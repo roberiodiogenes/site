@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robério Diógenes — Escritor</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAQABADASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAgMGCP/EACMQAAEEAQMEAwAAAAAAAAAAAAECAwQRBQAGEhMhMWEiQuH/xAAVAQEBAAAAAAAAAAAAAAAAAAAEBf/EABsRAAIDAAMAAAAAAAAAAAAAAAIDAAERBOHx/9oADAMBAAIRAxEAPwDPO3duYPK7ixmMly5MZmbG4odYj9VzrAWUBI8qJ+N+/B7HUTmseuBJWg8i2aU2VVZQoWkmiQLFdtFBlyHpkJtMpxhxDqeDiVUW6IpQ9jzp2cdYlyXJR4tlab4oASlS/soJHZKbuv3QEgxR4RbXcp8pqnVZCOeT/9k=" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* ============================================================
+       VARIÁVEIS — TEMA CLARO (padrão)
+    ============================================================ */
+    :root {
+      --bg:           #f5f0e8;
+      --bg-alt:       #ede8dd;
+      --bg-card:      #faf7f2;
+      --text:         #2a1f14;
+      --text-muted:   #6b5744;
+      --text-light:   #9e8672;
+      --accent:       #8b5e2e;
+      --accent-dark:  #5c3a12;
+      --gold:         #b8903a;
+      --gold-light:   #d4a853;
+      --border:       #d4c4ae;
+      --border-light: #e8ddd0;
+      --shadow:       rgba(42, 31, 20, 0.12);
+      --shadow-deep:  rgba(42, 31, 20, 0.25);
+      --overlay:      rgba(245, 240, 232, 0.92);
+      --nav-bg:       rgba(245, 240, 232, 0.97);
+      --hero-overlay: linear-gradient(135deg, rgba(245,240,232,0.96) 0%, rgba(237,232,221,0.88) 50%, rgba(229,224,213,0.75) 100%);
+    }
+
+    /* ============================================================
+       TEMA ESCURO
+    ============================================================ */
+    [data-theme="dark"] {
+      --bg:           #0f0c09;
+      --bg-alt:       #1a1410;
+      --bg-card:      #16120e;
+      --text:         #e8dfd2;
+      --text-muted:   #b09880;
+      --text-light:   #7a6554;
+      --accent:       #c4873f;
+      --accent-dark:  #e0a855;
+      --gold:         #c9a24a;
+      --gold-light:   #e0be6e;
+      --border:       #3a2e22;
+      --border-light: #2a2218;
+      --shadow:       rgba(0,0,0,0.4);
+      --shadow-deep:  rgba(0,0,0,0.65);
+      --overlay:      rgba(15, 12, 9, 0.92);
+      --nav-bg:       rgba(15, 12, 9, 0.97);
+      --hero-overlay: linear-gradient(135deg, rgba(15,12,9,0.96) 0%, rgba(20,16,11,0.88) 50%, rgba(26,20,14,0.70) 100%);
+    }
+
+    /* ============================================================
+       TEMA ALTO CONTRASTE
+    ============================================================ */
+    [data-theme="contrast"] {
+      --bg:           #ffffff;
+      --bg-alt:       #f0f0f0;
+      --bg-card:      #ffffff;
+      --text:         #000000;
+      --text-muted:   #1a1a1a;
+      --text-light:   #333333;
+      --accent:       #7a3a00;
+      --accent-dark:  #4d2400;
+      --gold:         #5c3a00;
+      --gold-light:   #7a5000;
+      --border:       #000000;
+      --border-light: #555555;
+      --shadow:       rgba(0,0,0,0.3);
+      --shadow-deep:  rgba(0,0,0,0.5);
+      --overlay:      rgba(255,255,255,0.97);
+      --nav-bg:       rgba(255,255,255,0.99);
+      --hero-overlay: linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(240,240,240,0.95) 100%);
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'EB Garamond', Georgia, serif;
+      line-height: 1.7;
+      transition: background-color 0.4s ease, color 0.4s ease;
+      overflow-x: hidden;
+    }
+
+    /* ============================================================
+       NAVEGAÇÃO
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border-light);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.4s ease;
+    }
+
+    #navbar.scrolled {
+      box-shadow: 0 2px 24px var(--shadow);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .nav-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: color 0.3s;
+    }
+
+    .nav-logo span {
+      color: var(--gold);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.5rem 1.1rem;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 50%; right: 50%;
+      height: 1px;
+      background: var(--gold);
+      transition: left 0.3s, right 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { left: 1.1rem; right: 1.1rem; }
+
+    .nav-links a.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Botão entrar */
+    .btn-login {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    .btn-login:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: transparent;
+    }
+
+    /* ============================================================
+       PAINEL ACESSIBILIDADE
+    ============================================================ */
+    .a11y-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-left: 0.8rem;
+      border-left: 1px solid var(--border-light);
+      padding-left: 0.8rem;
+    }
+
+    .a11y-btn {
+      width: 32px; height: 32px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s;
+      position: relative;
+    }
+
+    .a11y-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .a11y-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--bg);
+    }
+
+    .a11y-btn[title]::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -34px; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'EB Garamond', serif;
+      font-size: 0.68rem;
+      background: var(--text);
+      color: var(--bg);
+      padding: 3px 7px;
+      border-radius: 3px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+    }
+
+    .a11y-btn:hover[title]::after { opacity: 1; }
+
+    /* Font size controls */
+    .font-controls {
+      display: flex;
+      gap: 0.2rem;
+    }
+
+    /* Mobile menu */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 0.4rem;
+      background: none;
+      border: none;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px; height: 1.5px;
+      background: var(--text);
+      transition: all 0.3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 72px; left: 0; right: 0;
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      padding: 1.5rem 2rem;
+      z-index: 999;
+    }
+
+    .mobile-menu.open { display: block; }
+
+    .mobile-menu ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .mobile-menu a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .mobile-menu a.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 100px 0 60px;
+    }
+
+    /* Textura de papel */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.6;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Ornamento decorativo */
+    #hero::after {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--gold-light) 0%, transparent 70%);
+      opacity: 0.06;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-text { }
+
+    .hero-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      max-width: 40px;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+      border-left: 2px solid var(--gold);
+      padding-left: 1rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      padding: 0.9rem 2.2rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: var(--accent-dark);
+      transition: left 0.3s;
+      z-index: 0;
+    }
+
+    .btn-primary:hover::before { left: 0; }
+    .btn-primary span, .btn-primary i { position: relative; z-index: 1; }
+
+    .btn-secondary {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 0.9rem 2rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* Hero — lado direito: livro em destaque */
+    .hero-book {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .book-frame {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .book-ornament {
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      border: 1px solid var(--gold-light);
+      opacity: 0.3;
+      border-radius: 50%;
+    }
+
+    .book-ornament-2 {
+      position: absolute;
+      bottom: -20px; left: -20px;
+      width: 80px; height: 80px;
+      border: 1px solid var(--gold-light);
+      opacity: 0.2;
+    }
+
+    .book-cover-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .book-cover-wrapper::before {
+      content: '';
+      position: absolute;
+      bottom: -12px; right: -12px;
+      inset: 0;
+      background: var(--accent);
+      opacity: 0.15;
+      transform: translate(12px, 12px);
+      z-index: 0;
+    }
+
+    .book-cover {
+      width: 100%;
+      max-width: 300px;
+      display: block;
+      margin: 0 auto;
+      box-shadow:
+        -8px 0 20px rgba(0,0,0,0.15),
+        0 20px 60px var(--shadow-deep);
+      position: relative;
+      z-index: 1;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .book-cover:hover {
+      transform: translateY(-6px) rotate(-1deg);
+      box-shadow: -8px 6px 30px rgba(0,0,0,0.2), 0 30px 70px var(--shadow-deep);
+    }
+
+    .book-badge {
+      position: absolute;
+      bottom: 24px; right: 0;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      z-index: 2;
+    }
+
+    /* ============================================================
+       DIVIDER ORNAMENTAL
+    ============================================================ */
+    .ornamental-divider {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--gold);
+      font-size: 1.2rem;
+      letter-spacing: 0.5em;
+      opacity: 0.5;
+    }
+
+    /* ============================================================
+       SEÇÃO: LIVRO EM DESTAQUE
+    ============================================================ */
+    #destaque {
+      background: var(--bg-alt);
+      padding: 6rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #destaque::before {
+      content: '"';
+      position: absolute;
+      top: -3rem; left: 5%;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20rem;
+      color: var(--gold);
+      opacity: 0.04;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .section-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .book-destaque {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .book-destaque-cover {
+      position: relative;
+    }
+
+    .book-destaque-cover img {
+      width: 100%;
+      max-width: 280px;
+      box-shadow: 0 30px 80px var(--shadow-deep);
+      display: block;
+      transition: transform 0.4s;
+    }
+
+    .book-destaque-cover img:hover {
+      transform: scale(1.02);
+    }
+
+    .book-destaque-info {}
+
+    .book-genre {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .book-title-large {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 0.4rem;
+    }
+
+    .book-subtitle {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .book-sinopse {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1.5rem;
+    }
+
+    .book-sinopse strong { color: var(--text); font-weight: 500; }
+
+    .book-warning {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--text-light);
+      border: 1px solid var(--border-light);
+      padding: 0.3rem 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .book-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-amazon {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #fff;
+      background: #c45500;
+      border: none;
+      padding: 0.9rem 2rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.3s;
+    }
+
+    .btn-amazon:hover { background: #a84300; }
+
+    .btn-page-disabled {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      background: transparent;
+      border: 1px solid var(--border-light);
+      padding: 0.9rem 2rem;
+      cursor: not-allowed;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.55;
+    }
+
+    /* ============================================================
+       SEÇÃO: SOBRE O AUTOR
+    ============================================================ */
+    #autor {
+      padding: 6rem 0;
+      background: var(--bg);
+    }
+
+    .autor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.8fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .autor-photo-col {
+      position: relative;
+    }
+
+    .autor-photo-frame {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .autor-photo-frame::before {
+      content: '';
+      position: absolute;
+      top: 16px; left: 16px;
+      right: -16px; bottom: -16px;
+      border: 1px solid var(--gold);
+      opacity: 0.4;
+      z-index: 0;
+    }
+
+    .autor-photo-frame img {
+      width: 100%;
+      max-width: 300px;
+      display: block;
+      position: relative;
+      z-index: 1;
+      filter: sepia(15%) contrast(1.05);
+      transition: filter 0.4s;
+    }
+
+    [data-theme="dark"] .autor-photo-frame img {
+      filter: sepia(5%) contrast(1.1) brightness(0.92);
+    }
+
+    .autor-photo-frame img:hover { filter: sepia(0%) contrast(1.08); }
+
+    .autor-info {}
+
+    .autor-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      padding: 1.5rem 2rem;
+      border-left: 3px solid var(--gold);
+      background: var(--bg-alt);
+      position: relative;
+    }
+
+    .autor-quote::before {
+      content: '"';
+      font-size: 4rem;
+      color: var(--gold);
+      opacity: 0.25;
+      position: absolute;
+      top: -0.5rem; left: 0.5rem;
+      line-height: 1;
+      font-style: normal;
+    }
+
+    .autor-bio {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.85;
+      margin-bottom: 1rem;
+    }
+
+    .autor-bio strong { color: var(--text); font-weight: 500; }
+
+    .autor-dados {
+      display: flex;
+      gap: 2.5rem;
+      margin: 2rem 0;
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
+      flex-wrap: wrap;
+    }
+
+    .autor-dado {
+      text-align: left;
+    }
+
+    .autor-dado-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .autor-dado-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-top: 0.2rem;
+    }
+
+    /* ============================================================
+       SEÇÃO: INSCREVA-SE
+    ============================================================ */
+    #inscrevase {
+      padding: 6rem 0;
+      background: var(--bg-alt);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #inscrevase::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, var(--gold-light) 0%, transparent 65%);
+      opacity: 0.05;
+      pointer-events: none;
+    }
+
+    .subscribe-wrap {
+      max-width: 620px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .subscribe-wrap p {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+
+    .subscribe-form {
+      display: flex;
+      gap: 0;
+      max-width: 480px;
+      margin: 0 auto 1rem;
+    }
+
+    .subscribe-form input {
+      flex: 1;
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-right: none;
+      padding: 0.85rem 1.2rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .subscribe-form input::placeholder { color: var(--text-light); font-style: italic; }
+    .subscribe-form input:focus { border-color: var(--gold); }
+
+    .subscribe-form button {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      padding: 0.85rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.3s;
+      white-space: nowrap;
+    }
+
+    .subscribe-form button:hover { background: var(--accent-dark); }
+
+    .subscribe-legal {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.82rem;
+      color: var(--text-light);
+      font-style: italic;
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    #footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border-light);
+      padding: 3rem 0 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .footer-brand .nav-logo {
+      display: block;
+      margin-bottom: 0.8rem;
+      font-size: 1rem;
+    }
+
+    .footer-brand p {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .footer-col-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .footer-links a {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+    .footer-links a.disabled { opacity: 0.35; pointer-events: none; }
+
+    .social-icons {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .social-icon {
+      width: 38px; height: 38px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.3s;
+    }
+
+    .social-icon:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-copy {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-style: italic;
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-legal a {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.82rem;
+      color: var(--text-light);
+      text-decoration: none;
+      font-style: italic;
+      transition: color 0.3s;
+    }
+
+    .footer-legal a:hover { color: var(--text); }
+
+    /* ============================================================
+       SCROLL REVEAL
+    ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================================
+       TOAST NOTIFICATION
+    ============================================================ */
+    .toast {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      background: var(--text);
+      color: var(--bg);
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      padding: 0.9rem 1.5rem;
+      border-left: 3px solid var(--gold);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s ease;
+      z-index: 9999;
+      max-width: 320px;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ============================================================
+       FONT SIZE
+    ============================================================ */
+    /* Font scale via CSS custom property */
+    :root { --fscale: 1; }
+    body { font-size: calc(16px * var(--fscale)); }
+
+    /* As classes abaixo ajustam a variável via JS */
+    body.font-sm { --fscale: 0.875; font-size: calc(16px * 0.875); }
+    body.font-md { --fscale: 1;     font-size: 16px; }
+    body.font-lg { --fscale: 1.1875; font-size: calc(16px * 1.1875); }
+
+    /* Textos que usavam px fixo agora escalam */
+    body.font-lg .autor-bio,
+    body.font-lg .book-sinopse,
+    body.font-lg .autor-quote,
+    body.font-lg .subscribe-wrap p { font-size: 1.15rem; }
+    body.font-sm .autor-bio,
+    body.font-sm .book-sinopse,
+    body.font-sm .autor-quote,
+    body.font-sm .subscribe-wrap p { font-size: 0.95rem; }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 900px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        text-align: center;
+      }
+
+      .hero-book { order: -1; }
+      .book-cover { max-width: 220px; }
+
+      .hero-eyebrow::before, .hero-eyebrow::after { display: none; }
+      .hero-cta { justify-content: center; }
+      .hero-subtitle { text-align: left; }
+
+      .book-destaque {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .book-destaque-cover { text-align: center; }
+      .book-destaque-cover img { max-width: 200px; margin: 0 auto; }
+
+      .autor-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .autor-photo-col { text-align: center; }
+      .autor-photo-frame img { max-width: 220px; margin: 0 auto; }
+      .autor-photo-frame::before { display: none; }
+
+      .footer-top { grid-template-columns: 1fr; gap: 2rem; }
+
+      .hamburger { display: flex; }
+      .nav-links { display: none; }
+      .a11y-bar { display: none; }        /* escondida no topo — aparece no menu mobile */
+      .btn-login { display: none; }
+
+      /* Barra de acessibilidade dentro do menu mobile */
+      .mobile-a11y {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-light);
+        margin-top: 0.5rem;
+      }
+      .mobile-a11y-label {
+        font-family: 'Cinzel', serif;
+        font-size: 0.62rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted, var(--text-light));
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .subscribe-form { flex-direction: column; }
+      .subscribe-form input { border-right: 1px solid var(--border); border-bottom: none; }
+      .subscribe-form button { width: 100%; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ============================================================
+       MODAL DE LOGIN / CADASTRO
+    ============================================================ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 420px;
+      padding: 2.5rem 2rem;
+      position: relative;
+      transform: translateY(24px);
+      transition: transform 0.35s ease;
+      margin: 1rem;
+    }
+    .modal-overlay.open .modal-box {
+      transform: translateY(0);
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--text-light);
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+    .modal-subtitle {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 1.8rem;
+    }
+    .modal-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 1.5rem;
+      gap: 0;
+    }
+    .modal-tab {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      background: none;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.25s;
+    }
+    .modal-tab.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+    .modal-form { display: none; flex-direction: column; gap: 1rem; }
+    .modal-form.active { display: flex; }
+    .modal-field label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+    .modal-field input {
+      width: 100%;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      padding: 0.7rem 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .modal-field input:focus { border-color: var(--gold); }
+    .modal-btn-submit {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      padding: 0.85rem;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 0.5rem;
+    }
+    .modal-btn-submit:hover { background: var(--accent-dark); }
+    .modal-note {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--text-light);
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    /* ============================================================
+       CONTADOR DE VISITAS
+    ============================================================ */
+    .visit-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-top: 0.6rem;
+    }
+    .visit-counter i { color: var(--gold); font-size: 0.7rem; }
+    .visit-count-num { color: var(--gold); font-weight: 600; }
+
+    /* ============================================================
+       BOTÃO VOLTAR AO TOPO
+    ============================================================ */
+    #backToTop {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      width: 44px;
+      height: 44px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      z-index: 900;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.35s ease, transform 0.35s ease, background 0.25s;
+      box-shadow: 0 4px 16px var(--shadow-deep);
+    }
+    #backToTop.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #backToTop:hover { background: var(--accent-dark); }
+  </style>
+</head>
+
+<body class="font-md" data-theme="light">
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<header id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">Robério <span>Diógenes</span></a>
+
+    <nav aria-label="Menu principal">
+      <ul class="nav-links">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="#" class="disabled" title="Em breve">Autor</a></li>
+        <li><a href="#" class="disabled" title="Em breve">Biblioteca</a></li>
+        <li><a href="#" class="disabled" title="Em breve">Diário</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-right">
+      <!-- Acessibilidade -->
+      <div class="a11y-bar" role="toolbar" aria-label="Acessibilidade">
+        <div class="font-controls">
+          <button class="a11y-btn" id="fontDecrease" title="Diminuir fonte" aria-label="Diminuir tamanho da fonte">A-</button>
+          <button class="a11y-btn" id="fontIncrease" title="Aumentar fonte" aria-label="Aumentar tamanho da fonte">A+</button>
+        </div>
+        <button class="a11y-btn" id="themeLight" title="Tema claro" aria-label="Tema claro" aria-pressed="true">☀</button>
+        <button class="a11y-btn" id="themeDark" title="Tema escuro" aria-label="Tema escuro" aria-pressed="false">☾</button>
+        <button class="a11y-btn" id="themeContrast" title="Alto contraste" aria-label="Alto contraste" aria-pressed="false">◑</button>
+      </div>
+
+      <a href="#" class="btn-login" id="desktopLoginBtn" aria-label="Entrar ou cadastrar-se">Entrar</a>
+
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Menu mobile">
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="#" class="disabled">Autor (em breve)</a></li>
+    <li><a href="#" class="disabled">Biblioteca (em breve)</a></li>
+    <li><a href="#" class="disabled">Diário (em breve)</a></li>
+    <li><a href="#loginModal" id="mobileLoginBtn">Entrar / Cadastrar</a></li>
+  </ul>
+  <!-- Acessibilidade no mobile -->
+  <div class="mobile-a11y" role="toolbar" aria-label="Acessibilidade">
+    <span class="mobile-a11y-label">Acessibilidade</span>
+    <button class="a11y-btn" id="fontDecreaseMob" aria-label="Diminuir fonte">A-</button>
+    <button class="a11y-btn" id="fontIncreaseMob" aria-label="Aumentar fonte">A+</button>
+    <button class="a11y-btn" id="themeLightMob" aria-label="Tema claro">☀</button>
+    <button class="a11y-btn" id="themeDarkMob" aria-label="Tema escuro">☾</button>
+    <button class="a11y-btn" id="themeContrastMob" aria-label="Alto contraste">◑</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<main>
+<section id="hero" aria-label="Bem-vindo">
+  <div class="hero-inner">
+    <div class="hero-text reveal">
+      <p class="hero-eyebrow">Escritor independente</p>
+      <h1 class="hero-title">
+        Robério<br/><em>Diógenes</em>
+      </h1>
+      <p class="hero-subtitle">
+        "Escrevo sobre o que nos assombra no silêncio, sobre os abismos que escondemos atrás das telas e das convenções sociais."
+      </p>
+      <div class="hero-cta">
+        <a href="https://www.amazon.com.br/stores/author/B0DJCQMG7C/about" target="_blank" rel="noopener" class="btn-primary">
+          <span>Ver na Amazon</span><i class="fa-brands fa-amazon" aria-hidden="true"></i>
+        </a>
+        <a href="#destaque" class="btn-secondary">
+          <span>Livro em destaque</span><i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-book reveal" style="animation-delay:0.2s">
+      <div class="book-frame">
+        <div class="book-ornament" aria-hidden="true"></div>
+        <div class="book-ornament-2" aria-hidden="true"></div>
+        <div class="book-cover-wrapper">
+          <img
+            src="img/jogo-das-mascaras.jpg"
+            class="book-cover"
+            alt="Capa do livro O Jogo das Máscaras de Robério Diógenes"
+          />
+          <div class="book-badge">Em destaque</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     LIVRO EM DESTAQUE
+============================================================ -->
+<section id="destaque" aria-labelledby="destaque-title">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">Lançamento</p>
+      <h2 class="section-title" id="destaque-title">Livro em <em>Destaque</em></h2>
+    </div>
+
+    <div class="book-destaque">
+      <div class="book-destaque-cover reveal">
+        <img
+            src="img/jogo-das-mascaras.jpg"
+            alt="Capa de O Jogo das Máscaras"
+          />
+      </div>
+      <div class="book-destaque-info reveal">
+        <p class="book-genre">Thriller Psicológico · Drama · 18+</p>
+        <h3 class="book-title-large">O Jogo das Máscaras</h3>
+        <p class="book-subtitle">Toda verdade usa disfarce</p>
+        <span class="book-warning"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Conteúdo adulto — 18 anos ou mais</span>
+        <p class="book-sinopse">
+          Juliette acreditava que a dor era eterna — até conhecer o Cavaleiro. Um homem enigmático que não ofereceu salvação, mas lhe deu algo ainda mais perigoso: <strong>um sentido para sofrer</strong>.<br/><br/>
+          Entre cartas secretas, jogos psicológicos e correntes invisíveis, ela se vê mergulhada em um mundo onde cada lágrima é ritual, cada ordem é sentença, e cada máscara esconde uma verdade que pode destruí-la.<br/><br/>
+          Mas quando sua vida parece um espelho quebrado — um casamento em ruínas, o peso da solidão, a tentação do desejo e da submissão — Juliette descobre que não é apenas prisioneira do Cavaleiro… mas também de si mesma.
+        </p>
+        <div class="book-actions">
+          <a
+            href="https://www.amazon.com.br/jogo-das-m%C3%A1scaras-verdade-disfarce-ebook/dp/B0FTTFPWXB"
+            target="_blank"
+            rel="noopener"
+            class="btn-amazon"
+            aria-label="Comprar O Jogo das Máscaras na Amazon"
+          >
+            <i class="fa-brands fa-amazon" aria-hidden="true"></i>
+            <span>Comprar na Amazon</span>
+          </a>
+          <span class="btn-page-disabled" aria-label="Página do livro em breve">
+            <i class="fa-regular fa-book-open" aria-hidden="true"></i>
+            <span>Página do livro (em breve)</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     AUTOR
+============================================================ -->
+<section id="autor" aria-labelledby="autor-title">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">Quem escreve</p>
+      <h2 class="section-title" id="autor-title">Robério <em>Diógenes</em></h2>
+    </div>
+
+    <div class="autor-grid">
+      <div class="autor-photo-col reveal">
+        <div class="autor-photo-frame">
+          <img
+            src="img/autor2.jpg"
+            alt="Retrato do escritor Robério Diógenes"
+          />
+        </div>
+      </div>
+
+      <div class="autor-info reveal">
+        <blockquote class="autor-quote">
+          "Escrevo sobre o que nos assombra no silêncio, sobre os abismos que escondemos atrás das telas e das convenções sociais."
+        </blockquote>
+
+        <p class="autor-bio">
+          Nascido no Ceará, em 28 de fevereiro de 1974, <strong>Robério Diógenes</strong> é um observador arguto da alma humana e de seus labirintos mais discretos. Sua trajetória singular reúne a vivência das ruas e das estradas, onde atuou como entregador, à sensibilidade de quem também trilhou caminhos como fotógrafo e professor de informática.
+        </p>
+        <p class="autor-bio">
+          Autor independente, Robério dedica-se à construção de <strong>thrillers psicológicos, romances, dramas e autoajuda</strong>, explorando as fissuras da vida moderna, os dilemas das relações humanas e os perigos silenciosos que se escondem sob a superfície do cotidiano.
+        </p>
+        <p class="autor-bio">
+          Atualmente reside em <strong>Cascavel, Ceará</strong>, onde divide os dias entre a escrita e a observação atenta da realidade — matéria-prima de suas obras.
+        </p>
+
+        <div class="autor-dados">
+          <div class="autor-dado">
+            <div class="autor-dado-num">+10</div>
+            <div class="autor-dado-label">Livros escritos</div>
+          </div>
+          <div class="autor-dado">
+            <div class="autor-dado-num">10</div>
+            <div class="autor-dado-label">Anos como fotógrafo</div>
+          </div>
+          <div class="autor-dado">
+            <div class="autor-dado-num">CE</div>
+            <div class="autor-dado-label">Cascavel, Ceará</div>
+          </div>
+        </div>
+
+        <a href="https://www.amazon.com.br/stores/author/B0DJCQMG7C/about" target="_blank" rel="noopener" class="btn-secondary">
+          <span>Ver na Amazon</span><i class="fa-brands fa-amazon" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     INSCREVA-SE
+============================================================ -->
+<section id="inscrevase" aria-labelledby="newsletter-title">
+  <div class="subscribe-wrap">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">Fique por dentro</p>
+      <h2 class="section-title" id="newsletter-title">Receba as <em>novidades</em></h2>
+    </div>
+    <p class="reveal">
+      Seja o primeiro a saber sobre novos lançamentos, capítulos exclusivos e reflexões do autor. Sem spam — apenas palavras que valem a leitura.
+    </p>
+    <form class="subscribe-form reveal" id="subscribeForm" novalidate aria-label="Formulário de inscrição">
+      <input
+        type="email"
+        id="emailInput"
+        placeholder="Seu melhor e-mail"
+        autocomplete="email"
+        aria-label="E-mail para inscrição"
+        required
+      />
+      <button type="submit">Inscrever</button>
+    </form>
+    <p class="subscribe-legal reveal">
+      Ao se inscrever, você concorda com nossa Política de Privacidade.
+    </p>
+  </div>
+</section>
+</main>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">Robério <span>Diógenes</span></a>
+        <p>Escritor independente.<br/>Cascavel, Ceará — Brasil.</p>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Navegação</p>
+        <ul class="footer-links">
+          <li><a href="index.html">Início</a></li>
+          <li><a href="#" class="disabled">Autor</a></li>
+          <li><a href="#" class="disabled">Biblioteca</a></li>
+          <li><a href="#" class="disabled">Diário</a></li>
+          <li><a href="#" class="disabled">Área do Leitor</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Redes Sociais</p>
+        <div class="social-icons">
+          <a href="https://www.instagram.com/diogenesroberio" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram de Robério Diógenes">
+            <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/rob%C3%A9rio-di%C3%B3genes-47977b210/" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn de Robério Diógenes">
+            <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+          </a>
+          <a href="https://www.amazon.com.br/stores/author/B0DJCQMG7C/about" target="_blank" rel="noopener" class="social-icon" aria-label="Robério Diógenes na Amazon">
+            <i class="fa-brands fa-amazon" aria-hidden="true"></i>
+          </a>
+          <a href="mailto:autor@roberiodiogenes.com" class="social-icon" aria-label="E-mail do autor">
+            <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+          </a>
+          <a href="https://wa.me/5585996409818" target="_blank" rel="noopener" class="social-icon" aria-label="WhatsApp do autor">
+            <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+          </a>
+        </div>
+        <br/>
+        <p class="footer-col-title">Contato</p>
+        <ul class="footer-links">
+          <li><a href="mailto:autor@roberiodiogenes.com">autor@roberiodiogenes.com</a></li>
+          <li><a href="https://wa.me/5585996409818" target="_blank" rel="noopener">(85) 99640-9818</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>
+        <p class="footer-copy">© 2025 Robério Diógenes. Todos os direitos reservados.</p>
+        <p class="visit-counter">
+          <i class="fa-regular fa-eye" aria-hidden="true"></i>
+          <span>Visitas:</span>
+          <span class="visit-count-num" id="visitCount">—</span>
+        </p>
+      </div>
+      <div class="footer-legal">
+        <a href="#" class="disabled">Política de Privacidade</a>
+        <a href="#" class="disabled">Termos de Uso</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+<!-- Botão Voltar ao Topo -->
+<button id="backToTop" aria-label="Voltar ao topo da página" title="Voltar ao topo">
+  <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
+</button>
+
+<!-- Modal de Login / Cadastro -->
+<div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose" aria-label="Fechar">&times;</button>
+    <h2 class="modal-title" id="modalTitle">Área do Leitor</h2>
+    <p class="modal-subtitle">Em construção — em breve você poderá acessar conteúdo exclusivo.</p>
+    <div class="modal-tabs">
+      <button class="modal-tab active" data-tab="login">Entrar</button>
+      <button class="modal-tab" data-tab="register">Cadastrar</button>
+    </div>
+
+    <!-- Formulário Login -->
+    <form class="modal-form active" id="formLogin" novalidate>
+      <div class="modal-field">
+        <label for="loginEmail">E-mail</label>
+        <input type="email" id="loginEmail" autocomplete="email" placeholder="seu@email.com"/>
+      </div>
+      <div class="modal-field">
+        <label for="loginPass">Senha</label>
+        <input type="password" id="loginPass" autocomplete="current-password" placeholder="••••••••"/>
+      </div>
+      <button type="submit" class="modal-btn-submit">Entrar</button>
+      <p class="modal-note">Área do leitor em breve. Cadastre seu e-mail para ser avisado.</p>
+    </form>
+
+    <!-- Formulário Cadastro -->
+    <form class="modal-form" id="formRegister" novalidate>
+      <div class="modal-field">
+        <label for="regName">Nome</label>
+        <input type="text" id="regName" autocomplete="name" placeholder="Seu nome"/>
+      </div>
+      <div class="modal-field">
+        <label for="regEmail">E-mail</label>
+        <input type="email" id="regEmail" autocomplete="email" placeholder="seu@email.com"/>
+      </div>
+      <div class="modal-field">
+        <label for="regPass">Senha</label>
+        <input type="password" id="regPass" autocomplete="new-password" placeholder="Mínimo 6 caracteres"/>
+      </div>
+      <button type="submit" class="modal-btn-submit">Criar conta</button>
+      <p class="modal-note">Funcionalidade completa chegando em breve.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+  // ─── TEMA ────────────────────────────────────────────────
+  const body = document.body;
+  const themes = ['light', 'dark', 'contrast'];
+  const themeButtons = {
+    light:    document.getElementById('themeLight'),
+    dark:     document.getElementById('themeDark'),
+    contrast: document.getElementById('themeContrast'),
+  };
+
+  function setTheme(t) {
+    body.setAttribute('data-theme', t);
+    localStorage.setItem('rd-theme', t);
+    themes.forEach(th => {
+      themeButtons[th].classList.toggle('active', th === t);
+      themeButtons[th].setAttribute('aria-pressed', th === t ? 'true' : 'false');
+    });
+  }
+
+  Object.entries(themeButtons).forEach(([t, btn]) => {
+    btn.addEventListener('click', () => setTheme(t));
+  });
+
+  // Restaurar tema salvo
+  const savedTheme = localStorage.getItem('rd-theme') || 'light';
+  setTheme(savedTheme);
+
+  // ─── TAMANHO DA FONTE ────────────────────────────────────
+  const fontSizes = ['font-sm', 'font-md', 'font-lg'];
+  let currentFontIdx = 1;
+
+  function applyFont(idx) {
+    fontSizes.forEach(f => body.classList.remove(f));
+    body.classList.add(fontSizes[idx]);
+    localStorage.setItem('rd-font', idx);
+  }
+
+  const savedFont = localStorage.getItem('rd-font');
+  if (savedFont !== null) currentFontIdx = parseInt(savedFont);
+  applyFont(currentFontIdx);
+
+  document.getElementById('fontIncrease').addEventListener('click', () => {
+    if (currentFontIdx < 2) { currentFontIdx++; applyFont(currentFontIdx); }
+  });
+  document.getElementById('fontDecrease').addEventListener('click', () => {
+    if (currentFontIdx > 0) { currentFontIdx--; applyFont(currentFontIdx); }
+  });
+
+  // ─── NAVBAR SCROLL ───────────────────────────────────────
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // ─── MOBILE MENU ─────────────────────────────────────────
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  hamburger.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', open);
+  });
+
+  // ─── SCROLL REVEAL ───────────────────────────────────────
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  reveals.forEach(el => observer.observe(el));
+
+  // ─── FORMULÁRIO INSCRIÇÃO ────────────────────────────────
+  const form = document.getElementById('subscribeForm');
+  const toast = document.getElementById('toast');
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value.trim();
+    const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailReg.test(email)) {
+      showToast('Por favor, insira um e-mail válido.');
+      return;
+    }
+    const btn = form.querySelector('button');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+    try {
+      const fd = new FormData();
+      fd.append('email', email);
+      const res  = await fetch('subscribe.php', { method: 'POST', body: fd });
+      const json = await res.json();
+      showToast(json.message);
+      if (json.success) form.reset();
+    } catch(err) {
+      showToast('Erro de conexão. Tente novamente.');
+    } finally {
+      btn.textContent = 'Inscrever';
+      btn.disabled = false;
+    }
+  });
+
+  // ─── BOTÕES DE ACESSIBILIDADE MOBILE (sincronizados) ───────
+  // Tema
+  document.getElementById('themeLightMob').addEventListener('click', () => setTheme('light'));
+  document.getElementById('themeDarkMob').addEventListener('click',  () => setTheme('dark'));
+  document.getElementById('themeContrastMob').addEventListener('click', () => setTheme('contrast'));
+
+  // Fonte mobile
+  document.getElementById('fontIncreaseMob').addEventListener('click', () => {
+    if (currentFontIdx < 2) { currentFontIdx++; applyFont(currentFontIdx); }
+  });
+  document.getElementById('fontDecreaseMob').addEventListener('click', () => {
+    if (currentFontIdx > 0) { currentFontIdx--; applyFont(currentFontIdx); }
+  });
+
+  // ─── MODAL DE LOGIN ──────────────────────────────────────
+  const modal      = document.getElementById('loginModal');
+  const modalClose = document.getElementById('modalClose');
+  const loginTabs  = document.querySelectorAll('.modal-tab');
+  const loginForms = document.querySelectorAll('.modal-form');
+
+  function openModal() {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('input').focus();
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('desktopLoginBtn').addEventListener('click', (e) => {
+    e.preventDefault(); openModal();
+  });
+  document.getElementById('mobileLoginBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    mobileMenu.classList.remove('open');
+    openModal();
+  });
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+  // Tabs dentro do modal
+  loginTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      loginTabs.forEach(t => t.classList.remove('active'));
+      loginForms.forEach(f => f.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('form' + tab.dataset.tab.charAt(0).toUpperCase() + tab.dataset.tab.slice(1))
+              .classList.add('active');
+    });
+  });
+
+  // Submits do modal (placeholder — backend virá depois)
+  document.getElementById('formLogin').addEventListener('submit', (e) => {
+    e.preventDefault();
+    showToast('Área do leitor em breve. Aguarde!');
+    closeModal();
+  });
+  document.getElementById('formRegister').addEventListener('submit', (e) => {
+    e.preventDefault();
+    showToast('Cadastro em breve! Obrigado pelo interesse.');
+    closeModal();
+  });
+
+  // ─── BOTÃO VOLTAR AO TOPO ────────────────────────────────
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    backToTop.classList.toggle('visible', window.scrollY > 400);
+  });
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ─── CONTADOR DE VISITAS ─────────────────────────────────
+  // Tenta usar o backend PHP (visit.php); se offline, usa localStorage
+  (async function() {
+    const el = document.getElementById('visitCount');
+    if (!el) return;
+
+    const sessionKey = 'rd-visit-session';
+    const localKey   = 'rd-visit-local';
+
+    try {
+      // Chama o backend — ele controla unicidade por IP+UA no servidor
+      const res  = await fetch('visit.php', { method: 'GET' });
+      const json = await res.json();
+      if (json.success && json.total > 0) {
+        el.textContent = json.total.toLocaleString('pt-BR');
+        return;
+      }
+    } catch (e) {
+      // Backend indisponível (local/dev) — usa fallback localStorage
+    }
+
+    // Fallback localStorage: conta por sessão (não duplica ao recarregar)
+    let count = parseInt(localStorage.getItem(localKey) || '0', 10);
+    if (!sessionStorage.getItem(sessionKey)) {
+      count++;
+      localStorage.setItem(localKey, count);
+      sessionStorage.setItem(sessionKey, '1');
+    }
+    el.textContent = count.toLocaleString('pt-BR');
+  })();
+
+  // ─── SONS DE ACESSIBILIDADE ──────────────────────────────
+  function playClick() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.12);
+    } catch(e) {}
+  }
+
+  document.querySelectorAll('.btn-primary, .btn-amazon, .btn-login, .subscribe-form button').forEach(btn => {
+    btn.addEventListener('click', playClick);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+# ============================================================
+# .gitignore — roberiodiogenes.com
+# ============================================================
+
+# ─── CREDENCIAIS E CONFIGURAÇÃO SENSÍVEL ────────────────────
+# NUNCA versionar o db.php com senhas reais
+config/db.php
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.production
+*.env
+
+# ─── BANCO DE DADOS ─────────────────────────────────────────
+# Dumps e backups locais
+*.sql.gz
+*.dump
+backups/
+
+# ─── LOGS ───────────────────────────────────────────────────
+*.log
+logs/
+error_log
+php_errors.log
+
+# ─── SISTEMA OPERACIONAL ────────────────────────────────────
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ─── EDITORES E IDEs ────────────────────────────────────────
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains (PhpStorm, WebStorm)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim / Emacs
+*.swp
+*.swo
+*~
+\#*\#
+.emacs.desktop
+
+# Notepad++
+nppBackup/
+
+# ─── NODE / NPM (caso use futuramente) ──────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+dist/
+build/
+
+# ─── UPLOADS DE USUÁRIOS (dados pessoais) ───────────────────
+# Caso implemente upload de arquivos no futuro
+uploads/
+user-uploads/
+
+# ─── ARQUIVOS TEMPORÁRIOS ───────────────────────────────────
+tmp/
+temp/
+cache/
+*.tmp
+*.temp
+*.bak
+*.orig
+*.cache
+
+# ─── ARQUIVOS DE SESSÃO PHP ─────────────────────────────────
+sess_*
+
+# ─── COMPOSER (caso use futuramente) ────────────────────────
+vendor/
+composer.lock
+
+# ─── XAMPP / WAMP (arquivos locais de desenvolvimento) ──────
+xampp-*
+wamp-*
+
+# ─── ARQUIVOS GRANDES DE MÍDIA (não versionar) ──────────────
+# Suba imagens grandes via FTP diretamente
+# Mantenha no repo apenas imagens pequenas essenciais (favicon etc.)
+# img/*.jpg
+# img/*.png
+# Descomente as linhas acima se preferir não versionar as imagens
+# e subi-las diretamente via FTP para o servidor
+
+# ─── GUIA DE IMPLANTAÇÃO (opcional — pode versionar) ────────
+# Descomente se não quiser expor detalhes de infraestrutura:
+# GUIA_IMPLANTACAO.md
