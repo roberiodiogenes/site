@@ -1,0 +1,182 @@
+/* ================================================================
+   ROBÉRIO DIÓGENES — livros.css
+   ================================================================ */
+
+.pular-nav:focus { position:fixed;top:1rem;left:1rem;background:var(--ouro);color:var(--fundo);padding:0.5rem 1rem;border-radius:var(--raio);z-index:9999;font-family:var(--fonte-ui);text-decoration:none; }
+
+/* ── HERO CATÁLOGO ────────────────────────────────────────────── */
+.cat-hero {
+  padding: calc(var(--altura-nav) + 4rem) 2rem 4rem;
+  text-align: center;
+  position: relative;
+  background: linear-gradient(to bottom, var(--fundo-2) 0%, var(--fundo) 100%);
+  border-bottom: 1px solid var(--borda);
+  overflow: hidden;
+}
+.cat-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(184,134,11,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cat-hero-inner { max-width: var(--largura-max); margin: 0 auto; position: relative; z-index: 1; }
+.cat-titulo {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+.cat-titulo em { font-style: italic; color: var(--ouro); }
+.cat-subtitulo { font-family: var(--fonte-titulo); font-style: italic; font-size: 1.05rem; color: var(--texto-2); line-height: 1.7; margin-bottom: 2.5rem; }
+.cat-hero-ornamento {
+  position: absolute; bottom: 1rem; right: 3rem;
+  font-family: var(--fonte-titulo); font-size: 5rem;
+  color: var(--ornamento-cor); opacity: 0.3; pointer-events: none;
+  animation: flutuar 6s ease-in-out infinite;
+}
+@keyframes flutuar { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+/* ── FILTROS ──────────────────────────────────────────────────── */
+.filtros { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+.filtro-btn {
+  padding: 0.45rem 1.1rem;
+  border-radius: 20px;
+  border: 1px solid var(--borda-media);
+  background: transparent;
+  font-family: var(--fonte-ui);
+  font-size: 0.82rem;
+  color: var(--texto-2);
+  cursor: pointer;
+  transition: all var(--trans);
+  letter-spacing: 0.03em;
+}
+.filtro-btn:hover { border-color: var(--ouro); color: var(--ouro); background: rgba(184,134,11,0.06); }
+.filtro-btn.ativo { background: var(--ouro); color: var(--fundo); border-color: var(--ouro); }
+
+/* ── CATÁLOGO GRID ────────────────────────────────────────────── */
+.livros-catalogo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.livro-item {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 1.5rem;
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-lg);
+  padding: 1.5rem;
+  transition: all var(--trans-lenta);
+  align-items: start;
+}
+.livro-item:hover {
+  border-color: var(--borda-media);
+  box-shadow: var(--sombra-md);
+  transform: translateY(-3px);
+}
+
+.livro-item-capa-link { display: block; flex-shrink: 0; }
+.livro-item-capa-wrap {
+  position: relative;
+  width: 140px;
+}
+.livro-item-capa {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-livro);
+  transition: transform var(--trans-lenta);
+  display: block;
+}
+.livro-item:hover .livro-item-capa { transform: scale(1.03) rotate(-1deg); }
+
+.livro-item-spine {
+  position: absolute; left: -4px; top: 4px; bottom: 4px;
+  width: 8px;
+  background: linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0.05));
+  border-radius: 2px 0 0 2px;
+}
+
+.livro-item-info { display: flex; flex-direction: column; gap: 0.5rem; }
+.livro-item-genero {
+  font-family: var(--fonte-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ouro);
+}
+.livro-item-titulo {
+  font-family: var(--fonte-titulo);
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--texto);
+}
+.livro-item-titulo a { color: inherit; text-decoration: none; }
+.livro-item-titulo a:hover { color: var(--ouro); }
+.livro-item-subtitulo {
+  font-family: var(--fonte-titulo);
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--texto-3);
+  margin-top: -0.25rem;
+}
+.livro-item-sinopse { font-size: 0.875rem; color: var(--texto-2); line-height: 1.65; }
+.livro-item-badges { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
+.livro-item-acoes { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.livro-item-acoes .btn { padding: 0.5rem 1rem; font-size: 0.8rem; }
+
+/* ── VAZIO ────────────────────────────────────────────────────── */
+.vazio-msg {
+  grid-column: 1/-1;
+  display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+  padding: 4rem;
+  color: var(--texto-3);
+  font-family: var(--fonte-ui);
+  font-style: italic;
+  font-size: 1.1rem;
+}
+.vazio-msg span { font-size: 3rem; }
+
+/* ── CTA AMAZON ───────────────────────────────────────────────── */
+.cta-amazon {
+  background: var(--fundo-2);
+  border-top: 1px solid var(--borda);
+  margin-top: 0;
+  padding: 3.5rem 2rem;
+}
+.cta-amazon-wrap {
+  max-width: var(--largura-max);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.cta-amazon-texto h2 {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+}
+.cta-amazon-texto h2 em { color: var(--ouro); font-style: italic; }
+.cta-amazon-texto p { font-size: 0.95rem; color: var(--texto-2); }
+.cta-amazon-btn { font-size: 1rem; padding: 0.85rem 2rem; }
+
+/* ── RESPONSIVIDADE ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .livros-catalogo { grid-template-columns: 1fr; }
+  .livro-item { grid-template-columns: 100px 1fr; gap: 1rem; padding: 1rem; }
+  .livro-item-capa-wrap { width: 100px; }
+  .cta-amazon-wrap { flex-direction: column; text-align: center; }
+}
+@media (max-width: 480px) {
+  .livro-item { grid-template-columns: 1fr; }
+  .livro-item-capa-wrap { width: 120px; }
+}

@@ -1,0 +1,68 @@
+/* ================================================================
+   ROBÉRIO DIÓGENES — blog.css
+   ================================================================ */
+.pular-nav:focus{position:fixed;top:1rem;left:1rem;background:var(--ouro);color:var(--fundo);padding:.5rem 1rem;border-radius:var(--raio);z-index:9999;font-family:var(--fonte-ui);text-decoration:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* HERO */
+.blog-hero{padding:calc(var(--altura-nav) + 4rem) 2rem 4rem;background:var(--fundo-2);border-bottom:1px solid var(--borda);text-align:center;position:relative;overflow:hidden}
+.blog-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 50% 40%,rgba(184,134,11,.06) 0%,transparent 70%);pointer-events:none}
+.blog-hero-inner{max-width:var(--largura-max);margin:0 auto;position:relative;z-index:1}
+.blog-hero-titulo{font-family:var(--fonte-titulo);font-size:clamp(3rem,6vw,5rem);font-weight:300;line-height:1;margin-bottom:1rem;letter-spacing:-.02em}
+.blog-hero-titulo em{font-style:italic;color:var(--ouro)}
+.blog-hero-desc{font-family:var(--fonte-titulo);font-style:italic;font-size:1.05rem;color:var(--texto-2);margin-bottom:2.5rem;line-height:1.7}
+
+/* CATEGORIAS */
+.blog-cats{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem}
+.cat-btn{padding:.45rem 1.1rem;border-radius:20px;border:1px solid var(--borda-media);background:transparent;font-family:var(--fonte-ui);font-size:.82rem;color:var(--texto-2);cursor:pointer;transition:all var(--trans)}
+.cat-btn:hover{border-color:var(--ouro);color:var(--ouro);background:rgba(184,134,11,.06)}
+.cat-btn.ativo{background:var(--ouro);color:var(--fundo);border-color:var(--ouro)}
+
+/* LAYOUT BLOG */
+.blog-layout{max-width:var(--largura-max);margin:0 auto;display:flex;flex-direction:column;gap:2rem}
+
+/* POST DESTAQUE */
+.post-destaque{display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--fundo-card);border:1px solid var(--borda);border-radius:var(--raio-xl);overflow:hidden;text-decoration:none;color:inherit;transition:all var(--trans-lenta)}
+.post-destaque:hover{box-shadow:var(--sombra-lg);border-color:var(--borda-media);transform:translateY(-3px)}
+.post-destaque-img-wrap{position:relative;overflow:hidden}
+.post-destaque-img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease;min-height:320px}
+.post-destaque:hover .post-destaque-img{transform:scale(1.05)}
+.post-badge{position:absolute;top:1rem;left:1rem;background:var(--ouro);color:var(--fundo);font-family:var(--fonte-display);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;padding:.25rem .7rem;border-radius:var(--raio)}
+.post-destaque-corpo{padding:2.5rem;display:flex;flex-direction:column;justify-content:space-between;gap:1.5rem}
+.post-cat{font-family:var(--fonte-display);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro);display:block;margin-bottom:.5rem}
+.post-destaque-titulo{font-family:var(--fonte-titulo);font-size:clamp(1.4rem,2.5vw,2rem);font-weight:500;color:var(--texto);line-height:1.25;margin-bottom:.75rem}
+.post-destaque-titulo em{color:var(--ouro)}
+.post-destaque-resumo{font-size:.95rem;color:var(--texto-2);line-height:1.75}
+.post-destaque-meta{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.post-data,.post-leitura{font-family:var(--fonte-ui);font-size:.8rem;color:var(--texto-3);display:flex;align-items:center;gap:.35rem}
+.post-ler{font-family:var(--fonte-ui);font-size:.85rem;color:var(--ouro);margin-left:auto}
+
+/* GRADE DE POSTS */
+.posts-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}
+.post-card-b{display:flex;flex-direction:column;background:var(--fundo-card);border:1px solid var(--borda);border-radius:var(--raio-lg);overflow:hidden;text-decoration:none;color:inherit;transition:all var(--trans-lenta)}
+.post-card-b:hover{transform:translateY(-4px);box-shadow:var(--sombra-md);border-color:var(--borda-media)}
+.pcb-img-wrap{overflow:hidden;flex-shrink:0}
+.pcb-img{width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform .6s ease}
+.post-card-b:hover .pcb-img{transform:scale(1.06)}
+.pcb-corpo{padding:1.25rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
+.pcb-corpo-solo{padding:1.75rem}
+.pcb-titulo{font-family:var(--fonte-titulo);font-size:1rem;font-weight:500;color:var(--texto);line-height:1.3}
+.pcb-resumo{font-size:.875rem;color:var(--texto-2);line-height:1.65}
+.pcb-meta{display:flex;gap:1rem;margin-top:auto;padding-top:.5rem}
+
+/* NEWSLETTER BLOG */
+.nl-blog{background:var(--fundo-2);border-top:1px solid var(--borda)}
+.nl-blog-wrap{max-width:540px;margin:0 auto;text-align:center}
+.nl-blog-icon{display:block;font-size:2.5rem;margin-bottom:1rem}
+.nl-blog-wrap h2{font-family:var(--fonte-titulo);font-size:clamp(1.8rem,3vw,2.5rem);font-weight:400;margin-bottom:.75rem}
+.nl-blog-wrap h2 em{color:var(--ouro)}
+.nl-blog-wrap p{color:var(--texto-2);margin-bottom:1.75rem;line-height:1.7}
+.nl-blog-form{display:flex;gap:.75rem;max-width:440px;margin:0 auto}
+.nl-blog-form .finput{flex:1}
+
+@media(max-width:768px){
+  .post-destaque{grid-template-columns:1fr}
+  .post-destaque-img{min-height:240px}
+  .posts-grade{grid-template-columns:1fr}
+  .nl-blog-form{flex-direction:column}
+}

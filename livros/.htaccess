@@ -1,0 +1,11 @@
+# ================================================================
+# ROBÉRIO DIÓGENES — /livros/.htaccess
+# Permite servir HTML mas bloqueia listagem da pasta.
+# ================================================================
+Options -Indexes
+ServerSignature Off
+
+<FilesMatch "\.(php|log|sql|bak)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>

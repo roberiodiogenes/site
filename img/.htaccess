@@ -1,0 +1,7 @@
+# ================================================================
+# ROBÉRIO DIÓGENES — /img/.htaccess
+# Permite servir imagens mas bloqueia listagem da pasta.
+# ================================================================
+
+Options -Indexes
+ServerSignature Off

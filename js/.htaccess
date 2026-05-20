@@ -1,0 +1,7 @@
+# ================================================================
+# ROBÉRIO DIÓGENES — /js/.htaccess
+# Permite servir arquivos JS mas bloqueia listagem da pasta.
+# ================================================================
+
+Options -Indexes
+ServerSignature Off

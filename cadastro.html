@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Crie sua conta gratuita em Robério Diógenes." />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Cadastro | Robério Diógenes</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--fonte-ui); background: var(--fundo); color: var(--texto);
+      min-height: 100svh; display: flex; align-items: center;
+      justify-content: center; padding: 2rem 1rem; position: relative; overflow-x: hidden;
+    }
+    body::before {
+      content: '✦'; font-family: var(--fonte-titulo); position: fixed;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      font-size: 28rem; line-height: 1; color: var(--ornamento-cor); opacity: 0.07;
+      pointer-events: none; user-select: none; z-index: 0;
+      animation: flutuar 8s ease-in-out infinite;
+    }
+    @keyframes flutuar { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-52%) scale(1.02)} }
+
+    .auth-card {
+      position: relative; z-index: 1; background: var(--fundo-card);
+      border: 1px solid var(--borda-media); border-radius: var(--raio-xl);
+      padding: 3rem 2.5rem; width: 100%; max-width: 480px;
+      box-shadow: var(--sombra-lg), var(--sombra-dourada);
+    }
+    .auth-voltar {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.8rem; color: var(--texto-3); text-decoration: none;
+      font-family: var(--fonte-display); letter-spacing: 0.1em;
+      text-transform: uppercase; transition: color var(--trans); margin-bottom: 2rem;
+    }
+    .auth-voltar:hover { color: var(--ouro); }
+    .auth-logo {
+      font-family: var(--fonte-titulo); font-size: 1.8rem; font-weight: 400;
+      color: var(--ouro); text-align: center; margin-bottom: 0.25rem;
+    }
+    .auth-logo em { font-style: italic; }
+    .auth-subtitulo {
+      font-family: var(--fonte-display); font-size: 0.65rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--texto-3); text-align: center; margin-bottom: 0.5rem;
+    }
+    .auth-descricao {
+      text-align: center; font-size: 0.88rem; color: var(--texto-3);
+      margin-bottom: 2rem; font-style: italic;
+    }
+    .auth-divisor {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .auth-divisor-linha { flex: 1; height: 1px; background: var(--borda-media); }
+    .auth-divisor-texto {
+      font-family: var(--fonte-titulo); font-style: italic;
+      font-size: 0.9rem; color: var(--texto-3);
+    }
+    .auth-grupo { margin-bottom: 1.1rem; }
+    .auth-label {
+      display: block; font-size: 0.82rem; font-family: var(--fonte-display);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--texto-2); margin-bottom: 0.4rem;
+    }
+    .auth-input {
+      width: 100%; padding: 0.7rem 1rem; background: var(--fundo-2);
+      border: 1px solid var(--borda-media); border-radius: var(--raio);
+      color: var(--texto); font-family: var(--fonte-ui); font-size: 0.95rem;
+      transition: border-color var(--trans), box-shadow var(--trans); outline: none;
+    }
+    .auth-input:focus { border-color: var(--ouro); box-shadow: 0 0 0 3px rgba(184,134,11,0.15); }
+    .auth-input::placeholder { color: var(--texto-3); }
+    .auth-input.invalido { border-color: var(--ferrugem); }
+    .auth-input.valido { border-color: #4a7c4a; }
+    .auth-erro-campo { font-size: 0.78rem; color: var(--ferrugem); margin-top: 0.3rem; display: none; }
+    .auth-erro-campo.visivel { display: block; }
+
+    .senha-wrap { position: relative; }
+    .senha-toggle {
+      position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--texto-3); font-size: 0.9rem; padding: 0.25rem;
+    }
+    .senha-toggle:hover { color: var(--ouro); }
+
+    /* Força da senha */
+    .forca-wrap { margin-top: 0.5rem; }
+    .forca-barra { height: 4px; border-radius: 2px; background: var(--borda); overflow: hidden; }
+    .forca-barra-inner { height: 100%; border-radius: 2px; width: 0; transition: width 0.3s, background 0.3s; }
+    .forca-texto { font-size: 0.75rem; color: var(--texto-3); margin-top: 0.25rem; }
+
+    /* Termos */
+    .auth-termos {
+      display: flex; gap: 0.6rem; align-items: flex-start;
+      font-size: 0.84rem; color: var(--texto-2);
+      margin: 1rem 0;
+    }
+    .auth-termos input[type="checkbox"] { margin-top: 3px; accent-color: var(--ouro); flex-shrink: 0; }
+    .auth-termos a { color: var(--ouro); text-decoration: none; }
+    .auth-termos a:hover { text-decoration: underline; }
+
+    .btn-auth {
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      width: 100%; padding: 0.85rem 1.5rem; border: none; border-radius: var(--raio);
+      cursor: pointer; font-family: var(--fonte-display); font-size: 0.75rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      text-decoration: none; transition: all var(--trans);
+    }
+    .btn-primario-auth {
+      background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro)); color: var(--texto-inv);
+    }
+    .btn-primario-auth:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: var(--sombra-dourada); }
+    .btn-primario-auth:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-google {
+      background: var(--fundo-2); color: var(--texto); border: 1px solid var(--borda-media);
+      margin-bottom: 1.5rem;
+    }
+    .btn-google:hover { border-color: var(--ouro); background: var(--fundo-3); }
+    .btn-google img { width: 18px; height: 18px; }
+
+    .auth-alerta {
+      display: none; padding: 0.75rem 1rem; border-radius: var(--raio);
+      margin-bottom: 1rem; font-size: 0.88rem; border-left: 3px solid;
+    }
+    .auth-alerta.erro { background: rgba(139,58,42,0.12); border-color: var(--ferrugem); color: var(--ferrugem); }
+    .auth-alerta.sucesso { background: rgba(74,124,74,0.12); border-color: #4a7c4a; color: #4a7c4a; }
+    .auth-alerta.visivel { display: block; }
+
+    .auth-rodape { text-align: center; margin-top: 1.5rem; font-size: 0.88rem; color: var(--texto-3); }
+    .auth-rodape a { color: var(--ouro); text-decoration: none; }
+    .auth-rodape a:hover { text-decoration: underline; }
+
+    @media (max-width: 480px) { .auth-card { padding: 2rem 1.25rem; } }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas-particulas" aria-hidden="true"></canvas>
+
+<div class="auth-card" role="main">
+  <a href="index.html" class="auth-voltar"><i class="fa fa-arrow-left" aria-hidden="true"></i> Voltar</a>
+
+  <h1 class="auth-logo">Robério <em>Diógenes</em></h1>
+  <p class="auth-subtitulo">Criar conta gratuita</p>
+  <p class="auth-descricao">Acesse conteúdos exclusivos, capítulos antecipados e novidades.</p>
+
+  <div class="auth-alerta" id="authAlerta" role="alert" aria-live="polite"></div>
+
+  <!-- Google -->
+  <button class="btn-auth btn-google" id="btnGoogle" type="button">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" aria-hidden="true" />
+    Continuar com Google
+  </button>
+
+  <div class="auth-divisor" aria-hidden="true">
+    <div class="auth-divisor-linha"></div>
+    <span class="auth-divisor-texto">ou preencha o formulário</span>
+    <div class="auth-divisor-linha"></div>
+  </div>
+
+  <!-- Formulário -->
+  <form id="formCadastro" novalidate>
+    <div class="auth-grupo">
+      <label class="auth-label" for="cadNome">Nome completo</label>
+      <input class="auth-input" type="text" id="cadNome" name="nome"
+             placeholder="Seu nome" required autocomplete="name" />
+      <p class="auth-erro-campo" id="errNome">Informe seu nome (mínimo 2 letras).</p>
+    </div>
+
+    <div class="auth-grupo">
+      <label class="auth-label" for="cadEmail">E-mail</label>
+      <input class="auth-input" type="email" id="cadEmail" name="email"
+             placeholder="seu@email.com" required autocomplete="email" />
+      <p class="auth-erro-campo" id="errEmail">Informe um e-mail válido.</p>
+    </div>
+
+    <div class="auth-grupo">
+      <label class="auth-label" for="cadSenha">Senha</label>
+      <div class="senha-wrap">
+        <input class="auth-input" type="password" id="cadSenha" name="senha"
+               placeholder="Mínimo 8 caracteres" required autocomplete="new-password"
+               style="padding-right:2.5rem;" />
+        <button type="button" class="senha-toggle" aria-label="Mostrar senha"
+                onclick="alternarSenha('cadSenha', this)">
+          <i class="fa fa-eye" aria-hidden="true"></i>
+        </button>
+      </div>
+      <!-- Indicador de força -->
+      <div class="forca-wrap" id="forcaWrap" hidden>
+        <div class="forca-barra"><div class="forca-barra-inner" id="forcaBarra"></div></div>
+        <p class="forca-texto" id="forcaTexto"></p>
+      </div>
+      <p class="auth-erro-campo" id="errSenha">A senha deve ter pelo menos 8 caracteres, letras e números.</p>
+    </div>
+
+    <div class="auth-grupo">
+      <label class="auth-label" for="cadConfirmar">Confirmar Senha</label>
+      <div class="senha-wrap">
+        <input class="auth-input" type="password" id="cadConfirmar" name="confirmar_senha"
+               placeholder="Repita a senha" required autocomplete="new-password"
+               style="padding-right:2.5rem;" />
+        <button type="button" class="senha-toggle" aria-label="Mostrar senha"
+                onclick="alternarSenha('cadConfirmar', this)">
+          <i class="fa fa-eye" aria-hidden="true"></i>
+        </button>
+      </div>
+      <p class="auth-erro-campo" id="errConfirmar">As senhas não conferem.</p>
+    </div>
+
+    <label class="auth-termos">
+      <input type="checkbox" id="cadTermos" required />
+      <span>
+        Li e aceito os <a href="termos.html" target="_blank">Termos de Uso</a> e a
+        <a href="privacidade.html" target="_blank">Política de Privacidade</a>.
+      </span>
+    </label>
+
+    <button type="submit" class="btn-auth btn-primario-auth" id="btnCadastrar">
+      <i class="fa fa-user-plus" aria-hidden="true"></i> Criar minha conta
+    </button>
+  </form>
+
+  <p class="auth-rodape">Já tem conta? <a href="login.html">Entrar</a></p>
+</div>
+
+<script src="js/global.js"></script>
+<script src="js/api-client.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // Redirecionar se já logado
+  API.Auth.sessao().then(r => {
+    if (r.ok && r.logado) window.location.href = 'leitor/index.html';
+  });
+
+  function mostrarAlerta(msg, tipo = 'erro') {
+    const el = document.getElementById('authAlerta');
+    el.textContent = msg;
+    el.className = 'auth-alerta ' + tipo + ' visivel';
+  }
+
+  // ── Força da senha ─────────────────────────────────────────
+  document.getElementById('cadSenha').addEventListener('input', function () {
+    const v = this.value;
+    const wrap = document.getElementById('forcaWrap');
+    const barra = document.getElementById('forcaBarra');
+    const texto = document.getElementById('forcaTexto');
+
+    if (!v) { wrap.hidden = true; return; }
+    wrap.hidden = false;
+
+    let forca = 0;
+    if (v.length >= 8) forca++;
+    if (v.length >= 12) forca++;
+    if (/[A-Z]/.test(v)) forca++;
+    if (/[0-9]/.test(v)) forca++;
+    if (/[^A-Za-z0-9]/.test(v)) forca++;
+
+    const niveis = [
+      { w: '20%', bg: '#c0392b', t: 'Muito fraca' },
+      { w: '40%', bg: '#e67e22', t: 'Fraca' },
+      { w: '60%', bg: '#f1c40f', t: 'Razoável' },
+      { w: '80%', bg: '#2ecc71', t: 'Forte' },
+      { w: '100%',bg: '#27ae60', t: 'Muito forte' },
+    ];
+    const n = niveis[Math.min(forca, 4)];
+    barra.style.width = n.w;
+    barra.style.background = n.bg;
+    texto.textContent = n.t;
+  });
+
+  // ── Submissão ──────────────────────────────────────────────
+  document.getElementById('formCadastro').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    document.getElementById('authAlerta').className = 'auth-alerta';
+
+    const nome     = document.getElementById('cadNome').value.trim();
+    const email    = document.getElementById('cadEmail').value.trim();
+    const senha    = document.getElementById('cadSenha').value;
+    const confirmar= document.getElementById('cadConfirmar').value;
+    const termos   = document.getElementById('cadTermos').checked;
+
+    // Validação básica no front
+    let ok = true;
+    const marcar = (id, errId, cond) => {
+      const el = document.getElementById(id);
+      const err = document.getElementById(errId);
+      el.classList.toggle('invalido', !cond);
+      el.classList.toggle('valido', cond);
+      if (err) err.classList.toggle('visivel', !cond);
+      if (!cond) ok = false;
+    };
+    marcar('cadNome',     'errNome',     nome.length >= 2);
+    marcar('cadEmail',    'errEmail',    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+    marcar('cadSenha',    'errSenha',    senha.length >= 8 && /[A-Za-z]/.test(senha) && /[0-9]/.test(senha));
+    marcar('cadConfirmar','errConfirmar', senha === confirmar);
+
+    if (!termos) {
+      mostrarAlerta('Você precisa aceitar os Termos de Uso para continuar.', 'erro');
+      return;
+    }
+    if (!ok) return;
+
+    const btn = document.getElementById('btnCadastrar');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-circle-notch fa-spin"></i> Criando conta…';
+
+    const r = await API.Auth.cadastrar(nome, email, senha, confirmar);
+
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa fa-user-plus"></i> Criar minha conta';
+
+    if (r.ok) {
+      mostrarAlerta(r.mensagem, 'sucesso');
+      if (typeof Sons !== 'undefined') Sons.tocar('sucesso');
+      setTimeout(() => { window.location.href = 'leitor/index.html'; }, 1500);
+    } else {
+      mostrarAlerta(r.erro || 'Erro ao criar conta.', 'erro');
+      if (typeof Sons !== 'undefined') Sons.tocar('erro');
+    }
+  });
+
+  // ── Google ─────────────────────────────────────────────────
+  document.getElementById('btnGoogle').addEventListener('click', async () => {
+    const btn = document.getElementById('btnGoogle');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-circle-notch fa-spin"></i> Redirecionando…';
+    await API.Auth.loginGoogle();
+    btn.disabled = false;
+    btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" /> Continuar com Google';
+  });
+})();
+
+function alternarSenha(id, btn) {
+  const input = document.getElementById(id);
+  const icone = btn.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text'; icone.className = 'fa fa-eye-slash';
+    btn.setAttribute('aria-label', 'Ocultar senha');
+  } else {
+    input.type = 'password'; icone.className = 'fa fa-eye';
+    btn.setAttribute('aria-label', 'Mostrar senha');
+  }
+}
+</script>
+</body>
+</html>

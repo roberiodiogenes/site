@@ -1,0 +1,28 @@
+# ==========================================
+# Robots.txt oficial do site Robério Diógenes
+# Direcionamento técnico para indexação orgânica
+# ==========================================
+
+User-agent: *
+
+# Permitir a indexação de todo o conteúdo público principal
+Allow: /index.html
+Allow: /livros.html
+Allow: /autor.html
+Allow: /blog.html
+Allow: /contato.html
+Allow: /privacidade.html
+Allow: /termos.html
+Allow: /livros/
+Allow: /img/
+Allow: /css/
+Allow: /js/
+
+# Bloquear pastas privadas do sistema e scripts de processamento (E-E-A-T & Segurança)
+Disallow: /backend/
+Disallow: /leitor/
+Disallow: /config/
+Disallow: /db/
+
+# Indicar o mapa do site para acelerar o rastreamento do Google
+Sitemap: https://www.roberiodiogenes.com/sitemap.xml

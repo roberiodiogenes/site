@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <meta name="description" content="Conheça a trajetória, influências e biografia de Robério Diógenes. Escritor independente brasileiro de romances intensos, thrillers psicológicos e horror." />
+  <meta name="author" content="Robério Diógenes" />
+  
+  <link rel="canonical" href="https://www.roberiodiogenes.com/autor.html" />
+  
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:title" content="Sobre o Autor | Robério Diógenes — Escritor Independente" />
+  <meta property="og:description" content="A escrita como uma busca no escuro. Conheça a biografia e os bastidores do processo criativo do autor Robério Diógenes." />
+  <meta property="og:type" content="profile" />
+  <meta property="og:url" content="https://www.roberiodiogenes.com/autor.html" />
+  <meta property="og:image" content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Robério Diógenes" />
+
+  <title>O Autor | Robério Diógenes — Biografia e Universo Literário</title>
+  
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/autor.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+
+<a href="#conteudo-principal" class="pular-nav">Pular para o conteúdo</a>
+<canvas id="canvas-particulas" aria-hidden="true"></canvas>
+
+<nav id="nav" role="navigation" aria-label="Navegação principal">
+  <a href="index.html" class="nav-logo">Robério Diógenes<span>Escritor Independente</span></a>
+  <ul class="nav-links" id="navLinks" role="list">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="livros.html">Biblioteca</a></li>
+    <li><a href="autor.html" class="ativa" aria-current="page">O Autor</a></li>
+    <li><a href="blog.html">Diário</a></li>
+    <li><a href="contato.html">Contato</a></li>
+  
+          <!-- Controles de acessibilidade — visíveis no menu mobile -->
+          <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
+            <span class="mobile-controles-label">Tema &amp; Fonte</span>
+            <button class="tema-btn" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+            <button class="tema-btn" data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+            <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+            <button class="fonte-btn fonte-diminuir"       title="Texto menor"   aria-label="Texto menor">A-</button>
+            <button class="fonte-btn fonte-aumentar"       title="Texto maior"   aria-label="Texto maior">A+</button>
+            <button class="tema-btn som-btn"               title="Sons"          aria-label="Sons">♪</button>
+          </li>
+  </ul>
+  <div class="nav-acoes">
+    <div class="busca-nav" role="search">
+      <span class="busca-nav-icone" aria-hidden="true">🔍</span>
+      <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site"
+             autocomplete="off" spellcheck="false" />
+      <div class="busca-resultados" id="buscaResultados" role="listbox" aria-label="Resultados da busca" hidden></div>
+    </div>
+    <div class="tema-controles" role="group" aria-label="Tema">
+      <button class="tema-btn ativo" data-tema="claro" aria-label="Claro">☀</button>
+      <button class="tema-btn" data-tema="noturno" aria-label="Noturno">🌙</button>
+      <button class="tema-btn" data-tema="contraste" aria-label="Contraste">◑</button>
+    </div>
+    <div class="fonte-controles" role="group" aria-label="Fonte">
+      <button class="fonte-btn fonte-diminuir" aria-label="A-">A-</button>
+      <button class="fonte-btn fonte-aumentar" aria-label="A+">A+</button>
+    </div>
+    <button class="tema-btn som-btn" aria-label="Sons">♪</button>
+    <a href="login.html" class="btn btn-secundario btn-entrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;"><i class="fa fa-user" aria-hidden="true"></i> Entrar</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+</nav>
+<a href="#" class="topo-btn" id="topoBtn" aria-label="Voltar ao topo">↑</a>
+
+<main id="conteudo-principal">
+
+  <!-- HERO AUTOR -->
+  <header class="autor-hero">
+    <div class="autor-hero-bg" aria-hidden="true"></div>
+    <div class="autor-hero-inner">
+      <div class="autor-hero-foto-col">
+        <div class="autor-foto-moldura reveal">
+          
+          <img src="img/autor.jpg" alt="Foto de perfil de Robério Diógenes, escritor independente cearense de thrillers psicológicos e literatura de ficção" class="autor-hero-foto" loading="eager" />
+          <div class="autor-foto-borda-decorativa" aria-hidden="true"></div>
+        </div>
+        <!-- Redes sociais verticais -->
+        <div class="autor-social reveal reveal-delay-2" aria-label="Redes sociais">
+          <a href="https://www.instagram.com/diogenesroberio" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.amazon.com.br/stores/author/B0DJCQMG7C/about" target="_blank" rel="noopener" aria-label="Amazon" title="Amazon"><i class="fa-brands fa-amazon" aria-hidden="true"></i></a>
+          <a href="https://www.linkedin.com/in/rob%C3%A9rio-di%C3%B3genes-47977b210/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="https://wa.me/5585999999999" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div class="autor-hero-texto">
+        <p class="secao-pretitulo reveal">Escritor · Ceará, Brasil</p>
+        <h1 class="autor-hero-nome reveal reveal-delay-1">
+          Robério<br /><em>Diógenes</em>
+        </h1>
+        <div class="autor-hero-linha reveal reveal-delay-2" aria-hidden="true"></div>
+        <blockquote class="autor-hero-citacao reveal reveal-delay-3">
+          "Escrevo sobre o que nos assombra no silêncio, sobre os abismos que escondemos atrás das telas e das convenções sociais."
+        </blockquote>
+        <div class="autor-hero-dados reveal reveal-delay-4">
+          <div class="dado-item">
+            <span class="dado-num">11</span>
+            <span class="dado-label">Livros publicados</span>
+          </div>
+          <div class="dado-separador" aria-hidden="true">·</div>
+          <div class="dado-item">
+            <span class="dado-num">2020</span>
+            <span class="dado-label">Primeiro livro</span>
+          </div>
+          <div class="dado-separador" aria-hidden="true">·</div>
+          <div class="dado-item">
+            <span class="dado-num">50</span>
+            <span class="dado-label">Anos de vivência</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- BIOGRAFIA -->
+  <section class="secao" id="biografia" aria-labelledby="titulo-bio">
+    <div class="bio-wrap">
+      <div class="bio-linha-tempo" aria-label="Linha do tempo">
+        <div class="bio-col reveal">
+          <p class="secao-pretitulo">Quem é</p>
+          <h2 id="titulo-bio" class="secao-titulo" style="margin-bottom:2rem;">A <em>História</em><br />do Escritor</h2>
+
+          <div class="bio-texto">
+            <p>Nascido em <strong>Cascavel, Ceará</strong>, em <strong>28 de fevereiro de 1974</strong>, Robério Diógenes carrega consigo a marca de quem viveu nas margens — não como vítima, mas como observador. Sua trajetória singular o levou por caminhos que poucos escritores percorrem: das estradas como entregador às lentes da fotografia, da sala de aula de informática às páginas de histórias que fazem o leitor desconfortavelmente vivo.</p>
+            <p>É observador arguto da alma humana e de seus labirintos mais discretos. Enxerga nas pequenas traições cotidianas, nos silêncios entre casais, nas escolhas que fazemos quando ninguém está olhando — o material bruto da grande literatura.</p>
+            <p>Autor independente, recusa a intermediação que embota a voz. Cada livro publicado é um ato de coragem e fé: na narrativa, no leitor, na força das palavras que não pedem licença para chegar.</p>
+            <p>Escreve thrillers psicológicos que perturbam, romances que sangram, poesias que florescem nas rachaduras. Sua escrita não oferece conforto fácil — oferece algo mais raro: a sensação de ser completamente visto.</p>
+          </div>
+        </div>
+
+        <!-- Timeline visual -->
+        <div class="timeline reveal reveal-delay-2" aria-label="Linha do tempo da carreira">
+          <div class="tl-item">
+            <div class="tl-ponto" aria-hidden="true"></div>
+            <div class="tl-conteudo">
+              <span class="tl-ano">1974</span>
+              <h3 class="tl-titulo">Nasce em Cascavel, CE</h3>
+              <p class="tl-desc">Em 28 de fevereiro, Cascavel ganha um observador que vai passar décadas decifrando o silêncio humano.</p>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-ponto" aria-hidden="true"></div>
+            <div class="tl-conteudo">
+              <span class="tl-ano">Anos 90–2010</span>
+              <h3 class="tl-titulo">Estradas, lentes e teclados</h3>
+              <p class="tl-desc">Fotógrafo, entregador, professor de informática. Cada função foi um ângulo diferente para enxergar a mesma humanidade.</p>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-ponto" aria-hidden="true"></div>
+            <div class="tl-conteudo">
+              <span class="tl-ano">2020</span>
+              <h3 class="tl-titulo">Primeiro livro publicado</h3>
+              <p class="tl-desc">A decisão de publicar de forma independente foi um ato de fé — e o começo de uma voz que não pede permissão.</p>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-ponto" aria-hidden="true"></div>
+            <div class="tl-conteudo">
+              <span class="tl-ano">2024–25</span>
+              <h3 class="tl-titulo">O Jogo das Máscaras</h3>
+              <p class="tl-desc">O thriller psicológico que solidifica sua voz no gênero. 11 livros publicados, cada um um espelho diferente.</p>
+            </div>
+          </div>
+          <div class="tl-item tl-item-atual">
+            <div class="tl-ponto tl-ponto-atual" aria-hidden="true"></div>
+            <div class="tl-conteudo">
+              <span class="tl-ano">Agora</span>
+              <h3 class="tl-titulo">Em escrita contínua</h3>
+              <p class="tl-desc">Novas histórias em desenvolvimento. A caneta não descansa — o silêncio tem muito mais a dizer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divisor"><div class="divisor-linha"></div><span class="divisor-simbolo">✦</span><div class="divisor-linha"></div></div>
+
+  <!-- ESCRITA E INFLUÊNCIAS -->
+  <section class="secao" aria-labelledby="titulo-escrita">
+    <p class="secao-pretitulo reveal">O Universo Literário</p>
+    <h2 class="secao-titulo reveal reveal-delay-1" id="titulo-escrita">A <em>Escrita</em></h2>
+    <div class="escrita-grade">
+      <div class="escrita-card reveal">
+        <div class="escrita-icon" aria-hidden="true">🎭</div>
+        <h3>Thriller Psicológico</h3>
+        <p>Histórias que exploram a mente humana como campo de batalha. Personagens que enganam, são enganados, e às vezes não sabem a diferença. O leitor nunca está seguro.</p>
+      </div>
+      <div class="escrita-card reveal reveal-delay-1">
+        <div class="escrita-icon" aria-hidden="true">💔</div>
+        <h3>Romance &amp; Drama</h3>
+        <p>Amor como ferida aberta, como cura impossível, como a única coisa que nos mantém humanos quando tudo mais falha. Sentimentos reais em situações que sangram.</p>
+      </div>
+      <div class="escrita-card reveal reveal-delay-2">
+        <div class="escrita-icon" aria-hidden="true">🌑</div>
+        <h3>Horror &amp; Distopia</h3>
+        <p>O medo que vem de dentro. Mundos onde o pior da humanidade encontrou espaço para crescer. Não é sobre monstros — é sobre o que nos tornamos quando perdemos a humanidade.</p>
+      </div>
+      <div class="escrita-card reveal reveal-delay-3">
+        <div class="escrita-icon" aria-hidden="true">✍️</div>
+        <h3>Poesia</h3>
+        <p>Palavras que não cabem em prosa. A dor destilada ao essencial, a ternura que só existe quando comprimida em poucos versos. Para os que sentem demais e falam de menos.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divisor"><div class="divisor-linha"></div><span class="divisor-simbolo">❧</span><div class="divisor-linha"></div></div>
+
+  <!-- FOTOS GALERIA -->
+  <section class="secao" aria-labelledby="titulo-galeria">
+    <p class="secao-pretitulo reveal">Imagens</p>
+    <h2 class="secao-titulo reveal reveal-delay-1" id="titulo-galeria">O <em>Autor</em> em Imagens</h2>
+   <div class="galeria-autor">
+  <img src="img/autor2.jpg" alt="O escritor independente Robério Diógenes em seu ambiente de trabalho e criação literária" class="galeria-foto reveal" loading="lazy" />
+  <img src="img/autor-3.jpg" alt="Robério Diógenes, autor brasileiro de romances, dramas e thrillers psicológicos" class="galeria-foto reveal reveal-delay-1" loading="lazy" />
+  <img src="img/autor-4.jpg" alt="Retrato do autor Robério Diógenes — bastidores e dedicação à literatura independente nacional" class="galeria-foto reveal reveal-delay-2" loading="lazy" />
+</div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-autor secao" aria-labelledby="titulo-cta-autor">
+    <div class="cta-autor-wrap reveal">
+      <h2 id="titulo-cta-autor">Conheça as <em>obras</em></h2>
+      <p>Cada livro é um ângulo diferente do mesmo universo. Explore a biblioteca completa e encontre a história que fala com você.</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:2rem;">
+        <a href="livros.html" class="btn btn-primario"><i class="fa fa-book" aria-hidden="true"></i> Ver todos os livros</a>
+        <a href="contato.html" class="btn btn-secundario">Entrar em contato</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer role="contentinfo">
+  <div class="footer-wrap">
+    <div>
+      <a href="index.html" class="footer-logo">Robério Diógenes</a>
+      <p class="footer-desc">"Escrevo sobre o que nos assombra no silêncio."</p>
+      <div class="footer-social" aria-label="Redes sociais">
+        <a href="https://www.instagram.com/diogenesroberio" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://www.amazon.com.br/stores/author/B0DJCQMG7C/about" target="_blank" rel="noopener" aria-label="Amazon" title="Amazon"><i class="fa-brands fa-amazon" aria-hidden="true"></i></a>
+        <a href="https://wa.me/5585999999999" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div><p class="footer-col-titulo">Navegação</p>
+      <ul class="footer-links">
+        <li><a href="index.html">Início</a></li><li><a href="livros.html">Biblioteca</a></li>
+        <li><a href="autor.html">O Autor</a></li><li><a href="blog.html">Diário</a></li>
+        <li><a href="contato.html">Contato</a></li>
+      </ul>
+    </div>
+    <div><p class="footer-col-titulo">Livros</p>
+      <ul class="footer-links">
+        <li><a href="livros/jogo-das-mascaras.html">O Jogo das Máscaras</a></li>
+        <li><a href="livros/a-setima-lei.html">A Sétima Lei</a></li>
+        <li><a href="livros.html">Ver todos →</a></li>
+      </ul>
+    </div>
+    <div><p class="footer-col-titulo">Newsletter</p>
+      <form onsubmit="submeterNewsletter(event)" style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.75rem;">
+        <input type="email" class="finput" placeholder="seu@email.com" required aria-label="E-mail" style="font-size:0.85rem;padding:0.5rem 0.75rem;" />
+        <button type="submit" class="btn btn-primario" style="padding:0.5rem;font-size:0.8rem;">Inscrever-se</button>
+      </form>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Robério Diógenes. Todos os direitos reservados.</p>
+    <p class="footer-copy">Cascavel, Ceará</p>
+  </div>
+</footer>
+
+<div class="toast-wrap" role="status" aria-live="polite" aria-atomic="true"></div>
+<script src="js/global.js"></script>
+<script src="js/api-client.js"></script>
+<script src="js/busca.js"></script>
+<script src="js/script-autor.js"></script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfilePage",
+      "@id": "https://www.roberiodiogenes.com/autor.html",
+      "name": "Sobre Robério Diógenes",
+      "url": "https://www.roberiodiogenes.com/autor.html",
+      "mainEntity": {
+        "@type": "Person",
+        "name": "Robério Diógenes",
+        "jobTitle": "Escritor Independente",
+        "genre": ["Thriller Psicológico", "Horror", "Drama", "Romance"],
+        "url": "https://www.roberiodiogenes.com",
+        "sameAs": [
+          "https://www.instagram.com/diogenesroberio",
+          "https://www.amazon.com.br/stores/author/B0DJCQMG7C/about",
+          "https://www.linkedin.com/in/rob%C3%A9rio-di%C3%B3genes-47977b210/"
+        ]
+      }
+    }
+  ]
+}
+</script>
+</body>
+</html>

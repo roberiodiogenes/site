@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Gerencie seu perfil de leitor em Robério Diógenes." />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Meu Perfil | Robério Diógenes</title>
+  <link rel="icon" type="image/png" href="../img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+
+  <style>
+    /* ════════════════════════════════════════════════════════════ */
+    /* ROBÉRIO DIÓGENES — leitor/perfil.css (Inline) */
+    /* Dashboard do Leitor - Design Moderno & Responsivo */
+    /* ════════════════════════════════════════════════════════════ */
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--fonte-ui);
+      background: var(--fundo);
+      color: var(--texto);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    /* ── Layout Principal ────────────────────────────────────────── */
+    main {
+      flex: 1;
+      margin-top: var(--altura-nav);
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+      padding: 3rem 2rem;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* ── Sidebar (Navegação Vertical) ────────────────────────────── */
+    .perfil-sidebar {
+      position: relative;
+    }
+
+    .perfil-card-usuario {
+      background: var(--fundo-card);
+      border: 1px solid var(--borda-media);
+      border-radius: var(--raio-xl);
+      padding: 2rem;
+      text-align: center;
+      box-shadow: var(--sombra-sm);
+      position: sticky;
+      top: calc(var(--altura-nav) + 2rem);
+      animation: slideInLeft 0.5s ease;
+    }
+
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .perfil-avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 4rem;
+      color: var(--fundo);
+      border: 3px solid var(--borda-media);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .perfil-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .perfil-avatar-upload {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.7);
+      padding: 0.4rem;
+      opacity: 0;
+      transition: opacity var(--trans);
+      cursor: pointer;
+    }
+
+    .perfil-avatar:hover .perfil-avatar-upload {
+      opacity: 1;
+    }
+
+    .perfil-avatar-upload i {
+      color: var(--ouro);
+      font-size: 1rem;
+    }
+
+    .perfil-nome {
+      font-family: var(--fonte-titulo);
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      color: var(--texto);
+    }
+
+    .perfil-email {
+      font-size: 0.9rem;
+      color: var(--texto-3);
+      margin-bottom: 1.5rem;
+      word-break: break-all;
+    }
+
+    .perfil-badges {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .perfil-badge {
+      background: rgba(184,134,11,0.15);
+      color: var(--ouro);
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .perfil-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--borda);
+    }
+
+    .perfil-stat {
+      text-align: center;
+    }
+
+    .perfil-stat-numero {
+      font-family: var(--fonte-titulo);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--ouro);
+    }
+
+    .perfil-stat-label {
+      font-size: 0.75rem;
+      color: var(--texto-3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.25rem;
+    }
+
+    /* ── Menu Lateral ────────────────────────────────────────────── */
+    .perfil-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .perfil-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      background: var(--fundo-2);
+      border: 1px solid var(--borda);
+      border-radius: var(--raio-lg);
+      color: var(--texto-2);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all var(--trans);
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-left: 3px solid transparent;
+    }
+
+    .perfil-menu-item:hover,
+    .perfil-menu-item.ativo {
+      background: var(--fundo-card);
+      color: var(--ouro);
+      border-left-color: var(--ouro);
+      box-shadow: var(--sombra-sm);
+    }
+
+    .perfil-menu-item i {
+      font-size: 1.1rem;
+      min-width: 20px;
+    }
+
+    /* ── Conteúdo Principal ──────────────────────────────────────── */
+    .perfil-conteudo {
+      animation: slideInRight 0.5s ease;
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .perfil-abas {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--borda);
+      overflow-x: auto;
+    }
+
+    .perfil-aba {
+      padding: 0.9rem 1.5rem;
+      border: none;
+      background: none;
+      color: var(--texto-3);
+      cursor: pointer;
+      font-family: var(--fonte-ui);
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all var(--trans);
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+
+    .perfil-aba:hover {
+      color: var(--texto);
+    }
+
+    .perfil-aba.ativo {
+      color: var(--ouro);
+      border-bottom-color: var(--ouro);
+    }
+
+    .perfil-painel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .perfil-painel.ativo {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ── Cards de Seção ──────────────────────────────────────────── */
+    .perfil-secao {
+      background: var(--fundo-card);
+      border: 1px solid var(--borda-media);
+      border-radius: var(--raio-xl);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--sombra-sm);
+    }
+
+    .perfil-secao-titulo {
+      font-family: var(--fonte-titulo);
+      font-size: 1.3rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .perfil-secao-titulo i {
+      color: var(--ouro);
+      font-size: 1.5rem;
+    }
+
+    /* ── Formulários ─────────────────────────────────────────────── */
+    .perfil-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .perfil-form-grupo {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .perfil-form-grupo.full {
+      grid-column: 1 / -1;
+    }
+
+    .perfil-label {
+      font-family: var(--fonte-display);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--texto-2);
+      margin-bottom: 0.5rem;
+    }
+
+    .perfil-input,
+    .perfil-select,
+    .perfil-textarea {
+      padding: 0.75rem 1rem;
+      background: var(--fundo-2);
+      border: 1px solid var(--borda-media);
+      border-radius: var(--raio);
+      color: var(--texto);
+      font-family: var(--fonte-ui);
+      font-size: 0.95rem;
+      transition: all var(--trans);
+      outline: none;
+    }
+
+    .perfil-input:focus,
+    .perfil-select:focus,
+    .perfil-textarea:focus {
+      border-color: var(--ouro);
+      background: var(--fundo);
+      box-shadow: 0 0 0 3px rgba(184,134,11,0.15);
+    }
+
+    .perfil-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    /* ── Grid de Livros Favoritos ────────────────────────────────── */
+    .perfil-livros-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .perfil-livro-card {
+      background: var(--fundo-2);
+      border-radius: var(--raio-lg);
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: all var(--trans-lenta);
+      box-shadow: var(--sombra-sm);
+    }
+
+    .perfil-livro-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--sombra-md);
+    }
+
+    .perfil-livro-capa {
+      width: 100%;
+      aspect-ratio: 2/3;
+      background: linear-gradient(135deg, var(--ouro-claro), var(--ouro-escuro));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      overflow: hidden;
+    }
+
+    .perfil-livro-capa img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .perfil-livro-info {
+      padding: 1rem;
+    }
+
+    .perfil-livro-titulo {
+      font-family: var(--fonte-titulo);
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      line-height: 1.3;
+    }
+
+    .perfil-livro-genero {
+      font-size: 0.75rem;
+      color: var(--texto-3);
+      font-style: italic;
+    }
+
+    /* ── Tabela de Histórico ────────────────────────────────────── */
+    .perfil-tabela {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .perfil-tabela thead {
+      background: var(--fundo-2);
+      border-bottom: 2px solid var(--borda-media);
+    }
+
+    .perfil-tabela th {
+      padding: 1rem;
+      text-align: left;
+      font-family: var(--fonte-display);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--texto-2);
+      font-weight: 600;
+    }
+
+    .perfil-tabela td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--borda);
+    }
+
+    .perfil-tabela tbody tr:hover {
+      background: var(--fundo-2);
+    }
+
+    /* ── Botões ────────────────────────────────────────────────── */
+    .perfil-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.75rem;
+      border: none;
+      border-radius: var(--raio);
+      cursor: pointer;
+      font-family: var(--fonte-display);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all var(--trans);
+    }
+
+    .perfil-btn-primario {
+      background: linear-gradient(135deg, var(--ouro), var(--ouro-escuro));
+      color: var(--texto-inv);
+    }
+
+    .perfil-btn-primario:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+      box-shadow: var(--sombra-dourada);
+    }
+
+    .perfil-btn-primario:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .perfil-btn-secundario {
+      background: transparent;
+      color: var(--ouro);
+      border: 1px solid var(--borda-media);
+    }
+
+    .perfil-btn-secundario:hover {
+      background: var(--fundo-2);
+      border-color: var(--ouro);
+    }
+
+    .perfil-btn-perigo {
+      background: rgba(139,58,42,0.15);
+      color: var(--ferrugem);
+      border: 1px solid var(--ferrugem);
+    }
+
+    .perfil-btn-perigo:hover {
+      background: var(--ferrugem);
+      color: var(--fundo);
+    }
+
+    /* ── Alertas ─────────────────────────────────────────────── */
+    .perfil-alerta {
+      padding: 1rem;
+      border-radius: var(--raio-lg);
+      margin-bottom: 1.5rem;
+      border-left: 4px solid;
+      animation: slideDown 0.3s ease;
+    }
+
+    .perfil-alerta.sucesso {
+      background: rgba(74,124,74,0.12);
+      border-color: #4a7c4a;
+      color: #4a7c4a;
+    }
+
+    .perfil-alerta.erro {
+      background: rgba(139,58,42,0.12);
+      border-color: var(--ferrugem);
+      color: var(--ferrugem);
+    }
+
+    .perfil-alerta.info {
+      background: rgba(184,134,11,0.12);
+      border-color: var(--ouro);
+      color: var(--ouro);
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Sessão Estatísticas ────────────────────────────────────── */
+    .perfil-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .perfil-stat-card {
+      background: var(--fundo-2);
+      border-radius: var(--raio-lg);
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid var(--borda);
+    }
+
+    .perfil-stat-card-numero {
+      font-family: var(--fonte-titulo);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--ouro);
+      margin-bottom: 0.5rem;
+    }
+
+    .perfil-stat-card-label {
+      font-size: 0.85rem;
+      color: var(--texto-3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Loading & Estados ────────────────────────────────────── */
+    .perfil-carregando {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      text-align: center;
+      color: var(--texto-3);
+    }
+
+    .perfil-carregando i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .perfil-vazio {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--texto-3);
+    }
+
+    .perfil-vazio i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* ── Modal ───────────────────────────────────────────────────– */
+    .perfil-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--trans);
+    }
+
+    .perfil-modal-overlay.aberto {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .perfil-modal {
+      background: var(--fundo-card);
+      border-radius: var(--raio-xl);
+      padding: 2rem;
+      max-width: 500px;
+      width: calc(100% - 2rem);
+      position: relative;
+      box-shadow: var(--sombra-lg);
+      transform: scale(0.95);
+      transition: transform var(--trans);
+    }
+
+    .perfil-modal-overlay.aberto .perfil-modal {
+      transform: scale(1);
+    }
+
+    .perfil-modal-fechar {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: var(--texto-3);
+      padding: 0.5rem;
+      transition: color var(--trans);
+    }
+
+    .perfil-modal-fechar:hover {
+      color: var(--texto);
+    }
+
+    /* ── Responsividade ──────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      main {
+        grid-template-columns: 1fr;
+        margin-top: var(--altura-nav);
+        padding: 2rem 1.25rem;
+      }
+
+      /* Em tablet: sidebar compacta fica em cima */
+      .perfil-sidebar {
+        order: 1;
+      }
+
+      .perfil-conteudo {
+        order: 2;
+      }
+
+      .perfil-card-usuario {
+        position: static;
+        /* Layout horizontal em tablet */
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        text-align: left;
+        padding: 1.25rem 1.5rem;
+      }
+
+      .perfil-avatar {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+        flex-shrink: 0;
+      }
+
+      .perfil-info { flex: 1; }
+
+      .perfil-badges,
+      .perfil-stats {
+        display: none; /* esconder em tablet para economizar espaço */
+      }
+    }
+
+    @media (max-width: 768px) {
+      main {
+        grid-template-columns: 1fr;
+        padding: 1.25rem 0.875rem;
+        gap: 1rem;
+      }
+
+      .perfil-card-usuario {
+        padding: 1rem 1.25rem;
+        gap: 1rem;
+      }
+
+      .perfil-form {
+        grid-template-columns: 1fr;
+      }
+
+      .perfil-livros-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+      }
+
+      .perfil-abas {
+        gap: 0;
+        margin-bottom: 1.5rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .perfil-abas::-webkit-scrollbar { display: none; }
+
+      .perfil-aba {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .perfil-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      /* Botões de ação ocupam largura total */
+      .perfil-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      /* Seção de segurança */
+      .perfil-secao-seguranca {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      main {
+        padding: 1rem 0.75rem;
+      }
+
+      .perfil-card-usuario {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.25rem;
+        gap: 0.75rem;
+      }
+
+      .perfil-avatar {
+        width: 90px;
+        height: 90px;
+        font-size: 2.5rem;
+      }
+
+      .perfil-stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .perfil-livros-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .perfil-form {
+        grid-template-columns: 1fr;
+        gap: 0.875rem;
+      }
+    }
+
+    /* ── Impressão ───────────────────────────────────────────── */
+    @media print {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .perfil-sidebar,
+      .perfil-menu,
+      .perfil-btn {
+        display: none;
+      }
+
+      .perfil-secao {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ────────────────────────────────────────────────────────── -->
+  <!-- NAVEGAÇÃO GLOBAL (Compartilhada) -->
+  <!-- ────────────────────────────────────────────────────────── -->
+  <nav id="nav" role="navigation" aria-label="Navegação principal">
+    <a href="../index.html" class="nav-logo">
+      Robério <em>Diógenes</em>
+      <span>Escritor Independente</span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Início</a></li>
+      <li><a href="../index.html#livros">Biblioteca</a></li>
+      <li><a href="../index.html#autor-sec">O Autor</a></li>
+      <li><a href="../index.html#blog-sec">Diário</a></li>
+      <li><a href="../index.html#newsletter">Contato</a></li>
+    </ul>
+
+    <div class="nav-acoes">
+      <!-- Busca -->
+      <div class="busca-nav">
+        <input
+          type="text"
+          id="buscaNav"
+          placeholder="Buscar..."
+          aria-label="Buscar conteúdo"
+          autocomplete="off"
+        />
+        <i class="fa fa-search busca-nav-icone" aria-hidden="true"></i>
+        <div id="buscaResultados" class="busca-resultados" hidden></div>
+      </div>
+
+      <!-- Controles de Tema -->
+      <div class="tema-controles">
+        <button class="tema-btn ativo" data-tema="claro" aria-label="Tema claro" title="Claro">
+          <i class="fa fa-sun" aria-hidden="true"></i>
+        </button>
+        <button class="tema-btn" data-tema="noturno" aria-label="Tema noturno" title="Noturno">
+          <i class="fa fa-moon" aria-hidden="true"></i>
+        </button>
+        <button class="tema-btn" data-tema="contraste" aria-label="Alto contraste" title="Contraste">
+          <i class="fa fa-adjust" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <!-- Som -->
+      <button class="tema-btn" id="btnSom" aria-label="Ativar som" title="Som">
+        <i class="fa fa-volume-up" aria-hidden="true"></i>
+      </button>
+
+      <!-- Menu do Usuário (injetado pelo api-client.js) -->
+      <button class="btn-entrar">
+        <i class="fa fa-user-circle" aria-hidden="true"></i> Entrar
+      </button>
+
+      <!-- Hamburger Mobile -->
+      <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ────────────────────────────────────────────────────────── -->
+  <!-- CONTEÚDO PRINCIPAL -->
+  <!-- ────────────────────────────────────────────────────────── -->
+  <main role="main">
+    <!-- SIDEBAR ────────────────────────────────────────────────── -->
+    <aside class="perfil-sidebar" role="complementary">
+      <!-- Card do Usuário -->
+      <div class="perfil-card-usuario" id="perfilCard">
+        <div class="perfil-carregando">
+          <i class="fa fa-spinner fa-spin"></i>
+          <div>Carregando perfil...</div>
+        </div>
+      </div>
+
+      <!-- Menu Lateral -->
+      <nav class="perfil-menu">
+        <button class="perfil-menu-item ativo" data-aba="perfil">
+          <i class="fa fa-user" aria-hidden="true"></i>
+          <span>Meu Perfil</span>
+        </button>
+        <button class="perfil-menu-item" data-aba="favoritos">
+          <i class="fa fa-heart" aria-hidden="true"></i>
+          <span>Livros Favoritos</span>
+        </button>
+        <button class="perfil-menu-item" data-aba="downloads">
+          <i class="fa fa-download" aria-hidden="true"></i>
+          <span>Meus Downloads</span>
+        </button>
+        <button class="perfil-menu-item" data-aba="historico">
+          <i class="fa fa-history" aria-hidden="true"></i>
+          <span>Histórico</span>
+        </button>
+        <button class="perfil-menu-item" data-aba="seguranca">
+          <i class="fa fa-lock" aria-hidden="true"></i>
+          <span>Segurança</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- CONTEÚDO ───────────────────────────────────────────────── -->
+    <div class="perfil-conteudo">
+      <!-- Abas -->
+      <div class="perfil-abas" role="tablist">
+        <button class="perfil-aba ativo" data-aba="perfil" role="tab" aria-selected="true">
+          <i class="fa fa-user" aria-hidden="true"></i> Perfil
+        </button>
+        <button class="perfil-aba" data-aba="favoritos" role="tab">
+          <i class="fa fa-heart" aria-hidden="true"></i> Favoritos
+        </button>
+        <button class="perfil-aba" data-aba="downloads" role="tab">
+          <i class="fa fa-download" aria-hidden="true"></i> Downloads
+        </button>
+        <button class="perfil-aba" data-aba="historico" role="tab">
+          <i class="fa fa-history" aria-hidden="true"></i> Histórico
+        </button>
+        <button class="perfil-aba" data-aba="seguranca" role="tab">
+          <i class="fa fa-lock" aria-hidden="true"></i> Segurança
+        </button>
+      </div>
+
+      <!-- ABA 1: PERFIL ─────────────────────────────────────── -->
+      <section class="perfil-painel ativo" data-aba="perfil" role="tabpanel">
+        <div id="perfilAlerta"></div>
+
+        <!-- Estatísticas -->
+        <div class="perfil-stats-grid">
+          <div class="perfil-stat-card">
+            <div class="perfil-stat-card-numero" id="statFavoritos">0</div>
+            <div class="perfil-stat-card-label">Favoritos</div>
+          </div>
+          <div class="perfil-stat-card">
+            <div class="perfil-stat-card-numero" id="statDownloads">0</div>
+            <div class="perfil-stat-card-label">Downloads</div>
+          </div>
+          <div class="perfil-stat-card">
+            <div class="perfil-stat-card-numero" id="statIdade">-</div>
+            <div class="perfil-stat-card-label">Anos</div>
+          </div>
+          <div class="perfil-stat-card">
+            <div class="perfil-stat-card-numero" id="statMembro">-</div>
+            <div class="perfil-stat-card-label">Membro desde</div>
+          </div>
+        </div>
+
+        <!-- Formulário de Perfil -->
+        <div class="perfil-secao">
+          <h2 class="perfil-secao-titulo">
+            <i class="fa fa-edit" aria-hidden="true"></i>
+            Informações Pessoais
+          </h2>
+
+          <form id="formPerfil" class="perfil-form">
+            <div class="perfil-form-grupo">
+              <label class="perfil-label" for="perfilNome">Nome Completo</label>
+              <input type="text" id="perfilNome" name="nome" class="perfil-input" required />
+            </div>
+
+            <div class="perfil-form-grupo">
+              <label class="perfil-label" for="perfilEmail">E-mail</label>
+              <input type="email" id="perfilEmail" name="email" class="perfil-input" disabled />
+            </div>
+
+            <div class="perfil-form-grupo">
+              <label class="perfil-label" for="perfilSexo">Sexo</label>
+              <select id="perfilSexo" name="sexo" class="perfil-select">
+                <option value="nao_informado">Prefiro não informar</option>
+                <option value="masculino">Masculino</option>
+                <option value="feminino">Feminino</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+
+            <div class="perfil-form-grupo">
+              <label class="perfil-label" for="perfilDataNasc">Data de Nascimento</label>
+              <input type="date" id="perfilDataNasc" name="data_nascimento" class="perfil-input" />
+            </div>
+
+            <div class="perfil-form-grupo">
+              <label class="perfil-label" for="perfilCidade">Cidade</label>
+              <input type="text" id="perfilCidade" name="cidade" class="perfil-input" />
+            </div>
+
+            <div class="perfil-form-grupo">
+              <label class="perfil-label" for="perfilEstado">Estado</label>
+              <input type="text" id="perfilEstado" name="estado" class="perfil-input" placeholder="CE" maxlength="2" />
+            </div>
+
+            <div class="perfil-form-grupo">
+              <label class="perfil-label" for="perfilPais">País</label>
+              <input type="text" id="perfilPais" name="pais" class="perfil-input" value="Brasil" />
+            </div>
+
+            <div class="perfil-form-grupo">
+              <label class="perfil-label" for="perfilWhatsapp">WhatsApp</label>
+              <input type="tel" id="perfilWhatsapp" name="whatsapp" class="perfil-input" placeholder="+55 85 99999-9999" />
+            </div>
+
+            <div class="perfil-form-grupo full">
+              <button type="submit" class="perfil-btn perfil-btn-primario">
+                <i class="fa fa-save" aria-hidden="true"></i> Salvar Alterações
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ABA 2: FAVORITOS ──────────────────────────────────── -->
+      <section class="perfil-painel" data-aba="favoritos" role="tabpanel">
+        <div class="perfil-secao">
+          <h2 class="perfil-secao-titulo">
+            <i class="fa fa-heart" aria-hidden="true"></i>
+            Livros Favoritos
+          </h2>
+
+          <div id="favoritosGrid" class="perfil-livros-grid">
+            <div class="perfil-vazio">
+              <i class="fa fa-heart-o" aria-hidden="true"></i>
+              <p>Você ainda não tem livros favoritos.</p>
+              <p style="font-size: 0.85rem; margin-top: 0.5rem;">Explore a biblioteca e adicione seus livros preferidos!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 3: DOWNLOADS ──────────────────────────────────── -->
+      <section class="perfil-painel" data-aba="downloads" role="tabpanel">
+        <div class="perfil-secao">
+          <h2 class="perfil-secao-titulo">
+            <i class="fa fa-download" aria-hidden="true"></i>
+            Meus Downloads
+          </h2>
+
+          <div id="downloadsTabela">
+            <div class="perfil-vazio">
+              <i class="fa fa-inbox" aria-hidden="true"></i>
+              <p>Você ainda não fez download de nenhum livro.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 4: HISTÓRICO ──────────────────────────────────── -->
+      <section class="perfil-painel" data-aba="historico" role="tabpanel">
+        <div class="perfil-secao">
+          <h2 class="perfil-secao-titulo">
+            <i class="fa fa-history" aria-hidden="true"></i>
+            Histórico de Leitura
+          </h2>
+
+          <div id="historicoTabela">
+            <div class="perfil-vazio">
+              <i class="fa fa-book" aria-hidden="true"></i>
+              <p>Seu histórico de leitura aparecerá aqui.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA 5: SEGURANÇA ──────────────────────────────────── -->
+      <section class="perfil-painel" data-aba="seguranca" role="tabpanel">
+        <div id="segurancaAlerta"></div>
+
+        <!-- Alterar Senha -->
+        <div class="perfil-secao">
+          <h2 class="perfil-secao-titulo">
+            <i class="fa fa-key" aria-hidden="true"></i>
+            Alterar Senha
+          </h2>
+
+          <form id="formSenha" class="perfil-form">
+            <div class="perfil-form-grupo full">
+              <label class="perfil-label" for="senhaAtual">Senha Atual</label>
+              <input type="password" id="senhaAtual" name="senha_atual" class="perfil-input" required />
+            </div>
+
+            <div class="perfil-form-grupo full">
+              <label class="perfil-label" for="novaSenha">Nova Senha</label>
+              <input type="password" id="novaSenha" name="nova_senha" class="perfil-input" minlength="8" required />
+            </div>
+
+            <div class="perfil-form-grupo full">
+              <label class="perfil-label" for="confirmarSenha">Confirmar Nova Senha</label>
+              <input type="password" id="confirmarSenha" name="confirmar_senha" class="perfil-input" minlength="8" required />
+            </div>
+
+            <div class="perfil-form-grupo full">
+              <button type="submit" class="perfil-btn perfil-btn-primario">
+                <i class="fa fa-refresh" aria-hidden="true"></i> Atualizar Senha
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Sessões Ativas -->
+        <div class="perfil-secao">
+          <h2 class="perfil-secao-titulo">
+            <i class="fa fa-laptop" aria-hidden="true"></i>
+            Dispositivos Conectados
+          </h2>
+
+          <div id="dispositivosLista">
+            <div class="perfil-vazio">
+              <i class="fa fa-mobile" aria-hidden="true"></i>
+              <p>Carregando dispositivos...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deletar Conta -->
+        <div class="perfil-secao">
+          <h2 class="perfil-secao-titulo">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+            Zona de Perigo
+          </h2>
+
+          <p style="margin-bottom: 1.5rem; color: var(--texto-2);">
+            Ao deletar sua conta, todos os dados serão permanentemente removidos. Esta ação não pode ser desfeita.
+          </p>
+
+          <button id="btnDeletarConta" class="perfil-btn perfil-btn-perigo">
+            <i class="fa fa-trash" aria-hidden="true"></i> Deletar Minha Conta
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ────────────────────────────────────────────────────────── -->
+  <!-- RODAPÉ -->
+  <!-- ────────────────────────────────────────────────────────── -->
+  <footer role="contentinfo">
+    <div class="footer-wrap">
+      <div>
+        <a href="../index.html" class="footer-logo">Robério Diógenes</a>
+        <p class="footer-desc">
+          Escritor independente explorando os abismos da alma humana através de thrillers psicológicos e narrativas profundas.
+        </p>
+        <div class="footer-social">
+          <a href="https://instagram.com/roberiodiogenes" target="_blank" rel="noopener" aria-label="Instagram">
+            <i class="fa fa-instagram" aria-hidden="true"></i>
+          </a>
+          <a href="https://facebook.com/roberiodiogenes" target="_blank" rel="noopener" aria-label="Facebook">
+            <i class="fa fa-facebook" aria-hidden="true"></i>
+          </a>
+          <a href="mailto:diogenes.escritor@gmail.com" aria-label="E-mail">
+            <i class="fa fa-envelope" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="footer-col-titulo">Navegação</h4>
+        <ul class="footer-links">
+          <li><a href="../index.html">Início</a></li>
+          <li><a href="../index.html#livros">Biblioteca</a></li>
+          <li><a href="../index.html#autor-sec">O Autor</a></li>
+          <li><a href="../index.html#blog-sec">Diário</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-col-titulo">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="../privacidade.html">Privacidade</a></li>
+          <li><a href="../termos.html">Termos</a></li>
+          <li><a href="index.html">Meu Perfil</a></li>
+          <li><a href="../login.html">Sair</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-col-titulo">Suporte</h4>
+        <ul class="footer-links">
+          <li><a href="mailto:diogenes.escritor@gmail.com">Contato</a></li>
+          <li><a href="../index.html#newsletter">Newsletter</a></li>
+          <li><a href="https://wa.me/5585999999999" target="_blank" rel="noopener">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 Robério Diógenes. Todos os direitos reservados.</p>
+      <p class="footer-copy">Feito com tinta e silêncio · Cascavel, Ceará</p>
+    </div>
+  </footer>
+
+  <!-- Modal de Confirmação (genérico) -->
+  <div class="perfil-modal-overlay" id="modalConfirm">
+    <div class="perfil-modal">
+      <button class="perfil-modal-fechar" id="modalFechar">&times;</button>
+      <h3 style="margin-bottom: 1rem;" id="modalTitulo">Confirmação</h3>
+      <p style="margin-bottom: 1.5rem; color: var(--texto-2);" id="modalMsg"></p>
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <button id="btnModalCancelar" class="perfil-btn perfil-btn-secundario">
+          <i class="fa fa-times" aria-hidden="true"></i> Cancelar
+        </button>
+        <button id="btnModalConfirmar" class="perfil-btn perfil-btn-primario">
+          <i class="fa fa-check" aria-hidden="true"></i> Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/global.js"></script>
+  <script src="../js/api-client.js"></script>
+  <script src="../js/perfil.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# ================================================================
+# ROBÉRIO DIÓGENES — /docs/.htaccess
+# A pasta de documentação não deve ser acessível pelo navegador.
+# ================================================================
+
+Order Allow,Deny
+Deny from all

@@ -1,0 +1,22 @@
+# ================================================================
+# ROBÉRIO DIÓGENES — /backend/auth/.htaccess
+# Proteção da pasta de autenticação.
+# Os endpoints PHP precisam ser acessíveis via AJAX (fetch),
+# portanto não bloqueamos .php — bloqueamos apenas listagem.
+# A proteção real é feita pelo config.php (sessão + validação).
+# ================================================================
+
+Options -Indexes
+ServerSignature Off
+
+# Bloquear acesso a arquivos que NUNCA devem ser acessados diretamente
+<FilesMatch "^(config|setup)\.(php|sql)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
+
+# Bloquear logs e backups
+<FilesMatch "\.(log|sql|bak|env)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>

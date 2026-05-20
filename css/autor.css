@@ -1,0 +1,208 @@
+/* ================================================================
+   ROBÉRIO DIÓGENES — autor.css
+   ================================================================ */
+
+.pular-nav:focus { position:fixed;top:1rem;left:1rem;background:var(--ouro);color:var(--fundo);padding:0.5rem 1rem;border-radius:var(--raio);z-index:9999;font-family:var(--fonte-ui);text-decoration:none; }
+
+/* ── HERO DO AUTOR ────────────────────────────────────────────── */
+.autor-hero {
+  position: relative;
+  padding: calc(var(--altura-nav) + 4rem) 2rem 5rem;
+  overflow: hidden;
+  background: var(--fundo-2);
+  border-bottom: 1px solid var(--borda);
+}
+.autor-hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 20% 50%, rgba(139,58,42,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 30%, rgba(184,134,11,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.autor-hero-inner {
+  max-width: var(--largura-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 5rem;
+  align-items: center;
+  position: relative; z-index: 1;
+}
+
+/* Foto moldura */
+.autor-foto-moldura { position: relative; display: inline-block; }
+.autor-hero-foto {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: var(--raio-xl);
+  box-shadow: var(--sombra-livro);
+  display: block;
+}
+.autor-foto-borda-decorativa {
+  position: absolute; inset: -8px;
+  border: 1px solid var(--borda-media);
+  border-radius: calc(var(--raio-xl) + 8px);
+  pointer-events: none;
+}
+
+/* Social icons vertical */
+.autor-social {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+.autor-social a {
+  width: 40px; height: 40px;
+  border: 1px solid var(--borda);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--texto-3);
+  font-size: 1rem;
+  transition: all var(--trans);
+  text-decoration: none;
+}
+.autor-social a:hover { background: var(--ouro); color: var(--fundo); border-color: var(--ouro); transform: translateY(-3px); }
+
+.autor-hero-nome {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+.autor-hero-nome em { display: block; font-style: italic; color: var(--ouro); font-size: 0.85em; }
+
+.autor-hero-linha { width: 60px; height: 2px; background: linear-gradient(to right, var(--ouro), transparent); margin-bottom: 1.5rem; }
+
+.autor-hero-citacao {
+  font-family: var(--fonte-titulo);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--texto-2);
+  line-height: 1.7;
+  border-left: 2px solid var(--ouro);
+  padding-left: 1.25rem;
+  margin-bottom: 2.5rem;
+  quotes: none;
+}
+
+.autor-hero-dados { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.dado-item { text-align: center; }
+.dado-num { display: block; font-family: var(--fonte-titulo); font-size: 2rem; font-weight: 600; color: var(--ouro); line-height: 1; }
+.dado-label { display: block; font-family: var(--fonte-ui); font-size: 0.72rem; color: var(--texto-3); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.25rem; }
+.dado-separador { font-family: var(--fonte-titulo); color: var(--ornamento-cor); font-size: 1.5rem; }
+
+/* ── BIOGRAFIA ────────────────────────────────────────────────── */
+.bio-wrap { max-width: var(--largura-max); margin: 0 auto; }
+.bio-linha-tempo { display: grid; grid-template-columns: 1fr 380px; gap: 5rem; align-items: start; }
+.bio-texto p { margin-bottom: 1.25rem; font-size: 1rem; line-height: 1.85; color: var(--texto-2); }
+.bio-texto strong { color: var(--texto); font-weight: 600; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before {
+  content: '';
+  position: absolute; left: 0; top: 12px; bottom: 12px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--ouro), var(--borda), var(--ouro));
+}
+
+.tl-item { position: relative; padding-bottom: 2.5rem; }
+.tl-item:last-child { padding-bottom: 0; }
+
+.tl-ponto {
+  position: absolute; left: -2.5rem; top: 6px;
+  width: 12px; height: 12px;
+  background: var(--fundo-card);
+  border: 2px solid var(--ouro);
+  border-radius: 50%;
+  transition: background var(--trans);
+}
+.tl-ponto-atual { background: var(--ouro); box-shadow: 0 0 12px rgba(184,134,11,0.4); }
+.tl-item:hover .tl-ponto { background: var(--ouro); }
+
+.tl-ano {
+  font-family: var(--fonte-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ouro);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.tl-titulo { font-family: var(--fonte-titulo); font-size: 1rem; font-weight: 500; color: var(--texto); margin-bottom: 0.4rem; }
+.tl-desc { font-size: 0.875rem; color: var(--texto-3); line-height: 1.6; }
+
+/* ── ESCRITA ──────────────────────────────────────────────────── */
+.escrita-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  max-width: var(--largura-max);
+  margin: 0 auto;
+}
+.escrita-card {
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-lg);
+  padding: 2rem 1.75rem;
+  transition: all var(--trans-lenta);
+}
+.escrita-card:hover { border-color: var(--borda-media); box-shadow: var(--sombra-md); transform: translateY(-4px); }
+.escrita-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+.escrita-card h3 { font-family: var(--fonte-titulo); font-size: 1.2rem; font-weight: 500; color: var(--texto); margin-bottom: 0.75rem; }
+.escrita-card p { font-size: 0.9rem; color: var(--texto-2); line-height: 1.7; }
+
+/* ── GALERIA ──────────────────────────────────────────────────── */
+.galeria-autor {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: var(--largura-max);
+  margin: 0 auto;
+}
+.galeria-foto {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  object-position: top;
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-sm);
+  transition: all var(--trans-lenta);
+}
+.galeria-foto:hover { transform: scale(1.03); box-shadow: var(--sombra-livro); }
+
+/* ── CTA ──────────────────────────────────────────────────────── */
+.cta-autor {
+  background: var(--fundo-2);
+  border-top: 1px solid var(--borda);
+  text-align: center;
+}
+.cta-autor-wrap { max-width: 640px; margin: 0 auto; }
+.cta-autor-wrap h2 { font-family: var(--fonte-titulo); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; margin-bottom: 1rem; }
+.cta-autor-wrap h2 em { color: var(--ouro); }
+.cta-autor-wrap p { color: var(--texto-2); line-height: 1.7; }
+
+/* ── RESPONSIVIDADE ───────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .autor-hero-inner { grid-template-columns: 280px 1fr; gap: 3rem; }
+  .bio-linha-tempo { grid-template-columns: 1fr; }
+  .galeria-autor { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .autor-hero-inner { grid-template-columns: 1fr; text-align: center; }
+  .autor-hero-foto { max-width: 280px; margin: 0 auto; }
+  .autor-hero-citacao { border-left: none; border-top: 1px solid var(--borda); padding: 1rem 0 0; text-align: left; }
+  .autor-hero-dados { justify-content: center; }
+  .galeria-autor { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .galeria-autor { grid-template-columns: 1fr; }
+  .escrita-grade { grid-template-columns: 1fr; }
+}

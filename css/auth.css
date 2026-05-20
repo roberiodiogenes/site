@@ -1,0 +1,142 @@
+/* ================================================================
+   ROBÉRIO DIÓGENES — css/auth.css
+   Estilos do menu de usuário logado na navegação
+   (injetado pelo api-client.js em todas as páginas)
+   ================================================================ */
+
+/* ── Avatar no nav ─────────────────────────────────────────── */
+.nav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--borda-media);
+  object-fit: cover;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Ícone de fallback quando não há foto */
+.nav-avatar-icone {
+  font-size: 22px;
+  color: var(--ouro);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* Seta do dropdown */
+.nav-usuario-seta {
+  font-size: 0.6rem;
+  opacity: 0.7;
+  transition: transform var(--trans);
+  flex-shrink: 0;
+}
+.nav-usuario-btn[aria-expanded="true"] .nav-usuario-seta {
+  transform: rotate(180deg);
+}
+
+/* ── Wrapper do menu de usuário ───────────────────────────── */
+.nav-usuario-menu {
+  position: relative;
+}
+
+.nav-usuario-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8rem;
+  font-family: var(--fonte-ui);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  /* Reset obrigatório: remove o fundo branco padrão do navegador em <button> */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  color: var(--ouro);
+  border: 1px solid var(--borda-media);
+  border-radius: var(--raio);
+  line-height: 1;
+  transition: all var(--trans);
+}
+.nav-usuario-btn:hover {
+  background: var(--fundo-2);
+  border-color: var(--ouro);
+  color: var(--ouro-claro);
+}
+
+/* Tema noturno */
+[data-tema="noturno"] .nav-usuario-btn {
+  color: var(--ouro-claro);
+  border-color: rgba(200,148,12,0.45);
+}
+[data-tema="noturno"] .nav-usuario-btn:hover {
+  background: rgba(200,148,12,0.12);
+  border-color: var(--ouro);
+}
+
+/* Alto contraste */
+[data-tema="contraste"] .nav-usuario-btn {
+  color: var(--texto);
+  border-color: var(--texto);
+  font-weight: 700;
+}
+[data-tema="contraste"] .nav-usuario-btn:hover {
+  background: var(--texto);
+  color: var(--fundo);
+}
+
+/* ── Dropdown ──────────────────────────────────────────────── */
+.nav-usuario-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: var(--fundo-card);
+  border: 1px solid var(--borda-media);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-md);
+  min-width: 180px;
+  padding: 0.4rem 0;
+  z-index: 200;
+  animation: fadeDown 0.15s ease;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.nav-usuario-dropdown a,
+.nav-usuario-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-family: var(--fonte-ui);
+  font-size: 0.85rem;
+  color: var(--texto-2);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--trans), color var(--trans);
+}
+
+.nav-usuario-dropdown a:hover,
+.nav-usuario-dropdown button:hover {
+  background: var(--fundo-2);
+  color: var(--ouro);
+}
+
+.nav-usuario-sair {
+  border-top: 1px solid var(--borda) !important;
+  margin-top: 0.2rem;
+  color: var(--texto-3) !important;
+}
+
+.nav-usuario-sair:hover {
+  color: var(--ferrugem) !important;
+}

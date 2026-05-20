@@ -1,0 +1,13 @@
+# ================================================================
+# ROBÉRIO DIÓGENES — /leitor/.htaccess
+# A área do leitor é protegida pelo JavaScript (verifica sessão).
+# Este arquivo bloqueia listagem e arquivos sensíveis.
+# ================================================================
+
+Options -Indexes
+ServerSignature Off
+
+<FilesMatch "\.(log|sql|bak|env|php)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>

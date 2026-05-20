@@ -1,0 +1,30 @@
+# ================================================================
+# ROBÉRIO DIÓGENES — /backend/.htaccess
+# Bloqueia acesso direto à pasta backend pelo navegador.
+# Somente requisições internas (mesmo servidor) são permitidas.
+# ================================================================
+
+Options -Indexes
+ServerSignature Off
+
+# ── Bloquear navegação de diretório ──────────────────────────
+<IfModule mod_autoindex.c>
+  IndexIgnore *
+</IfModule>
+
+# ── Bloquear acesso direto a config e diagnóstico ─────────────
+<FilesMatch "^(config|diagnostico)\.php$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
+
+# ── Apenas arquivos PHP são servidos — bloquear resto ─────────
+<FilesMatch "\.(sql|log|bak|sh|env|example)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
+
+# ── Cabeçalho anti-sniff ──────────────────────────────────────
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+</IfModule>

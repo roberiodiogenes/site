@@ -1,0 +1,32 @@
+# ================================================================
+# .gitignore — Robério Diógenes Site
+# ================================================================
+
+# ── Configuração sensível (NUNCA commitar) ────────────────────
+backend/config.php
+
+# ── Dependências de sistema ───────────────────────────────────
+node_modules/
+vendor/
+.DS_Store
+Thumbs.db
+
+# ── IDEs e editores ───────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Uploads de usuários (manter pasta, ignorar conteúdo) ──────
+uploads/*
+!uploads/.gitkeep
+
+# ── Cache ─────────────────────────────────────────────────────
+.cache/
+tmp/
+testeemail.php

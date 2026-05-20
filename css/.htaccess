@@ -1,0 +1,7 @@
+# ================================================================
+# ROBÉRIO DIÓGENES — /css/.htaccess
+# Permite servir arquivos CSS mas bloqueia listagem da pasta.
+# ================================================================
+
+Options -Indexes
+ServerSignature Off

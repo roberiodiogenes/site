@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Área do Leitor | Robério Diógenes</title>
+  <link rel="icon" type="image/png" href="../img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fonte-ui); background: var(--fundo); color: var(--texto); min-height: 100svh; }
+
+    /* ── Nav simplificada ────────────────────────────────────── */
+    .leitor-nav {
+      background: var(--fundo-nav); border-bottom: 1px solid var(--borda-media);
+      padding: 0 2rem; height: var(--altura-nav);
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .leitor-nav-logo {
+      font-family: var(--fonte-titulo); font-size: 1.3rem; font-weight: 400;
+      color: var(--ouro); text-decoration: none;
+    }
+    .leitor-nav-logo span { font-size: 0.65rem; display: block; font-family: var(--fonte-display); letter-spacing: 0.2em; text-transform: uppercase; color: var(--texto-3); }
+    .leitor-nav-acoes { display: flex; align-items: center; gap: 1rem; }
+    .btn-voltar {
+      font-family: var(--fonte-display); font-size: 0.7rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--texto-3); text-decoration: none;
+      transition: color var(--trans);
+    }
+    .btn-voltar:hover { color: var(--ouro); }
+    .btn-sair {
+      font-family: var(--fonte-display); font-size: 0.7rem; letter-spacing: 0.1em;
+      text-transform: uppercase; background: none; border: 1px solid var(--borda-media);
+      border-radius: var(--raio); padding: 0.4rem 0.8rem; cursor: pointer;
+      color: var(--texto-3); transition: all var(--trans);
+    }
+    .btn-sair:hover { border-color: var(--ferrugem); color: var(--ferrugem); }
+
+    /* ── Tela de carregamento ─────────────────────────────────── */
+    .leitor-loading {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: calc(100svh - var(--altura-nav));
+      gap: 1rem; color: var(--texto-3);
+    }
+    .leitor-loading i { font-size: 2rem; color: var(--ouro); animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Main ────────────────────────────────────────────────── */
+    .leitor-main {
+      max-width: 1100px; margin: 0 auto; padding: 3rem 2rem;
+      display: none; /* ocultado até verificar login */
+    }
+    .leitor-main.visivel { display: block; }
+
+    /* Boas-vindas */
+    .leitor-boas-vindas {
+      margin-bottom: 3rem; border-bottom: 1px solid var(--borda); padding-bottom: 2rem;
+    }
+    .leitor-pretitulo {
+      font-family: var(--fonte-display); font-size: 0.65rem;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--ouro); margin-bottom: 0.5rem;
+    }
+    .leitor-titulo {
+      font-family: var(--fonte-titulo); font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 400; line-height: 1.2;
+    }
+    .leitor-titulo em { color: var(--ouro); font-style: italic; }
+    .leitor-usuario-info {
+      display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem;
+    }
+    .leitor-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 2px solid var(--borda-media); object-fit: cover;
+    }
+    .leitor-avatar-placeholder {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--fundo-3); border: 2px solid var(--borda-media);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: var(--ouro);
+    }
+    .leitor-nome { font-family: var(--fonte-titulo); font-size: 1.15rem; }
+    .leitor-email { font-size: 0.82rem; color: var(--texto-3); margin-top: 0.1rem; }
+
+    /* Grade de cards */
+    .leitor-grade {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .leitor-card {
+      background: var(--fundo-card); border: 1px solid var(--borda);
+      border-radius: var(--raio-lg); padding: 1.75rem;
+      transition: border-color var(--trans), box-shadow var(--trans);
+      text-decoration: none; color: var(--texto);
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .leitor-card:hover { border-color: var(--ouro); box-shadow: var(--sombra-dourada); }
+    .leitor-card-icone {
+      font-size: 1.8rem; color: var(--ouro); margin-bottom: 0.25rem;
+    }
+    .leitor-card-titulo {
+      font-family: var(--fonte-titulo); font-size: 1.2rem; font-weight: 500;
+    }
+    .leitor-card-desc { font-size: 0.88rem; color: var(--texto-3); line-height: 1.6; }
+    .leitor-card-badge {
+      align-self: flex-start; font-size: 0.7rem; font-family: var(--fonte-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      background: var(--fundo-2); border: 1px solid var(--borda-media);
+      border-radius: 20px; padding: 0.2rem 0.7rem; color: var(--texto-3);
+    }
+    .leitor-card-badge.novo { background: rgba(184,134,11,0.1); border-color: var(--ouro); color: var(--ouro); }
+
+    .secao-titulo-leitor {
+      font-family: var(--fonte-titulo); font-size: 1.4rem; font-weight: 400;
+      margin-bottom: 1.25rem; color: var(--texto);
+    }
+    .secao-titulo-leitor em { color: var(--ouro); font-style: italic; }
+
+    @media (max-width: 600px) {
+      .leitor-main { padding: 2rem 1rem; }
+      .leitor-nav { padding: 0 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="leitor-nav">
+  <a href="../index.html" class="leitor-nav-logo">
+    Robério Diógenes
+    <span>Área do Leitor</span>
+  </a>
+  <div class="leitor-nav-acoes">
+    <a href="../index.html" class="btn-voltar">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i> Site
+    </a>
+    <button class="btn-sair" id="btnSair">
+      <i class="fa fa-sign-out-alt" aria-hidden="true"></i> Sair
+    </button>
+  </div>
+</nav>
+
+<!-- Carregando -->
+<div class="leitor-loading" id="leitorLoading" aria-live="polite" aria-label="Verificando sessão">
+  <i class="fa fa-circle-notch" aria-hidden="true"></i>
+  <p>Verificando sua sessão…</p>
+</div>
+
+<!-- Conteúdo principal (oculto até verificar login) -->
+<main class="leitor-main" id="leitorMain">
+
+  <div class="leitor-boas-vindas">
+    <p class="leitor-pretitulo">Bem-vindo à</p>
+    <h1 class="leitor-titulo">Área do <em>Leitor</em></h1>
+    <div class="leitor-usuario-info" id="leitorUsuarioInfo">
+      <!-- preenchido pelo JS -->
+    </div>
+  </div>
+
+  <p class="secao-titulo-leitor">O que você deseja fazer <em>hoje</em>?</p>
+
+  <div class="leitor-grade">
+    <a href="perfil.html" class="leitor-card">
+      <div class="leitor-card-icone"><i class="fa fa-user-circle" aria-hidden="true"></i></div>
+      <h2 class="leitor-card-titulo">Meu Perfil</h2>
+      <p class="leitor-card-desc">Edite seus dados, altere sua senha e gerencie sua conta.</p>
+    </a>
+
+    <a href="../blog.html" class="leitor-card">
+      <div class="leitor-card-icone"><i class="fa fa-book-open" aria-hidden="true"></i></div>
+      <h2 class="leitor-card-titulo">Diário do Escritor</h2>
+      <p class="leitor-card-desc">Reflexões, bastidores e histórias que não cabem nos livros.</p>
+    </a>
+
+    <div class="leitor-card" style="opacity:0.6;cursor:default;">
+      <div class="leitor-card-icone"><i class="fa fa-lock" aria-hidden="true"></i></div>
+      <h2 class="leitor-card-titulo">Capítulos Exclusivos</h2>
+      <p class="leitor-card-desc">Leia capítulos antecipados antes do lançamento oficial.</p>
+      <span class="leitor-card-badge">Em breve</span>
+    </div>
+
+    <div class="leitor-card" style="opacity:0.6;cursor:default;">
+      <div class="leitor-card-icone"><i class="fa fa-envelope-open-text" aria-hidden="true"></i></div>
+      <h2 class="leitor-card-titulo">Newsletter</h2>
+      <p class="leitor-card-desc">Gerencie suas preferências de comunicação.</p>
+      <span class="leitor-card-badge">Em breve</span>
+    </div>
+  </div>
+
+</main>
+
+<script src="../js/global.js"></script>
+<script>
+(async function () {
+  'use strict';
+
+  // Verificar sessão diretamente (sem api-client para evitar problemas de path relativo)
+  let sessao;
+  try {
+    const r = await fetch('../backend/auth/sessao.php', { credentials: 'same-origin' });
+    sessao = await r.json();
+  } catch (e) {
+    sessao = { ok: false };
+  }
+
+  const loading = document.getElementById('leitorLoading');
+  const main    = document.getElementById('leitorMain');
+
+  if (!sessao.ok || !sessao.logado) {
+    // Não logado — redirecionar para login
+    window.location.href = '../login.html';
+    return;
+  }
+
+  // Exibir conteúdo
+  loading.style.display = 'none';
+  main.classList.add('visivel');
+
+  const u = sessao.usuario;
+
+  // Renderizar info do usuário
+  const infoEl = document.getElementById('leitorUsuarioInfo');
+  const fotoHtml = u.foto
+    ? `<img src="${u.foto}" alt="${u.nome}" class="leitor-avatar" />`
+    : `<div class="leitor-avatar-placeholder"><i class="fa fa-user" aria-hidden="true"></i></div>`;
+  infoEl.innerHTML = `
+    ${fotoHtml}
+    <div>
+      <div class="leitor-nome">${u.nome}</div>
+      <div class="leitor-email">${u.email}</div>
+    </div>`;
+
+  // Botão sair
+  document.getElementById('btnSair').addEventListener('click', async () => {
+    await fetch('../backend/auth/logout.php', { method: 'POST', credentials: 'same-origin' });
+    window.location.href = '../index.html';
+  });
+})();
+</script>
+</body>
+</html>

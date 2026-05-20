@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://www.roberiodiogenes.com/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/index.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.00</priority>
+  </url>
+
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <url>
+    <loc>https://www.roberiodiogenes.com/blog.html</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://www.roberiodiogenes.com/autor.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://www.roberiodiogenes.com/contato.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.roberiodiogenes.com/privacidade.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.30</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/termos.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.30</priority>
+  </url>
+
+</urlset>
