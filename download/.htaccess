@@ -1,0 +1,9 @@
+# ================================================================
+# ROBÉRIO DIÓGENES — /download/.htaccess
+# Bloqueia acesso direto aos arquivos de download pelo navegador.
+# Os downloads são servidos exclusivamente pelo backend/downloads.php
+# que verifica autenticação antes de enviar o arquivo.
+# ================================================================
+
+Order Allow,Deny
+Deny from all

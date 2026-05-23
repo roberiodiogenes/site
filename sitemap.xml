@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  <!-- ═══ PÁGINAS PRINCIPAIS ════════════════════════════════════ -->
   <url>
     <loc>https://www.roberiodiogenes.com/</loc>
     <changefreq>weekly</changefreq>
@@ -11,40 +12,92 @@
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
   </url>
-
   <url>
     <loc>https://www.roberiodiogenes.com/livros.html</loc>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
-
-  <url>
-    <loc>https://www.roberiodiogenes.com/blog.html</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.80</priority>
-  </url>
-
   <url>
     <loc>https://www.roberiodiogenes.com/autor.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
-
+  <url>
+    <loc>https://www.roberiodiogenes.com/blog.html</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.80</priority>
+  </url>
   <url>
     <loc>https://www.roberiodiogenes.com/contato.html</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
+    <priority>0.60</priority>
   </url>
-
   <url>
     <loc>https://www.roberiodiogenes.com/privacidade.html</loc>
     <changefreq>yearly</changefreq>
-    <priority>0.30</priority>
+    <priority>0.20</priority>
   </url>
   <url>
     <loc>https://www.roberiodiogenes.com/termos.html</loc>
     <changefreq>yearly</changefreq>
-    <priority>0.30</priority>
+    <priority>0.20</priority>
+  </url>
+
+  <!-- ═══ LIVROS — prioridade alta para SEO ═════════════════════ -->
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/a-setima-lei.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/a-marca-da-besta.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/genesis.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/jogo-das-mascaras.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/lumen.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/caminhos-de-outono.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/cartas-do-passado.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/das-coisas-que-o-amor-faz.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/mares-secretas.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/rosas-e-espinhos.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/o-abismo-das-almas.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
   </url>
 
 </urlset>

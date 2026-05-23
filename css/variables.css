@@ -848,3 +848,161 @@ footer {
   background: var(--fundo-2);
   outline: none;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   BOTÕES DE INTERAÇÃO DOS LIVROS
+   (favoritar, estrelas, download)
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Wrapper de ações do livro ───────────────────────────────── */
+.livro-acoes-leitor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-lg);
+}
+
+/* ── Botão Favoritar ─────────────────────────────────────────── */
+.btn-favoritar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--borda-media);
+  border-radius: var(--raio);
+  background: transparent;
+  color: var(--texto-2);
+  font-family: var(--fonte-ui);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all var(--trans);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.btn-favoritar:hover {
+  border-color: #e53e3e;
+  color: #e53e3e;
+  background: rgba(229,62,62,0.06);
+}
+.btn-favoritar.favoritado {
+  border-color: #e53e3e;
+  color: #e53e3e;
+  background: rgba(229,62,62,0.08);
+}
+.btn-favoritar .fav-icone { font-size: 0.95rem; }
+
+/* ── Avaliação com estrelas ──────────────────────────────────── */
+.avaliacao-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.avaliacao-label {
+  font-size: 0.75rem;
+  color: var(--texto-3);
+  font-family: var(--fonte-display);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.avaliacao-estrelas {
+  display: flex;
+  gap: 0.15rem;
+}
+.estrela-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.35rem;
+  color: var(--borda-media);
+  transition: color 0.15s, transform 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0.1rem;
+  line-height: 1;
+}
+.estrela-btn:hover,
+.estrela-btn.iluminada {
+  color: #f6ad55;
+  transform: scale(1.15);
+}
+.avaliacao-info {
+  font-size: 0.78rem;
+  color: var(--texto-3);
+  font-style: italic;
+}
+
+/* ── Botões de Download ──────────────────────────────────────── */
+.download-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--raio);
+  font-family: var(--fonte-ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all var(--trans);
+  -webkit-appearance: none;
+  appearance: none;
+  text-decoration: none;
+}
+.btn-download-pdf {
+  background: #c53030;
+  color: #fff;
+}
+.btn-download-pdf:hover {
+  background: #9b2c2c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(197,48,48,0.35);
+}
+.btn-download-epub {
+  background: var(--ouro);
+  color: var(--fundo);
+}
+.btn-download-epub:hover {
+  background: var(--ouro-claro);
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-dourada);
+}
+.btn-download:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+.download-aviso {
+  font-size: 0.75rem;
+  color: var(--texto-3);
+  font-style: italic;
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+/* ── Contador de downloads (na listagem) ─────────────────────── */
+.livro-dl-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--texto-3);
+  font-family: var(--fonte-display);
+  letter-spacing: 0.05em;
+}
+.livro-dl-count i { font-size: 0.7rem; }
+
+@media (max-width: 600px) {
+  .livro-acoes-leitor { flex-direction: column; align-items: flex-start; }
+  .btn-download { width: 100%; justify-content: center; }
+}

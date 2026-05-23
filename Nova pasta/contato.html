@@ -3,12 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Entre em contato com Robério Diógenes — escritor, autor, palestras, parcerias e muito mais." />
-  <title>Contato | Robério Diógenes</title>
+  
+  <meta name="description" content="Entre em contacto direto com o escritor Robério Diógenes. Canal exclusivo para leitores, parcerias editoriais, imprensa e envio de mensagens." />
+  <meta name="author" content="Robério Diógenes" />
+  
+  <link rel="canonical" href="https://www.roberiodiogenes.com/contato.html" />
+  
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:title" content="Contacto | Robério Diógenes — Escritor Independente" />
+  <meta property="og:description" content="Tem alguma dúvida, proposta ou quer falar sobre os livros? Envie uma mensagem diretamente para o autor." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.roberiodiogenes.com/contato.html" />
+  <meta property="og:image" content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Robério Diógenes" />
+
+  <title>Contacto | Robério Diógenes — Fale com o Autor</title>
+  
   <link rel="icon" type="image/png" href="img/favicon.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="css/variables.css" />
-  <link rel="stylesheet" href="css/auth.css" />
   <link rel="stylesheet" href="css/contato.css" />
 </head>
 <body>
@@ -39,7 +52,7 @@
     <div class="tema-controles" role="group"><button class="tema-btn ativo" data-tema="claro" aria-label="Claro">☀</button><button class="tema-btn" data-tema="noturno" aria-label="Noturno">🌙</button><button class="tema-btn" data-tema="contraste" aria-label="Contraste">◑</button></div>
     <div class="fonte-controles" role="group"><button class="fonte-btn fonte-diminuir" aria-label="A-">A-</button><button class="fonte-btn fonte-aumentar" aria-label="A+">A+</button></div>
     <button class="tema-btn som-btn" aria-label="Sons">♪</button>
-    <a href="login.html" class="btn btn-secundario btn-entrar"><i class="fa fa-user" aria-hidden="true"></i> Entrar</a>
+    <a href="login.html" class="btn btn-secundario btn-entrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;"><i class="fa fa-user" aria-hidden="true"></i> Entrar</a>
   </div>
   <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
 </nav>
@@ -230,6 +243,26 @@ document.getElementById('formContato').addEventListener('submit', async function
   }
 });
 // Newsletter gerenciada pelo api-client.js
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ContactPage",
+      "@id": "https://www.roberiodiogenes.com/contato.html",
+      "name": "Página de Contacto de Robério Diógenes",
+      "url": "https://www.roberiodiogenes.com/contato.html",
+      "description": "Formulário de contacto oficial para falar com o escritor independente Robério Diógenes.",
+      "mainEntity": {
+        "@type": "Person",
+        "name": "Robério Diógenes",
+        "url": "https://www.roberiodiogenes.com"
+      }
+    }
+  ]
+}
 </script>
 </body>
 </html>

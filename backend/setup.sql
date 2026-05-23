@@ -313,3 +313,75 @@ CREATE TABLE IF NOT EXISTS `contato` (
     `criado_em`  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ================================================================
+-- ATUALIZAÇÃO v2 — Favoritos, Avaliações, Downloads por slug
+-- ================================================================
+
+-- ── Catálogo de livros ────────────────────────────────────────
+-- Tabela central que mapeia slug → metadados do livro
+CREATE TABLE IF NOT EXISTS `livros` (
+    `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `slug`          VARCHAR(100) NOT NULL,
+    `titulo`        VARCHAR(200) NOT NULL,
+    `arquivo_pdf`   VARCHAR(200) DEFAULT NULL,  -- nome do arquivo em download/pdf/
+    `arquivo_epub`  VARCHAR(200) DEFAULT NULL,  -- nome do arquivo em download/epub/
+    `ativo`         TINYINT(1) NOT NULL DEFAULT 1,
+    `criado_em`     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dados iniciais dos livros
+INSERT IGNORE INTO `livros` (slug, titulo, arquivo_pdf, arquivo_epub) VALUES
+('jogo-das-mascaras',   'O Jogo das Máscaras',           'O-jogo-das-mascas-capitulo-1.pdf',          'O-jogo-das-mascas-capitulo-1.epub'),
+('a-setima-lei',        'A Sétima Lei',                  'A-setima-lei-capitulo-1.pdf',               'A-setima-lei-capitulo-1.epub'),
+('a-marca-da-besta',    'A Marca da Besta',              'a-marca-da-besta-capitulo-1.pdf',           'a-marca-da-besta-capitulo-1.epub'),
+('caminhos-de-outono',  'Caminhos de Outono',            'caminhos-de-outono-capitulo-1.pdf',         'caminhos-de-outono-capitulo-1.epub'),
+('cartas-do-passado',   'Cartas do Passado',             'cartas-do-passado-capitulo-1.pdf',          'cartas-do-passado-capitulo-1.epub'),
+('das-coisas-que-o-amor-faz', 'Das Coisas que o Amor Faz', 'das-coisas-que-o-amor-faz-capitulo-1.pdf','das-coisas-que-o-amor-faz-capitulo-1.epub'),
+('genesis',             'Gênesis',                       'genesis-capitulo-1.pdf',                    'genesis-capitulo-1.epub'),
+('lumen',               'Lumen',                         'lumen-capitulo-1.pdf',                      'lumen-capitulo-1.epub'),
+('mares-secretas',      'Marés Secretas',                'as-mares-secretas-do-amor-capitulo-1.pdf',  'as-mares-secretas-do-amor-capitulo-1.epub'),
+('o-abismo-das-almas',  'O Abismo das Almas',            'o-abismo-das-almas-capitulo-1.pdf',         'o-abismo-das-almas-capitulo-1.epub'),
+('rosas-e-espinhos',    'Rosas e Espinhos',              'rosas-e-espinhos-capitulo-1.pdf',           'rosas-e-espinhos-capitulo-1.epub');
+
+-- ── Favoritos (usando slug) ───────────────────────────────────
+-- Substitui a estrutura antiga com livro_id por livro_slug
+CREATE TABLE IF NOT EXISTS `favoritos` (
+    `id`           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `usuario_id`   INT UNSIGNED NOT NULL,
+    `livro_slug`   VARCHAR(100) NOT NULL,
+    `adicionado_em`DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_fav` (`usuario_id`, `livro_slug`),
+    CONSTRAINT `fk_fav_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── Avaliações (estrelas 1–5) ─────────────────────────────────
+CREATE TABLE IF NOT EXISTS `avaliacoes` (
+    `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `usuario_id` INT UNSIGNED NOT NULL,
+    `livro_slug` VARCHAR(100) NOT NULL,
+    `estrelas`   TINYINT UNSIGNED NOT NULL CHECK (`estrelas` BETWEEN 1 AND 5),
+    `avaliado_em`DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `atualizado_em` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_aval` (`usuario_id`, `livro_slug`),
+    CONSTRAINT `fk_aval_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── Downloads protegidos (usando slug) ───────────────────────
+CREATE TABLE IF NOT EXISTS `downloads_log` (
+    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `usuario_id`  INT UNSIGNED NOT NULL,
+    `livro_slug`  VARCHAR(100) NOT NULL,
+    `formato`     ENUM('pdf','epub') NOT NULL DEFAULT 'pdf',
+    `arquivo`     VARCHAR(200) NOT NULL,
+    `ip`          VARCHAR(45) DEFAULT NULL,
+    `baixado_em`  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_usuario` (`usuario_id`),
+    KEY `idx_livro` (`livro_slug`),
+    CONSTRAINT `fk_dl_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

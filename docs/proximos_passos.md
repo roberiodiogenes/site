@@ -72,16 +72,45 @@
 
 *Atualizado: maio de 2025*
 
-# 20/05/2026
-1. Botão de deletar conta no perfil ainda não funcionando;
-2. Aplicar a solução do botão entrar (que fica na or branca) às páginas (que foram acrescentadas) livros.thml, blog.thml, contato.html;
-3. Às páginas dos livros (dentro da pasta livros), devem conter agora um botão para marcar como favoritos, um botão para o leitor classificar (marcar de 0 a 5 estrelas), esses botões devem estar disponíveis apenas se o usuário estiver logado em sua conta. Essas preferencias (quantidade de estrelas, favoritar, devem aparecer no leitor/perfil.html na aba "Favoritos"). O botão para download do capitulo deve ser dois, dando opção baixar o formato PDF ou o formato ePub. Além disso, o visitante só poderá baixar se estiver cadastrado e logado no site em seu perfil. No perfil do usuário (leitor/perfil.html), deve constar o número de downloads que ele realizou e quais foram (a mostra gratuita para download), isso deve estar na aba "Downloads". Na página livors.html, cada livro deve conter agora o número geral de todos os downloads (capítulos gratuitos). Para facilitar, estou enviando o arquivo download.zip em anexo (não precisa ler os conteúdos, no momento eles são apenas exemplos dos arquivos que eu substituirei em breve, pelos verdadeiros.), note que dentro da pasta, que ficará localizada na raiz do site, existe as pastas pdf e a pasta epub, com seus respectivos arquivos. Crie todos os arquivos necessários para que estás páginas funcionem perfeitamente e se precisar, reestruture o backend/setup.sql para inserir novas tabelas;
+### Sprint 7 — Favoritos, Avaliações, Downloads protegidos
+- [x] Tabela `livros` (catálogo com slugs e nomes de arquivos)
+- [x] Tabela `favoritos` (por slug, com FK CASCADE)
+- [x] Tabela `avaliacoes` (estrelas 1-5, upsert)
+- [x] Tabela `downloads_log` (log de downloads por usuário)
+- [x] backend/livros.php — estado, favoritar, avaliar, contadores, meus_favoritos
+- [x] backend/downloads.php — servir arquivo protegido (só logado), meus_downloads
+- [x] backend/auth/deletar-conta.php — exclusão com confirmação de senha
+- [x] download/.htaccess — bloquear acesso direto aos arquivos
+- [x] js/livros-shared.js v2 — favoritar, estrelas, baixarCapitulo(pdf/epub)
+- [x] js/perfil.js — abas Favoritos e Downloads populadas do backend
+- [x] perfil.html — botão deletar conta funcional
+- [x] Botões PDF + ePub em todas as 11 páginas de livros
+- [x] Contador de downloads em livros.html (ao vivo do banco)
+- [x] auth.css adicionado em blog.html, contato.html, livros.html
+- [x] ⚠ Executar novo setup.sql no phpMyAdmin (novas tabelas)
 
-4. Para trabalhar com o Gemini
-    1. SEO das principais páginas do site;
-        [*] index.html;
-        [*] livros.html
-        [*] contato.html;
-        [] blog.html;
-        [*] autor.html;
 
+# 21/05/2026
+1. [x] Botão entrar da página blog.html e contato.html sem formatação;
+2. [x] Ajustes na página jogo-das-mascaras.html:
+    - [x] Após fazer o comentário, esse comentário não aparece em comentários;
+    - [x] Criar uma formatação melhor para os favoritar. avaliação e downloads (pdf e epub);
+    - [x] Avaliar se estes botões (favoritar. avaliação e downloads) gar. Ou se estão no melhor lugar ou se precisão de um lugar mais estratégico;
+    - [x] Otimizar o SEO da página para estar em conformidade com as boas práticas e com o Google, garantindo um excelente posicionamento da página nas pesquisas do google;
+
+3. SEO das páginas dos livros
+    1. [x] A marca da besta;
+    2. [?] A sétima lei - Algumas imagens precisão do alt="";
+
+# 22/05/2026 A sétima lei
+    1. O campo de email, na sessão de download gratuito não funciona. O botão de download só deve funcionar se o visitante etiver logado. Refazer essa parte da página para funcione corretamente;
+
+# 23/05/2026
+    1. As marés secretas do amor - livros/mares-secretas.html - Botões favoritar sem formatação;
+    2. Comentários em Lúmen não funcionam;
+    3. Comentário em Rosas & Espnhos não funciona;
+    4. Cartas do passado - livros/cartas-do-passado.html - Desconfigurada, comentáriod não funcionam;
+    5. Caminhos de outono - livros/caminhos-de-outono.html - Comentários não funcionam;
+    6. Das coisas que o amor faz - livros/das-coisas-que-o-amor-faz.html - Comentários não funionam;
+    7. A marca da besta - livros/a-marca-da-besta.html - Atualizarpágina. Comentários não funcionam;
+    

@@ -3,16 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Gênesis — Um Novo Começo. Romance e ficção distópica de Robério Diógenes. Uma história sobre o fim de tudo — e sobre o que nasce quando tudo acaba." />
-  <meta property="og:title" content="Gênesis — Um Novo Começo | Robério Diógenes" />
-  <meta property="og:description" content="Esta é uma história sobre o fim — mas também sobre começos. Sobre fé, mesmo quando não há sinais. Sobre perder tudo e, ainda assim, encontrar o que realmente importa." />
-  <title>Gênesis — Um Novo Começo | Robério Diógenes</title>
+  
+  <meta name="description" content="Conheça 'Gênesis — Um Novo Começo' de Robério Diógenes. Um romance marcante e ficção distópica sobre o fim de tudo e o renascimento através da fé e da resiliência." />
+  <meta name="author" content="Robério Diógenes" />
+  
+  <link rel="canonical" href="https://www.roberiodiogenes.com/livros/genesis.html" />
+  
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:title" content="Gênesis — Um Novo Começo — Robério Diógenes | Romance Distópico" />
+  <meta property="og:description" content="Uma história profunda sobre perdas, recomeços e a busca por significado mesmo quando o mundo ao redor desaba." />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="https://www.roberiodiogenes.com/livros/genesis.html" />
+  <meta property="og:image" content="https://www.roberiodiogenes.com/img/genesis.jpg" />
+  <meta property="og:site_name" content="Robério Diógenes" />
+
+  <title>Gênesis — Um Novo Começo | Robério Diógenes — Ficção Distópica</title>
+  
   <link rel="icon" type="image/png" href="../img/favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cinzel:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" />
-  <link rel="stylesheet" href="../css/genesis.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cinzel:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
 
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/genesis.css" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Book",
+      "@id": "https://www.roberiodiogenes.com/livros/genesis.html#book",
+      "name": "Gênesis — Um Novo Começo",
+      "author": {
+        "@type": "Person",
+        "name": "Robério Diógenes",
+        "url": "https://www.roberiodiogenes.com"
+      },
+      "description": "Uma história profunda sobre o fim de tudo — e sobre o que nasce quando tudo acaba. Um romance distópico marcante focado em fé, perda e reconstrução espiritual.",
+      "genre": ["Ficção Distópica", "Romance", "Drama"],
+      "bookFormat": "http://schema.org/EBook",
+      "inLanguage": "pt-BR",
+      "url": "https://www.roberiodiogenes.com/livros/genesis.html",
+      "image": "https://www.roberiodiogenes.com/img/genesis.jpg",
+      "publisher": {
+        "@type": "Person",
+        "name": "Robério Diógenes"
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body data-livro="genesis">
 
@@ -38,10 +79,10 @@
       <div class="livro-3d" id="livro3d">
         <div class="livro-lombada"><span>Gênesis · Robério Diógenes</span></div>
         <div class="livro-frente">
-          <img src="../img/genesis.jpg" alt="Gênesis — Um Novo Começo · Robério Diógenes" />
+          <img src="../img/genesis.jpg" alt="Capa do livro Gênesis — Um Novo Começo, escrito por Robério Diógenes. Obra de ficção distópica e romance sobre sobrevivência e renovação espiritual." />
         </div>
         <div class="livro-reflexo" aria-hidden="true">
-          <img src="../img/genesis.jpg" alt="" />
+          <img src="../img/genesis.jpg" alt="Robério Diógenes, Capa do livro Gênesis — Um Novo Começo" />
         </div>
       </div>
     </div>
@@ -79,6 +120,41 @@
       <div class="hero-nota">
         <strong>Uma nota especial:</strong> Este é o primeiro livro escrito e publicado por Robério Diógenes — o ponto de partida de uma voz que ainda estava se descobrindo. Há uma honestidade única em primeiras obras. Uma coragem que os livros seguintes, mais maduros, carregam de outra forma.
       </div>
+
+  <!-- AÇÕES DO LEITOR (Favoritar / Avaliar / Download) -->
+  <section style="padding:1.5rem 2rem;max-width:960px;margin:0 auto;">
+    <div class="livro-acoes-leitor">
+      <button class="btn-favoritar" id="btnFavoritar" aria-pressed="false" title="Adicionar aos favoritos">
+        <i class="fav-icone fa fa-heart-o" aria-hidden="true"></i>
+        <span class="fav-texto">Favoritar</span>
+      </button>
+      <div class="avaliacao-wrap">
+        <span class="avaliacao-label">Sua avaliação</span>
+        <div class="avaliacao-estrelas" id="avaliacaoEstrelas" data-selecionada="0" role="group" aria-label="Avaliar de 1 a 5 estrelas">
+          <button class="estrela-btn" aria-label="1 estrela">&#9733;</button>
+          <button class="estrela-btn" aria-label="2 estrelas">&#9733;</button>
+          <button class="estrela-btn" aria-label="3 estrelas">&#9733;</button>
+          <button class="estrela-btn" aria-label="4 estrelas">&#9733;</button>
+          <button class="estrela-btn" aria-label="5 estrelas">&#9733;</button>
+        </div>
+        <span class="avaliacao-info">Média: <strong id="mediaEstrelas">—</strong> (<span id="totalAval">0</span> aval.)</span>
+      </div>
+      <div style="flex:1;"></div>
+      <div>
+        <div class="download-wrap">
+          <button class="btn-download btn-download-pdf" data-formato="pdf" onclick="baixarCapitulo('pdf')">
+            <i class="fa fa-file-pdf-o" aria-hidden="true"></i> PDF
+          </button>
+          <button class="btn-download btn-download-epub" data-formato="epub" onclick="baixarCapitulo('epub')">
+            <i class="fa fa-book" aria-hidden="true"></i> ePub
+          </button>
+        </div>
+        <p class="download-aviso"><i class="fa fa-download"></i> <span id="totalDownloads">0</span> downloads · Login necessário</p>
+      </div>
+    </div>
+  </section>
+
+
     </div>
   </section>
 
@@ -238,7 +314,7 @@
         <!-- ADAM -->
         <div class="pers-card r d1">
           <div class="pers-foto-wrap">
-            <img src="../img/adan-personagem.jpg" alt="Adam Ribeiro" class="pers-foto" loading="lazy" />
+            <img src="../img/adan-personagem.jpg" alt="Adam Ribeiro, personagem do livro Gênesis — Um Novo Começo" class="pers-foto" loading="lazy" />
             <div class="pers-foto-overlay"></div>
           </div>
           <div class="pers-info">
@@ -268,7 +344,7 @@
         <!-- AIYRA -->
         <div class="pers-card r d3">
           <div class="pers-foto-wrap">
-            <img src="../img//aiyra-personagem.jpg" alt="Aiyra Diógenes" class="pers-foto" loading="lazy" />
+            <img src="../img//aiyra-personagem.jpg" alt="Aiyra Diógenes, personagem do livro Gênesis — Um Novo Começo" class="pers-foto" loading="lazy" />
             <div class="pers-foto-overlay"></div>
           </div>
           <div class="pers-info">
@@ -283,7 +359,7 @@
         <!-- O GUARDIÃO -->
         <div class="pers-card guardiao r d4">
           <div class="pers-foto-wrap">
-            <img src="../img//guardiao-personagem.jpg" alt="O Guardião" class="pers-foto" loading="lazy" style="filter:brightness(.55) contrast(1.2) grayscale(.2)" />
+            <img src="../img//guardiao-personagem.jpg" alt="O Guardião, personagem do livro Gênesis — Um Novo Começo" class="pers-foto" loading="lazy" style="filter:brightness(.55) contrast(1.2) grayscale(.2)" />
             <div class="pers-foto-overlay"></div>
           </div>
           <div class="pers-info">
@@ -423,8 +499,8 @@
       <div class="mais-grade r d1">
         <a href="../livros/lumen.html" class="mais-card"><img src="../img/lumen.jpg" alt="Lúmen" class="mais-capa" loading="lazy" /><p class="mais-tit">Lúmen</p></a>
         <a href="../livros/a-setima-lei.html" class="mais-card"><img src="../img/a-setima-lei.jpg" alt="A Sétima Lei" class="mais-capa" loading="lazy" /><p class="mais-tit">A Sétima Lei</p></a>
-        <a href="../livros/jogo-das-mascaras.html" class="mais-card"><img src="../img/jogo-das-mascaras.jpg" alt="O Jogo das Máscaras" class="mais-capa" loading="lazy" /><p class="mais-tit">O Jogo das Máscaras</p></a>
-        <a href="../livros/rosas-e-espinhos.html" class="mais-card"><img src="../img/rosas-e-espinhos.jpg" alt="Rosas & Espinhos" class="mais-capa" loading="lazy" /><p class="mais-tit">Rosas & Espinhos</p></a>
+        <a href="../livros/jogo-das-mascaras.html" class="mais-card"><img src="../img/jogo-das-mascaras.jpg" alt="Capa do livro O Jogo das Máscaras, thriller psicológico de Robério Diógenes" class="mais-capa" class="mais-capa" loading="lazy" /><p class="mais-tit">O Jogo das Máscaras</p></a>
+        <a href="../livros/rosas-e-espinhos.html" class="mais-card"><img src="../img/rosas-e-espinhos.jpg" alt="Capa do livro Rosas e Espinhos, drama literário do autor Robério Diógene" class="mais-capa" loading="lazy" /><p class="mais-tit">Rosas & Espinhos</p></a>
         <a href="../livros.html" class="mais-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:160px;border:var(--borda-t);background:var(--preto-3)">
           <span style="font-size:1.8rem;color:var(--teal-2);margin-bottom:.4rem">→</span>
           <p class="mais-tit" style="color:var(--teal-2);text-align:center">Ver toda a biblioteca</p>
@@ -449,9 +525,10 @@
 
   <!-- JAVASCRIPT -->
   <script src="../js/script-genesis.js"></script>
-
 <script src="../js/global.js"></script>
 <script src="../js/api-client.js"></script>
 <script src="../js/livros-shared.js"></script>
+
+
 </body>
 </html>

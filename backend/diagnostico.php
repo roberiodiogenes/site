@@ -61,7 +61,7 @@ try {
     linha('OK', 'Conexão com o banco de dados', 'Conectado com sucesso a "' . DB_NAME . '" em ' . DB_HOST . '.');
 
     // ── 4. Tabelas ────────────────────────────────────────────
-    $tabelas = ['usuarios','newsletter','auth_log','visitas','visitas_log','admin_users','password_reset','livros_favoritos','downloads','comentarios','contato'];
+    $tabelas = ['usuarios','newsletter','auth_log','visitas','visitas_log','admin_users','password_reset','livros_favoritos','downloads','comentarios','contato','livros','favoritos','avaliacoes','downloads_log'];
     $stmt    = $pdo->query("SHOW TABLES");
     $existentes = $stmt->fetchAll(PDO::FETCH_COLUMN);
 

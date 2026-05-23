@@ -171,12 +171,6 @@
     }
 
     // --- Enviar comentário ---
-    function enviarComentario(e) {
-      e.preventDefault();
-      const btn = e.target.querySelector('button[type="submit"]');
-      btn.textContent = '✓ Enviado! Aguardando moderação.';
-      btn.style.background = '#2a9d8f';
-      btn.disabled = true;
-      e.target.reset();
-      setTimeout(() => { btn.textContent='Publicar Comentário'; btn.style.background=''; btn.disabled=false; }, 5000);
+    // Comentário — gerenciado pelo livros-shared.js (window.enviarComentario)
+, 5000);
     }

@@ -32,17 +32,6 @@
     // ============================================================
     // COUNTDOWN — Junho 2026
     // ============================================================
-    function atualizarCountdown(){
-      const alvo=new Date('2026-06-01T00:00:00');
-      const agora=new Date();
-      const diff=alvo-agora;
-      if(diff<=0){
-        document.getElementById('cd-dias').textContent='00';
-        document.getElementById('cd-horas').textContent='00';
-        document.getElementById('cd-mins').textContent='00';
-        document.getElementById('cd-segs').textContent='00';
-        return;
-      }
       const d=Math.floor(diff/(1000*60*60*24));
       const h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
       const m=Math.floor((diff%(1000*60*60))/(1000*60));
@@ -52,15 +41,5 @@
       document.getElementById('cd-mins').textContent=String(m).padStart(2,'0');
       document.getElementById('cd-segs').textContent=String(s).padStart(2,'0');
     }
-    atualizarCountdown();
-    setInterval(atualizarCountdown,1000);
-
-    // Formulário de pré-lançamento
-    function inscricaoLancamento(e){
-      e.preventDefault();
-      const nome=document.getElementById('preLancNome').value;
-      const btn=e.target.querySelector('button[type="submit"]');
-      btn.textContent='✓ Na lista!';btn.style.background='#2a8a7a';btn.disabled=true;
-      e.target.reset();
-      setTimeout(()=>{btn.textContent='Entrar na lista →';btn.style.background='';btn.disabled=false;},5000);
+    // Formulário de pré-lançamento removido — livro já lançado,5000);
     }

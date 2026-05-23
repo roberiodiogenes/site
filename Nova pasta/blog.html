@@ -3,12 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Diário de Robério Diógenes — Reflexões, bastidores, pensamentos de um escritor em constante criação." />
-  <title>Diário | Robério Diógenes</title>
+  
+  <meta name="description" content="Diário de Robério Diógenes. Acompanhe reflexões sobre literatura, os bastidores do processo criativo, dicas de escrita e o dia a dia de um escritor independente." />
+  <meta name="author" content="Robério Diógenes" />
+  
+  <link rel="canonical" href="https://www.roberiodiogenes.com/blog.html" />
+  
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:title" content="Diário Literário | Robério Diógenes — Bastidores e Reflexões" />
+  <meta property="og:description" content="Pensamentos de um escritor em constante criação. Explore crônicas, artigos sobre escrita e novidades do meu universo literário." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.roberiodiogenes.com/blog.html" />
+  <meta property="og:image" content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+  <meta property="og:site_name" content="Robério Diógenes" />
+
+  <title>Diário | Robério Diógenes — Bastidores da Escrita e Literatura</title>
+  
   <link rel="icon" type="image/png" href="img/favicon.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="css/variables.css" />
-  <link rel="stylesheet" href="css/auth.css" />
   <link rel="stylesheet" href="css/blog.css" />
 </head>
 <body>
@@ -41,7 +54,7 @@
     <div class="tema-controles" role="group"><button class="tema-btn ativo" data-tema="claro" aria-label="Claro">☀</button><button class="tema-btn" data-tema="noturno" aria-label="Noturno">🌙</button><button class="tema-btn" data-tema="contraste" aria-label="Contraste">◑</button></div>
     <div class="fonte-controles" role="group"><button class="fonte-btn fonte-diminuir" aria-label="A-">A-</button><button class="fonte-btn fonte-aumentar" aria-label="A+">A+</button></div>
     <button class="tema-btn som-btn" aria-label="Sons">♪</button>
-    <a href="login.html" class="btn btn-secundario btn-entrar"><i class="fa fa-user" aria-hidden="true"></i> Entrar</a>
+    <a href="login.html" class="btn btn-secundario btn-entrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;"><i class="fa fa-user" aria-hidden="true"></i> Entrar</a>
   </div>
   <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
 </nav>
@@ -74,7 +87,7 @@
       <!-- Post destaque -->
       <a href="blog/post-01.html" class="post-destaque reveal" data-cat="bastidores">
         <div class="post-destaque-img-wrap">
-          <img src="img/post-01.jpg" alt="Por trás da serpente e da maçã" class="post-destaque-img" loading="eager" />
+          <img src="img/post-01.jpg" alt="Ilustração representando o processo de escrita criativa no silêncio — Diário de Robério Diógenes" class="post-destaque-img" loading="eager" />
           <span class="post-badge" aria-label="Post em destaque">Destaque</span>
         </div>
         <div class="post-destaque-corpo">
@@ -96,7 +109,7 @@
 
         <a href="blog/post-02.html" class="post-card-b reveal" data-cat="reflexao">
           <div class="pcb-img-wrap">
-            <img src="img/bastidores-setima-lei.jpg" alt="O peso do silêncio" class="pcb-img" loading="lazy" />
+            <img src="img/bastidores-setima-lei.jpg" alt="Representação conceitual sobre o bloqueio criativo e páginas em branco na literatura independente" class="pcb-img" loading="lazy" />
           </div>
           <div class="pcb-corpo">
             <span class="post-cat">Reflexão</span>
@@ -228,6 +241,26 @@ function filtrarCat(cat) {
 }
 document.querySelectorAll('.cat-btn').forEach(b => b.addEventListener('click', () => filtrarCat(b.dataset.cat)));
 // Newsletter gerenciada pelo api-client.js (window.submeterNewsletter já definido)
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Blog",
+      "@id": "https://www.roberiodiogenes.com/blog.html",
+      "name": "Diário de Robério Diógenes",
+      "url": "https://www.roberiodiogenes.com/blog.html",
+      "description": "Artigos, crônicas e reflexões sobre os bastidores da criação literária de um escritor independente.",
+      "publisher": {
+        "@type": "Person",
+        "name": "Robério Diógenes",
+        "url": "https://www.roberiodiogenes.com"
+      }
+    }
+  ]
+}
 </script>
 </body>
 </html>

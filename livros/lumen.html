@@ -13,8 +13,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" />
 
  <link rel="stylesheet" href="../css/lumen.css" />
+ <link rel="stylesheet" href="../css/variables.css" />
 
 </head>
+
 <body data-livro="lumen">
 
   <div class="cursor" id="cursor"></div>
@@ -120,9 +122,44 @@
         Disponível em: <span>Digital (Kindle)</span> &nbsp;·&nbsp; <span>Físico sob encomenda</span>
       </p>
     </div>
+    
+  </section>
+
+  <!-- AÇÕES DO LEITOR (Favoritar / Avaliar / Download) -->
+  <section style="padding:1.5rem 2rem;max-width:960px;margin:0 auto;">
+    <div class="livro-acoes-leitor">
+      <button class="btn-favoritar" id="btnFavoritar" aria-pressed="false" title="Adicionar aos favoritos">
+        <i class="fav-icone fa fa-heart-o" aria-hidden="true"></i>
+        <span class="fav-texto">Favoritar</span>
+      </button>
+      <div class="avaliacao-wrap">
+        <span class="avaliacao-label">Sua avaliação</span>
+        <div class="avaliacao-estrelas" id="avaliacaoEstrelas" data-selecionada="0" role="group" aria-label="Avaliar de 1 a 5 estrelas">
+          <button class="estrela-btn" aria-label="1 estrela">&#9733;</button>
+          <button class="estrela-btn" aria-label="2 estrelas">&#9733;</button>
+          <button class="estrela-btn" aria-label="3 estrelas">&#9733;</button>
+          <button class="estrela-btn" aria-label="4 estrelas">&#9733;</button>
+          <button class="estrela-btn" aria-label="5 estrelas">&#9733;</button>
+        </div>
+        <span class="avaliacao-info">Média: <strong id="mediaEstrelas">—</strong> (<span id="totalAval">0</span> aval.)</span>
+      </div>
+      <div style="flex:1;"></div>
+      <div>
+        <div class="download-wrap">
+          <button class="btn-download btn-download-pdf" data-formato="pdf" onclick="baixarCapitulo('pdf')">
+            <i class="fa fa-file-pdf-o" aria-hidden="true"></i> PDF
+          </button>
+          <button class="btn-download btn-download-epub" data-formato="epub" onclick="baixarCapitulo('epub')">
+            <i class="fa fa-book" aria-hidden="true"></i> ePub
+          </button>
+        </div>
+        <p class="download-aviso"><i class="fa fa-download"></i> <span id="totalDownloads">0</span> downloads · Login necessário</p>
+      </div>
+    </div>
   </section>
 
   <div class="div-linha"></div>
+
 
   <!-- ============================================================
        A PERGUNTA
@@ -401,9 +438,6 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       COMENTÁRIOS
-  ============================================================ -->
   <section class="comentarios-section" id="comentarios">
     <div class="comentarios-wrap">
       <div class="comentarios-header r">
@@ -515,5 +549,6 @@
 <script src="../js/global.js"></script>
 <script src="../js/api-client.js"></script>
 <script src="../js/livros-shared.js"></script>
+
 </body>
 </html>

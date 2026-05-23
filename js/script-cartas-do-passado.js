@@ -43,6 +43,12 @@
         setTimeout(()=>{btn.textContent='✉ Baixar Capítulo Grátis';btn.style.background='';btn.disabled=false;},4000);
       },700);
     }
-    // Comentário — gerenciado pelo livros-shared.js (window.enviarComentario)
-,5000);
+
+    // Comentário
+    function enviarComentario(e){
+      e.preventDefault();
+      const btn=e.target.querySelector('button[type="submit"]');
+      btn.textContent='✓ Enviado! Aguardando moderação.';btn.style.background='#5a7a5c';btn.disabled=true;
+      e.target.reset();
+      setTimeout(()=>{btn.textContent='Publicar Comentário';btn.style.background='';btn.disabled=false;},5000);
     }

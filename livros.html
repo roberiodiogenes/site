@@ -324,7 +324,7 @@
         </div>
       </article>
 
-    </div>
+    </div><!-- /gradeLivros -->
 
     <!-- Estado vazio (filtro sem resultado) -->
     <div class="vazio-msg" id="vazioMsg" aria-live="polite" style="display:none;">
@@ -420,6 +420,19 @@ function filtrar(genero) {
 document.querySelectorAll('.filtro-btn').forEach(btn => {
   btn.addEventListener('click', () => filtrar(btn.dataset.filtro));
 });
+
+// Carregar contadores de downloads de todos os livros
+(async function() {
+  try {
+    const r = await fetch('backend/livros.php?acao=todos_contadores', { credentials: 'same-origin' });
+    const data = await r.json();
+    if (!data.ok) return;
+    Object.entries(data.contadores).forEach(([slug, total]) => {
+      const el = document.querySelector(`#dl-${slug} span`);
+      if (el) el.textContent = total.toLocaleString('pt-BR');
+    });
+  } catch(e) { /* silencioso */ }
+})();
 
 window.submeterNewsletter = function(e) {
   e.preventDefault();

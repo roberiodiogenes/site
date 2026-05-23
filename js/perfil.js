@@ -321,3 +321,163 @@ document.addEventListener('DOMContentLoaded', async () => {
     alerta('Erro ao carregar perfil. Tente recarregar a página.', 'erro', 'perfilAlerta');
   }
 });
+
+/* ════════════════════════════════════════════════════════════════
+   ABA: FAVORITOS
+   ════════════════════════════════════════════════════════════════ */
+async function carregarFavoritos() {
+  const grid = document.getElementById('favoritosGrid');
+  if (!grid) return;
+
+  try {
+    const r = await apiFetch('../backend/livros.php?acao=meus_favoritos', { method: 'GET' });
+    if (!r.ok || !r.favoritos?.length) return;
+
+    grid.innerHTML = '';
+    r.favoritos.forEach(fav => {
+      const card = document.createElement('div');
+      card.className = 'perfil-livro-card';
+      card.innerHTML = `
+        <a href="../livros/${esc(fav.slug)}.html" class="perfil-livro-capa-link">
+          <img src="../img/${esc(fav.slug)}.jpg"
+               alt="Capa de ${esc(fav.titulo)}"
+               class="perfil-livro-capa"
+               onerror="this.src='../img/placeholder.jpg'" />
+        </a>
+        <div class="perfil-livro-info">
+          <p class="perfil-livro-titulo">${esc(fav.titulo)}</p>
+          <div class="perfil-livro-estrelas">
+            ${'★'.repeat(fav.estrelas || 0)}${'☆'.repeat(5 - (fav.estrelas || 0))}
+          </div>
+          <button class="perfil-btn-remover-fav" data-slug="${esc(fav.slug)}" aria-label="Remover dos favoritos">
+            <i class="fa fa-heart" aria-hidden="true"></i> Remover
+          </button>
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    // Botões de remover
+    grid.querySelectorAll('.perfil-btn-remover-fav').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const slug = btn.dataset.slug;
+        const r = await apiFetch('../backend/livros.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ acao: 'favoritar', livro: slug }),
+        });
+        if (r.ok) {
+          btn.closest('.perfil-livro-card').remove();
+          if (!grid.children.length) {
+            grid.innerHTML = '<div class="perfil-vazio"><i class="fa fa-heart-o"></i><p>Sem favoritos.</p></div>';
+          }
+        }
+      });
+    });
+  } catch (e) { Log.erro('carregarFavoritos', e); }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ABA: DOWNLOADS
+   ════════════════════════════════════════════════════════════════ */
+async function carregarDownloads() {
+  const container = document.getElementById('downloadsTabela');
+  if (!container) return;
+
+  try {
+    const r = await apiFetch('../backend/downloads.php?acao=meus_downloads', { method: 'GET' });
+    if (!r.ok || !r.downloads?.length) return;
+
+    container.innerHTML = `
+      <p style="margin-bottom:1rem;color:var(--texto-3);font-size:.88rem;">
+        Total: <strong>${r.downloads.length}</strong> download(s) realizado(s).
+      </p>
+      <table class="perfil-tabela">
+        <thead>
+          <tr>
+            <th>Livro</th>
+            <th>Formato</th>
+            <th>Data</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${r.downloads.map(d => `
+            <tr>
+              <td><a href="../livros/${esc(d.slug)}.html" style="color:var(--ouro);">${esc(d.titulo)}</a></td>
+              <td><span style="text-transform:uppercase;font-size:.8rem;">${esc(d.formato)}</span></td>
+              <td style="color:var(--texto-3);font-size:.85rem;">${esc(d.data)}</td>
+              <td>
+                <a href="../backend/downloads.php?livro=${esc(d.slug)}&formato=${esc(d.formato)}"
+                   class="perfil-btn" style="padding:.3rem .7rem;font-size:.75rem;"
+                   title="Baixar novamente">
+                  <i class="fa fa-download" aria-hidden="true"></i>
+                </a>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  } catch (e) { Log.erro('carregarDownloads', e); }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DELETAR CONTA
+   ════════════════════════════════════════════════════════════════ */
+function iniciarDeletarConta() {
+  const btn = document.getElementById('btnDeletarConta');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    mostrarModalConfirmacao(
+      '⚠ Deletar Conta Permanentemente',
+      'Esta ação é irreversível. Todos os seus dados (favoritos, downloads, avaliações) serão apagados. Confirma?',
+      async () => {
+        // Pedir senha de confirmação
+        const temSenha = document.getElementById('senhaAtual') || false;
+
+        let confirmInput = '';
+        // Criar mini-formulário inline
+        const painel = document.getElementById('segurancaAlerta');
+        if (painel) {
+          painel.innerHTML = `
+            <div class="perfil-alerta aviso" style="margin-bottom:1rem;">
+              <strong>Confirmação final:</strong> Digite sua senha abaixo para deletar a conta.
+              <div style="display:flex;gap:.5rem;margin-top:.75rem;">
+                <input type="password" id="senhaConfirmDelete" placeholder="Sua senha"
+                  style="flex:1;padding:.5rem;background:var(--fundo-2);border:1px solid var(--ferrugem);
+                  border-radius:var(--raio);color:var(--texto);font-family:var(--fonte-ui);" />
+                <button id="btnConfirmarDelete" class="perfil-btn perfil-btn-perigo"
+                  style="padding:.5rem 1rem;">
+                  <i class="fa fa-trash"></i> Confirmar
+                </button>
+              </div>
+            </div>`;
+
+          document.getElementById('btnConfirmarDelete').addEventListener('click', async () => {
+            const senha = document.getElementById('senhaConfirmDelete').value;
+            const r = await apiFetch('../backend/auth/deletar-conta.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ senha }),
+            });
+            if (r.ok) {
+              alerta(r.mensagem, 'sucesso', 'segurancaAlerta');
+              setTimeout(() => { window.location.href = '../index.html'; }, 2500);
+            } else {
+              alerta(r.erro || 'Erro ao deletar conta.', 'erro', 'segurancaAlerta');
+            }
+          });
+        }
+      }
+    );
+  });
+}
+
+/* Adicionar aos listeners de DOMContentLoaded existentes */
+document.addEventListener('DOMContentLoaded', async () => {
+  // Aguardar inicialização principal (definida no perfil.js original)
+  setTimeout(() => {
+    carregarFavoritos();
+    carregarDownloads();
+    iniciarDeletarConta();
+  }, 500);
+});
