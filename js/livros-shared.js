@@ -1,316 +1,304 @@
 /* ================================================================
-   ROBÉRIO DIÓGENES — js/livros-shared.js  (v2)
-   Funções compartilhadas por todas as páginas de livros:
-   - Newsletter real
-   - Comentários reais
-   - Favoritar (toggle, só logado)
-   - Avaliar com estrelas (só logado)
-   - Download protegido PDF/ePub (só logado)
-   - Contadores públicos de downloads
-   ================================================================ */
+ * ROBÉRIO DIÓGENES — js/livros-shared.js (v3.0)
+ * Script compartilhado para todas as páginas de livros individuais.
+ *
+ * Funcionalidades:
+ * ✓ Botão Favoritar (toggle, requer login)
+ * ✓ Avaliação por estrelas (1–5, requer login)
+ * ✓ Download de amostra gratuita PDF e ePub (requer login)
+ * ✓ Contadores públicos (downloads, média de avaliações)
+ * ✓ Estado inicial do usuário (já favoritou? já avaliou?)
+ * ✓ Redirecionamento para login com mensagem contextual
+ * ✓ Feedback visual (toast, animações)
+ * ✓ BASE_URL dinâmico — funciona em livros/ (subpasta)
+ * ================================================================ */
+
 'use strict';
 
-const BASE_LIVROS = '../backend';
+/* ── BASE URL (páginas de livro estão em livros/, um nível acima de backend/) ── */
+const LIVROS_BASE = '../backend';
 
-/* ── Requisição base ─────────────────────────────────────────── */
-async function req(endpoint, dados = null, metodo = 'POST') {
-  try {
-    const opts = {
-      method: metodo,
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' },
-    };
-    if (dados !== null && metodo !== 'GET') opts.body = JSON.stringify(dados);
-    const r = await fetch(BASE_LIVROS + '/' + endpoint, opts);
-    return await r.json();
-  } catch (e) {
-    return { ok: false, erro: 'Falha na conexão.' };
+/* ── SLUG DO LIVRO (definido no <body data-livro="slug">) ──────── */
+const LIVRO_SLUG = document.body.dataset.livro || '';
+
+/* ── UTILITÁRIOS ────────────────────────────────────────────────── */
+
+function mostrarToast(msg, tipo = 'info') {
+  let toast = document.getElementById('livro-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'livro-toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    Object.assign(toast.style, {
+      position:     'fixed',
+      bottom:       '2rem',
+      left:         '50%',
+      transform:    'translateX(-50%) translateY(20px)',
+      background:   'var(--fundo-card)',
+      border:       '1px solid var(--borda-media)',
+      borderRadius: 'var(--raio-lg)',
+      padding:      '0.8rem 1.5rem',
+      fontFamily:   'var(--fonte-ui)',
+      fontSize:     '0.92rem',
+      color:        'var(--texto)',
+      boxShadow:    'var(--sombra-md)',
+      zIndex:       '9999',
+      opacity:      '0',
+      transition:   'all 0.35s cubic-bezier(0.25,0.46,0.45,0.94)',
+      pointerEvents:'none',
+      maxWidth:     '90vw',
+      textAlign:    'center',
+    });
+    document.body.appendChild(toast);
   }
-}
 
-function toast(msg, tipo = 'sucesso', dur = 4000) {
-  if (typeof mostrarToast === 'function') mostrarToast(msg, tipo, dur);
-  else console.log('[' + tipo + '] ' + msg);
-}
+  const cores = {
+    sucesso: 'var(--ouro)',
+    erro:    'var(--ferrugem)',
+    info:    'var(--ouro-claro)',
+  };
+  toast.style.borderColor = cores[tipo] || cores.info;
+  toast.textContent = msg;
 
-function esc(s) {
-  return (s || '').replace(/[&<>"']/g,
-    c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[c]));
-}
-
-/* ── Slug do livro atual ─────────────────────────────────────── */
-function getSlug() {
-  return document.body.dataset.livro || '';
-}
-
-/* ════════════════════════════════════════════════════════════════
-   NEWSLETTER
-   ════════════════════════════════════════════════════════════════ */
-window.submeterNewsletter = async function(e) {
-  e.preventDefault();
-  const input = e.target.querySelector('input[type="email"]');
-  const btn   = e.target.querySelector('button[type="submit"]');
-  if (!input?.value) return;
-  if (btn) { btn.disabled = true; btn.textContent = 'Aguarde…'; }
-  const r = await req('newsletter.php', { email: input.value.trim() });
-  if (btn) { btn.disabled = false; btn.textContent = 'Inscrever-se'; }
-  r.ok ? toast(r.mensagem || 'Inscrição realizada! 📖', 'sucesso', 5000)
-       : toast(r.erro || 'Erro na inscrição.', 'erro');
-  if (r.ok) input.value = '';
-};
-
-window.inscricaoEmailLivro = async function(email) {
-  if (!email || !email.includes('@')) return;
-  await req('newsletter.php', { email: email.trim() });
-};
-
-/* ════════════════════════════════════════════════════════════════
-   COMENTÁRIOS
-   ════════════════════════════════════════════════════════════════ */
-async function carregarComentarios(slug) {
-  const container = document.getElementById('comentariosLista');
-  if (!container || !slug) return;
-  const r = await req(`comentarios.php?livro=${encodeURIComponent(slug)}`, null, 'GET');
-  if (!r.ok || !r.comentarios?.length) return;
-  r.comentarios.forEach(c => {
-    const leuTexto = { sim:'Leu o livro completo', cap:'Leu o capítulo gratuito', nao:'Ainda não leu', '':{} }[c.leu] || '';
-    const div = document.createElement('div');
-    div.className = 'com-card r d2';
-    div.innerHTML = `
-      <span class="com-aspas" aria-hidden="true">"</span>
-      <p class="com-texto">${esc(c.texto)}</p>
-      <p class="com-autor">— ${esc(c.nome)}${c.cidade ? ' · '+esc(c.cidade) : ''}${leuTexto ? ' · '+leuTexto : ''} · ${c.data}</p>`;
-    container.appendChild(div);
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
   });
+
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 3500);
 }
 
-window.enviarComentario = async function(e) {
-  e.preventDefault();
-  const form = e.target;
-  const btn  = form.querySelector('button[type="submit"]');
-  const slug = form.dataset.livro || getSlug();
-  const get  = id => (document.getElementById(id) || form.querySelector(`[name="${id}"]`))?.value?.trim() ?? '';
-  const nome  = get('cn') || get('nome');
-  const cidade= get('cc') || get('cidade');
-  const leu   = get('cl') || get('leu');
-  const texto = get('ct') || get('texto') || get('comentario');
-  if (!nome)  { toast('Informe seu nome.', 'aviso'); return; }
-  if (!texto) { toast('Escreva seu comentário.', 'aviso'); return; }
-  if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
-  const r = await req('comentarios.php', { livro: slug, nome, cidade, leu, texto });
-  if (btn) { btn.disabled = false; btn.textContent = 'Publicar Comentário'; }
-  if (r.ok) {
-    toast(r.mensagem, 'sucesso', 6000);
-    form.reset();
-    // Mostrar comentário otimisticamente com badge de "aguardando moderação"
-    const lista = document.getElementById('comentariosLista');
-    if (lista && nome && texto) {
-      const div = document.createElement('div');
-      div.className = 'com-card';
-      div.style.cssText = 'opacity:.7;border-style:dashed;';
-      div.innerHTML = `
-        <span class="com-aspas" aria-hidden="true">"</span>
-        <p class="com-texto">${esc(texto)}</p>
-        <p class="com-autor">— ${esc(nome)}${cidade ? ' · '+esc(cidade) : ''}
-          <span style="font-size:.75em;color:#f6ad55;margin-left:.5rem;">⏳ aguardando moderação</span>
-        </p>`;
-      lista.prepend(div);
-    }
-  } else {
-    toast(r.erro || 'Erro ao enviar.', 'erro');
+async function chamarAPI(endpoint, opcoes = {}) {
+  try {
+    const res = await fetch(`${LIVROS_BASE}/${endpoint}`, {
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      ...opcoes,
+    });
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    console.error('[livros-shared] Erro de rede:', e);
+    return { ok: false, erro: 'Erro de conexão. Tente novamente.' };
   }
-};
+}
 
-/* ════════════════════════════════════════════════════════════════
-   FAVORITAR
-   ════════════════════════════════════════════════════════════════ */
-async function toggleFavorito() {
-  const slug = getSlug();
-  const btn  = document.getElementById('btnFavoritar');
-  if (!btn) return;
+function redirecionarParaLogin(motivo = '') {
+  const url = '../login.html' + (motivo ? `?next=${encodeURIComponent(window.location.pathname)}&motivo=${encodeURIComponent(motivo)}` : '');
+  window.location.href = url;
+}
 
-  btn.disabled = true;
-  const r = await req('livros.php', { acao: 'favoritar', livro: slug });
-  btn.disabled = false;
+/* ── ESTADO INICIAL ─────────────────────────────────────────────── */
 
-  if (!r.ok) {
-    if (r.erro === 'Você precisa estar logado.') {
-      toast('Faça login para favoritar este livro.', 'aviso', 4000);
-    } else {
-      toast(r.erro || 'Erro ao favoritar.', 'erro');
+async function carregarEstado() {
+  if (!LIVRO_SLUG) return;
+
+  const [estado, contadores] = await Promise.all([
+    chamarAPI(`livros.php?acao=estado&livro=${LIVRO_SLUG}`),
+    chamarAPI(`livros.php?acao=contadores&livro=${LIVRO_SLUG}`),
+  ]);
+
+  /* Botão de favoritar */
+  const btnFav = document.getElementById('btn-favoritar');
+  if (btnFav && estado.ok) {
+    if (estado.logado) {
+      aplicarEstadoFavorito(btnFav, estado.favorito);
     }
+  }
+
+  /* Estrelas */
+  if (estado.ok && estado.logado && estado.estrelas > 0) {
+    aplicarEstrelasUsuario(estado.estrelas);
+  }
+
+  /* Contadores públicos */
+  if (contadores.ok) {
+    const elDownloads = document.getElementById('contador-downloads');
+    if (elDownloads && contadores.downloads !== undefined) {
+      elDownloads.textContent = contadores.downloads;
+    }
+
+    const elMedia = document.getElementById('media-estrelas');
+    const elTotal = document.getElementById('total-avaliacoes');
+    if (elMedia && contadores.media_estrelas !== null) {
+      elMedia.textContent = contadores.media_estrelas.toFixed(1);
+    }
+    if (elTotal) {
+      elTotal.textContent = contadores.total_aval || 0;
+    }
+
+    /* Preencher estrelas visuais da média pública */
+    renderizarEstrelasMedia(contadores.media_estrelas);
+  }
+}
+
+/* ── FAVORITAR ──────────────────────────────────────────────────── */
+
+function aplicarEstadoFavorito(btn, isFav) {
+  btn.dataset.favoritado = isFav ? '1' : '0';
+  const icone = btn.querySelector('.fav-icone');
+  const texto = btn.querySelector('.fav-texto');
+  if (icone) icone.textContent = isFav ? '♥' : '♡';
+  if (texto) texto.textContent = isFav ? 'Favoritado' : 'Favoritar';
+  btn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
+  btn.classList.toggle('favoritado', isFav);
+}
+
+async function alternarFavorito() {
+  const btn = document.getElementById('btn-favoritar');
+  if (!btn || !LIVRO_SLUG) return;
+
+  /* Verificar login */
+  const estado = await chamarAPI(`livros.php?acao=estado&livro=${LIVRO_SLUG}`);
+  if (!estado.ok || !estado.logado) {
+    mostrarToast('Faça login para salvar nos favoritos.', 'info');
+    setTimeout(() => redirecionarParaLogin('favoritar'), 1500);
     return;
   }
 
-  atualizarBtnFavorito(r.favorito);
-  toast(r.mensagem, r.favorito ? 'sucesso' : 'info', 3000);
-}
-
-function atualizarBtnFavorito(ativo) {
-  const btn = document.getElementById('btnFavoritar');
-  if (!btn) return;
-  btn.dataset.favoritado = ativo ? '1' : '0';
-  btn.classList.toggle('favoritado', ativo);
-  btn.setAttribute('aria-pressed', String(ativo));
-  const icone = btn.querySelector('.fav-icone');
-  if (icone) icone.className = 'fav-icone fa ' + (ativo ? 'fa-heart' : 'fa-heart-o');
-  const texto = btn.querySelector('.fav-texto');
-  if (texto) texto.textContent = ativo ? 'Favoritado' : 'Favoritar';
-}
-
-/* ════════════════════════════════════════════════════════════════
-   AVALIAÇÃO COM ESTRELAS
-   ════════════════════════════════════════════════════════════════ */
-function iniciarEstrelas() {
-  const wrap = document.getElementById('avaliacaoEstrelas');
-  if (!wrap) return;
-
-  const estrelas = wrap.querySelectorAll('.estrela-btn');
-  if (!estrelas.length) return;
-
-  // Hover
-  estrelas.forEach((btn, idx) => {
-    btn.addEventListener('mouseenter', () => iluminar(idx + 1));
-    btn.addEventListener('mouseleave', () => iluminar(Number(wrap.dataset.selecionada || 0)));
-    btn.addEventListener('click',      () => avaliar(idx + 1));
+  btn.disabled = true;
+  const data = await chamarAPI('livros.php', {
+    method: 'POST',
+    body: JSON.stringify({ acao: 'favoritar', livro: LIVRO_SLUG }),
   });
+  btn.disabled = false;
+
+  if (data.ok) {
+    aplicarEstadoFavorito(btn, data.favorito);
+    mostrarToast(data.mensagem, 'sucesso');
+  } else {
+    mostrarToast(data.erro || 'Erro ao atualizar favorito.', 'erro');
+  }
 }
 
-function iluminar(ate) {
-  const wrap = document.getElementById('avaliacaoEstrelas');
-  if (!wrap) return;
-  wrap.querySelectorAll('.estrela-btn').forEach((btn, idx) => {
-    btn.classList.toggle('iluminada', idx < ate);
+/* ── AVALIAÇÃO POR ESTRELAS ─────────────────────────────────────── */
+
+function renderizarEstrelasMedia(media) {
+  const container = document.getElementById('estrelas-media');
+  if (!container || media === null || media === undefined) return;
+  const cheias = Math.round(media);
+  container.innerHTML = [1,2,3,4,5].map(n =>
+    `<span class="estrela-media ${n <= cheias ? 'cheia' : ''}" aria-hidden="true">★</span>`
+  ).join('');
+}
+
+function aplicarEstrelasUsuario(n) {
+  document.querySelectorAll('.estrela-avaliacao').forEach(el => {
+    const val = parseInt(el.dataset.valor);
+    el.classList.toggle('selecionada', val <= n);
+    el.setAttribute('aria-checked', val === n ? 'true' : 'false');
   });
 }
 
 async function avaliar(estrelas) {
-  const wrap = document.getElementById('avaliacaoEstrelas');
-  const slug = getSlug();
+  if (!LIVRO_SLUG) return;
 
-  const r = await req('livros.php', { acao: 'avaliar', livro: slug, estrelas });
-
-  if (!r.ok) {
-    if (r.erro?.includes('logado')) {
-      toast('Faça login para avaliar este livro.', 'aviso');
-    } else {
-      toast(r.erro || 'Erro ao avaliar.', 'erro');
-    }
+  /* Verificar login */
+  const estado = await chamarAPI(`livros.php?acao=estado&livro=${LIVRO_SLUG}`);
+  if (!estado.ok || !estado.logado) {
+    mostrarToast('Faça login para avaliar este livro.', 'info');
+    setTimeout(() => redirecionarParaLogin('avaliar'), 1500);
     return;
   }
 
-  if (wrap) wrap.dataset.selecionada = estrelas;
-  iluminar(estrelas);
-  toast(r.mensagem, 'sucesso', 3000);
-
-  // Atualizar média exibida
-  const elMedia = document.getElementById('mediaEstrelas');
-  const elTotal = document.getElementById('totalAval');
-  if (elMedia && r.media_estrelas) elMedia.textContent = r.media_estrelas.toFixed(1);
-  if (elTotal && r.total_aval)  elTotal.textContent = r.total_aval;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   DOWNLOAD PROTEGIDO
-   ════════════════════════════════════════════════════════════════ */
-window.baixarCapitulo = async function(formato) {
-  const slug = getSlug();
-  if (!slug) return;
-
-  const btn = document.querySelector(`[data-formato="${formato}"]`);
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Preparando…'; }
-
-  // Verificar sessão antes
-  let sessao;
-  try {
-    const r = await fetch('../backend/auth/sessao.php', { credentials: 'same-origin' });
-    sessao = await r.json();
-  } catch { sessao = { ok: false }; }
-
-  if (!sessao?.ok || !sessao.logado) {
-    if (btn) { btn.disabled = false; btn.innerHTML = labelBtn(formato); }
-    toast('Faça login para baixar este capítulo gratuitamente.', 'aviso', 5000);
-    setTimeout(() => { window.location.href = '../login.html'; }, 2000);
-    return;
-  }
-
-  // Disparar download via link temporário
-  const url = `../backend/downloads.php?livro=${encodeURIComponent(slug)}&formato=${formato}`;
-  const a = document.createElement('a');
-  a.href = url;
-  a.click();
-
-  if (btn) {
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.innerHTML = labelBtn(formato);
-    }, 2500);
-  }
-
-  toast(`Download em ${formato.toUpperCase()} iniciado! Boa leitura. 📖`, 'sucesso', 4000);
-};
-
-function labelBtn(formato) {
-  return formato === 'pdf'
-    ? '<i class="fa fa-file-pdf-o" aria-hidden="true"></i> Baixar PDF'
-    : '<i class="fa fa-book" aria-hidden="true"></i> Baixar ePub';
-}
-
-/* ════════════════════════════════════════════════════════════════
-   CONTADORES PÚBLICOS (total de downloads do livro)
-   ════════════════════════════════════════════════════════════════ */
-async function carregarContadores(slug) {
-  const r = await req(`livros.php?acao=contadores&livro=${encodeURIComponent(slug)}`, null, 'GET');
-  if (!r.ok) return;
-
-  const elDl    = document.getElementById('totalDownloads');
-  const elMedia = document.getElementById('mediaEstrelas');
-  const elTotal = document.getElementById('totalAval');
-
-  if (elDl    && r.downloads     !== undefined) elDl.textContent    = r.downloads.toLocaleString('pt-BR');
-  if (elMedia && r.media_estrelas !== null)      elMedia.textContent = r.media_estrelas.toFixed(1);
-  if (elTotal && r.total_aval    !== undefined)  elTotal.textContent = r.total_aval;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   ESTADO DO USUÁRIO (carregar fav e estrelas ao abrir página)
-   ════════════════════════════════════════════════════════════════ */
-async function carregarEstadoUsuario(slug) {
-  const r = await req(`livros.php?acao=estado&livro=${encodeURIComponent(slug)}`, null, 'GET');
-  if (!r.ok || !r.logado) return;
-
-  atualizarBtnFavorito(r.favorito);
-
-  if (r.estrelas > 0) {
-    const wrap = document.getElementById('avaliacaoEstrelas');
-    if (wrap) wrap.dataset.selecionada = r.estrelas;
-    iluminar(r.estrelas);
-  }
-}
-
-/* ════════════════════════════════════════════════════════════════
-   INICIALIZAÇÃO
-   ════════════════════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', async () => {
-  const slug = getSlug();
-  if (!slug) return;
-
-  // Carregar dados em paralelo
-  await Promise.all([
-    carregarComentarios(slug),
-    carregarContadores(slug),
-    carregarEstadoUsuario(slug),
-  ]);
-
-  // Iniciar sistema de estrelas
-  iniciarEstrelas();
-
-  // Event: botão favoritar
-  const btnFav = document.getElementById('btnFavoritar');
-  if (btnFav) btnFav.addEventListener('click', toggleFavorito);
-
-  // Formulários de comentário — associar slug
-  document.querySelectorAll('form[onsubmit*="enviarComentario"]').forEach(f => {
-    if (!f.dataset.livro) f.dataset.livro = slug;
+  const data = await chamarAPI('livros.php', {
+    method: 'POST',
+    body: JSON.stringify({ acao: 'avaliar', livro: LIVRO_SLUG, estrelas }),
   });
+
+  if (data.ok) {
+    aplicarEstrelasUsuario(data.estrelas);
+    renderizarEstrelasMedia(data.media_estrelas);
+    const elMedia = document.getElementById('media-estrelas');
+    const elTotal = document.getElementById('total-avaliacoes');
+    if (elMedia) elMedia.textContent = data.media_estrelas.toFixed(1);
+    if (elTotal) elTotal.textContent = data.total_aval;
+    mostrarToast(data.mensagem, 'sucesso');
+  } else {
+    mostrarToast(data.erro || 'Erro ao registrar avaliação.', 'erro');
+  }
+}
+
+/* ── DOWNLOAD ───────────────────────────────────────────────────── */
+
+async function baixarCapitulo(formato) {
+  if (!LIVRO_SLUG) return;
+
+  /* Verificar login primeiro */
+  const estado = await chamarAPI(`livros.php?acao=estado&livro=${LIVRO_SLUG}`);
+  if (!estado.ok || !estado.logado) {
+    mostrarToast(`Faça login para baixar a amostra ${formato.toUpperCase()} gratuita.`, 'info');
+    setTimeout(() => redirecionarParaLogin('download'), 1500);
+    return;
+  }
+
+  mostrarToast(`Iniciando download ${formato.toUpperCase()}…`, 'info');
+
+  /* Abre o download via URL protegida */
+  const url = `${LIVROS_BASE}/downloads.php?livro=${encodeURIComponent(LIVRO_SLUG)}&formato=${encodeURIComponent(formato)}`;
+  const link = document.createElement('a');
+  link.href = url;
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => link.remove(), 2000);
+
+  /* Atualizar contador de downloads após pequeno delay */
+  setTimeout(async () => {
+    const contadores = await chamarAPI(`livros.php?acao=contadores&livro=${LIVRO_SLUG}`);
+    if (contadores.ok) {
+      const el = document.getElementById('contador-downloads');
+      if (el) el.textContent = contadores.downloads;
+    }
+  }, 2000);
+}
+
+/* ── INICIALIZAÇÃO ──────────────────────────────────────────────── */
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!LIVRO_SLUG) {
+    console.warn('[livros-shared] Nenhum data-livro encontrado no <body>. Defina data-livro="slug".');
+    return;
+  }
+
+  /* Bind: botão favoritar */
+  const btnFav = document.getElementById('btn-favoritar');
+  if (btnFav) {
+    btnFav.addEventListener('click', alternarFavorito);
+  }
+
+  /* Bind: estrelas de avaliação */
+  document.querySelectorAll('.estrela-avaliacao').forEach(el => {
+    el.addEventListener('click', () => avaliar(parseInt(el.dataset.valor)));
+    el.addEventListener('mouseenter', () => {
+      const val = parseInt(el.dataset.valor);
+      document.querySelectorAll('.estrela-avaliacao').forEach(s => {
+        s.classList.toggle('hover', parseInt(s.dataset.valor) <= val);
+      });
+    });
+    el.addEventListener('mouseleave', () => {
+      document.querySelectorAll('.estrela-avaliacao').forEach(s => s.classList.remove('hover'));
+    });
+    el.setAttribute('role', 'radio');
+    el.setAttribute('tabindex', '0');
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        avaliar(parseInt(el.dataset.valor));
+      }
+    });
+  });
+
+  /* Bind: botões de download */
+  document.querySelectorAll('[data-download]').forEach(btn => {
+    btn.addEventListener('click', () => baixarCapitulo(btn.dataset.download));
+  });
+
+  /* Carregar estado do livro */
+  carregarEstado();
 });
