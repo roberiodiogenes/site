@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Pagamento não aprovado | Robério Diógenes</title>
+  <link rel="icon" type="image/png" href="../img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--fonte-ui);background:var(--fundo);color:var(--texto);min-height:100svh;display:flex;align-items:center;justify-content:center;padding:2rem}
+    .card{background:var(--fundo-card);border:1px solid var(--borda);border-radius:var(--raio-xl);padding:3rem 2.5rem;max-width:480px;width:100%;text-align:center;box-shadow:var(--sombra-md)}
+    .icone{width:72px;height:72px;border-radius:50%;background:rgba(192,57,43,0.1);border:2px solid #c0392b;display:flex;align-items:center;justify-content:center;margin:0 auto 1.75rem;font-size:1.8rem;color:#c0392b}
+    h1{font-family:var(--fonte-titulo);font-size:1.8rem;font-weight:400;margin-bottom:.75rem}
+    p{font-size:.95rem;color:var(--texto-2);line-height:1.7;margin-bottom:.5rem}
+    .btns{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:2rem}
+    .btn{padding:.75rem 1.5rem;border-radius:var(--raio-lg);font-family:var(--fonte-display);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;text-decoration:none;transition:all .2s}
+    .btn-primario{background:var(--ouro);color:#1A0F00;border:none}
+    .btn-primario:hover{opacity:.85}
+    .btn-sec{background:none;border:1px solid var(--borda-media);color:var(--texto-3)}
+    .btn-sec:hover{border-color:var(--ouro);color:var(--ouro)}
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="icone"><i class="fa fa-xmark" aria-hidden="true"></i></div>
+  <h1>Pagamento não aprovado</h1>
+  <p>Houve um problema e seu pagamento não foi concluído. Nenhum valor foi cobrado.</p>
+  <p style="font-size:.82rem;color:var(--texto-3);margin-top:.25rem">Verifique os dados do cartão ou tente outro método de pagamento.</p>
+  <div class="btns">
+    <a href="javascript:history.back()" class="btn btn-primario">
+      <i class="fa fa-rotate-left" aria-hidden="true"></i> Tentar novamente
+    </a>
+    <a href="../livros.html" class="btn btn-sec">Voltar à biblioteca</a>
+  </div>
+</div>
+</body>
+</html>

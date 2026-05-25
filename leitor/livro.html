@@ -429,6 +429,21 @@
 <!-- ══ TOAST DE NOTIFICAÇÕES ══════════════════════════════════ -->
 <div class="leitor-toast" id="leitor-toast" role="status" aria-live="polite"></div>
 
+<!-- ══ RODAPÉ LEGAL DISCRETO ══════════════════════════════════ -->
+<footer class="leitor-rodape-legal" aria-label="Informações legais">
+  <a href="documentacao-legal.html"
+     target="_blank"
+     rel="noopener"
+     title="Termos de uso, direitos autorais e política de privacidade do leitor">
+    <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+    Termos de uso do leitor
+  </a>
+  <span class="leitor-rodape-sep" aria-hidden="true">·</span>
+  <span>© <span id="leitor-rodape-ano"></span> Robério Diógenes</span>
+  <span class="leitor-rodape-sep" aria-hidden="true">·</span>
+  <span>Conteúdo protegido pela Lei nº 9.610/98</span>
+</footer>
+
 <!-- ══ SCRIPTS ════════════════════════════════════════════════ -->
 <script src="../js/leitor.js"></script>
 
@@ -448,6 +463,10 @@
       }
     });
   });
+
+  // Ano no rodapé legal
+  const anoEl = document.getElementById('leitor-rodape-ano');
+  if (anoEl) anoEl.textContent = new Date().getFullYear();
 </script>
 
 </body>

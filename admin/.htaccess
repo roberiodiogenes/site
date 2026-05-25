@@ -1,0 +1,5 @@
+Options -Indexes
+<FilesMatch "^(?!login\.php|logout\.php|index\.php|usuarios\.php|assinaturas\.php|compras\.php|livros\.php|blog\.php)">
+  Order deny,allow
+  Deny from all
+</FilesMatch>

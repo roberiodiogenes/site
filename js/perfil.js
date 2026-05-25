@@ -101,11 +101,23 @@ function exibirPerfil(u) {
   const card = document.getElementById('perfilCard');
   if (card) {
     card.innerHTML = `
-      <div class="perfil-avatar">
+      <div class="perfil-avatar" id="avatarWrap" role="button" tabindex="0"
+           title="Clique para alterar sua foto de perfil"
+           aria-label="Alterar foto de perfil">
         ${u.foto_url
-          ? `<img src="${esc(u.foto_url)}" alt="Avatar de ${esc(u.nome)}" />`
-          : `<i class="fa fa-user-circle" aria-hidden="true"></i>`}
+          ? `<img src="${esc(u.foto_url)}" alt="Avatar de ${esc(u.nome)}" id="avatarImg" />`
+          : `<i class="fa fa-user-circle" aria-hidden="true" id="avatarIcone"></i>`}
+        <div class="perfil-avatar-upload" aria-hidden="true">
+          <i class="fa fa-camera"></i>
+        </div>
       </div>
+      <button type="button" id="btnRemoverFoto"
+              style="display:none;background:none;border:none;color:var(--ferrugem,#c0392b);
+                     font-size:0.72rem;font-family:var(--fonte-display);letter-spacing:0.06em;
+                     cursor:pointer;opacity:0.7;margin-top:0.25rem;transition:opacity 0.2s"
+              onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0.7">
+        Remover foto
+      </button>
       <div class="perfil-nome">${esc(u.nome)}</div>
       <div class="perfil-email">${esc(u.email)}</div>
       <div class="perfil-badges">

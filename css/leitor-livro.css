@@ -950,3 +950,59 @@ body.leitor-corpo[data-largura="larga"]    { --leitor-largura: 860px; }
     color: black;
   }
 }
+
+/* ================================================================
+   RODAPÉ LEGAL DISCRETO (livro.html)
+   ================================================================ */
+.leitor-rodape-legal {
+  width: 100%;
+  padding: 1rem 2rem 1.5rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  border-top: 1px solid var(--leitor-borda);
+  margin-top: 1rem;
+}
+
+.leitor-rodape-legal a,
+.leitor-rodape-legal span {
+  font-family: var(--fonte-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  color: var(--texto-3, #8C7D65);
+  text-decoration: none;
+  opacity: 0.65;
+  transition: opacity 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.leitor-rodape-legal a:hover {
+  opacity: 1;
+  color: var(--ouro);
+}
+
+.leitor-rodape-sep {
+  opacity: 0.35 !important;
+}
+
+/* Ajuste para modo escuro */
+body.leitor-corpo[data-fundo="preto"] .leitor-rodape-legal a,
+body.leitor-corpo[data-fundo="preto"] .leitor-rodape-legal span {
+  color: rgba(232,220,200,0.45);
+}
+body.leitor-corpo[data-fundo="preto"] .leitor-rodape-legal a:hover {
+  color: var(--ouro);
+  opacity: 1;
+}
+
+@media (max-width: 480px) {
+  .leitor-rodape-legal {
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1rem;
+  }
+  .leitor-rodape-sep { display: none; }
+}
