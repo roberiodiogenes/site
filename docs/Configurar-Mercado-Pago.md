@@ -6,6 +6,9 @@ Clique em "Suas integrações" → "Criar aplicação" (ou use uma existente)
 No menu da aplicação, vá em "Credenciais" → aba "Credenciais de teste"
 Copie o Access Token (começa com TEST-) e a Public Key (começa com TEST-)
 
+    ## Public Key:  TEST-2374bdf2-771f-44e1-b4c0-76278701240e
+    ## Access Token: TEST-4691823925683572-052605-c0a7c3d4700d19dfa5ef338ab35f1a56-78507919
+
 
 # Passo 2 — Colar no backend/pagamento.php
 Abra o arquivo e substitua as linhas 24 e 28:

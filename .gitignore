@@ -4,6 +4,14 @@
 
 # ── Configuração sensível (NUNCA commitar) ────────────────────
 backend/config.php
+backend/mailer.php
+
+# ── Tokens e credenciais de pagamento ────────────────────────
+# pagamento.php deve ser commitado SEM tokens reais;
+# tokens de produção ficam em config.php (não commitado)
+
+# ── Diagnóstico (apagar antes do deploy) ─────────────────────
+backend/diagnostico.php
 
 # ── Dependências de sistema ───────────────────────────────────
 node_modules/
@@ -25,8 +33,12 @@ logs/
 # ── Uploads de usuários (manter pasta, ignorar conteúdo) ──────
 uploads/*
 !uploads/.gitkeep
+uploads/avatars/*
+!uploads/avatars/.gitkeep
 
-# ── Cache ─────────────────────────────────────────────────────
+# ── Cache e temporários ───────────────────────────────────────
 .cache/
 tmp/
 testeemail.php
+*.bak
+*.backup

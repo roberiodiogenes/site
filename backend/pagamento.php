@@ -21,11 +21,11 @@ iniciarSessao();
    Crie suas credenciais em: https://www.mercadopago.com.br/developers
    → Suas integrações → Credenciais de produção / teste               */
 define('MP_ACCESS_TOKEN', AMBIENTE === 'local'
-    ? 'TEST-COLE_SEU_ACCESS_TOKEN_DE_TESTE_AQUI'   // ← token de teste (sandbox)
+    ? 'TEST-4691823925683572-052605-c0a7c3d4700d19dfa5ef338ab35f1a56-78507919'   // ← token de teste (sandbox)
     : 'APP_USR-COLE_SEU_ACCESS_TOKEN_PRODUCAO_AQUI' // ← token de produção
 );
 define('MP_PUBLIC_KEY', AMBIENTE === 'local'
-    ? 'TEST-COLE_SUA_PUBLIC_KEY_DE_TESTE_AQUI'
+    ? 'TEST-2374bdf2-771f-44e1-b4c0-76278701240e'
     : 'APP_USR-COLE_SUA_PUBLIC_KEY_PRODUCAO_AQUI'
 );
 

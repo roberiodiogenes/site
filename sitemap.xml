@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <!-- ═══ PÁGINAS PRINCIPAIS ════════════════════════════════════ -->
   <url>
     <loc>https://www.roberiodiogenes.com/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.00</priority>
-  </url>
-  <url>
-    <loc>https://www.roberiodiogenes.com/index.html</loc>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
   </url>
@@ -24,8 +21,8 @@
   </url>
   <url>
     <loc>https://www.roberiodiogenes.com/blog.html</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.80</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.roberiodiogenes.com/contato.html</loc>
@@ -41,6 +38,78 @@
     <loc>https://www.roberiodiogenes.com/termos.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.20</priority>
+  </url>
+
+  <!-- ═══ LEITOR ONLINE ═════════════════════════════════════════ -->
+  <url>
+    <loc>https://www.roberiodiogenes.com/leitor/index.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- ═══ BLOG — rich snippets e visitas orgânicas ══════════════ -->
+  <url>
+    <loc>https://www.roberiodiogenes.com/blog/post-01.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.roberiodiogenes.com/img/post-bastidores-setima-lei.jpg</image:loc>
+      <image:title>Bastidores de A Sétima Lei</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/blog/post-02.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.roberiodiogenes.com/img/post-silencio.jpg</image:loc>
+      <image:title>O peso do silêncio entre duas pessoas que se amaram</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/blog/post-03.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.roberiodiogenes.com/img/post-escritor.jpg</image:loc>
+      <image:title>Por que escrevo sobre dor</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/blog/post-04.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://www.roberiodiogenes.com/img/post-cidade.jpg</image:loc>
+      <image:title>23h47 em Cascavel — onde as histórias nascem</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/blog/post-05.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://www.roberiodiogenes.com/img/post-horror.jpg</image:loc>
+      <image:title>Bastidores de O Abismo das Almas</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/blog/post-06.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://www.roberiodiogenes.com/img/post-lumen.jpg</image:loc>
+      <image:title>O labirinto de Lúmen</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/blog/post-07.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://www.roberiodiogenes.com/img/post-solidao.jpg</image:loc>
+      <image:title>Sobre a solidão que produz</image:title>
+    </image:image>
   </url>
 
   <!-- ═══ LIVROS — prioridade alta para SEO ═════════════════════ -->
@@ -96,6 +165,22 @@
   </url>
   <url>
     <loc>https://www.roberiodiogenes.com/livros/o-abismo-das-almas.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <!-- Novos livros adicionados -->
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/o-farol-do-afogado.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/o-quarto-das-moscas.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/livros/linhas-e-agulhas.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>

@@ -6,7 +6,7 @@
 Options -Indexes
 ServerSignature Off
 
-# ── HTTPS (ativo apenas em produção — comentar no XAMPP) ─────
+# ── HTTPS: descomentar após ativar SSL no Hostgator ──────────
 # RewriteEngine On
 # RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
@@ -16,13 +16,19 @@ ErrorDocument 403 /404.html
 ErrorDocument 404 /404.html
 
 # ── Proteger arquivos sensíveis ───────────────────────────────
-<FilesMatch "(config\.php|\.env|\.git|composer\.(json|lock)|package(-lock)?\.json)$">
+<FilesMatch "(config\.php|mailer\.php|\.env|\.git|composer\.(json|lock)|package(-lock)?\.json)$">
   Order Allow,Deny
   Deny from all
 </FilesMatch>
 
-# ── Bloquear acesso direto a arquivos de log ──────────────────
+# ── Bloquear acesso direto a arquivos de log, SQL e scripts ──
 <FilesMatch "\.(log|sql|bak|backup|sh|bash)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
+
+# ── Bloquear ferramentas de diagnóstico ───────────────────────
+<FilesMatch "^(diagnostico|phpinfo|info|test|teste)\.php$">
   Order Allow,Deny
   Deny from all
 </FilesMatch>
@@ -34,7 +40,7 @@ ErrorDocument 404 /404.html
   Header set X-XSS-Protection "1; mode=block"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
   Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
-  # HSTS — ativar só após HTTPS estar confirmado em produção
+  # HSTS — ativar APÓS confirmar HTTPS funcionando em produção:
   # Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 </IfModule>
 

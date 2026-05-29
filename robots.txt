@@ -1,11 +1,11 @@
 # ==========================================
-# Robots.txt oficial do site Robério Diógenes
-# Direcionamento técnico para indexação orgânica
+# Robots.txt — Robério Diógenes
 # ==========================================
 
 User-agent: *
 
-# Permitir a indexação de todo o conteúdo público principal
+# ── Conteúdo público principal (indexar) ─────────────────
+Allow: /$
 Allow: /index.html
 Allow: /livros.html
 Allow: /autor.html
@@ -14,15 +14,31 @@ Allow: /contato.html
 Allow: /privacidade.html
 Allow: /termos.html
 Allow: /livros/
+Allow: /blog/
 Allow: /img/
 Allow: /css/
 Allow: /js/
 
-# Bloquear pastas privadas do sistema e scripts de processamento (E-E-A-T & Segurança)
-Disallow: /backend/
-Disallow: /leitor/
-Disallow: /config/
-Disallow: /db/
+# ── Leitor online (página de apresentação indexável) ─────
+Allow: /leitor/index.html
 
-# Indicar o mapa do site para acelerar o rastreamento do Google
+# ── Bloquear áreas privadas e de sistema ─────────────────
+Disallow: /backend/
+Disallow: /admin/
+Disallow: /leitor/perfil.html
+Disallow: /leitor/livro.html
+Disallow: /leitor/livro.php
+Disallow: /leitor/documentacao-legal.html
+Disallow: /leitor/_index.html
+Disallow: /pagamento/
+Disallow: /download/
+Disallow: /uploads/
+Disallow: /livros-conteudo/
+Disallow: /cadastro.html
+Disallow: /login.html
+Disallow: /recuperar-senha.html
+Disallow: /resetar-senha.html
+Disallow: /docs/
+Disallow: /404.html
+
 Sitemap: https://www.roberiodiogenes.com/sitemap.xml

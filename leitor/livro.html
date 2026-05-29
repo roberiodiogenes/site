@@ -25,17 +25,19 @@
 
       // Mapa estático de livros (futuramente virá do backend via PHP include)
       const LIVROS = {
-        'lumen':              { titulo: 'Lúmen – A Outra Metade do Céu',   totalCapitulos: 12 },
-        'jogo-das-mascaras':  { titulo: 'O Jogo das Máscaras',              totalCapitulos: 10 },
-        'a-setima-lei':       { titulo: 'A Sétima Lei',                     totalCapitulos:  8 },
-        'a-marca-da-besta':   { titulo: 'A Marca da Besta',                 totalCapitulos:  9 },
-        'caminhos-de-outono': { titulo: 'Caminhos de Outono',               totalCapitulos:  7 },
-        'cartas-do-passado':  { titulo: 'Cartas do Passado',                totalCapitulos: 11 },
-        'das-coisas-que-o-amor-faz': { titulo: 'Das Coisas que o Amor Faz', totalCapitulos:  8 },
-        'genesis':            { titulo: 'Gênesis',                          totalCapitulos: 10 },
-        'mares-secretas':     { titulo: 'Marés Secretas',                   totalCapitulos:  9 },
-        'o-abismo-das-almas': { titulo: 'O Abismo das Almas',               totalCapitulos:  8 },
-        'rosas-e-espinhos':   { titulo: 'Rosas e Espinhos',                 totalCapitulos:  6 },
+        // slug deve ser IDÊNTICO ao data-livro="" na página do livro
+        // e ao slug cadastrado no banco de dados (tabela livros)
+        'lumen':                   { titulo: 'Lúmen – A Outra Metade do Céu',  totalCapitulos:  9 },
+        'jogo-das-mascaras':       { titulo: 'O Jogo das Máscaras',             totalCapitulos: 10 },
+        'a-setima-lei':            { titulo: 'A Sétima Lei',                    totalCapitulos:  8 },
+        'a-marca-da-besta':        { titulo: 'A Marca da Besta',                totalCapitulos:  9 },
+        'caminhos-de-outono':      { titulo: 'Caminhos de Outono',              totalCapitulos:  7 },
+        'cartas-do-passado':       { titulo: 'Cartas do Passado',               totalCapitulos: 11 },
+        'das-coisas-que-o-amor-faz': { titulo: 'Das Coisas que o Amor Faz',    totalCapitulos:  8 },
+        'genesis':                 { titulo: 'Gênesis',                         totalCapitulos: 10 },
+        'mares-secretas-do-amor':  { titulo: 'As Marés Secretas do Amor',       totalCapitulos:  9 },
+        'o-abismo-das-almas':      { titulo: 'O Abismo das Almas',              totalCapitulos:  8 },
+        'rosas-e-espinhos':        { titulo: 'Rosas e Espinhos',                totalCapitulos:  6 },
       };
 
       const info = LIVROS[slug] || {};

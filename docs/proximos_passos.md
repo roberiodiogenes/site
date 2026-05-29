@@ -114,3 +114,7 @@
     6. Das coisas que o amor faz - livros/das-coisas-que-o-amor-faz.html - Comentários não funionam;
     7. A marca da besta - livros/a-marca-da-besta.html - Atualizarpágina. Comentários não funcionam;
     
+# 27/05/2026
+1. Reorganizar página livros. Muitos botões ficando confuso. Layout mais otimzado e organizado visualmente;
+2. Integrar leitor ao site. Atualmente não existe links no site para o leitor;
+3. Criar manual do uauário (leitor, compra, assinaura, conta no site, cancelamentos, etc) - Também atualizar a documentção, resumindo em LEIAME.md para o site e HEADME.md para o Github;

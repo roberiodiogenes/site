@@ -1,337 +1,282 @@
 <?php
-/* ================================================================
-   ROBÉRIO DIÓGENES — admin/index.php
-   Painel de administração protegido.
+$ADMIN_PAGE = 'dashboard';
+require_once __DIR__ . '/_admin.php';
 
-   Acesso: /admin/  (redireciona para login se não autenticado)
-   Login:  /admin/login.php
-   ================================================================ */
+/* ── Estatísticas principais ── */
+$sUsuarios  = $pdo->query("SELECT COUNT(*) FROM usuarios WHERE ativo=1")->fetchColumn();
+$sAssinat   = $pdo->query("SELECT COUNT(*) FROM assinaturas WHERE status='ativa' AND expira_em>NOW()")->fetchColumn();
+$sCompras   = $pdo->query("SELECT COUNT(*) FROM compras WHERE status='aprovada'")->fetchColumn();
+$sComents   = $pdo->query("SELECT COUNT(*) FROM comentarios WHERE aprovado=0")->fetchColumn();
 
-session_name('rd_admin_sess');
-session_start();
+$receitaComprasMes = (float)$pdo->query(
+    "SELECT COALESCE(SUM(preco_pago),0) FROM compras
+     WHERE status='aprovada' AND MONTH(comprado_em)=MONTH(NOW()) AND YEAR(comprado_em)=YEAR(NOW())"
+)->fetchColumn();
 
-if (empty($_SESSION['admin_id'])) {
-    header('Location: login.php');
-    exit;
-}
+$receitaAssinMes = (float)$pdo->query(
+    "SELECT COALESCE(SUM(p.preco),0) FROM assinaturas a
+     JOIN planos p ON p.id=a.plano_id
+     WHERE a.status='ativa' AND MONTH(a.inicio_em)=MONTH(NOW()) AND YEAR(a.inicio_em)=YEAR(NOW())"
+)->fetchColumn();
 
-require_once __DIR__ . '/../backend/config.php';
-$pdo = db();
+$receitaMes = $receitaComprasMes + $receitaAssinMes;
 
-/* ── Estatísticas do dashboard ─────────────────────────────── */
-$stats = [];
+/* ── Receita últimos 6 meses (para gráfico) ── */
+$receita6m = $pdo->query(
+    "SELECT DATE_FORMAT(comprado_em,'%Y-%m') AS mes,
+            SUM(preco_pago) AS total
+     FROM compras WHERE status='aprovada'
+       AND comprado_em >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+     GROUP BY mes ORDER BY mes ASC"
+)->fetchAll();
 
-$stats['usuarios']      = $pdo->query("SELECT COUNT(*) FROM usuarios WHERE ativo=1")->fetchColumn();
-$stats['assinaturas']   = $pdo->query("SELECT COUNT(*) FROM assinaturas WHERE status='ativa' AND expira_em > NOW()")->fetchColumn();
-$stats['compras']       = $pdo->query("SELECT COUNT(*) FROM compras WHERE status='aprovada'")->fetchColumn();
-$stats['receita_mes']   = $pdo->query("SELECT COALESCE(SUM(preco_pago),0) FROM compras WHERE status='aprovada' AND MONTH(comprado_em)=MONTH(NOW()) AND YEAR(comprado_em)=YEAR(NOW())")->fetchColumn();
-$stats['receita_assin'] = $pdo->query("SELECT COALESCE(SUM(p.preco),0) FROM assinaturas a JOIN planos p ON p.id=a.plano_id WHERE a.status='ativa' AND MONTH(a.inicio_em)=MONTH(NOW()) AND YEAR(a.inicio_em)=YEAR(NOW())")->fetchColumn();
-
-$receitaTotal = (float)$stats['receita_mes'] + (float)$stats['receita_assin'];
-
-/* ── Últimos usuários ──────────────────────────────────────── */
+/* ── Últimos 6 usuários ── */
 $ultimosUsuarios = $pdo->query(
-    "SELECT id, nome, email, created_at, ultimo_login, ativo
-     FROM usuarios ORDER BY created_at DESC LIMIT 8"
+    "SELECT id,nome,email,created_at,
+     (SELECT COUNT(*) FROM compras WHERE usuario_id=u.id AND status='aprovada') AS n_compras
+     FROM usuarios u ORDER BY created_at DESC LIMIT 6"
 )->fetchAll();
 
-/* ── Últimas compras ───────────────────────────────────────── */
+/* ── Últimas 6 compras ── */
 $ultimasCompras = $pdo->query(
-    "SELECT c.id, u.nome, u.email, c.livro_slug, c.preco_pago, c.status, c.comprado_em
-     FROM compras c JOIN usuarios u ON u.id=c.usuario_id
-     ORDER BY c.comprado_em DESC LIMIT 8"
+    "SELECT c.id,u.nome,u.email,c.livro_slug,c.preco_pago,c.status,c.comprado_em,l.titulo
+     FROM compras c
+     JOIN usuarios u ON u.id=c.usuario_id
+     LEFT JOIN livros l ON l.slug=c.livro_slug
+     ORDER BY c.comprado_em DESC LIMIT 6"
 )->fetchAll();
 
-/* ── Assinaturas ativas ────────────────────────────────────── */
-$assinaturasAtivas = $pdo->query(
-    "SELECT a.id, u.nome, u.email, p.nome AS plano, a.inicio_em, a.expira_em,
-            DATEDIFF(a.expira_em, NOW()) AS dias_rest
+/* ── Assinaturas a vencer em 7 dias ── */
+$aVencer = $pdo->query(
+    "SELECT a.id,u.nome,u.email,p.nome AS plano,a.expira_em,
+     DATEDIFF(a.expira_em,NOW()) AS dias_rest
      FROM assinaturas a
      JOIN usuarios u ON u.id=a.usuario_id
      JOIN planos   p ON p.id=a.plano_id
      WHERE a.status='ativa' AND a.expira_em > NOW()
-     ORDER BY a.expira_em ASC LIMIT 10"
+       AND DATEDIFF(a.expira_em,NOW()) <= 7
+     ORDER BY a.expira_em ASC LIMIT 8"
 )->fetchAll();
 
-$adminNome = htmlspecialchars($_SESSION['admin_nome'] ?? 'Admin');
+/* ── Comentários pendentes ── */
+$comentPend = $pdo->query(
+    "SELECT c.id,c.referencia,c.tipo,c.texto,c.criado_em,
+     COALESCE(u.nome,c.nome) AS autor
+     FROM comentarios c
+     LEFT JOIN usuarios u ON u.id=c.usuario_id
+     WHERE c.aprovado=0
+     ORDER BY c.criado_em DESC LIMIT 6"
+)->fetchAll();
+
+/* ── Livro mais vendido do mês ── */
+$topLivro = $pdo->query(
+    "SELECT l.titulo,COUNT(*) AS total
+     FROM compras c JOIN livros l ON l.slug=c.livro_slug
+     WHERE c.status='aprovada'
+       AND MONTH(c.comprado_em)=MONTH(NOW()) AND YEAR(c.comprado_em)=YEAR(NOW())
+     GROUP BY c.livro_slug ORDER BY total DESC LIMIT 1"
+)->fetch();
+
+$mesAtual = date('F Y');
 ?>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>Painel Admin | Robério Diógenes</title>
-  <link rel="icon" type="image/png" href="../img/favicon.png" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --ouro: #B8860B; --fundo: #0D0A07; --fundo-2: #151008; --fundo-card: #1C1408;
-      --texto: #E8DCC8; --texto-2: #C8B898; --texto-3: #8C7D65;
-      --borda: rgba(184,134,11,0.18); --borda-2: rgba(184,134,11,0.30);
-      --raio: 8px; --raio-lg: 12px;
-      --verde: #2E7D32; --vermelho: #c0392b; --azul: #1565C0;
-    }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--fundo); color: var(--texto); min-height: 100vh; display: flex; }
 
-    /* ── Sidebar ── */
-    .sidebar {
-      width: 240px; background: var(--fundo-2); border-right: 1px solid var(--borda);
-      display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh;
-      overflow-y: auto; z-index: 100;
-    }
-    .sidebar-logo {
-      padding: 1.5rem 1.25rem; border-bottom: 1px solid var(--borda);
-      font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ouro);
-    }
-    .sidebar-logo strong { display: block; font-size: 1rem; letter-spacing: 0.05em; }
-    .sidebar-nav { padding: 1rem 0; flex: 1; }
-    .nav-item {
-      display: flex; align-items: center; gap: 0.75rem;
-      padding: 0.7rem 1.25rem; color: var(--texto-3); text-decoration: none;
-      font-size: 0.85rem; transition: all 0.15s; border-left: 3px solid transparent;
-    }
-    .nav-item:hover { color: var(--ouro); background: rgba(184,134,11,0.06); border-left-color: var(--ouro); }
-    .nav-item.ativo  { color: var(--ouro); background: rgba(184,134,11,0.10); border-left-color: var(--ouro); }
-    .nav-item i { width: 16px; text-align: center; font-size: 0.9rem; }
-    .nav-sep { border: none; border-top: 1px solid var(--borda); margin: 0.5rem 1.25rem; }
-    .sidebar-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--borda); }
-    .admin-info { font-size: 0.78rem; color: var(--texto-3); margin-bottom: 0.5rem; }
-    .btn-sair {
-      display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem;
-      color: var(--vermelho); text-decoration: none; opacity: 0.7; transition: opacity 0.2s;
-      background: none; border: none; cursor: pointer; padding: 0;
-    }
-    .btn-sair:hover { opacity: 1; }
-
-    /* ── Main ── */
-    .main { margin-left: 240px; flex: 1; padding: 2rem; min-height: 100vh; }
-    .page-titulo {
-      font-size: 1.5rem; font-weight: 500; color: var(--ouro); margin-bottom: 0.25rem;
-      font-family: Georgia, serif;
-    }
-    .page-sub { font-size: 0.82rem; color: var(--texto-3); margin-bottom: 2rem; }
-
-    /* ── Cards de stats ── */
-    .stats-grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; margin-bottom: 2rem; }
-    .stat-card {
-      background: var(--fundo-card); border: 1px solid var(--borda);
-      border-radius: var(--raio-lg); padding: 1.25rem 1.5rem;
-      display: flex; align-items: center; gap: 1rem;
-    }
-    .stat-icone { font-size: 1.6rem; color: var(--ouro); opacity: 0.7; width: 36px; text-align: center; }
-    .stat-valor { font-size: 1.8rem; font-weight: 700; line-height: 1; color: var(--texto); }
-    .stat-label { font-size: 0.72rem; color: var(--texto-3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.2rem; }
-
-    /* ── Tabelas ── */
-    .secao { background: var(--fundo-card); border: 1px solid var(--borda); border-radius: var(--raio-lg); margin-bottom: 1.5rem; overflow: hidden; }
-    .secao-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 1.5rem; border-bottom: 1px solid var(--borda);
-    }
-    .secao-titulo { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ouro); }
-    .secao-link { font-size: 0.72rem; color: var(--texto-3); text-decoration: none; transition: color 0.2s; }
-    .secao-link:hover { color: var(--ouro); }
-    table { width: 100%; border-collapse: collapse; }
-    th { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--texto-3); padding: 0.6rem 1.5rem; text-align: left; border-bottom: 1px solid var(--borda); }
-    td { padding: 0.7rem 1.5rem; font-size: 0.83rem; color: var(--texto-2); border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: rgba(184,134,11,0.04); }
-
-    /* ── Badges ── */
-    .badge {
-      display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px;
-      font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
-    }
-    .badge-verde    { background: rgba(46,125,50,0.15);  color: #4CAF50; border: 1px solid rgba(46,125,50,0.3); }
-    .badge-vermelho { background: rgba(192,57,43,0.15);  color: #e74c3c; border: 1px solid rgba(192,57,43,0.3); }
-    .badge-amarelo  { background: rgba(184,134,11,0.15); color: var(--ouro); border: 1px solid var(--borda-2); }
-    .badge-cinza    { background: rgba(255,255,255,0.06); color: var(--texto-3); border: 1px solid rgba(255,255,255,0.1); }
-
-    /* ── Botões de ação ── */
-    .btn-acao {
-      padding: 0.25rem 0.6rem; border-radius: 4px; border: 1px solid var(--borda);
-      background: transparent; color: var(--texto-3); font-size: 0.72rem;
-      cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex;
-      align-items: center; gap: 0.3rem;
-    }
-    .btn-acao:hover { border-color: var(--ouro); color: var(--ouro); }
-    .btn-acao.danger:hover { border-color: var(--vermelho); color: var(--vermelho); }
-
-    /* Grade de 2 colunas */
-    .grade-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-
-    @media (max-width: 900px) {
-      .sidebar { width: 60px; }
-      .sidebar-logo, .nav-item span, .sidebar-footer { display: none; }
-      .main { margin-left: 60px; }
-      .grade-2 { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 600px) {
-      .main { padding: 1rem; }
-      .stats-grade { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
-</head>
-<body>
-
-<!-- ══ SIDEBAR ═════════════════════════════════════════════════ -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <strong>Robério Diógenes</strong>
-    Painel Admin
-  </div>
-  <nav class="sidebar-nav">
-    <a href="index.php"         class="nav-item ativo"><i class="fa fa-gauge"></i><span>Dashboard</span></a>
-    <a href="usuarios.php"      class="nav-item"><i class="fa fa-users"></i><span>Usuários</span></a>
-    <a href="assinaturas.php"   class="nav-item"><i class="fa fa-crown"></i><span>Assinaturas</span></a>
-    <a href="compras.php"       class="nav-item"><i class="fa fa-shopping-cart"></i><span>Compras</span></a>
-    <hr class="nav-sep">
-    <a href="livros.php"        class="nav-item"><i class="fa fa-book"></i><span>Livros</span></a>
-    <a href="blog.php"          class="nav-item"><i class="fa fa-pen-nib"></i><span>Blog</span></a>
-    <hr class="nav-sep">
-    <a href="../index.html" target="_blank" class="nav-item"><i class="fa fa-globe"></i><span>Ver site</span></a>
-  </nav>
-  <div class="sidebar-footer">
-    <div class="admin-info"><?= $adminNome ?></div>
-    <form action="logout.php" method="post" style="display:inline">
-      <button type="submit" class="btn-sair"><i class="fa fa-sign-out-alt"></i> Sair</button>
-    </form>
-  </div>
-</aside>
-
-<!-- ══ MAIN ════════════════════════════════════════════════════ -->
-<main class="main">
+<div class="page-header">
   <h1 class="page-titulo">Dashboard</h1>
   <p class="page-sub"><?= date('l, d \d\e F \d\e Y') ?></p>
+</div>
 
-  <!-- Stats -->
-  <div class="stats-grade">
-    <div class="stat-card">
-      <i class="fa fa-users stat-icone"></i>
-      <div>
-        <div class="stat-valor"><?= number_format((int)$stats['usuarios']) ?></div>
-        <div class="stat-label">Usuários ativos</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <i class="fa fa-crown stat-icone"></i>
-      <div>
-        <div class="stat-valor"><?= number_format((int)$stats['assinaturas']) ?></div>
-        <div class="stat-label">Assinantes ativos</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <i class="fa fa-shopping-cart stat-icone"></i>
-      <div>
-        <div class="stat-valor"><?= number_format((int)$stats['compras']) ?></div>
-        <div class="stat-label">Compras aprovadas</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <i class="fa fa-dollar-sign stat-icone"></i>
-      <div>
-        <div class="stat-valor">R$ <?= number_format($receitaTotal, 0, ',', '.') ?></div>
-        <div class="stat-label">Receita este mês</div>
-      </div>
-    </div>
+<!-- ── 4 CARDS PRINCIPAIS ── -->
+<div class="stats-grade">
+  <div class="stat-card">
+    <i class="fa fa-users stat-icone"></i>
+    <div><div class="stat-valor"><?= number_format((int)$sUsuarios) ?></div><div class="stat-label">Usuários ativos</div></div>
   </div>
-
-  <div class="grade-2">
-
-    <!-- Últimos usuários -->
-    <div class="secao">
-      <div class="secao-header">
-        <span class="secao-titulo"><i class="fa fa-users"></i> Últimos usuários</span>
-        <a href="usuarios.php" class="secao-link">Ver todos →</a>
-      </div>
-      <table>
-        <thead><tr><th>Nome</th><th>Cadastro</th><th>Status</th></tr></thead>
-        <tbody>
-        <?php foreach ($ultimosUsuarios as $u): ?>
-        <tr>
-          <td>
-            <div style="font-weight:500;color:var(--texto)"><?= htmlspecialchars($u['nome']) ?></div>
-            <div style="font-size:0.72rem;color:var(--texto-3)"><?= htmlspecialchars($u['email']) ?></div>
-          </td>
-          <td style="font-size:0.75rem"><?= date('d/m/Y', strtotime($u['created_at'])) ?></td>
-          <td><span class="badge <?= $u['ativo'] ? 'badge-verde' : 'badge-vermelho' ?>"><?= $u['ativo'] ? 'Ativo' : 'Inativo' ?></span></td>
-        </tr>
-        <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Assinaturas próximas do vencimento -->
-    <div class="secao">
-      <div class="secao-header">
-        <span class="secao-titulo"><i class="fa fa-crown"></i> Assinaturas ativas</span>
-        <a href="assinaturas.php" class="secao-link">Ver todas →</a>
-      </div>
-      <table>
-        <thead><tr><th>Assinante</th><th>Plano</th><th>Vence em</th></tr></thead>
-        <tbody>
-        <?php foreach ($assinaturasAtivas as $a): ?>
-        <tr>
-          <td>
-            <div style="font-weight:500;color:var(--texto)"><?= htmlspecialchars($a['nome']) ?></div>
-            <div style="font-size:0.72rem;color:var(--texto-3)"><?= htmlspecialchars($a['email']) ?></div>
-          </td>
-          <td><span class="badge badge-amarelo"><?= htmlspecialchars($a['plano']) ?></span></td>
-          <td style="font-size:0.75rem">
-            <?= date('d/m/Y', strtotime($a['expira_em'])) ?>
-            <?php if ($a['dias_rest'] <= 7): ?>
-            <span class="badge badge-vermelho" style="margin-left:0.3rem"><?= $a['dias_rest'] ?>d</span>
-            <?php endif; ?>
-          </td>
-        </tr>
-        <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
-
+  <div class="stat-card">
+    <i class="fa fa-crown stat-icone"></i>
+    <div><div class="stat-valor"><?= number_format((int)$sAssinat) ?></div><div class="stat-label">Assinantes ativos</div></div>
   </div>
-
-  <!-- Últimas compras -->
-  <div class="secao">
-    <div class="secao-header">
-      <span class="secao-titulo"><i class="fa fa-shopping-cart"></i> Últimas compras</span>
-      <a href="compras.php" class="secao-link">Ver todas →</a>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Cliente</th>
-          <th>Livro</th>
-          <th>Valor</th>
-          <th>Status</th>
-          <th>Data</th>
-        </tr>
-      </thead>
-      <tbody>
-      <?php foreach ($ultimasCompras as $c): ?>
-      <tr>
-        <td>
-          <div style="font-weight:500;color:var(--texto)"><?= htmlspecialchars($c['nome']) ?></div>
-          <div style="font-size:0.72rem;color:var(--texto-3)"><?= htmlspecialchars($c['email']) ?></div>
-        </td>
-        <td><?= htmlspecialchars($c['livro_slug']) ?></td>
-        <td>R$ <?= number_format((float)$c['preco_pago'], 2, ',', '.') ?></td>
-        <td>
-          <?php
-          $badgeComp = ['aprovada'=>'badge-verde','pendente'=>'badge-amarelo','cancelada'=>'badge-vermelho','reembolsada'=>'badge-cinza'];
-          $bc = $badgeComp[$c['status']] ?? 'badge-cinza';
-          ?>
-          <span class="badge <?= $bc ?>"><?= ucfirst($c['status']) ?></span>
-        </td>
-        <td style="font-size:0.75rem"><?= date('d/m/Y H:i', strtotime($c['comprado_em'])) ?></td>
-      </tr>
-      <?php endforeach; ?>
-      </tbody>
-    </table>
+  <div class="stat-card">
+    <i class="fa fa-cart-shopping stat-icone"></i>
+    <div><div class="stat-valor"><?= number_format((int)$sCompras) ?></div><div class="stat-label">Compras aprovadas</div></div>
   </div>
+  <div class="stat-card">
+    <i class="fa fa-dollar-sign stat-icone"></i>
+    <div><div class="stat-valor">R$&nbsp;<?= number_format($receitaMes,0,',','.') ?></div><div class="stat-label">Receita este mês</div></div>
+  </div>
+</div>
 
-</main>
-</body>
-</html>
+<!-- ── ALERTAS ── -->
+<?php if ((int)$sComents > 0): ?>
+<div style="background:rgba(184,134,11,.08);border:1px solid var(--borda-2);border-radius:var(--raio-lg);padding:.7rem 1.1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;font-size:.85rem">
+  <i class="fa fa-comment-dots" style="color:var(--ouro)"></i>
+  <span><?= $sComents ?> comentário<?= (int)$sComents>1?'s':'' ?> aguardando moderação.</span>
+  <a href="blog.php?tipo=aguard" class="btn btn-sm btn-primario" style="margin-left:auto">Moderar</a>
+</div>
+<?php endif; ?>
+<?php if (count($aVencer) > 0): ?>
+<div style="background:rgba(183,28,28,.07);border:1px solid rgba(183,28,28,.25);border-radius:var(--raio-lg);padding:.7rem 1.1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;font-size:.85rem">
+  <i class="fa fa-triangle-exclamation" style="color:var(--vermelho)"></i>
+  <span><?= count($aVencer) ?> assinatura<?= count($aVencer)>1?'s':'' ?> vencem em até 7 dias.</span>
+  <a href="assinaturas.php?status=ativas" class="btn btn-sm btn-danger" style="margin-left:auto">Ver</a>
+</div>
+<?php endif; ?>
+<?php if ($topLivro): ?>
+<div style="background:var(--ouro-bg);border:1px solid var(--borda-2);border-radius:var(--raio-lg);padding:.7rem 1.1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;font-size:.85rem">
+  <i class="fa fa-trophy" style="color:var(--ouro)"></i>
+  <span>Livro mais vendido em <?= date('F') ?>: <strong><?= adm_esc($topLivro['titulo']) ?></strong> (<?= $topLivro['total'] ?> vendas)</span>
+</div>
+<?php endif; ?>
+
+<!-- ── GRÁFICO DE RECEITA ── -->
+<?php if ($receita6m): ?>
+<div class="secao" style="margin-bottom:1.25rem">
+  <div class="secao-header">
+    <span class="secao-titulo"><i class="fa fa-chart-line"></i> Receita — últimos 6 meses</span>
+  </div>
+  <div style="padding:1.25rem;display:flex;align-items:flex-end;gap:.5rem;height:110px">
+    <?php
+    // CORREÇÃO: Força o valor máximo a ser pelo menos 1 usando a função max() do PHP de forma estrita
+    $maiorValorEncontrado = (float)max(array_column($receita6m, 'total'));
+    $maxVal = $maiorValorEncontrado > 0 ? $maiorValorEncontrado : 1;
+
+    foreach ($receita6m as $rm):
+      $pct = round(((float)$rm['total'] / $maxVal) * 100);
+      $mes = date('M', strtotime($rm['mes'].'-01'));
+    ?>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem">
+      <span style="font-size:.62rem;color:var(--ouro)">R$<?= number_format((float)$rm['total'],0,',','.') ?></span>
+      <div style="width:100%;background:var(--ouro);border-radius:3px 3px 0 0;height:<?= max(4,$pct) ?>px;transition:height .3s"></div>
+      <span style="font-size:.62rem;color:var(--texto-3)"><?= $mes ?></span>
+    </div>
+    <?php endforeach; ?>
+  </div>
+</div>
+<?php endif; ?>
+
+<div class="grade-2">
+
+<!-- ── ÚLTIMOS USUÁRIOS ── -->
+<div class="secao">
+  <div class="secao-header">
+    <span class="secao-titulo"><i class="fa fa-users"></i> Últimos usuários</span>
+    <a href="usuarios.php" class="btn btn-ghost btn-sm">Ver todos</a>
+  </div>
+  <table>
+    <thead><tr><th>Nome</th><th>Cadastro</th><th>Compras</th></tr></thead>
+    <tbody>
+    <?php foreach ($ultimosUsuarios as $u): ?>
+    <tr>
+      <td>
+        <div class="td-nome"><?= adm_esc($u['nome']) ?></div>
+        <div class="td-sub"><?= adm_esc($u['email']) ?></div>
+      </td>
+      <td style="font-size:.75rem;white-space:nowrap"><?= adm_data($u['created_at']) ?></td>
+      <td style="text-align:center"><?= $u['n_compras'] ?: '—' ?></td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── ÚLTIMAS COMPRAS ── -->
+<div class="secao">
+  <div class="secao-header">
+    <span class="secao-titulo"><i class="fa fa-cart-shopping"></i> Últimas compras</span>
+    <a href="compras.php" class="btn btn-ghost btn-sm">Ver todas</a>
+  </div>
+  <table>
+    <thead><tr><th>Cliente</th><th>Livro</th><th>Valor</th><th>Status</th></tr></thead>
+    <tbody>
+    <?php foreach ($ultimasCompras as $c): ?>
+    <tr>
+      <td>
+        <div class="td-nome"><?= adm_esc($c['nome']) ?></div>
+        <div class="td-sub"><?= adm_esc($c['email']) ?></div>
+      </td>
+      <td style="font-size:.78rem"><?= adm_esc($c['titulo'] ?? $c['livro_slug']) ?></td>
+      <td style="font-size:.78rem;white-space:nowrap">R$&nbsp;<?= number_format((float)$c['preco_pago'],2,',','.') ?></td>
+      <td><?= adm_badge($c['status']) ?></td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /.grade-2 -->
+
+<!-- ── ASSINATURAS A VENCER ── -->
+<?php if ($aVencer): ?>
+<div class="secao" style="margin-top:1.25rem">
+  <div class="secao-header">
+    <span class="secao-titulo"><i class="fa fa-clock" style="color:var(--vermelho)"></i> Assinaturas vencendo em 7 dias</span>
+    <a href="assinaturas.php?status=ativas" class="btn btn-ghost btn-sm">Ver todas</a>
+  </div>
+  <table>
+    <thead><tr><th>Assinante</th><th>Plano</th><th>Vence em</th><th>Dias</th></tr></thead>
+    <tbody>
+    <?php foreach ($aVencer as $a): ?>
+    <tr>
+      <td><div class="td-nome"><?= adm_esc($a['nome']) ?></div><div class="td-sub"><?= adm_esc($a['email']) ?></div></td>
+      <td><span class="badge badge-amarelo"><?= adm_esc($a['plano']) ?></span></td>
+      <td style="font-size:.75rem;white-space:nowrap"><?= adm_data($a['expira_em']) ?></td>
+      <td><span class="badge badge-vermelho"><?= $a['dias_rest'] ?>d</span></td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+<?php endif; ?>
+
+<!-- ── COMENTÁRIOS PENDENTES ── -->
+<?php if ($comentPend): ?>
+<div class="secao" style="margin-top:1.25rem">
+  <div class="secao-header">
+    <span class="secao-titulo"><i class="fa fa-comment-dots" style="color:var(--ouro)"></i> Comentários aguardando moderação</span>
+    <a href="blog.php?tipo=aguard" class="btn btn-primario btn-sm">Moderar todos</a>
+  </div>
+  <table>
+    <thead><tr><th>Autor</th><th>Onde</th><th>Trecho</th><th>Data</th><th>Ação</th></tr></thead>
+    <tbody>
+    <?php foreach ($comentPend as $c): ?>
+    <tr>
+      <td style="font-size:.82rem;font-weight:500;color:var(--texto)"><?= adm_esc($c['autor']) ?></td>
+      <td>
+        <span class="badge <?= $c['tipo']==='blog'?'badge-azul':'badge-amarelo' ?>">
+          <?= $c['tipo']==='blog' ? 'Blog' : 'Livro' ?>
+        </span>
+        <div style="font-size:.68rem;color:var(--texto-3)"><?= adm_esc($c['referencia'] ?? '') ?></div>
+      </td>
+      <td style="font-size:.8rem;color:var(--texto-2);max-width:240px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">
+        <?= adm_esc($c['texto']) ?>
+      </td>
+      <td style="font-size:.72rem;white-space:nowrap"><?= adm_data($c['criado_em'],'d/m H:i') ?></td>
+      <td>
+        <div style="display:flex;gap:.3rem">
+          <button class="btn btn-sm btn-primario" onclick="aprovarDash(<?= $c['id'] ?>)" title="Aprovar"><i class="fa fa-check"></i></button>
+          <button class="btn btn-sm btn-danger"   onclick="deletarDash(<?= $c['id'] ?>)" title="Deletar"><i class="fa fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+<?php endif; ?>
+
+<script>
+async function aprovarDash(id) {
+  const r = await fetch('blog.php', {method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:`acao=aprovar&id=${id}`});
+  const d = await r.json();
+  if (d.ok) { toast('Comentário aprovado!'); document.querySelector(`[data-cid="${id}"]`)?.remove(); setTimeout(()=>location.reload(),1200); }
+  else toast(d.erro||'Erro.','erro');
+}
+async function deletarDash(id) {
+  if (!confirm('Deletar este comentário?')) return;
+  const r = await fetch('blog.php', {method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:`acao=deletar&id=${id}`});
+  const d = await r.json();
+  if (d.ok) { toast('Comentário deletado.'); setTimeout(()=>location.reload(),1200); }
+  else toast(d.erro||'Erro.','erro');
+}
+</script>
+<?= $ADMIN_FOOTER_HTML ?>
+</main></body></html>

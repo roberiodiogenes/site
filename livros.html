@@ -23,6 +23,98 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="css/variables.css" />
   <link rel="stylesheet" href="css/livros.css" />
+<style>
+  /* ── Tabs de tipo (Todos / Livros / Contos) ───────────────── */
+  .tipo-tabs {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .tipo-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .5rem 1.1rem;
+    border-radius: var(--raio-full, 20px);
+    border: 1px solid var(--borda-media, rgba(139,121,80,.3));
+    background: transparent;
+    color: var(--texto-3);
+    font-family: var(--fonte-display);
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .tipo-tab:hover { border-color: var(--ouro); color: var(--ouro); }
+  .tipo-tab.ativo {
+    background: var(--ouro);
+    color: #1A0F00;
+    border-color: var(--ouro);
+    font-weight: 700;
+  }
+  .tipo-tab-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.25);
+    color: inherit;
+    border-radius: 20px;
+    padding: .05rem .45rem;
+    font-size: .6rem;
+    font-weight: 700;
+    min-width: 18px;
+    text-align: center;
+  }
+  .tipo-tab.ativo .tipo-tab-badge { background: rgba(0,0,0,.15); }
+
+  /* ── Badges extras para contos/destaque ───────────────────── */
+  .badge-azul-escuro {
+    background: rgba(21,101,192,.15);
+    color: #90CAF9;
+    border: 1px solid rgba(21,101,192,.3);
+    padding: .18rem .55rem;
+    border-radius: 20px;
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+  .badge-ferrugem {
+    background: rgba(180,60,20,.15);
+    color: #FFAB91;
+    border: 1px solid rgba(180,60,20,.3);
+    padding: .18rem .55rem;
+    border-radius: 20px;
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+
+  /* ── Leitura estimada (contos) ────────────────────────────── */
+  .livro-item-leitura {
+    font-size: .78rem;
+    color: var(--texto-3);
+    margin-bottom: .35rem;
+  }
+  .livro-item-leitura i { margin-right: .3rem; color: var(--ouro); opacity: .7; }
+
+  /* ── Paginação da biblioteca ──────────────────────────────── */
+  #paginacao {
+    gap: .4rem;
+    padding: 2rem 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* ── Estado vazio ─────────────────────────────────────────── */
+  #vazioMsg {
+    align-items: center;
+    gap: 1rem;
+  }
+
+</style>
 </head>
 <body>
 
@@ -76,6 +168,21 @@
       <h1 class="cat-titulo reveal reveal-delay-1">A <em>Biblioteca</em></h1>
       <p class="cat-subtitulo reveal reveal-delay-2">Histórias que habitam o limiar entre o que se vê e o que se cala.<br />Escolha o espelho que deseja encarar.</p>
 
+
+      <!-- Abas de tipo: Todos / Livros / Contos -->
+      <div class="tipo-tabs reveal" role="tablist" aria-label="Tipo de obra" style="margin-bottom:1.5rem">
+        <button class="tipo-tab ativo" data-tipo="todos"  role="tab" aria-selected="true">
+          <i class="fa fa-books" aria-hidden="true"></i> Todos
+        </button>
+        <button class="tipo-tab" data-tipo="livro" role="tab" aria-selected="false">
+          <i class="fa fa-book" aria-hidden="true"></i> Livros
+        </button>
+        <button class="tipo-tab" data-tipo="conto" role="tab" aria-selected="false">
+          <i class="fa fa-scroll" aria-hidden="true"></i> Contos
+          <span class="tipo-tab-badge" id="badge-contos"></span>
+        </button>
+      </div>
+
       <!-- Filtros por gênero -->
       <div class="filtros reveal reveal-delay-3" role="group" aria-label="Filtrar por gênero">
         <button class="filtro-btn ativo" data-filtro="todos">Todos</button>
@@ -90,252 +197,92 @@
     <div class="cat-hero-ornamento" aria-hidden="true">❧</div>
   </header>
 
-  <!-- CATÁLOGO -->
-  <section class="secao" id="catalogo" aria-label="Catálogo de livros">
-    <div class="livros-catalogo" id="gradeLivros" role="list">
 
-      <article class="livro-item reveal" data-genero="thriller" role="listitem">
-        <a href="livros/jogo-das-mascaras.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/jogo-das-mascaras.jpg" alt="Capa do livro O Jogo das Máscaras, de Robério Diógenes — Livro de suspense e thriller psicológico nacional disponível em e-book Kindle" class="livro-item-capa" loading="eager" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Thriller Psicológico</span>
-          <h2 class="livro-item-titulo"><a href="livros/jogo-das-mascaras.html">O Jogo das Máscaras</a></h2>
-          <p class="livro-item-subtitulo">Toda verdade usa disfarce</p>
-          <p class="livro-item-sinopse">Juliette acreditava que a dor era eterna, até conhecer o Cavaleiro — um homem enigmático que não ofereceu salvação, mas algo ainda mais perigoso: um sentido para sofrer.</p>
-          <div class="livro-item-badges">
-            <span class="badge badge-ferrugem"><i class="fa fa-star" aria-hidden="true"></i> Em destaque</span>
-            <span class="badge badge-ouro">e-book · Físico</span>
-          </div>
-          <div class="livro-item-acoes">
-            <a href="https://www.amazon.com.br/jogo-das-m%C3%A1scaras-verdade-disfarce-ebook/dp/B0FTTFPWXB" target="_blank" rel="noopener" class="btn btn-primario">
-              <i class="fa-brands fa-amazon" aria-hidden="true"></i> Comprar
-            </a>
-            <a href="livros/jogo-das-mascaras.html" class="btn btn-ghost">Ver mais</a>
-          </div>
+  <!-- LEITOR ONLINE — Banner de acesso -->
+  <section class="secao" aria-label="Leitor Online" style="margin-bottom:0;padding-bottom:0">
+    <div style="
+      background: linear-gradient(135deg, var(--fundo-2, #EDE6D6) 0%, var(--fundo-3, #E4DBC8) 100%);
+      border: 1px solid var(--borda-media);
+      border-radius: var(--raio-lg);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    ">
+      <div style="display:flex;align-items:center;gap:1rem">
+        <span style="font-size:2rem;line-height:1" aria-hidden="true">📖</span>
+        <div>
+          <p style="font-family:var(--fonte-display);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ouro);margin-bottom:.2rem">Leitor Online</p>
+          <p style="font-family:var(--fonte-titulo);font-size:1.1rem;color:var(--texto);margin-bottom:.2rem">Leia capítulos diretamente no navegador</p>
+          <p style="font-size:.82rem;color:var(--texto-3)">Sem download. Sem aplicativo. Basta ter uma conta.</p>
         </div>
-      </article>
-
-      <article class="livro-item reveal reveal-delay-1" data-genero="autoajuda" role="listitem">
-        <a href="livros/a-setima-lei.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/a-setima-lei.jpg" alt="Capa do livro A Sétima Lei: A guerra silenciosa no casamento, de Robério Diógenes — Livro cristão de autoajuda espiritual e restauração de relacionamentos" class="livro-item-capa" loading="lazy" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Auto-Ajuda Cristã</span>
-          <h2 class="livro-item-titulo"><a href="livros/a-setima-lei.html">A Sétima Lei</a></h2>
-          <p class="livro-item-subtitulo">A guerra silenciosa no casamento</p>
-          <p class="livro-item-sinopse">Existe uma lei que ninguém te ensina sobre relacionamentos, mas que todo casal descobre — às vezes tarde demais. Uma reflexão cristã sobre amor, conflito e restauração.</p>
-          <div class="livro-item-badges">
-            <span class="badge badge-ouro">e-book · Físico</span>
-          </div>
-          <div class="livro-item-acoes">
-            <a href="https://www.amazon.com.br/dp/B0GXGZJV1Y" target="_blank" rel="noopener" class="btn btn-primario">
-              <i class="fa-brands fa-amazon" aria-hidden="true"></i> Comprar
-            </a>
-            <a href="livros/a-setima-lei.html" class="btn btn-ghost">Ver mais</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="livro-item reveal reveal-delay-2" data-genero="romance" role="listitem">
-        <a href="livros/lumen.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/lumen.jpg" alt="Capa do livro Lúmen: A outra metade do céu, de Robério Diógenes — Romance literário de ficção nacional contemporânea" class="livro-item-capa" loading="lazy" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Ficção · Romance</span>
-          <h2 class="livro-item-titulo"><a href="livros/lumen.html">Lúmen</a></h2>
-          <p class="livro-item-subtitulo">A outra metade do céu</p>
-          <p class="livro-item-sinopse">Hannah convive com sonhos que parecem avisos, um labirinto de portas fechadas e um silêncio que sussurra verdades que ela não quer ouvir. Mas nem tudo que parece real… é real.</p>
-          <div class="livro-item-badges">
-            <span class="badge badge-ouro">e-book · Físico</span>
-          </div>
-          <div class="livro-item-acoes">
-            <a href="livros/lumen.html" class="btn btn-secundario">Ver detalhes</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="livro-item reveal" data-genero="romance" role="listitem">
-        <a href="livros/genesis.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/genesis.jpg" alt="Capa do livro Gênesis: Um novo começo, de Robério Diógenes — Obra ficcional de drama e romance independente nacional" class="livro-item-capa" loading="lazy" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Ficção · Romance</span>
-          <h2 class="livro-item-titulo"><a href="livros/genesis.html">Gênesis</a></h2>
-          <p class="livro-item-subtitulo">Um novo começo</p>
-          <p class="livro-item-sinopse">Esta é uma história sobre o fim — mas também sobre começos. Sobre fé, mesmo quando não há sinais. Sobre perder tudo e, ainda assim, encontrar o que realmente importa.</p>
-          <div class="livro-item-badges"><span class="badge badge-ouro">e-book · Físico</span></div>
-          <div class="livro-item-acoes">
-            <a href="livros/genesis.html" class="btn btn-secundario">Ver detalhes</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="livro-item reveal reveal-delay-1" data-genero="drama romance" role="listitem">
-        <a href="livros/rosas-e-espinhos.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/rosas-e-espinhos.jpg" alt="Capa do livro Rosas &amp; Espinhos: O diário secreto de uma alma apaixonada, de Robério Diógenes — Romance dramático ambientado em Campos do Jordão" class="livro-item-capa" loading="lazy" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Drama · Romance</span>
-          <h2 class="livro-item-titulo"><a href="livros/rosas-e-espinhos.html">Rosas &amp; Espinhos</a></h2>
-          <p class="livro-item-subtitulo">O diário secreto de uma alma apaixonada</p>
-          <p class="livro-item-sinopse">Em Campos do Jordão, entre montanhas e névoa, Camille vive uma vida que parece perfeita por fora. Até que uma carta antiga perturba a paz cuidadosamente construída.</p>
-          <div class="livro-item-badges">
-            <span class="badge badge-ouro">e-book</span>
-          </div>
-          <div class="livro-item-acoes">
-            <a href="https://www.amazon.com.br/Rosas-espinhos-onde-voc%C3%AA-sente-ebook/dp/B0DMHSDJPX/" target="_blank" rel="noopener" class="btn btn-primario">
-              <i class="fa-brands fa-amazon" aria-hidden="true"></i> Comprar
-            </a>
-            <a href="livros/rosas-e-espinhos.html" class="btn btn-ghost">Ver mais</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="livro-item reveal reveal-delay-2" data-genero="romance drama" role="listitem">
-        <a href="livros/cartas-do-passado.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/cartas-do-passado.jpg" alt="Capa do livro Cartas do Passado: O verdadeiro amor nunca morre, de Robério Diógenes — Livro de ficção histórica e romance dramático brasileiro" class="livro-item-capa" loading="lazy" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Ficção · Romance</span>
-          <h2 class="livro-item-titulo"><a href="livros/cartas-do-passado.html">Cartas do Passado</a></h2>
-          <p class="livro-item-subtitulo">O verdadeiro amor nunca morre</p>
-          <p class="livro-item-sinopse">Lucas, soldado brasileiro, escreve cartas de amor entre bombardeios. Do lado de fora, a guerra. Dentro do papel, tudo o que o mantém vivo: Giulia, o lar, a promessa de voltar.</p>
-          <div class="livro-item-badges"><span class="badge badge-ouro">e-book · Físico</span></div>
-          <div class="livro-item-acoes">
-            <a href="livros/cartas-do-passado.html" class="btn btn-secundario">Ver detalhes</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="livro-item reveal" data-genero="romance drama" role="listitem">
-        <a href="livros/mares-secretas.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/mares-secretas.jpg" alt="Capa do livro As Marés Secretas do Amor, de Robério Diógenes — Livro romance dramático de literatura independente" class="livro-item-capa" loading="lazy" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Romance · Drama</span>
-          <h2 class="livro-item-titulo"><a href="livros/mares-secretas.html">As Marés Secretas do Amor</a></h2>
-          <p class="livro-item-subtitulo">O mar não devolve tudo que engole</p>
-          <p class="livro-item-sinopse">Entre ondas e silêncios, dois corações descobrem que o amor mais intenso é aquele que não pede permissão para entrar.</p>
-          <div class="livro-item-badges"><span class="badge badge-ouro">e-book · Físico</span></div>
-          <div class="livro-item-acoes">
-            <a href="livros/mares-secretas.html" class="btn btn-secundario">Ver detalhes</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="livro-item reveal reveal-delay-1" data-genero="poesia romance" role="listitem">
-        <a href="livros/das-coisas-que-o-amor-faz.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/coisas-que-o-amor-faz.jpg" alt="Capa do livro Das Coisas que o Amor Faz: Poesias que sangram e florescem, de Robério Diógenes — Coletânea de poemas de amor e romance" class="livro-item-capa" loading="lazy" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Poesia · Romance</span>
-          <h2 class="livro-item-titulo"><a href="livros/das-coisas-que-o-amor-faz.html">Das Coisas que o Amor Faz</a></h2>
-          <p class="livro-item-subtitulo">Poesias que sangram e florescem</p>
-          <p class="livro-item-sinopse">Uma coleção de poemas que capturam os extremos do amor: a ternura que cura e a dor que transforma. Para os que já amaram com toda a alma.</p>
-          <div class="livro-item-badges"><span class="badge badge-ouro">e-book · Físico</span></div>
-          <div class="livro-item-acoes">
-            <a href="livros/das-coisas-que-o-amor-faz.html" class="btn btn-secundario">Ver detalhes</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="livro-item reveal reveal-delay-2" data-genero="horror" role="listitem">
-        <a href="livros/o-abismo-das-almas.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/o-abismo-das-almas-vol-1.jpg" alt="Capa do livro O Abismo das Almas: O horror que mora dentro de nós, de Robério Diógenes — Livro ficcional de horror e ficção distópica Volume 1" class="livro-item-capa" loading="lazy" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Distopia · Horror</span>
-          <h2 class="livro-item-titulo"><a href="livros/o-abismo-das-almas.html">O Abismo das Almas</a></h2>
-          <p class="livro-item-subtitulo">O horror que mora dentro de nós</p>
-          <p class="livro-item-sinopse">Em um mundo onde as emoções são proibidas, o último homem capaz de sentir precisa escolher entre a sobrevivência e a humanidade. Vol. 1.</p>
-          <div class="livro-item-badges"><span class="badge badge-ferrugem">Série</span><span class="badge badge-ouro">e-book · Físico</span></div>
-          <div class="livro-item-acoes">
-            <a href="https://www.amazon.com.br/dp/B0DYL933QC" target="_blank" rel="noopener" class="btn btn-primario">
-              <i class="fa-brands fa-amazon" aria-hidden="true"></i> Comprar
-            </a>
-            <a href="livros/o-abismo-das-almas.html" class="btn btn-secundario">Ver detalhes</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="livro-item reveal" data-genero="horror" role="listitem">
-        <a href="livros/a-marca-da-besta.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/a-marca-da-besta-capa.jpg" alt="Capa do livro A Marca da Besta: Ninguém escapa da marca, de Robério Diógenes — Romance distópico de horror ficcional nacional" class="livro-item-capa" loading="lazy" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Distopia · Horror</span>
-          <h2 class="livro-item-titulo"><a href="livros/a-marca-da-besta.html">A Marca da Besta</a></h2>
-          <p class="livro-item-subtitulo">Ninguém escapa da marca</p>
-          <p class="livro-item-sinopse">Quando o controle social se torna total, a resistência se torna sagrada. Uma distopia perturbadora sobre fé, identidade e o preço da liberdade.</p>
-          <div class="livro-item-badges"><span class="badge badge-ouro">e-book · Físico</span></div>
-          <div class="livro-item-acoes">
-            <a href="livros/a-marca-da-besta.html" class="btn btn-secundario">Ver detalhes</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="livro-item reveal reveal-delay-1" data-genero="romance" role="listitem">
-        <a href="livros/caminhos-de-outono.html" class="livro-item-capa-link" tabindex="-1" aria-hidden="true">
-          <div class="livro-item-capa-wrap">
-            <img src="img/caminhos-de-outono.jpg" alt="Capa do livro Caminhos de Outono: O outono que muda tudo, de Robério Diógenes — Romance ficcional brasileiro e drama literário" class="livro-item-capa" loading="lazy" />
-            <div class="livro-item-spine" aria-hidden="true"></div>
-          </div>
-        </a>
-        <div class="livro-item-info">
-          <span class="livro-item-genero">Romance</span>
-          <h2 class="livro-item-titulo"><a href="livros/caminhos-de-outono.html">Caminhos de Outono</a></h2>
-          <p class="livro-item-subtitulo">O outono que muda tudo</p>
-          <p class="livro-item-sinopse">Algumas estações chegam para transformar. Quando Léa decide recomeçar em uma cidade nova, ela não esperava encontrar mais do que paisagens — mas o outono tem seus próprios planos.</p>
-          <div class="livro-item-badges"><span class="badge badge-ouro">e-book · Físico</span></div>
-          <div class="livro-item-acoes">
-            <a href="livros/caminhos-de-outono.html" class="btn btn-secundario">Ver detalhes</a>
-          </div>
-        </div>
-      </article>
-
-    </div><!-- /gradeLivros -->
-
-    <!-- Estado vazio (filtro sem resultado) -->
-    <div class="vazio-msg" id="vazioMsg" aria-live="polite" style="display:none;">
-      <span aria-hidden="true">📚</span>
-      <p>Nenhum livro encontrado nesta categoria.</p>
+      </div>
+      <a href="leitor/index.html" class="btn btn-primario" style="white-space:nowrap">
+        <i class="fa fa-book-open" aria-hidden="true"></i> Acessar o Leitor
+      </a>
     </div>
+  </section>
+
+  <!-- CATÁLOGO -->
+  
+
+  <!-- LEITOR ONLINE — Banner de acesso -->
+  <section class="secao" aria-label="Leitor Online" style="margin-bottom:0;padding-bottom:0">
+    <div style="
+      background: linear-gradient(135deg, var(--fundo-2, #EDE6D6) 0%, var(--fundo-3, #E4DBC8) 100%);
+      border: 1px solid var(--borda-media);
+      border-radius: var(--raio-lg);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    ">
+      <div style="display:flex;align-items:center;gap:1rem">
+        <span style="font-size:2rem;line-height:1" aria-hidden="true">📖</span>
+        <div>
+          <p style="font-family:var(--fonte-display);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ouro);margin-bottom:.2rem">Leitor Online</p>
+          <p style="font-family:var(--fonte-titulo);font-size:1.1rem;color:var(--texto);margin-bottom:.2rem">Leia capítulos diretamente no navegador</p>
+          <p style="font-size:.82rem;color:var(--texto-3)">Sem download. Sem aplicativo. Basta ter uma conta.</p>
+        </div>
+      </div>
+      <a href="leitor/index.html" class="btn btn-primario" style="white-space:nowrap">
+        <i class="fa fa-book-open" aria-hidden="true"></i> Acessar o Leitor
+      </a>
+    </div>
+  </section>
+
+  <!-- CATÁLOGO DINÂMICO -->
+  <section class="secao" id="catalogo" aria-label="Catálogo de obras">
+
+    <!-- Loading state -->
+    <div id="biblioteca-loading" style="text-align:center;padding:4rem 2rem;color:var(--texto-3)">
+      <i class="fa fa-circle-notch fa-spin" style="font-size:1.5rem;color:var(--ouro)" aria-hidden="true"></i>
+      <p style="margin-top:1rem;font-size:.9rem">Carregando biblioteca…</p>
+    </div>
+
+    <!-- Grade de cards (preenchida pelo JS) -->
+    <div class="livros-catalogo" id="gradeLivros" role="list" style="display:none"></div>
+
+    <!-- Estado vazio -->
+    <div id="vazioMsg" style="display:none;flex-direction:column;align-items:center;padding:4rem 2rem;text-align:center;color:var(--texto-3)">
+      <i class="fa fa-book-open" style="font-size:2.5rem;color:var(--ouro);opacity:.3;margin-bottom:1rem" aria-hidden="true"></i>
+      <p>Nenhuma obra encontrada para este filtro.</p>
+    </div>
+
+    <!-- Paginação -->
+    <nav id="paginacao" aria-label="Paginação da biblioteca"
+         style="display:none;justify-content:center;align-items:center;gap:.5rem;padding:2rem 1rem;flex-wrap:wrap">
+    </nav>
 
   </section>
 
-  <!-- CTA AMAZON -->
-  <section class="cta-amazon secao" aria-labelledby="titulo-amazon">
+<section class="cta-amazon secao" aria-labelledby="titulo-amazon">
     <div class="cta-amazon-wrap reveal">
       <div class="cta-amazon-texto">
         <h2 id="titulo-amazon">Todos os livros disponíveis na <em>Amazon</em></h2>
@@ -396,9 +343,8 @@
 
 <script src="js/global.js"></script>
 <script src="js/api-client.js"></script>
+<script src="js/biblioteca.js"></script>
 <script>
-// Filtro de gêneros
-function filtrar(genero) {
   const btnAtivo = document.querySelector(`.filtro-btn[data-filtro="${genero}"]`);
   if (btnAtivo) {
     document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
