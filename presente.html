@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Você recebeu um presente | Robério Diógenes</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  body {
+    font-family: var(--fonte-corpo); background: var(--fundo);
+    color: var(--texto); min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: flex-start; padding: 2rem 1rem 4rem;
+  }
+
+  /* ── CARD PRINCIPAL ─────────────────────────────────────────── */
+  .presente-card {
+    max-width: 560px; width: 100%;
+    background: var(--fundo-card);
+    border: 1px solid var(--borda-media);
+    border-radius: var(--raio-xl);
+    overflow: hidden;
+    box-shadow: var(--sombra-lg), var(--sombra-dourada);
+    margin-top: 2rem;
+  }
+  .pc-topo {
+    background: #1A0F00; padding: 28px 32px; text-align: center;
+    position: relative;
+  }
+  .pc-topo::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(to right, #8B6508, #D4A843, #B8860B);
+  }
+  .pc-logo {
+    font-family: var(--fonte-titulo); font-size: 1.3rem;
+    color: #D4A843; letter-spacing: 3px;
+  }
+  .pc-subtag {
+    font-family: 'Cinzel', serif; font-size: .6rem;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: #786858; margin-top: 4px;
+  }
+
+  /* ── CORPO ─────────────────────────────────────────────────── */
+  .pc-corpo { padding: 36px 40px; }
+  @media (max-width: 480px) { .pc-corpo { padding: 24px 20px; } }
+
+  .pc-emoji { font-size: 2.75rem; margin-bottom: .65rem; display: block; text-align: center; animation: pulsar 2.5s ease-in-out infinite; }
+  @keyframes pulsar { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+  .pc-titulo { font-family: var(--fonte-titulo); font-size: 1.7rem; font-weight: 400; margin-bottom: .4rem; text-align: center; }
+  .pc-titulo em { color: var(--ouro); font-style: italic; }
+  .pc-subtitulo { font-size: .9rem; color: var(--texto-3); margin-bottom: 1.75rem; line-height: 1.65; text-align: center; }
+
+  /* Livro */
+  .pc-livro {
+    display: flex; gap: 1.25rem; align-items: flex-start;
+    background: rgba(184,134,11,.06); border: 1px solid rgba(184,134,11,.2);
+    border-radius: var(--raio-lg); padding: 1.25rem; margin-bottom: 1.5rem;
+  }
+  .pc-capa { width: 72px; flex-shrink: 0; border-radius: 6px; box-shadow: var(--sombra-livro); }
+  .pc-capa-ph {
+    width: 72px; height: 100px; border-radius: 6px;
+    background: var(--fundo-2); display: flex; align-items: center;
+    justify-content: center; color: var(--texto-3); font-size: 1.5rem; flex-shrink: 0;
+  }
+  .pc-livro-titulo { font-family: var(--fonte-titulo); font-size: 1.05rem; font-weight: 400; margin-bottom: .2rem; }
+  .pc-livro-autor { font-size: .8rem; color: var(--texto-3); margin-bottom: .5rem; }
+  .pc-livro-badge {
+    display: inline-flex; align-items: center; gap: .3rem;
+    font-family: var(--fonte-display); font-size: .54rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    background: rgba(39,174,96,.12); color: #27ae60;
+    border: 1px solid #27ae60; border-radius: 20px; padding: .2rem .55rem;
+  }
+
+  /* Dedicatória */
+  .pc-ded {
+    background: var(--fundo-2); border-left: 3px solid var(--ouro);
+    padding: 1rem 1.25rem; border-radius: 0 var(--raio) var(--raio) 0;
+    margin-bottom: 1.5rem;
+  }
+  .pc-ded-label {
+    font-family: var(--fonte-display); font-size: .56rem;
+    letter-spacing: .15em; text-transform: uppercase; color: var(--ouro); margin-bottom: .4rem;
+  }
+  .pc-ded-texto { font-family: var(--fonte-titulo); font-style: italic; font-size: .98rem; line-height: 1.75; color: var(--texto-2); }
+  .pc-ded-de { font-size: .76rem; color: var(--texto-3); margin-top: .5rem; }
+
+  /* ── SEPARADOR DE SEÇÃO ─────────────────────────────────────── */
+  .pc-divisor {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .pc-divisor-linha { flex: 1; height: 1px; background: var(--borda); }
+  .pc-divisor-texto {
+    font-family: var(--fonte-titulo); font-style: italic;
+    font-size: .88rem; color: var(--texto-3); white-space: nowrap;
+  }
+
+  /* ── MURO DE ACESSO (não logado) ────────────────────────────── */
+  .pc-acesso-muro {
+    background: linear-gradient(135deg, var(--fundo-2) 0%, rgba(184,134,11,.05) 100%);
+    border: 1px solid var(--borda-media);
+    border-radius: var(--raio-lg); padding: 1.75rem;
+    text-align: center;
+  }
+  .pc-acesso-icon {
+    font-size: 2rem; color: var(--ouro); margin-bottom: .75rem; display: block;
+  }
+  .pc-acesso-titulo { font-family: var(--fonte-titulo); font-size: 1.2rem; font-weight: 400; margin-bottom: .4rem; }
+  .pc-acesso-desc { font-size: .85rem; color: var(--texto-3); line-height: 1.65; margin-bottom: 1.5rem; }
+  .pc-acesso-btns { display: flex; flex-direction: column; gap: .6rem; }
+  .pc-btn {
+    display: flex; align-items: center; justify-content: center; gap: .5rem;
+    padding: .85rem 1.25rem; border-radius: var(--raio-lg);
+    font-family: var(--fonte-display); font-size: .65rem;
+    font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    text-decoration: none; transition: opacity .2s, transform .15s;
+    border: none; cursor: pointer; width: 100%;
+  }
+  .pc-btn:hover { opacity: .88; transform: translateY(-1px); }
+  .pc-btn-prim { background: var(--ouro); color: #1A0F00; }
+  .pc-btn-sec  { background: transparent; color: var(--texto-2); border: 1px solid var(--borda-media); }
+  .pc-btn-verde { background: rgba(39,174,96,.12); color: #27ae60; border: 1px solid #27ae60; }
+  .pc-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+  .pc-btn-spinner { display: none; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .pc-btn.carregando .pc-btn-spinner { display: inline-block; }
+  .pc-btn.carregando .pc-btn-icon    { display: none; }
+
+  /* O que você ganha */
+  .pc-vantagens {
+    display: flex; gap: .75rem; flex-wrap: wrap; margin: 1.25rem 0;
+  }
+  .pc-vantagem {
+    display: flex; align-items: center; gap: .4rem;
+    font-size: .78rem; color: var(--texto-2);
+    background: var(--fundo-2); border: 1px solid var(--borda);
+    border-radius: 20px; padding: .3rem .8rem; flex: 1; min-width: 120px;
+  }
+  .pc-vantagem i { color: var(--ouro); font-size: .7rem; }
+
+  /* ── ESTADO: RESGATAR (logado, não resgatado) ────────────────── */
+  .pc-resgatar-wrap {
+    border: 1px solid rgba(184,134,11,.3);
+    border-radius: var(--raio-lg); padding: 1.5rem;
+    background: rgba(184,134,11,.04); text-align: center;
+  }
+  .pc-resgatar-titulo { font-family: var(--fonte-titulo); font-size: 1.1rem; font-weight: 400; margin-bottom: .4rem; }
+  .pc-resgatar-desc { font-size: .84rem; color: var(--texto-3); line-height: 1.6; margin-bottom: 1.25rem; }
+  .pc-usuario-badge {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-family: var(--fonte-display); font-size: .6rem;
+    letter-spacing: .1em; text-transform: uppercase;
+    background: var(--fundo-2); border: 1px solid var(--borda-media);
+    border-radius: 20px; padding: .3rem .9rem; margin-bottom: 1.25rem;
+    color: var(--texto-2);
+  }
+  .pc-usuario-badge i { color: var(--ouro); }
+
+  /* ── ESTADO: SUCESSO ─────────────────────────────────────────── */
+  .pc-sucesso {
+    text-align: center; padding: 1rem 0;
+  }
+  .pc-sucesso-emoji { font-size: 3rem; display: block; margin-bottom: 1rem; }
+  .pc-sucesso-titulo { font-family: var(--fonte-titulo); font-size: 1.4rem; font-weight: 400; color: var(--ouro); margin-bottom: .5rem; }
+  .pc-sucesso-desc { font-size: .9rem; color: var(--texto-2); line-height: 1.65; margin-bottom: 1.5rem; }
+
+  /* Área do Leitor preview */
+  .leitor-preview {
+    background: var(--fundo-2); border: 1px solid var(--borda);
+    border-radius: var(--raio-lg); padding: 1.25rem; margin-bottom: 1.5rem; text-align: left;
+  }
+  .leitor-preview-titulo {
+    font-family: var(--fonte-display); font-size: .6rem; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--ouro); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: .4rem;
+  }
+  .leitor-preview-item {
+    display: flex; align-items: center; gap: .6rem;
+    font-size: .83rem; color: var(--texto-2); padding: .4rem 0;
+    border-bottom: 1px solid var(--borda);
+  }
+  .leitor-preview-item:last-child { border-bottom: none; }
+  .leitor-preview-item i { color: var(--ouro); width: 14px; text-align: center; }
+  .leitor-preview-item .badge-gratis {
+    font-family: var(--fonte-display); font-size: .52rem; letter-spacing: .1em;
+    text-transform: uppercase; background: rgba(39,174,96,.12);
+    color: #27ae60; border: 1px solid #27ae60; border-radius: 20px; padding: .1rem .45rem;
+    margin-left: auto;
+  }
+  .leitor-preview-item .badge-presente {
+    font-family: var(--fonte-display); font-size: .52rem; letter-spacing: .1em;
+    text-transform: uppercase; background: rgba(184,134,11,.12);
+    color: var(--ouro); border: 1px solid var(--ouro); border-radius: 20px; padding: .1rem .45rem;
+    margin-left: auto;
+  }
+
+  /* Loading e Erro */
+  .pc-loading { padding: 3.5rem; text-align: center; color: var(--texto-3); }
+  .pc-loading i { font-size: 2.25rem; color: var(--ouro); opacity: .35; display: block; margin-bottom: .85rem; }
+  .pc-erro { padding: 2.5rem; text-align: center; }
+  .pc-erro i { font-size: 2.5rem; color: var(--ferrugem); opacity: .45; display: block; margin-bottom: .85rem; }
+  .pc-erro p { color: var(--texto-2); margin-bottom: .75rem; }
+  .pc-data { font-family: var(--fonte-display); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-3); margin-top: 1.25rem; text-align: center; }
+  </style>
+</head>
+<body>
+
+<div class="presente-card" id="mainCard">
+  <div class="pc-topo">
+    <div class="pc-logo">Robério Diógenes</div>
+    <div class="pc-subtag">Escritor Independente</div>
+  </div>
+  <div class="pc-corpo" id="cardCorpo">
+    <div class="pc-loading">
+      <i class="fa fa-circle-notch fa-spin"></i>
+      Carregando seu presente…
+    </div>
+  </div>
+</div>
+
+<script src="js/global.js"></script>
+<script>
+'use strict';
+
+/* ── Helpers ─────────────────────────────────────────────────── */
+function esc(s)     { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtData(d) { try { return new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'}); } catch{ return d; } }
+const token = new URLSearchParams(window.location.search).get('token') || '';
+
+/* ── Estado ──────────────────────────────────────────────────── */
+let PRESENTE  = null; // dados do presente carregados do backend
+let USUARIO   = null; // usuário logado (se houver)
+let RESGATADO = false;
+
+/* ── Carregar sessão ─────────────────────────────────────────── */
+async function carregarSessao() {
+  try {
+    const r = await fetch('backend/auth/sessao.php', { credentials: 'same-origin' });
+    const d = await r.json();
+    if (d.ok && d.logado) USUARIO = d.usuario;
+  } catch {}
+}
+
+/* ── Carregar dados do presente ──────────────────────────────── */
+async function carregarPresente() {
+  const corpo = document.getElementById('cardCorpo');
+  if (!token) { renderErro('Token inválido ou ausente.'); return; }
+
+  try {
+    const r = await fetch('backend/presente.php?token=' + encodeURIComponent(token));
+    const d = await r.json();
+    if (!d.ok || !d.presente) { renderErro(d.erro || 'Presente não encontrado.'); return; }
+    PRESENTE = d.presente;
+    renderPresente();
+  } catch {
+    renderErro('Erro de conexão. Tente novamente.');
+  }
+}
+
+/* ── Renderizar o presente ───────────────────────────────────── */
+function renderPresente() {
+  const p        = PRESENTE;
+  const primeiro = (p.nome_presenteado || '').split(' ')[0] || p.nome_presenteado;
+  const corpo    = document.getElementById('cardCorpo');
+
+  const capaHtml = p.capa_img
+    ? `<img src="${esc(p.capa_img)}" alt="Capa" class="pc-capa"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    : '';
+  const phStyle = p.capa_img ? 'style="display:none"' : '';
+
+  const dedHtml = p.dedicatoria ? `
+    <div class="pc-ded">
+      <div class="pc-ded-label">Dedicatória</div>
+      <div class="pc-ded-texto">"${esc(p.dedicatoria)}"</div>
+      <div class="pc-ded-de">— ${esc(p.comprador_nome)}, com carinho</div>
+    </div>` : '';
+
+  // Seção de acesso — varia com o estado do usuário
+  const acessoHtml = renderAcessoHtml();
+
+  corpo.innerHTML = `
+    <span class="pc-emoji">🎁</span>
+    <h1 class="pc-titulo">Olá, <em>${esc(primeiro)}</em>!</h1>
+    <p class="pc-subtitulo"><strong>${esc(p.comprador_nome)}</strong> te presenteou com uma história. Que ela te marque para sempre.</p>
+
+    <div class="pc-livro">
+      ${capaHtml}
+      <div class="pc-capa-ph" ${phStyle}><i class="fa fa-book"></i></div>
+      <div>
+        <div class="pc-livro-titulo">${esc(p.titulo)}</div>
+        <div class="pc-livro-autor">Robério Diógenes</div>
+        <span class="pc-livro-badge"><i class="fa fa-unlock"></i> Acesso incluído</span>
+      </div>
+    </div>
+
+    ${dedHtml}
+
+    <div class="pc-divisor">
+      <div class="pc-divisor-linha"></div>
+      <span class="pc-divisor-texto">para resgatar</span>
+      <div class="pc-divisor-linha"></div>
+    </div>
+
+    <div id="secaoAcesso">${acessoHtml}</div>
+
+    <div class="pc-data">Presenteado em ${fmtData(p.criado_em)}</div>`;
+
+  // Re-bind event listener do botão de resgate (se logado)
+  const btnResgatar = document.getElementById('btnResgatar');
+  if (btnResgatar) btnResgatar.addEventListener('click', resgatar);
+}
+
+/* ── HTML da seção de acesso (muda com estado) ───────────────── */
+function renderAcessoHtml() {
+  if (RESGATADO) {
+    return renderSucessoHtml();
+  }
+
+  if (USUARIO) {
+    // Logado → oferecer botão de resgate
+    return `
+      <div class="pc-resgatar-wrap">
+        <div class="pc-resgatar-titulo">Resgate seu presente</div>
+        <p class="pc-resgatar-desc">
+          Clique para adicionar este livro à sua biblioteca. Você poderá ler online ou fazer o download a qualquer momento.
+        </p>
+        <span class="pc-usuario-badge"><i class="fa fa-user"></i> ${esc(USUARIO.nome.split(' ')[0])}</span>
+        <button class="pc-btn pc-btn-prim" id="btnResgatar" style="max-width:320px;margin:0 auto">
+          <span class="pc-btn-icon"><i class="fa fa-gift"></i></span>
+          <span class="pc-btn-spinner"><i class="fa fa-circle-notch fa-spin"></i></span>
+          Resgatar e acessar meu livro
+        </button>
+      </div>`;
+  }
+
+  // Não logado → muro de cadastro/login
+  const redirUrl = encodeURIComponent('presente.html?token=' + token);
+  return `
+    <div class="pc-acesso-muro">
+      <span class="pc-acesso-icon"><i class="fa fa-user-plus"></i></span>
+      <h2 class="pc-acesso-titulo">Crie sua conta gratuita</h2>
+      <p class="pc-acesso-desc">
+        Para receber este presente e acessar o livro, basta criar uma conta rápida. Com ela você também acessa todos os contos gratuitos.
+      </p>
+
+      <!-- O que você ganha -->
+      <div class="pc-vantagens">
+        <div class="pc-vantagem"><i class="fa fa-book-open"></i> Leitor online</div>
+        <div class="pc-vantagem"><i class="fa fa-download"></i> Download ePub</div>
+        <div class="pc-vantagem"><i class="fa fa-gift"></i> Este livro</div>
+        <div class="pc-vantagem"><i class="fa fa-unlock"></i> Contos grátis</div>
+      </div>
+
+      <div class="pc-acesso-btns">
+        <a href="cadastro.html?redir=${redirUrl}" class="pc-btn pc-btn-prim">
+          <i class="fa fa-user-plus"></i> Criar conta gratuita e resgatar
+        </a>
+        <a href="login.html?redir=${redirUrl}" class="pc-btn pc-btn-sec">
+          <i class="fa fa-sign-in-alt"></i> Já tenho conta — entrar
+        </a>
+      </div>
+    </div>`;
+}
+
+/* ── HTML de sucesso após resgate ────────────────────────────── */
+function renderSucessoHtml() {
+  const p = PRESENTE;
+  return `
+    <div class="pc-sucesso">
+      <span class="pc-sucesso-emoji">🎉</span>
+      <h2 class="pc-sucesso-titulo">Presente resgatado!</h2>
+      <p class="pc-sucesso-desc">
+        <strong>${esc(p.titulo)}</strong> agora está na sua biblioteca. Acesse a Área do Leitor para começar.
+      </p>
+    </div>
+
+    <!-- O que tem na Área do Leitor -->
+    <div class="leitor-preview">
+      <div class="leitor-preview-titulo"><i class="fa fa-book-open"></i> Sua Área do Leitor</div>
+      <div class="leitor-preview-item">
+        <i class="fa fa-book"></i> ${esc(p.titulo)}
+        <span class="badge-presente">🎁 Presente</span>
+      </div>
+      <div class="leitor-preview-item">
+        <i class="fa fa-feather-pointed"></i> O Farol do Afogado
+        <span class="badge-gratis">Grátis</span>
+      </div>
+      <div class="leitor-preview-item">
+        <i class="fa fa-feather-pointed"></i> Linhas e Agulhas
+        <span class="badge-gratis">Grátis</span>
+      </div>
+      <div class="leitor-preview-item">
+        <i class="fa fa-feather-pointed"></i> O Quarto das Moscas
+        <span class="badge-gratis">Grátis</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:.6rem">
+      <a href="leitor/index.html" class="pc-btn pc-btn-prim">
+        <i class="fa fa-book-open"></i> Ir para a Área do Leitor
+      </a>
+      <a href="livros.html" class="pc-btn pc-btn-sec">
+        <i class="fa fa-book"></i> Explorar mais obras
+      </a>
+    </div>`;
+}
+
+/* ── Resgatar presente ───────────────────────────────────────── */
+async function resgatar() {
+  const btn = document.getElementById('btnResgatar');
+  if (!btn || !USUARIO) return;
+  btn.classList.add('carregando');
+  btn.disabled = true;
+
+  try {
+    const r = await fetch('backend/resgatar-presente.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
+    const d = await r.json();
+
+    if (d.ok) {
+      RESGATADO = true;
+      document.getElementById('secaoAcesso').innerHTML = renderSucessoHtml();
+    } else {
+      // Mostrar erro inline
+      btn.classList.remove('carregando');
+      btn.disabled = false;
+      const errDiv = document.createElement('div');
+      errDiv.style.cssText = 'margin-top:.75rem;padding:.7rem 1rem;background:rgba(139,58,42,.08);border:1px solid rgba(139,58,42,.25);border-radius:6px;font-size:.83rem;color:var(--ferrugem)';
+      errDiv.textContent = d.erro || 'Não foi possível resgatar. Tente novamente.';
+      btn.parentElement?.appendChild(errDiv);
+      setTimeout(() => errDiv.remove(), 5000);
+    }
+  } catch {
+    btn.classList.remove('carregando');
+    btn.disabled = false;
+  }
+}
+
+/* ── Renderizar erro ────────────────────────────────────────── */
+function renderErro(msg) {
+  document.getElementById('cardCorpo').innerHTML = `
+    <div class="pc-erro">
+      <i class="fa fa-triangle-exclamation"></i>
+      <p>${esc(msg)}</p>
+      <a href="livros.html" style="color:var(--ouro);font-size:.88rem">← Ver a biblioteca</a>
+    </div>`;
+}
+
+/* ── INIT ──────────────────────────────────────────────────────── */
+(async () => {
+  await carregarSessao();
+  await carregarPresente();
+})();
+</script>
+</body>
+</html>

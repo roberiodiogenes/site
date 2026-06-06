@@ -79,6 +79,12 @@ $_SESSION['usuario_id']    = $userId;
 $_SESSION['usuario_nome']  = $nome;
 $_SESSION['usuario_email'] = $email;
 $_SESSION['usuario_foto']  = $foto;
+// Formato unificado para o leitor
+$_SESSION['usuario'] = [
+    'id'    => $userId,
+    'nome'  => $nome,
+    'email' => $email,
+];
 
 header('Location: ' . SITE_URL . '/leitor/index.html');
 exit;

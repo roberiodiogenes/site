@@ -318,7 +318,9 @@
     if (r.ok) {
       mostrarAlerta(r.mensagem, 'sucesso');
       if (typeof Sons !== 'undefined') Sons.tocar('sucesso');
-      setTimeout(() => { window.location.href = 'leitor/index.html'; }, 1500);
+      const redir = new URLSearchParams(window.location.search).get('redir');
+      const destino = redir ? decodeURIComponent(redir) : 'leitor/index.html';
+      setTimeout(() => { window.location.href = destino; }, 1500);
     } else {
       mostrarAlerta(r.erro || 'Erro ao criar conta.', 'erro');
       if (typeof Sons !== 'undefined') Sons.tocar('erro');

@@ -1,450 +1,428 @@
 /* ================================================================
    ROBÉRIO DIÓGENES — css/livro-pagina.css
-   CSS compartilhado para todas as páginas individuais de livros.
-   Use em conjunto com: variables.css, auth.css
+   Layout completo para as páginas individuais de livros/contos.
+   Depende de: variables.css  (fontes, cores, raios, sombras)
+               auth.css ou global.css (nav, btn, footer, reveal)
    ================================================================ */
 
-/* ── ACESSIBILIDADE ───────────────────────────────────────────── */
-.pular-nav:focus {
-  position: fixed; top: 1rem; left: 1rem;
-  background: var(--ouro); color: var(--fundo);
-  padding: 0.5rem 1rem; border-radius: var(--raio);
+/* ── SKIP NAV ─────────────────────────────────────────────────── */
+.pular-nav {
+  position: absolute; top: -999px; left: -999px;
+  background: var(--ouro); color: #1A0F00;
+  padding: .5rem 1rem; border-radius: var(--raio);
   z-index: 9999; font-family: var(--fonte-ui); text-decoration: none;
 }
+.pular-nav:focus { top: 1rem; left: 1rem; }
 
-/* ── HERO DO LIVRO ────────────────────────────────────────────── */
+/* ================================================================
+   HERO DO LIVRO
+   ================================================================ */
 .livro-hero {
-  min-height: calc(var(--altura-nav) + 520px);
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 4rem;
+  grid-template-columns: 280px 1fr;
+  gap: 3rem;
   max-width: var(--largura-max);
   margin: 0 auto;
   padding: calc(var(--altura-nav) + 3rem) 3rem 4rem;
+  align-items: start;
+}
+@media (max-width: 780px) {
+  .livro-hero {
+    grid-template-columns: 1fr;
+    padding: calc(var(--altura-nav) + 2rem) 1.5rem 3rem;
+    text-align: center;
+  }
 }
 
+/* ── CAPA ────────────────────────────────────────────────────── */
 .livro-hero-capa {
-  display: flex;
-  justify-content: center;
-  position: relative;
+  position: sticky; top: calc(var(--altura-nav) + 1.5rem);
 }
-
-.livro-hero-capa-img {
-  width: min(280px, 100%);
-  border-radius: var(--raio-lg);
+.livro-hero-capa a {
+  display: block; border-radius: var(--raio-lg);
+  overflow: hidden;
   box-shadow: var(--sombra-livro);
-  display: block;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform .3s ease;
 }
-.livro-hero-capa-img:hover { transform: translateY(-6px) rotate(-1deg); }
-
-.livro-hero-info { display: flex; flex-direction: column; gap: 1.2rem; }
-
-.livro-genero {
-  display: inline-block;
-  font-family: var(--fonte-ui);
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ouro);
-  border: 1px solid var(--borda-media);
-  border-radius: 20px;
-  padding: 0.3rem 0.9rem;
-  width: fit-content;
-}
-
-.livro-titulo {
-  font-family: var(--fonte-titulo);
-  font-size: clamp(2.4rem, 5vw, 3.8rem);
-  font-weight: 300;
-  line-height: 1.05;
-  color: var(--texto);
-  letter-spacing: -0.01em;
-}
-.livro-titulo em { font-style: italic; color: var(--ouro); }
-
-.livro-subtitulo {
-  font-family: var(--fonte-titulo);
-  font-style: italic;
-  font-size: 1.1rem;
-  color: var(--texto-2);
-}
-
-.livro-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  font-family: var(--fonte-ui);
-  font-size: 0.85rem;
-  color: var(--texto-3);
-}
-.livro-meta span::before { content: '·'; margin-right: 0.5rem; color: var(--borda-forte); }
-.livro-meta span:first-child::before { display: none; }
-
-/* ── PAINEL DE INTERAÇÃO (favoritar, estrelas, downloads) ─────── */
-.livro-acoes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;
-  padding: 1.25rem 0;
-  border-top: 1px solid var(--borda);
-  border-bottom: 1px solid var(--borda);
-}
-
-/* Botão Favoritar */
-.btn-favoritar {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 1.2rem;
-  border: 1px solid var(--borda-media);
+.livro-hero-capa a:hover { transform: translateY(-4px) scale(1.01); }
+.livro-hero-capa-img {
+  width: 100%; height: auto; display: block;
   border-radius: var(--raio-lg);
-  background: transparent;
-  font-family: var(--fonte-ui);
-  font-size: 0.88rem;
-  color: var(--texto-2);
-  cursor: pointer;
-  transition: all var(--trans);
 }
-.btn-favoritar:hover { border-color: var(--ferrugem); color: var(--ferrugem); background: rgba(139,58,42,0.06); }
-.btn-favoritar.favoritado { border-color: var(--ferrugem); color: var(--ferrugem); background: rgba(139,58,42,0.08); }
-.btn-favoritar .fav-icone { font-size: 1.1rem; transition: transform 0.3s; }
-.btn-favoritar:hover .fav-icone, .btn-favoritar.favoritado .fav-icone { transform: scale(1.2); }
-.btn-favoritar:disabled { opacity: 0.6; cursor: not-allowed; }
+@media (max-width: 780px) {
+  .livro-hero-capa { position: static; max-width: 220px; margin: 0 auto 2rem; }
+}
+
+/* ── INFO ─────────────────────────────────────────────────────── */
+.livro-genero {
+  font-family: var(--fonte-display); font-size: .6rem;
+  letter-spacing: .35em; text-transform: uppercase;
+  color: var(--ouro); display: block; margin-bottom: 1rem;
+}
+.livro-titulo {
+  font-family: var(--fonte-titulo); font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 400; line-height: 1.1; margin-bottom: .75rem;
+  color: var(--texto);
+}
+.livro-titulo em { color: var(--ouro); font-style: italic; }
+.livro-subtitulo {
+  font-family: var(--fonte-corpo); font-size: 1.05rem;
+  color: var(--texto-3); line-height: 1.65; margin-bottom: 1.5rem;
+  font-style: italic;
+}
+.livro-meta {
+  display: flex; flex-wrap: wrap; gap: .45rem 1.25rem;
+  font-family: var(--fonte-display); font-size: .6rem;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--texto-3); margin-bottom: 1.75rem;
+}
+.livro-meta a { color: var(--texto-3); text-decoration: none; }
+.livro-meta a:hover { color: var(--ouro); }
+
+/* ── AÇÕES (favoritar, estrelas, downloads, contadores) ────────── */
+.livro-acoes {
+  display: flex; flex-wrap: wrap; gap: .65rem;
+  align-items: center; margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem; border-bottom: 1px solid var(--borda);
+}
+
+/* Favoritar */
+.btn-favoritar {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .45rem 1rem; border-radius: 20px;
+  border: 1px solid var(--borda-media);
+  background: transparent; color: var(--texto-3);
+  font-family: var(--fonte-display); font-size: .62rem;
+  letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer; transition: all .2s;
+}
+.btn-favoritar:hover,
+.btn-favoritar.ativo   { border-color: var(--ferrugem); color: var(--ferrugem); }
+.btn-favoritar.ativo .fav-icone { content: '♥'; }
+.fav-icone { font-size: 1rem; line-height: 1; }
 
 /* Estrelas de avaliação */
-.avaliacao-wrap { display: flex; align-items: center; gap: 0.6rem; }
+.avaliacao-wrap {
+  display: flex; align-items: center; gap: .5rem;
+}
 .estrelas-usuario {
-  display: flex;
-  gap: 2px;
+  display: flex; gap: .15rem;
 }
 .estrela-avaliacao {
-  font-size: 1.4rem;
-  color: var(--borda-forte);
-  cursor: pointer;
-  transition: color 0.15s, transform 0.15s;
-  line-height: 1;
-  user-select: none;
+  font-size: 1.2rem; color: var(--borda-media);
+  cursor: pointer; transition: color .15s;
+  line-height: 1; user-select: none;
 }
 .estrela-avaliacao:hover,
-.estrela-avaliacao.hover { color: var(--ouro-claro); transform: scale(1.15); }
 .estrela-avaliacao.selecionada { color: var(--ouro); }
 .avaliacao-label {
-  font-family: var(--fonte-ui);
-  font-size: 0.8rem;
+  font-family: var(--fonte-display); font-size: .58rem;
+  letter-spacing: .12em; text-transform: uppercase;
   color: var(--texto-3);
 }
 
-/* Botões de download */
-.download-wrap { display: flex; gap: 0.5rem; }
+/* Botões de download (amostra) */
+.download-wrap { display: flex; gap: .4rem; flex-wrap: wrap; }
 .btn-download {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 1rem;
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .4rem .8rem; border-radius: var(--raio);
   border: 1px solid var(--borda-media);
-  border-radius: var(--raio-lg);
-  background: transparent;
-  font-family: var(--fonte-ui);
-  font-size: 0.82rem;
-  color: var(--texto-2);
-  cursor: pointer;
-  transition: all var(--trans);
-  text-decoration: none;
+  background: transparent; color: var(--texto-3);
+  font-family: var(--fonte-display); font-size: .58rem;
+  letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer; transition: all .2s;
 }
-.btn-download:hover { border-color: var(--ouro); color: var(--ouro); background: rgba(184,134,11,0.06); }
-.btn-download .icone-formato { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; }
+.btn-download:hover { border-color: var(--ouro); color: var(--ouro); }
+.icone-formato {
+  font-family: var(--fonte-display); font-size: .55rem;
+  font-weight: 700; letter-spacing: .05em;
+  background: var(--ouro); color: #1A0F00;
+  padding: .1rem .35rem; border-radius: 3px;
+}
 
 /* Contadores */
 .contadores-wrap {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-family: var(--fonte-ui);
-  font-size: 0.82rem;
-  color: var(--texto-3);
-  margin-left: auto;
+  display: flex; align-items: center; gap: 1rem;
+  font-size: .78rem; color: var(--texto-3);
 }
-.contador-item { display: flex; align-items: center; gap: 0.3rem; }
+.contador-item, .estrelas-media-wrap {
+  display: flex; align-items: center; gap: .3rem;
+}
+.contador-item i, .estrelas-media-wrap i { color: var(--ouro); font-size: .75rem; }
+#estrelas-media { color: var(--ouro); font-size: .95rem; letter-spacing: -.05em; }
 
-/* Estrelas da média pública */
-.estrelas-media-wrap { display: flex; align-items: center; gap: 0.4rem; font-family: var(--fonte-ui); font-size: 0.83rem; color: var(--texto-3); }
-.estrela-media { color: var(--borda-forte); font-size: 0.9rem; }
-.estrela-media.cheia { color: var(--ouro); }
+/* CTAs (botão comprar + voltar) */
+.livro-ctas {
+  display: flex; flex-direction: column; gap: .6rem;
+}
 
-/* ── BOTÕES PRINCIPAIS (compra, etc.) ─────────────────────────── */
-.livro-ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-
-.btn {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.7rem 1.5rem;
-  border-radius: var(--raio-lg);
-  font-family: var(--fonte-ui); font-size: 0.9rem;
-  text-decoration: none; cursor: pointer;
-  transition: all var(--trans); border: 1px solid transparent;
-  white-space: nowrap;
-}
-.btn-primario {
-  background: var(--ouro); color: var(--fundo);
-  border-color: var(--ouro);
-}
-.btn-primario:hover { background: var(--ouro-escuro); border-color: var(--ouro-escuro); transform: translateY(-2px); box-shadow: var(--sombra-dourada); }
-.btn-secundario {
-  background: transparent; color: var(--ouro);
-  border-color: var(--ouro);
-}
-.btn-secundario:hover { background: rgba(184,134,11,0.08); transform: translateY(-2px); }
-.btn-ghost {
-  background: transparent; color: var(--texto-2);
-  border-color: var(--borda-media);
-}
-.btn-ghost:hover { border-color: var(--ouro); color: var(--ouro); }
-
-/* ── CONTEÚDO DO LIVRO ────────────────────────────────────────── */
+/* ================================================================
+   CONTEÚDO PRINCIPAL + SIDEBAR
+   ================================================================ */
 .livro-conteudo {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 3rem;
   max-width: var(--largura-max);
   margin: 0 auto;
-  padding: 4rem 3rem;
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 4rem;
+  padding: 0 3rem 5rem;
   align-items: start;
 }
+@media (max-width: 960px) {
+  .livro-conteudo { grid-template-columns: 1fr; padding: 0 1.5rem 4rem; }
+  .livro-sidebar  { order: -1; }
+}
 
-.livro-corpo { min-width: 0; }
-
-.secao-titulo {
-  font-family: var(--fonte-titulo);
-  font-size: 1.8rem;
-  font-weight: 400;
-  color: var(--texto);
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
+/* ── CORPO ─────────────────────────────────────────────────────── */
+.livro-corpo > section {
+  margin-bottom: 3rem;
+  padding-bottom: 3rem;
   border-bottom: 1px solid var(--borda);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
 }
-.secao-titulo::after {
-  content: '❧';
-  font-size: 1.2rem;
-  color: var(--ornamento-cor);
-}
+.livro-corpo > section:last-child { border-bottom: none; }
 
-.sinopse {
-  font-family: var(--fonte-corpo);
-  font-size: 1.08rem;
-  line-height: 1.85;
-  color: var(--texto);
+/* Título de seção */
+.secao-titulo {
+  font-family: var(--fonte-titulo); font-size: 1.5rem; font-weight: 400;
+  color: var(--texto); margin-bottom: 1.25rem;
+  padding-bottom: .6rem; border-bottom: 1px solid var(--borda);
+  display: flex; align-items: center; gap: .5rem;
 }
-.sinopse p { margin-bottom: 1.2rem; }
+.secao-titulo em { color: var(--ouro); font-style: italic; }
+
+/* Sinopse */
+.sinopse { font-size: 1rem; color: var(--texto-2); line-height: 1.85; }
+.sinopse p { margin-bottom: 1rem; }
 .sinopse p:last-child { margin-bottom: 0; }
+.sinopse em { color: var(--texto); font-style: italic; }
 
-/* ── EXCERTO / TRECHO ─────────────────────────────────────────── */
+/* Excerto */
 .excerto-bloco {
-  background: var(--fundo-2);
-  border-left: 3px solid var(--ouro);
+  background: linear-gradient(135deg, var(--fundo-2) 0%, var(--fundo-card) 100%);
+  border-left: 4px solid var(--ouro);
   border-radius: 0 var(--raio-lg) var(--raio-lg) 0;
   padding: 1.75rem 2rem;
-  margin: 2.5rem 0;
   position: relative;
+  overflow: hidden;
 }
 .excerto-bloco::before {
-  content: '"';
+  content: '❝';
   font-family: var(--fonte-titulo);
-  font-size: 5rem;
-  color: var(--ouro);
-  opacity: 0.15;
-  position: absolute;
-  top: -0.5rem;
-  left: 0.75rem;
-  line-height: 1;
-  pointer-events: none;
+  position: absolute; top: -.25rem; left: 1rem;
+  font-size: 5rem; color: var(--ouro); opacity: .1;
+  line-height: 1; pointer-events: none;
 }
 .excerto-texto {
-  font-family: var(--fonte-titulo);
-  font-style: italic;
-  font-size: 1.15rem;
-  line-height: 1.8;
-  color: var(--texto);
+  font-family: var(--fonte-titulo); font-style: italic;
+  font-size: 1.05rem; line-height: 1.8; color: var(--texto-2);
+  position: relative; z-index: 1;
 }
 .excerto-fonte {
-  margin-top: 0.75rem;
-  font-family: var(--fonte-ui);
-  font-size: 0.78rem;
-  color: var(--texto-3);
-  text-align: right;
+  font-family: var(--fonte-display); font-size: .62rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ouro); margin-top: 1rem; display: block;
 }
 
-/* ── PERSONAGENS ──────────────────────────────────────────────── */
+/* Personagens */
 .personagens-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1.25rem;
-  margin: 1.5rem 0;
 }
 .personagem-card {
-  background: var(--fundo-card);
-  border: 1px solid var(--borda);
-  border-radius: var(--raio-lg);
-  padding: 1.25rem;
-  transition: all var(--trans);
+  background: var(--fundo-card); border: 1px solid var(--borda);
+  border-radius: var(--raio-lg); padding: 1.25rem;
+  transition: border-color .2s, box-shadow .2s;
 }
-.personagem-card:hover { border-color: var(--borda-media); box-shadow: var(--sombra-sm); transform: translateY(-2px); }
-.personagem-nome { font-family: var(--fonte-titulo); font-size: 1.1rem; color: var(--texto); margin-bottom: 0.3rem; }
-.personagem-papel { font-family: var(--fonte-ui); font-size: 0.78rem; color: var(--ouro); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.6rem; }
-.personagem-desc { font-family: var(--fonte-corpo); font-size: 0.9rem; color: var(--texto-2); line-height: 1.6; }
+.personagem-card:hover {
+  border-color: var(--borda-media);
+  box-shadow: var(--sombra-sm);
+}
+.personagem-nome {
+  font-family: var(--fonte-titulo); font-size: 1rem; font-weight: 500;
+  color: var(--texto); margin-bottom: .2rem;
+}
+.personagem-papel {
+  font-family: var(--fonte-display); font-size: .58rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ouro); margin-bottom: .65rem;
+}
+.personagem-desc {
+  font-size: .85rem; color: var(--texto-3); line-height: 1.65;
+}
 
-/* ── CAPÍTULOS ────────────────────────────────────────────────── */
-.capitulos-lista { list-style: none; padding: 0; margin: 1.5rem 0; display: flex; flex-direction: column; gap: 0.5rem; }
+/* Capítulos */
+.capitulos-lista {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: .25rem;
+}
 .capitulo-item {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 0.7rem 1rem;
-  background: var(--fundo-card);
-  border: 1px solid var(--borda);
-  border-radius: var(--raio);
-  font-family: var(--fonte-ui);
-  font-size: 0.9rem;
-  color: var(--texto-2);
-  transition: all var(--trans);
+  display: flex; align-items: baseline; gap: 1rem;
+  padding: .65rem .85rem; border-radius: var(--raio);
+  background: var(--fundo-card); border: 1px solid var(--borda);
+  transition: border-color .18s, background .18s;
+  font-size: .92rem; color: var(--texto-2);
 }
-.capitulo-item:hover { border-color: var(--borda-media); color: var(--texto); }
-.capitulo-num { font-family: var(--fonte-titulo); font-size: 0.78rem; color: var(--ouro); min-width: 24px; }
-.capitulo-nome { flex: 1; }
+.capitulo-item:hover { border-color: var(--borda-media); background: var(--fundo-2); }
+.capitulo-num {
+  font-family: var(--fonte-display); font-size: .65rem;
+  letter-spacing: .1em; color: var(--ouro); flex-shrink: 0;
+  min-width: 2ch;
+}
+.capitulo-nome { font-family: var(--fonte-corpo); }
 
-/* ── BARRA LATERAL ────────────────────────────────────────────── */
-.livro-sidebar { display: flex; flex-direction: column; gap: 1.5rem; position: sticky; top: calc(var(--altura-nav) + 1.5rem); }
+/* ── SIDEBAR ──────────────────────────────────────────────────── */
+.livro-sidebar {
+  position: sticky; top: calc(var(--altura-nav) + 1.5rem);
+  display: flex; flex-direction: column; gap: 1.25rem;
+}
+@media (max-width: 960px) {
+  .livro-sidebar { position: static; display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); }
+}
 
 .sidebar-card {
-  background: var(--fundo-card);
-  border: 1px solid var(--borda);
-  border-radius: var(--raio-lg);
-  padding: 1.5rem;
+  background: var(--fundo-card); border: 1px solid var(--borda);
+  border-radius: var(--raio-lg); padding: 1.25rem;
+  box-shadow: var(--sombra-sm);
 }
 .sidebar-titulo {
-  font-family: var(--fonte-ui);
-  font-size: 0.78rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ouro);
-  margin-bottom: 1rem;
+  font-family: var(--fonte-display); font-size: .62rem;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--ouro); margin-bottom: .85rem;
+  display: flex; align-items: center; gap: .4rem;
 }
-.sidebar-item { display: flex; justify-content: space-between; align-items: baseline; padding: 0.4rem 0; border-bottom: 1px solid var(--borda); font-family: var(--fonte-ui); font-size: 0.88rem; }
+.sidebar-item {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: .5rem; padding: .35rem 0;
+  border-bottom: 1px solid var(--borda); font-size: .82rem;
+}
 .sidebar-item:last-child { border-bottom: none; }
-.sidebar-label { color: var(--texto-3); }
-.sidebar-valor { color: var(--texto); font-weight: 500; }
+.sidebar-label { color: var(--texto-3); flex-shrink: 0; }
+.sidebar-valor { color: var(--texto-2); text-align: right; }
+.sidebar-card p { font-size: .85rem; color: var(--texto-3); line-height: 1.6; margin-bottom: .85rem; }
 
-/* Box download da sidebar */
-.download-box {
-  background: linear-gradient(135deg, var(--fundo-2) 0%, var(--fundo-card) 100%);
-  border: 1px solid var(--borda-media);
+/* Download box sidebar */
+.download-box .download-btns {
+  display: flex; flex-direction: column; gap: .45rem;
 }
-.download-box .sidebar-titulo { color: var(--ouro); }
-.download-box p {
-  font-family: var(--fonte-corpo);
-  font-size: 0.88rem;
-  color: var(--texto-2);
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-.download-btns { display: flex; flex-direction: column; gap: 0.6rem; }
 
-/* ── OUTROS LIVROS ────────────────────────────────────────────── */
+/* ================================================================
+   OUTROS LIVROS
+   ================================================================ */
 .outros-livros-secao {
   background: var(--fundo-2);
   border-top: 1px solid var(--borda);
-  padding: 4rem 3rem;
+  padding: 4rem 2rem;
 }
 .outros-livros-inner { max-width: var(--largura-max); margin: 0 auto; }
 .outros-livros-titulo {
-  font-family: var(--fonte-titulo);
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 300;
-  text-align: center;
-  margin-bottom: 2.5rem;
-  color: var(--texto);
+  font-family: var(--fonte-titulo); font-size: 1.75rem; font-weight: 400;
+  text-align: center; margin-bottom: 2.5rem;
 }
-.outros-livros-titulo em { font-style: italic; color: var(--ouro); }
+.outros-livros-titulo em { color: var(--ouro); font-style: italic; }
 .outros-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 1.5rem;
 }
 .outro-livro-card {
-  background: var(--fundo-card);
-  border: 1px solid var(--borda);
-  border-radius: var(--raio-lg);
-  overflow: hidden;
-  transition: all var(--trans-lenta);
-  text-decoration: none;
-  display: block;
+  display: flex; flex-direction: column;
+  text-decoration: none; color: var(--texto);
+  border-radius: var(--raio-lg); overflow: hidden;
+  background: var(--fundo-card); border: 1px solid var(--borda);
+  transition: transform .25s, box-shadow .25s, border-color .25s;
 }
-.outro-livro-card:hover { transform: translateY(-4px); box-shadow: var(--sombra-md); border-color: var(--borda-media); }
-.outro-livro-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; }
-.outro-livro-info { padding: 1rem; }
-.outro-livro-titulo { font-family: var(--fonte-titulo); font-size: 1rem; color: var(--texto); margin-bottom: 0.25rem; }
-.outro-livro-genero { font-family: var(--fonte-ui); font-size: 0.75rem; color: var(--texto-3); }
+.outro-livro-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-md);
+  border-color: var(--borda-media);
+}
+.outro-livro-card img {
+  width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block;
+}
+.outro-livro-info { padding: .75rem; }
+.outro-livro-titulo {
+  font-family: var(--fonte-titulo); font-size: .95rem; font-weight: 400;
+  margin-bottom: .2rem; color: var(--texto);
+}
+.outro-livro-genero {
+  font-family: var(--fonte-display); font-size: .56rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--texto-3);
+}
 
-/* ── NEWSLETTER ───────────────────────────────────────────────── */
+/* ================================================================
+   NEWSLETTER SECTION
+   ================================================================ */
 .newsletter-secao {
-  background: var(--fundo-3);
-  border-top: 1px solid var(--borda);
-  padding: 4rem 3rem;
-  text-align: center;
+  background: linear-gradient(135deg, #1A0F00 0%, #2C1810 100%);
+  padding: 4rem 2rem; text-align: center;
 }
-.newsletter-inner { max-width: 600px; margin: 0 auto; }
-.newsletter-titulo { font-family: var(--fonte-titulo); font-size: 1.8rem; font-weight: 300; color: var(--texto); margin-bottom: 0.75rem; }
-.newsletter-desc { font-family: var(--fonte-corpo); font-style: italic; color: var(--texto-2); margin-bottom: 1.5rem; line-height: 1.7; }
-.newsletter-form { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.newsletter-inner { max-width: 560px; margin: 0 auto; }
+.newsletter-titulo {
+  font-family: var(--fonte-titulo); font-size: clamp(1.4rem,3vw,2rem);
+  font-weight: 400; color: #D4C5A0; margin-bottom: .75rem;
+}
+.newsletter-desc {
+  font-size: .95rem; color: #786858; line-height: 1.7; margin-bottom: 1.75rem;
+}
+.newsletter-form {
+  display: flex; gap: .6rem; max-width: 420px; margin: 0 auto;
+}
 .newsletter-input {
-  flex: 1;
-  min-width: 220px;
-  max-width: 340px;
-  padding: 0.7rem 1.1rem;
+  flex: 1; padding: .75rem 1rem;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(184,134,11,.3);
+  border-radius: var(--raio); color: #D4C5A0;
+  font-family: var(--fonte-ui); font-size: .95rem;
+  outline: none; transition: border-color .2s;
+}
+.newsletter-input::placeholder { color: #4A3D2E; }
+.newsletter-input:focus { border-color: var(--ouro); }
+@media (max-width: 480px) {
+  .newsletter-form { flex-direction: column; }
+}
+
+/* ================================================================
+   BOTÕES GLOBAIS (btn, btn-primario, btn-secundario, btn-ghost)
+   — definidos aqui para as páginas de livro não dependerem do auth.css
+   ================================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: .45rem; padding: .65rem 1.35rem; border-radius: var(--raio);
+  font-family: var(--fonte-display); font-size: .65rem;
+  font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  cursor: pointer; border: none; text-decoration: none;
+  transition: all .2s;
+}
+.btn-primario { background: var(--ouro); color: #1A0F00; }
+.btn-primario:hover { opacity: .88; }
+.btn-secundario {
+  background: transparent; color: var(--texto-2);
   border: 1px solid var(--borda-media);
-  border-radius: var(--raio-lg);
-  background: var(--fundo-card);
-  font-family: var(--fonte-ui);
-  font-size: 0.9rem;
-  color: var(--texto);
 }
-.newsletter-input:focus { outline: none; border-color: var(--ouro); box-shadow: 0 0 0 3px rgba(184,134,11,0.12); }
-
-/* ── NAV GERAL ────────────────────────────────────────────────── */
-.nav-logo { font-family: var(--fonte-display); font-size: 1.15rem; color: var(--texto); text-decoration: none; display: flex; flex-direction: column; line-height: 1.2; }
-.nav-logo span { font-family: var(--fonte-ui); font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--texto-3); font-weight: 400; }
-
-/* ── REVEAL ───────────────────────────────────────────────────── */
-.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
-.reveal.visivel { opacity: 1; transform: translateY(0); }
-.reveal-delay-1 { transition-delay: 0.1s; }
-.reveal-delay-2 { transition-delay: 0.2s; }
-.reveal-delay-3 { transition-delay: 0.3s; }
-
-/* ── SEÇÃO ────────────────────────────────────────────────────── */
-.secao { padding: 0; }
-
-/* ── RESPONSIVIDADE ───────────────────────────────────────────── */
-@media (max-width: 900px) {
-  .livro-hero { grid-template-columns: 1fr; gap: 2.5rem; padding: calc(var(--altura-nav) + 2rem) 1.5rem 3rem; text-align: center; }
-  .livro-hero-capa { order: -1; }
-  .livro-hero-capa-img { width: min(220px, 60vw); }
-  .livro-acoes { justify-content: center; }
-  .livro-ctas { justify-content: center; }
-  .livro-meta { justify-content: center; }
-  .livro-genero { align-self: center; }
-  .livro-conteudo { grid-template-columns: 1fr; padding: 2.5rem 1.5rem; gap: 2.5rem; }
-  .livro-sidebar { position: static; }
-  .outros-livros-secao, .newsletter-secao { padding: 3rem 1.5rem; }
+.btn-secundario:hover { border-color: var(--ouro); color: var(--ouro); }
+.btn-ghost {
+  background: transparent; color: var(--texto-3);
+  border: 1px solid var(--borda);
 }
+.btn-ghost:hover { border-color: var(--borda-media); color: var(--texto-2); }
+.btn-ler-agora { background: rgba(39,174,96,.12); color: #27ae60; border: 1px solid #27ae60; }
+.btn-ler-agora:hover { background: rgba(39,174,96,.22); }
 
-@media (max-width: 600px) {
-  .personagens-grid { grid-template-columns: 1fr 1fr; }
-  .outros-grid { grid-template-columns: repeat(2, 1fr); }
-  .download-wrap { flex-direction: column; }
-  .contadores-wrap { margin-left: 0; width: 100%; justify-content: center; }
+/* Slot de compra */
+[data-slot-compra] { display: flex; flex-direction: column; gap: .6rem; }
+
+/* ================================================================
+   REVEAL ANIMATION (scroll-triggered fade-up)
+   ================================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .6s ease, transform .6s ease;
 }
+.reveal.visivel {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }

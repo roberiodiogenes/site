@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Presentear | Robério Diógenes</title>
+  <meta name="description" content="Presenteie alguém especial com um livro de Robério Diógenes. Inclui dedicatória personalizada e voucher em PDF." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  body { font-family: var(--fonte-corpo); background: var(--fundo); color: var(--texto); min-height: 100vh; }
+
+  /* ── HERO ─────────────────────────────────────────────────────── */
+  .gift-hero {
+    padding: 5rem 2rem 3.5rem;
+    background: linear-gradient(to bottom, var(--fundo-2), var(--fundo));
+    border-bottom: 1px solid var(--borda);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .gift-hero::before {
+    content: '❧';
+    font-family: var(--fonte-titulo);
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 20rem; color: var(--ouro); opacity: .04;
+    pointer-events: none;
+  }
+  .gift-pretitulo {
+    font-family: var(--fonte-display); font-size: .6rem;
+    letter-spacing: .35em; text-transform: uppercase;
+    color: var(--ouro); margin-bottom: .75rem; display: block;
+  }
+  .gift-titulo {
+    font-family: var(--fonte-titulo); font-size: clamp(1.75rem,4vw,2.75rem);
+    font-weight: 400; line-height: 1.15; margin-bottom: .75rem;
+  }
+  .gift-titulo em { color: var(--ouro); font-style: italic; }
+  .gift-desc { font-size: .95rem; color: var(--texto-3); max-width: 480px; margin: 0 auto 1.5rem; line-height: 1.7; }
+  .gift-voltar {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-family: var(--fonte-display); font-size: .6rem;
+    letter-spacing: .15em; text-transform: uppercase;
+    color: var(--texto-3); text-decoration: none;
+    transition: color var(--trans);
+  }
+  .gift-voltar:hover { color: var(--ouro); }
+
+  /* ── LAYOUT ───────────────────────────────────────────────────── */
+  .gift-wrap {
+    max-width: 960px; margin: 0 auto;
+    padding: 2.5rem 2rem 5rem;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem; align-items: start;
+  }
+  @media (max-width: 720px) {
+    .gift-wrap { grid-template-columns: 1fr; }
+  }
+
+  /* ── CARD DO LIVRO ────────────────────────────────────────────── */
+  .gift-livro-card {
+    background: var(--fundo-card);
+    border: 1px solid var(--borda-media);
+    border-radius: var(--raio-xl);
+    padding: 1.5rem;
+    position: sticky; top: 5rem;
+    box-shadow: var(--sombra-sm);
+    text-align: center;
+  }
+  .gift-livro-card.loading { opacity: .5; }
+  .gift-capa {
+    width: 140px; height: 196px; object-fit: cover;
+    border-radius: 8px; margin: 0 auto 1rem; display: block;
+    box-shadow: var(--sombra-livro);
+  }
+  .gift-capa-ph {
+    width: 140px; height: 196px; border-radius: 8px;
+    background: var(--fundo-2); margin: 0 auto 1rem;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--texto-3); font-size: 2rem;
+    box-shadow: var(--sombra-sm);
+  }
+  .gift-livro-tipo {
+    font-family: var(--fonte-display); font-size: .58rem;
+    letter-spacing: .15em; text-transform: uppercase; color: var(--ouro);
+    margin-bottom: .3rem;
+  }
+  .gift-livro-titulo {
+    font-family: var(--fonte-titulo); font-size: 1.05rem; font-weight: 400;
+    line-height: 1.3; margin-bottom: .3rem;
+  }
+  .gift-livro-genero { font-size: .82rem; color: var(--texto-3); margin-bottom: .75rem; }
+  .gift-livro-preco {
+    font-family: var(--fonte-titulo); font-size: 1.3rem;
+    color: var(--ouro); font-weight: 600;
+  }
+  .gift-livro-detalhe {
+    font-size: .78rem; color: var(--texto-3); margin-top: .3rem;
+    display: flex; align-items: center; justify-content: center; gap: .35rem;
+  }
+
+  /* ── FORMULÁRIO ───────────────────────────────────────────────── */
+  .gift-form-wrap {
+    background: var(--fundo-card);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-xl);
+    padding: 2rem;
+  }
+
+  /* Stepper */
+  .gift-stepper {
+    display: flex; gap: 0; margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--borda);
+    padding-bottom: 1.5rem;
+  }
+  .gift-step {
+    flex: 1; text-align: center; position: relative;
+  }
+  .gift-step::after {
+    content: '';
+    position: absolute; top: 18px; right: -50%;
+    width: 100%; height: 1px;
+    background: var(--borda-media);
+    z-index: 0;
+  }
+  .gift-step:last-child::after { display: none; }
+  .gift-step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--fundo-2); border: 2px solid var(--borda-media);
+    color: var(--texto-3); font-family: var(--fonte-display);
+    font-size: .7rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto .4rem; position: relative; z-index: 1;
+    transition: all .3s;
+  }
+  .gift-step.ativo .gift-step-num {
+    background: var(--ouro); border-color: var(--ouro); color: #1A0F00;
+  }
+  .gift-step.concluido .gift-step-num {
+    background: #27ae60; border-color: #27ae60; color: #fff;
+  }
+  .gift-step-label {
+    font-family: var(--fonte-display); font-size: .58rem;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--texto-3);
+  }
+  .gift-step.ativo .gift-step-label { color: var(--ouro); }
+  .gift-step.concluido .gift-step-label { color: #27ae60; }
+
+  /* Paineis dos passos */
+  .gift-passo { display: none; }
+  .gift-passo.ativo { display: block; animation: fadeInUp .3s ease; }
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+  /* Campos */
+  .gift-secao-titulo {
+    font-family: var(--fonte-titulo); font-size: 1.1rem; font-weight: 400;
+    margin-bottom: 1.25rem; padding-bottom: .5rem;
+    border-bottom: 1px solid var(--borda);
+  }
+  .gift-secao-titulo em { color: var(--ouro); font-style: italic; }
+  .gift-campo { margin-bottom: 1.1rem; }
+  .gift-label {
+    display: block; font-family: var(--fonte-display); font-size: .62rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--texto-3);
+    margin-bottom: .45rem;
+  }
+  .gift-label .obrig { color: var(--ouro); }
+  .gift-input, .gift-select, .gift-textarea {
+    width: 100%; padding: .7rem 1rem;
+    background: var(--fundo-2); border: 1px solid var(--borda-media);
+    border-radius: var(--raio); color: var(--texto);
+    font-family: var(--fonte-corpo); font-size: .95rem;
+    outline: none; transition: border-color var(--trans), box-shadow var(--trans);
+  }
+  .gift-input:focus, .gift-select:focus, .gift-textarea:focus {
+    border-color: var(--ouro);
+    box-shadow: 0 0 0 3px rgba(184,134,11,.12);
+  }
+  .gift-input::placeholder, .gift-textarea::placeholder { color: var(--texto-3); }
+  .gift-textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
+  .gift-input-hint {
+    font-size: .75rem; color: var(--texto-3); margin-top: .3rem;
+  }
+  .gift-campos-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem;
+  }
+  @media (max-width: 500px) {
+    .gift-campos-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Contador de caracteres */
+  .gift-char-count {
+    font-size: .72rem; color: var(--texto-3); text-align: right;
+    margin-top: .2rem; transition: color .2s;
+  }
+  .gift-char-count.aviso { color: #f39c12; }
+  .gift-char-count.limite { color: var(--ferrugem); }
+
+  /* Preview da dedicatória */
+  .dedicatoria-preview {
+    background: linear-gradient(135deg, var(--fundo-2) 0%, var(--creme, #F2E8D4) 100%);
+    border: 1px solid var(--borda-media);
+    border-radius: var(--raio-lg);
+    padding: 1.5rem;
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .dedicatoria-preview::before {
+    content: '❝';
+    font-family: var(--fonte-titulo);
+    font-size: 4rem; color: var(--ouro); opacity: .12;
+    position: absolute; top: -.25rem; left: .75rem;
+    line-height: 1;
+  }
+  .dedicatoria-preview-texto {
+    font-family: var(--fonte-titulo); font-style: italic;
+    font-size: 1rem; line-height: 1.75; color: var(--texto-2);
+    padding-left: .5rem; min-height: 2rem;
+    white-space: pre-wrap;
+  }
+  .dedicatoria-preview-de {
+    font-family: var(--fonte-display); font-size: .6rem;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--texto-3); margin-top: .75rem;
+  }
+
+  /* Política */
+  .gift-politica {
+    background: var(--fundo-2); border: 1px solid var(--borda);
+    border-radius: var(--raio-lg); padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .gift-politica-titulo {
+    font-family: var(--fonte-display); font-size: .65rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ouro); margin-bottom: .75rem;
+    display: flex; align-items: center; gap: .4rem;
+  }
+  .gift-politica-texto {
+    font-size: .83rem; line-height: 1.7; color: var(--texto-2);
+  }
+  .gift-politica-texto li { margin-left: 1.2rem; margin-bottom: .3rem; }
+  .gift-toggle-wrap {
+    display: flex; align-items: flex-start; gap: .75rem;
+    margin-top: .85rem;
+  }
+  .gift-toggle-wrap input[type="checkbox"] {
+    width: 18px; height: 18px; margin-top: 2px;
+    accent-color: var(--ouro); cursor: pointer; flex-shrink: 0;
+  }
+  .gift-toggle-wrap label {
+    font-size: .85rem; line-height: 1.55; color: var(--texto-2); cursor: pointer;
+  }
+
+  /* Resumo do pedido */
+  .gift-resumo-linha {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: .88rem; padding: .5rem 0; border-bottom: 1px solid var(--borda);
+    color: var(--texto-2);
+  }
+  .gift-resumo-linha:last-of-type { border-bottom: none; }
+  .gift-resumo-linha.total {
+    font-family: var(--fonte-titulo); font-size: 1.2rem; font-weight: 600;
+    padding-top: .75rem; border-top: 2px solid var(--borda-media);
+    margin-top: .25rem;
+  }
+  .gift-resumo-linha.total span:last-child { color: var(--ouro); }
+
+  /* Botões de navegação */
+  .gift-btns {
+    display: flex; gap: .75rem; margin-top: 1.75rem;
+    justify-content: space-between; align-items: center;
+  }
+  .btn-gift-nav {
+    display: inline-flex; align-items: center; gap: .45rem;
+    padding: .7rem 1.35rem; border-radius: var(--raio);
+    font-family: var(--fonte-display); font-size: .65rem;
+    font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    cursor: pointer; border: none; transition: all .2s;
+  }
+  .btn-gift-primary {
+    background: var(--ouro); color: #1A0F00; padding: .85rem 1.75rem;
+  }
+  .btn-gift-primary:hover:not(:disabled) { opacity: .88; }
+  .btn-gift-primary:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-gift-secondary {
+    background: transparent; color: var(--texto-3);
+    border: 1px solid var(--borda-media);
+  }
+  .btn-gift-secondary:hover { border-color: var(--ouro); color: var(--ouro); }
+  .btn-spinner { display: none; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-gift-primary.carregando .btn-spinner { display: inline-block; }
+  .btn-gift-primary.carregando .btn-icon { display: none; }
+
+  /* Erro inline */
+  .gift-erro {
+    background: rgba(139,58,42,.08); border: 1px solid rgba(139,58,42,.25);
+    border-radius: var(--raio); padding: .75rem 1rem;
+    font-size: .85rem; color: var(--ferrugem);
+    margin-bottom: 1rem; display: flex; align-items: flex-start; gap: .5rem;
+  }
+
+  /* ── ANIMAÇÃO CAIXA DE PRESENTE ─────────────────────────────── */
+  .presente-anim-wrap {
+    text-align: center; padding: .5rem 0 1.5rem; position: relative;
+  }
+  .presente-box {
+    display: inline-block; position: relative;
+    width: 90px; height: 90px; cursor: default;
+  }
+  /* Base da caixa */
+  .pbox-base {
+    position: absolute; bottom: 0; left: 5px; right: 5px; height: 55px;
+    background: linear-gradient(135deg, #c0392b 0%, #8B2020 100%);
+    border-radius: 4px 4px 6px 6px;
+    box-shadow: 0 4px 16px rgba(139,32,32,.4);
+  }
+  .pbox-fita-v {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 12px; height: 55px;
+    background: linear-gradient(to bottom, #f1c40f, #D4A843);
+    border-radius: 0 0 3px 3px;
+  }
+  /* Tampa */
+  .pbox-tampa {
+    position: absolute; top: 0; left: 0; right: 0; height: 32px;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    border-radius: 6px;
+    transform-origin: center top;
+    transform: rotate(0deg);
+    transition: transform .5s cubic-bezier(.34,1.56,.64,1), top .5s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    z-index: 2;
+  }
+  .pbox-fita-h {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    left: 0; right: 0; height: 10px;
+    background: linear-gradient(to right, #f1c40f, #D4A843);
+  }
+  /* Laço */
+  .pbox-laco {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    font-size: 1.75rem; line-height: 1; z-index: 3;
+    transition: transform .4s ease;
+  }
+  /* Estado aberto */
+  .presente-box.aberto .pbox-tampa {
+    transform: rotate(-45deg) translateY(-8px);
+    top: -12px;
+  }
+  .presente-box.aberto .pbox-laco { transform: translateX(-50%) rotate(-45deg) scale(.7); }
+  /* Partículas / estrelas */
+  .pbox-sparks {
+    position: absolute; top: -20px; left: -10px; right: -10px;
+    pointer-events: none;
+    opacity: 0; transition: opacity .3s;
+  }
+  .presente-box.aberto .pbox-sparks { opacity: 1; }
+  .pbox-spark {
+    position: absolute; font-size: .9rem;
+    animation: sparkFloat 1.2s ease-out forwards;
+  }
+  @keyframes sparkFloat {
+    0%   { transform: translateY(0) scale(0); opacity: 1; }
+    60%  { transform: translateY(-28px) scale(1.2); opacity: 1; }
+    100% { transform: translateY(-44px) scale(0); opacity: 0; }
+  }
+  /* Pulso na caixa fechada */
+  @keyframes boxPulse {
+    0%,100% { transform: scale(1) rotate(-1deg); }
+    50%     { transform: scale(1.05) rotate(1deg); }
+  }
+  .presente-box.pulsar { animation: boxPulse 1.4s ease-in-out 3; }
+  /* Mensagem abaixo da animação */
+  .presente-anim-msg {
+    font-family: var(--fonte-titulo); font-style: italic;
+    font-size: .95rem; color: var(--texto-3); margin-top: .75rem;
+    transition: color .4s;
+  }
+  .presente-anim-msg.confirmado { color: var(--ouro); }
+
+  /* ── QR CODE ─────────────────────────────────────────────────── */
+  .previa-qr-wrap {
+    display: flex; gap: 1rem; align-items: center;
+    background: var(--fundo-2); border: 1px solid var(--borda);
+    border-radius: var(--raio-lg); padding: .85rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .previa-qr-img {
+    width: 72px; height: 72px; border-radius: var(--raio);
+    image-rendering: pixelated; flex-shrink: 0;
+    background: #fff; padding: 2px;
+  }
+  .previa-qr-info { min-width: 0; }
+  .previa-qr-label {
+    font-family: var(--fonte-display); font-size: .56rem;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--ouro);
+    margin-bottom: .3rem;
+  }
+  .previa-qr-url {
+    font-size: .75rem; color: var(--texto-3); word-break: break-all;
+    line-height: 1.4;
+  }
+
+  /* ── PAGAMENTO INLINE NA PRÉVIA ──────────────────────────────── */
+  .previa-pagar-wrap {
+    border-top: 1px solid var(--borda); padding-top: 1.25rem; margin-top: 1.25rem;
+  }
+  .previa-pagar-titulo {
+    font-family: var(--fonte-titulo); font-size: 1rem; font-weight: 400;
+    margin-bottom: .75rem; color: var(--texto-2);
+  }
+
+  /* ── PRÉVIA DA PÁGINA DO PRESENTE ───────────────────────────── */
+  .previa-wrap {
+    position: relative; margin-bottom: 1.5rem;
+  }
+  .previa-badge {
+    position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+    background: var(--ouro); color: #1A0F00;
+    font-family: var(--fonte-display); font-size: .55rem;
+    letter-spacing: .2em; text-transform: uppercase; font-weight: 700;
+    padding: .2rem .8rem; border-radius: 20px; z-index: 2;
+    box-shadow: 0 2px 8px rgba(184,134,11,.3);
+  }
+  .previa-frame {
+    border: 2px solid var(--ouro); border-radius: var(--raio-xl);
+    overflow: hidden; position: relative;
+    box-shadow: 0 8px 32px rgba(44,36,24,.15), 0 0 0 1px rgba(184,134,11,.12);
+  }
+  /* Mini card — espelho fiel da presente.html */
+  .pv-card { background: var(--fundo-card); font-family: var(--fonte-corpo); }
+  .pv-topo {
+    background: #1A0F00; padding: 18px 24px; text-align: center; position: relative;
+  }
+  .pv-topo::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(to right, #8B6508, #D4A843, #B8860B);
+  }
+  .pv-logo { font-family: var(--fonte-titulo); font-size: 1rem; color: #D4A843; letter-spacing: 3px; }
+  .pv-corpo { padding: 24px 28px; text-align: center; }
+  .pv-emoji { font-size: 2.25rem; display: block; margin-bottom: .5rem; }
+  .pv-titulo { font-family: var(--fonte-titulo); font-size: 1.45rem; font-weight: 400; margin-bottom: .35rem; }
+  .pv-titulo em { color: var(--ouro); font-style: italic; }
+  .pv-subtitulo { font-size: .85rem; color: var(--texto-3); margin-bottom: 1.5rem; line-height: 1.6; }
+  .pv-livro {
+    display: flex; gap: 1rem; align-items: flex-start;
+    background: rgba(184,134,11,.06); border: 1px solid rgba(184,134,11,.18);
+    border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem; text-align: left;
+  }
+  .pv-capa { width: 58px; flex-shrink: 0; border-radius: 5px; box-shadow: -4px 6px 14px rgba(44,36,24,.25); }
+  .pv-capa-ph { width: 58px; height: 80px; border-radius: 5px; background: var(--fundo-2); display: flex; align-items: center; justify-content: center; color: var(--texto-3); font-size: 1.25rem; flex-shrink: 0; }
+  .pv-livro-titulo { font-family: var(--fonte-titulo); font-size: .95rem; font-weight: 400; margin-bottom: .15rem; }
+  .pv-livro-autor { font-size: .75rem; color: var(--texto-3); margin-bottom: .35rem; }
+  .pv-badge {
+    display: inline-flex; align-items: center; gap: .25rem;
+    font-family: var(--fonte-display); font-size: .5rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    background: rgba(39,174,96,.12); color: #27ae60;
+    border: 1px solid #27ae60; border-radius: 20px; padding: .15rem .5rem;
+  }
+  .pv-ded {
+    background: var(--fundo-2); border-left: 3px solid var(--ouro);
+    padding: .8rem 1rem; border-radius: 0 8px 8px 0;
+    margin-bottom: 1.25rem; text-align: left;
+  }
+  .pv-ded-label { font-family: var(--fonte-display); font-size: .52rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ouro); margin-bottom: .3rem; }
+  .pv-ded-texto { font-family: var(--fonte-titulo); font-style: italic; font-size: .88rem; color: var(--texto-2); line-height: 1.65; white-space: pre-wrap; }
+  .pv-ded-de { font-size: .72rem; color: var(--texto-3); margin-top: .4rem; }
+  /* Muro de cadastro na prévia */
+  .pv-cadastro-muro {
+    background: linear-gradient(135deg, var(--fundo-2) 0%, rgba(184,134,11,.06) 100%);
+    border: 1px solid var(--borda-media);
+    border-radius: 10px; padding: 1.25rem; text-align: center;
+    margin-bottom: 1rem;
+  }
+  .pv-cadastro-icon { font-size: 1.75rem; color: var(--ouro); margin-bottom: .6rem; display: block; }
+  .pv-cadastro-titulo { font-family: var(--fonte-titulo); font-size: 1.05rem; font-weight: 400; margin-bottom: .3rem; }
+  .pv-cadastro-desc { font-size: .8rem; color: var(--texto-3); line-height: 1.55; margin-bottom: 1rem; }
+  .pv-btn-cadastro {
+    display: flex; align-items: center; justify-content: center; gap: .4rem;
+    padding: .7rem 1.25rem; border-radius: 8px;
+    background: var(--ouro); color: #1A0F00;
+    font-family: var(--fonte-display); font-size: .62rem;
+    font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    cursor: default; opacity: .7;
+    width: 100%; border: none; margin-bottom: .5rem;
+  }
+  .pv-btn-leitor {
+    display: flex; align-items: center; justify-content: center; gap: .4rem;
+    padding: .65rem 1.25rem; border-radius: 8px;
+    background: transparent; color: var(--texto-2);
+    border: 1px solid var(--borda-media);
+    font-family: var(--fonte-display); font-size: .6rem;
+    font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    cursor: default; opacity: .5; width: 100%;
+  }
+  .pv-nota { font-size: .72rem; color: var(--texto-3); margin-top: .75rem; }
+  .pv-data { font-family: var(--fonte-display); font-size: .55rem; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-3); margin-top: 1rem; }
+  /* Nota informativa abaixo da prévia */
+  .previa-nota {
+    margin-top: 1rem; padding: .85rem 1rem;
+    background: rgba(184,134,11,.06); border: 1px solid rgba(184,134,11,.2);
+    border-radius: var(--raio); font-size: .82rem; color: var(--texto-2);
+    display: flex; align-items: flex-start; gap: .5rem; line-height: 1.55;
+  }
+  .previa-nota i { color: var(--ouro); flex-shrink: 0; margin-top: .1rem; }
+
+  /* Toast */
+  .toast-wrap { position: fixed; bottom: 2rem; right: 2rem; z-index: 900; display: flex; flex-direction: column; gap: .5rem; align-items: flex-end; }
+  .toast {
+    background: var(--fundo-card); border: 1px solid var(--ouro);
+    color: var(--texto); padding: .65rem 1.25rem;
+    border-radius: var(--raio-lg); font-size: .85rem;
+    box-shadow: var(--sombra-md); opacity: 0; transform: translateX(20px);
+    transition: opacity .25s, transform .25s; max-width: 300px; pointer-events: none;
+  }
+  .toast.visivel { opacity: 1; transform: translateX(0); }
+  .toast.erro { border-color: var(--ferrugem); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav" role="navigation" aria-label="Navegação principal">
+  <a href="index.html" class="nav-logo">Robério Diógenes<span>Escritor Independente</span></a>
+  <ul class="nav-links" id="navLinks" role="list">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="livros.html">Biblioteca</a></li>
+    <li><a href="autor.html">O Autor</a></li>
+    <li><a href="blog.html">Diário</a></li>
+    <li><a href="contato.html">Contato</a></li>
+  </ul>
+  <div class="nav-acoes">
+    <div class="tema-controles" role="group">
+      <button class="tema-btn ativo" data-tema="claro" aria-label="Tema claro">☀</button>
+      <button class="tema-btn" data-tema="noturno" aria-label="Tema noturno">🌙</button>
+    </div>
+    <a href="login.html" class="btn btn-secundario" id="btnEntrar">
+      <i class="fa fa-user" aria-hidden="true"></i> Entrar
+    </a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<header class="gift-hero">
+  <span class="gift-pretitulo">Presente especial</span>
+  <h1 class="gift-titulo">Presenteie com <em>histórias</em></h1>
+  <p class="gift-desc">Um livro é um presente que dura para sempre. Escreva uma dedicatória, escolha a forma de pagamento e o presenteado receberá tudo por e-mail.</p>
+  <a href="livros.html" class="gift-voltar">
+    <i class="fa fa-arrow-left"></i> Voltar à biblioteca
+  </a>
+</header>
+
+<main>
+  <div class="gift-wrap" id="giftWrap">
+
+    <!-- ── COLUNA: card do livro ────────────────────────────── -->
+    <aside>
+      <div class="gift-livro-card" id="livroCard">
+        <div class="gift-capa-ph" id="capaPh"><i class="fa fa-book"></i></div>
+        <img id="capaImg" class="gift-capa" src="" alt="" style="display:none"
+             onerror="this.style.display='none';document.getElementById('capaPh').style.display='flex'">
+        <div class="gift-livro-tipo" id="livroTipo">Livro · Ficção</div>
+        <div class="gift-livro-titulo" id="livroTitulo">Carregando…</div>
+        <div class="gift-livro-genero" id="livroGenero"></div>
+        <div class="gift-livro-preco" id="livroPreco">R$ 19,90</div>
+        <div class="gift-livro-detalhe">
+          <i class="fa fa-file-code" style="color:var(--ouro);opacity:.7"></i> ePub
+          <span>·</span>
+          <i class="fa fa-book-open" style="color:var(--ouro);opacity:.7"></i> Leitor online
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── COLUNA: formulário ──────────────────────────────── -->
+    <section>
+      <div class="gift-form-wrap">
+
+        <!-- Stepper -->
+        <nav class="gift-stepper" aria-label="Etapas do presente">
+          <div class="gift-step ativo" id="step-1">
+            <div class="gift-step-num">1</div>
+            <div class="gift-step-label">Presenteado</div>
+          </div>
+          <div class="gift-step" id="step-2">
+            <div class="gift-step-num">2</div>
+            <div class="gift-step-label">Dedicatória</div>
+          </div>
+          <div class="gift-step" id="step-3">
+            <div class="gift-step-num">3</div>
+            <div class="gift-step-label">Prévia</div>
+          </div>
+          <div class="gift-step" id="step-4">
+            <div class="gift-step-num">4</div>
+            <div class="gift-step-label">Pagamento</div>
+          </div>
+        </nav>
+
+        <div id="erroGeral" class="gift-erro" hidden>
+          <i class="fa fa-triangle-exclamation"></i>
+          <span id="erroGeralMsg"></span>
+        </div>
+
+        <!-- ── PASSO 1: Dados do presenteado ── -->
+        <div class="gift-passo ativo" id="passo1">
+          <h2 class="gift-secao-titulo">Quem vai <em>receber</em>?</h2>
+
+          <div class="gift-campo">
+            <label class="gift-label" for="nomePresenteado">
+              Nome do presenteado <span class="obrig">*</span>
+            </label>
+            <input class="gift-input" type="text" id="nomePresenteado"
+                   placeholder="Ex: Maria Silva" maxlength="120"
+                   autocomplete="off" required />
+          </div>
+
+          <div class="gift-campos-grid">
+            <div class="gift-campo">
+              <label class="gift-label" for="emailPresenteado">
+                E-mail do presenteado <span class="obrig">*</span>
+              </label>
+              <input class="gift-input" type="email" id="emailPresenteado"
+                     placeholder="email@exemplo.com" maxlength="255"
+                     autocomplete="off" required />
+              <p class="gift-input-hint">O voucher será enviado para este e-mail.</p>
+            </div>
+            <div class="gift-campo">
+              <label class="gift-label" for="whatsappPresenteado">
+                WhatsApp do presenteado
+              </label>
+              <input class="gift-input" type="tel" id="whatsappPresenteado"
+                     placeholder="(85) 99999-9999"
+                     maxlength="20" />
+              <p class="gift-input-hint">Opcional — para enviar o voucher também pelo WhatsApp.</p>
+            </div>
+          </div>
+
+          <div class="gift-btns">
+            <a href="livros.html" class="btn-gift-nav btn-gift-secondary">
+              <i class="fa fa-arrow-left"></i> Cancelar
+            </a>
+            <button class="btn-gift-nav btn-gift-primary" onclick="irPasso(2)">
+              <span class="btn-icon"><i class="fa fa-arrow-right"></i></span>
+              <span class="btn-spinner"><i class="fa fa-circle-notch fa-spin"></i></span>
+              Próximo
+            </button>
+          </div>
+        </div>
+
+        <!-- ── PASSO 2: Dedicatória ── -->
+        <div class="gift-passo" id="passo2">
+          <h2 class="gift-secao-titulo">Escreva sua <em>dedicatória</em></h2>
+
+          <div class="gift-campo">
+            <label class="gift-label" for="dedicatoria">
+              Texto da dedicatória <span style="color:var(--texto-3);font-weight:400">(opcional)</span>
+            </label>
+            <textarea class="gift-textarea" id="dedicatoria"
+                      placeholder="Ex: Para você, que sempre acreditou que as histórias têm o poder de mudar o mundo. Com carinho..."
+                      maxlength="600" rows="5"></textarea>
+            <div class="gift-char-count" id="charCount">0 / 600</div>
+          </div>
+
+          <!-- Preview da dedicatória -->
+          <div class="dedicatoria-preview" id="dedicatoriaPreview">
+            <div class="dedicatoria-preview-texto" id="previewTexto">
+              <em style="color:var(--texto-3);font-size:.9rem">O texto da sua dedicatória aparecerá aqui…</em>
+            </div>
+            <div class="dedicatoria-preview-de" id="previewDe"></div>
+          </div>
+
+          <div class="gift-btns">
+            <button class="btn-gift-nav btn-gift-secondary" onclick="irPasso(1)">
+              <i class="fa fa-arrow-left"></i> Voltar
+            </button>
+            <button class="btn-gift-nav btn-gift-primary" onclick="irPasso(3)">
+              <span class="btn-icon"><i class="fa fa-eye"></i></span>
+              Ver prévia
+            </button>
+          </div>
+        </div>
+
+        <!-- ── PASSO 3: Prévia da página do presente ── -->
+        <div class="gift-passo" id="passo3">
+          <h2 class="gift-secao-titulo">Assim seu presente <em>chegará</em></h2>
+
+          <!-- Animação caixa de presente -->
+          <div class="presente-anim-wrap">
+            <div class="presente-box" id="presenteBox">
+              <div class="pbox-sparks" id="pboxSparks"></div>
+              <div class="pbox-tampa">
+                <div class="pbox-fita-h"></div>
+              </div>
+              <div class="pbox-laco">🎀</div>
+              <div class="pbox-base">
+                <div class="pbox-fita-v"></div>
+              </div>
+            </div>
+            <div class="presente-anim-msg" id="animMsg">Clique para confirmar o presente ✦</div>
+          </div>
+
+          <p style="font-size:.88rem;color:var(--texto-3);margin-bottom:1.25rem;line-height:1.6">
+            Esta é a página personalizada que o presenteado verá ao abrir o link. Após se cadastrar no site, ele terá acesso imediato ao livro.
+          </p>
+
+          <!-- Card de prévia -->
+          <div class="previa-wrap">
+            <div class="previa-badge">✦ Prévia do presente</div>
+            <div class="previa-frame">
+              <div class="pv-card" id="pvCard">
+                <div class="pv-topo"><div class="pv-logo">Robério Diógenes</div></div>
+                <div class="pv-corpo">
+                  <span class="pv-emoji">🎁</span>
+                  <h2 class="pv-titulo">Olá, <em id="pvNome">—</em>!</h2>
+                  <p class="pv-subtitulo" id="pvSubtitulo"></p>
+                  <div class="pv-livro" id="pvLivroWrap">
+                    <div class="pv-capa-ph" id="pvCapaPh"><i class="fa fa-book"></i></div>
+                    <img id="pvCapa" class="pv-capa" src="" alt="" style="display:none"
+                         onerror="this.style.display='none';document.getElementById('pvCapaPh').style.display='flex'">
+                    <div>
+                      <div class="pv-livro-titulo" id="pvLivroTitulo">—</div>
+                      <div class="pv-livro-autor">Robério Diógenes</div>
+                      <span class="pv-badge"><i class="fa fa-unlock"></i> Acesso liberado ao cadastrar</span>
+                    </div>
+                  </div>
+                  <div class="pv-ded" id="pvDedWrap" style="display:none">
+                    <div class="pv-ded-label">Dedicatória</div>
+                    <div class="pv-ded-texto" id="pvDedTexto"></div>
+                    <div class="pv-ded-de" id="pvDedDe"></div>
+                  </div>
+                  <!-- Muro de cadastro (como o presenteado verá) -->
+                  <div class="pv-cadastro-muro">
+                    <span class="pv-cadastro-icon"><i class="fa fa-user-plus"></i></span>
+                    <div class="pv-cadastro-titulo">Crie sua conta gratuita</div>
+                    <p class="pv-cadastro-desc">Para resgatar este presente e acessar o livro, basta criar uma conta. É rápido e gratuito.</p>
+                    <div class="pv-btn-cadastro">
+                      <i class="fa fa-user-plus"></i> Criar conta e resgatar
+                    </div>
+                    <div class="pv-btn-leitor">
+                      <i class="fa fa-sign-in-alt"></i> Já tenho conta — fazer login
+                    </div>
+                    <p class="pv-nota">Após o cadastro você terá acesso à Área do Leitor com este livro e todos os contos gratuitos.</p>
+                  </div>
+                  <div class="pv-data" id="pvData"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nota explicativa -->
+          <div class="previa-nota">
+            <i class="fa fa-circle-info"></i>
+            <span>
+              O presenteado receberá esta página por e-mail com um link único e seguro. Ao se cadastrar (ou fazer login), o livro é adicionado automaticamente à Área do Leitor — onde ele encontra este livro e todos os contos gratuitos do site.
+            </span>
+          </div>
+
+          <!-- QR Code do livro -->
+          <div class="previa-qr-wrap" id="previaQrWrap" style="margin-top:1rem">
+            <img id="previaQrImg" class="previa-qr-img" src="" alt="QR Code do livro" />
+            <div class="previa-qr-info">
+              <div class="previa-qr-label"><i class="fa fa-qrcode"></i> QR Code do livro</div>
+              <div class="previa-qr-url" id="previaQrUrl">—</div>
+              <div style="font-size:.72rem;color:var(--texto-3);margin-top:.3rem">Escaneável pelo presenteado para acessar a página</div>
+            </div>
+          </div>
+
+          <!-- Pagamento inline — apenas para itens pagos -->
+          <div class="previa-pagar-wrap" id="previaPagarWrap">
+            <div class="previa-pagar-titulo">Gostou? Confirme e envie o presente agora.</div>
+            <div class="gift-toggle-wrap" style="margin-bottom:.85rem">
+              <input type="checkbox" id="aceitePoliticaPrevia" />
+              <label for="aceitePoliticaPrevia" style="font-size:.82rem;color:var(--texto-2)">
+                Li e aceito a
+                <button type="button" onclick="irPasso(4)"
+                  style="background:none;border:none;color:var(--ouro);cursor:pointer;font-size:.82rem;padding:0;text-decoration:underline">política de presentear</button>
+                e confirmo que o e-mail informado pertence ao destinatário.
+              </label>
+            </div>
+            <button class="btn-gift-nav btn-gift-primary" id="btnPagarPrevia"
+                    disabled onclick="finalizarPresente()"
+                    style="width:100%;justify-content:center;padding:.9rem">
+              <span class="btn-icon"><i class="fa fa-lock"></i></span>
+              <span class="btn-spinner"><i class="fa fa-circle-notch fa-spin"></i></span>
+              Pagar e enviar presente
+            </button>
+          </div>
+
+          <!-- Envio gratuito — apenas para itens sem custo -->
+          <div class="previa-pagar-wrap" id="previaGratisWrap" style="display:none">
+            <div class="previa-pagar-titulo">Este item é gratuito — envie sem custo! 🎁</div>
+            <button class="btn-gift-nav btn-gift-primary" id="btnEnviarGratis"
+                    onclick="enviarPresenteGratis()"
+                    style="width:100%;justify-content:center;padding:.9rem;background:#27ae60;color:#fff">
+              <span class="btn-icon"><i class="fa fa-paper-plane"></i></span>
+              <span class="btn-spinner"><i class="fa fa-circle-notch fa-spin"></i></span>
+              Enviar presente gratuitamente
+            </button>
+          </div>
+
+          <div class="gift-btns" style="margin-top:1rem">
+            <button class="btn-gift-nav btn-gift-secondary" onclick="irPasso(2)">
+              <i class="fa fa-arrow-left"></i> Editar
+            </button>
+            <button class="btn-gift-nav btn-gift-secondary" onclick="irPasso(4)">
+              <i class="fa fa-list-check"></i> Revisão completa
+            </button>
+          </div>
+        </div>
+
+        <!-- ── PASSO 4: Revisão e pagamento ── -->
+        <div class="gift-passo" id="passo4">
+          <h2 class="gift-secao-titulo">Revisão e <em>pagamento</em></h2>
+
+          <div id="resumoPresente"></div>
+
+          <!-- Política de presentes -->
+          <div class="gift-politica">
+            <div class="gift-politica-titulo">
+              <i class="fa fa-shield-halved"></i> Política de Presentear
+            </div>
+            <ul class="gift-politica-texto">
+              <li>O presenteado recebe o voucher por e-mail imediatamente após a confirmação do pagamento.</li>
+              <li>O voucher inclui a dedicatória, a capa do livro e os links de acesso ao leitor online e download.</li>
+              <li>O presente é pessoal e intransferível; o e-mail cadastrado terá acesso exclusivo.</li>
+              <li>Em caso de pagamento recusado, nenhum e-mail é enviado ao presenteado.</li>
+              <li>Não há reembolso após o envio do voucher, exceto em caso de erro do sistema.</li>
+            </ul>
+            <div class="gift-toggle-wrap">
+              <input type="checkbox" id="aceitePolitica" />
+              <label for="aceitePolitica">
+                Declaro que li e aceito a política de presentear desta plataforma e confirmo que o e-mail informado pertence ao destinatário.
+              </label>
+            </div>
+          </div>
+
+          <div class="gift-btns">
+            <button class="btn-gift-nav btn-gift-secondary" onclick="irPasso(3)">
+              <i class="fa fa-arrow-left"></i> Ver prévia
+            </button>
+            <button class="btn-gift-nav btn-gift-primary" id="btnPagar" disabled onclick="finalizarPresente()">
+              <span class="btn-icon"><i class="fa fa-lock"></i></span>
+              <span class="btn-spinner"><i class="fa fa-circle-notch fa-spin"></i></span>
+              Pagar e enviar presente
+            </button>
+          </div>
+
+          <div style="text-align:center;margin-top:1rem">
+            <span style="font-family:var(--fonte-display);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--texto-3)">
+              <i class="fa fa-lock" style="color:var(--ouro)"></i>
+              Pagamento processado pelo Mercado Pago · Pix · Cartão · Boleto
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- RODAPÉ -->
+<footer role="contentinfo">
+  <div class="footer-wrap">
+    <div>
+      <a href="index.html" class="footer-logo">Robério Diógenes</a>
+      <p class="footer-desc">"Escrevo sobre o que nos assombra no silêncio."</p>
+    </div>
+    <div>
+      <p class="footer-col-titulo">Navegação</p>
+      <ul class="footer-links">
+        <li><a href="livros.html">Biblioteca</a></li>
+        <li><a href="contato.html">Contato</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Robério Diógenes. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<div class="toast-wrap" id="toastWrap" role="status" aria-live="polite"></div>
+
+<script src="js/global.js"></script>
+<script>
+'use strict';
+
+/* ── Catálogo local (espelho do livros.html) ─────────────────── */
+const CATALOGO = {
+  /* Livros pagos */
+  'a-setima-lei':         { titulo:'A Sétima Lei',                  genero:'Ficção literária',    tipo:'livro',  preco:19.90, gratuito:false, capa:'img/a-setima-lei.jpg' },
+  'lumen':                { titulo:'Lúmen — A Outra Metade do Céu', genero:'Ficção psicológica',  tipo:'livro',  preco:19.90, gratuito:false, capa:'img/lumen.jpg' },
+  'o-abismo-das-almas':   { titulo:'O Abismo das Almas',            genero:'Horror literário',    tipo:'livro',  preco:19.90, gratuito:false, capa:'img/o-abismo-das-almas.jpg' },
+  'jogo-das-mascaras':    { titulo:'O Jogo das Máscaras',           genero:'Suspense',            tipo:'livro',  preco:19.90, gratuito:false, capa:'img/jogo-das-mascaras.jpg' },
+  'cartas-do-passado':    { titulo:'Cartas do Passado',             genero:'Drama',               tipo:'livro',  preco:19.90, gratuito:false, capa:'img/cartas-do-passado.jpg' },
+  'a-marca-da-besta':     { titulo:'A Marca da Besta',              genero:'Horror',              tipo:'livro',  preco:19.90, gratuito:false, capa:'img/a-marca-da-besta.jpg' },
+  'caminhos-de-outono':   { titulo:'Caminhos de Outono',            genero:'Lírico',              tipo:'livro',  preco:19.90, gratuito:false, capa:'img/caminhos-de-outono.jpg' },
+  'das-coisas-que-o-amor-faz':{ titulo:'Das Coisas que o Amor Faz',genero:'Romance literário',   tipo:'livro',  preco:19.90, gratuito:false, capa:'img/das-coisas-que-o-amor-faz.jpg' },
+  'genesis':              { titulo:'Gênesis',                       genero:'Ficção especulativa', tipo:'livro',  preco:19.90, gratuito:false, capa:'img/genesis.jpg' },
+  'mares-secretas-do-amor':{ titulo:'As Marés Secretas do Amor',   genero:'Romance',             tipo:'livro',  preco:19.90, gratuito:false, capa:'img/mares-secretas.jpg' },
+  'rosas-e-espinhos':     { titulo:'Rosas e Espinhos',             genero:'Drama',               tipo:'livro',  preco:19.90, gratuito:false, capa:'img/rosas-e-espinhos.jpg' },
+  /* Contos gratuitos */
+  'o-farol-do-afogado':   { titulo:'O Farol do Afogado',           genero:'Conto',               tipo:'conto',  preco:null,  gratuito:true,  capa:'img/o-farol-do-afogado-conto.jpg' },
+  'linhas-e-agulhas':     { titulo:'Linhas e Agulhas',             genero:'Conto',               tipo:'conto',  preco:null,  gratuito:true,  capa:'img/linhas-e-agulhas.jpg' },
+  'o-quarto-das-moscas':  { titulo:'O Quarto das Moscas',          genero:'Conto de horror',     tipo:'conto',  preco:null,  gratuito:true,  capa:'img/o-quarto-das-moscas.jpg' },
+};
+
+/* ── Estado ──────────────────────────────────────────────────── */
+const G = {
+  slug:     new URLSearchParams(window.location.search).get('livro') || '',
+  gratis:   new URLSearchParams(window.location.search).get('gratis') === '1',
+  livro:    null,
+  usuario:  null,
+  passoAtual: 1,
+};
+
+/* ── Helpers ─────────────────────────────────────────────────── */
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtPreco(v) { return 'R$ ' + Number(v||0).toFixed(2).replace('.', ','); }
+function toast(msg, tipo = 'ok') {
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast' + (tipo === 'erro' ? ' erro' : '');
+  t.textContent = msg;
+  wrap.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('visivel'));
+  setTimeout(() => { t.classList.remove('visivel'); setTimeout(() => t.remove(), 400); }, 3500);
+}
+function mostrarErro(msg) {
+  const el  = document.getElementById('erroGeral');
+  const msg2= document.getElementById('erroGeralMsg');
+  if (el && msg2) { msg2.textContent = msg; el.hidden = !msg; }
+}
+function val(id) { return document.getElementById(id)?.value.trim() || ''; }
+
+/* ── Carregar livro ──────────────────────────────────────────── */
+function carregarLivro() {
+  G.livro = CATALOGO[G.slug] || null;
+  if (!G.livro) {
+    document.getElementById('livroTitulo').textContent = 'Livro não encontrado.';
+    return;
+  }
+  const l = G.livro;
+  // Sincronizar flag gratis com o catálogo
+  if (l.gratuito) G.gratis = true;
+
+  document.getElementById('livroTitulo').textContent  = l.titulo;
+  document.getElementById('livroGenero').textContent  = l.genero;
+  document.getElementById('livroTipo').textContent    = (l.tipo === 'conto' ? 'Conto' : 'Livro') + ' · ' + l.genero;
+  document.getElementById('livroPreco').textContent   = l.gratuito ? 'Gratuito' : fmtPreco(l.preco);
+  document.title = 'Presentear — ' + l.titulo + ' | Robério Diógenes';
+
+  if (l.capa) {
+    const img = document.getElementById('capaImg');
+    img.src = l.capa; img.alt = 'Capa de ' + l.titulo;
+    img.style.display = 'block';
+    document.getElementById('capaPh').style.display = 'none';
+  }
+}
+
+/* ── Sessão ──────────────────────────────────────────────────── */
+async function carregarSessao() {
+  try {
+    const r = await fetch('backend/auth/sessao.php', { credentials: 'same-origin' });
+    const d = await r.json();
+    if (d.ok && d.logado) {
+      G.usuario = d.usuario;
+      const btn = document.getElementById('btnEntrar');
+      if (btn) { btn.innerHTML = `<i class="fa fa-user"></i> ${d.usuario.nome.split(' ')[0]}`; btn.href = 'leitor/'; }
+    } else {
+      // Redirecionar para login com retorno
+      window.location.href = 'login.html?redir=presentear.html' + (G.slug ? '?livro=' + G.slug : '');
+    }
+  } catch {
+    window.location.href = 'login.html';
+  }
+}
+
+/* ── Passo atual ─────────────────────────────────────────────── */
+function irPasso(n) {
+  // Validar passo atual antes de avançar
+  if (n > G.passoAtual) {
+    if (!validarPasso(G.passoAtual)) return;
+  }
+  mostrarErro('');
+
+  // Atualizar stepper
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('step-' + i);
+    if (!el) continue;
+    el.classList.remove('ativo', 'concluido');
+    if (i < n) el.classList.add('concluido');
+    else if (i === n) el.classList.add('ativo');
+  }
+
+  // Trocar painéis
+  document.querySelectorAll('.gift-passo').forEach(p => p.classList.remove('ativo'));
+  document.getElementById('passo' + n)?.classList.add('ativo');
+  G.passoAtual = n;
+
+  // Ações específicas por passo
+  if (n === 2) atualizarPreviewDedicatoria();
+  if (n === 3) renderizarPrevia();
+  if (n === 4) renderizarResumo();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── Validar passo ───────────────────────────────────────────── */
+function validarPasso(n) {
+  if (n === 1) {
+    const nome  = val('nomePresenteado');
+    const email = val('emailPresenteado');
+    if (!nome)  { toast('Informe o nome do presenteado.', 'erro'); document.getElementById('nomePresenteado').focus(); return false; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast('Informe um e-mail válido para o presenteado.', 'erro');
+      document.getElementById('emailPresenteado').focus(); return false;
+    }
+  }
+  if (!G.livro) { toast('Livro não encontrado. Volte à biblioteca.', 'erro'); return false; }
+  return true;
+}
+
+/* ── Preview da dedicatória ──────────────────────────────────── */
+function atualizarPreviewDedicatoria() {
+  const texto = document.getElementById('dedicatoria')?.value.trim() || '';
+  const prev  = document.getElementById('previewTexto');
+  const de    = document.getElementById('previewDe');
+  if (prev) {
+    if (texto) {
+      prev.textContent = texto;
+      prev.style.fontStyle = 'italic';
+    } else {
+      prev.innerHTML = '<em style="color:var(--texto-3);font-size:.9rem">Sem dedicatória — o presenteado receberá apenas o livro.</em>';
+    }
+  }
+  if (de && G.usuario) {
+    de.textContent = '— ' + G.usuario.nome.split(' ')[0] + ', com carinho';
+  }
+}
+
+/* ── Animação caixa de presente ──────────────────────────────── */
+function animarCaixaPresente() {
+  const box     = document.getElementById('presenteBox');
+  const msg     = document.getElementById('animMsg');
+  const sparks  = document.getElementById('pboxSparks');
+  if (!box) return;
+
+  // Fase 1: pulsar (caixa vibrando para chamar atenção)
+  box.classList.add('pulsar');
+  setTimeout(() => {
+    box.classList.remove('pulsar');
+
+    // Fase 2: abrir a caixa
+    box.classList.add('aberto');
+    if (msg) { msg.textContent = '✨ Que presente lindo!'; msg.classList.add('confirmado'); }
+
+    // Fase 3: gerar partículas/estrelas
+    if (sparks) {
+      sparks.innerHTML = '';
+      const emojis = ['⭐','✨','🌟','💫','🎉','🎊','❤️'];
+      const positions = [
+        {left:'10%',delay:0}, {left:'30%',delay:.1}, {left:'50%',delay:.05},
+        {left:'70%',delay:.15}, {left:'85%',delay:.08}
+      ];
+      positions.forEach(({ left, delay }) => {
+        const s = document.createElement('span');
+        s.className = 'pbox-spark';
+        s.style.left = left;
+        s.style.animationDelay = delay + 's';
+        s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        sparks.appendChild(s);
+      });
+    }
+  }, 2200); // 3 pulsações × ~700ms
+}
+
+/* ── Renderizar prévia (passo 3) ─────────────────────────────── */
+function renderizarPrevia() {
+  const nome = val('nomePresenteado');
+  const ded  = document.getElementById('dedicatoria')?.value.trim() || '';
+  const l    = G.livro;
+
+  // Resetar animação da caixa
+  const box = document.getElementById('presenteBox');
+  const msg = document.getElementById('animMsg');
+  if (box) { box.classList.remove('aberto','pulsar'); }
+  if (msg) { msg.textContent = 'Clique para confirmar o presente ✦'; msg.classList.remove('confirmado'); }
+  setTimeout(animarCaixaPresente, 400);
+
+  // QR Code — aponta para a página do livro (prévia; o link do presente só existe após pagamento)
+  const livroUrl = l?.pagina
+    ? 'https://www.roberiodiogenes.com/' + l.pagina
+    : 'https://www.roberiodiogenes.com/livros.html';
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=144x144&ecc=M&data='
+    + encodeURIComponent(livroUrl)
+    + '&color=B8860B&bgcolor=FAF7F2';
+  const qrImg = document.getElementById('previaQrImg');
+  const qrTxt = document.getElementById('previaQrUrl');
+  if (qrImg) qrImg.src = qrUrl;
+  if (qrTxt) qrTxt.textContent = livroUrl;
+
+  // Mostrar seção correta: pagar (pago) ou enviar grátis
+  const isGratis = !l?.preco || l?.gratuito;
+  document.getElementById('previaPagarWrap').style.display = isGratis ? 'none' : 'block';
+  document.getElementById('previaGratisWrap').style.display = isGratis ? 'block' : 'none';
+
+  // Nome do presenteado
+  const pvNome = document.getElementById('pvNome');
+  if (pvNome) pvNome.textContent = nome.split(' ')[0] || nome;
+
+  // Subtítulo
+  const pvSub = document.getElementById('pvSubtitulo');
+  if (pvSub) pvSub.textContent =
+    (G.usuario?.nome || 'Seu amigo') + ' te presenteou com uma história. Que ela te marque para sempre.';
+
+  // Livro
+  if (l) {
+    const pvTit = document.getElementById('pvLivroTitulo');
+    if (pvTit) pvTit.textContent = l.titulo;
+
+    const pvCapa = document.getElementById('pvCapa');
+    const pvPh   = document.getElementById('pvCapaPh');
+    if (pvCapa && l.capa) {
+      pvCapa.src = l.capa; pvCapa.alt = 'Capa de ' + l.titulo;
+      pvCapa.style.display = 'block';
+      if (pvPh) pvPh.style.display = 'none';
+    }
+  }
+
+  // Dedicatória
+  const pvDedWrap = document.getElementById('pvDedWrap');
+  const pvDedTxt  = document.getElementById('pvDedTexto');
+  const pvDedDe   = document.getElementById('pvDedDe');
+  if (ded && pvDedWrap && pvDedTxt) {
+    pvDedTxt.textContent = '"' + ded + '"';
+    if (pvDedDe) pvDedDe.textContent = '— ' + (G.usuario?.nome?.split(' ')[0] || 'com carinho') + ', com carinho';
+    pvDedWrap.style.display = 'block';
+  } else if (pvDedWrap) {
+    pvDedWrap.style.display = 'none';
+  }
+
+  // Data
+  const pvData = document.getElementById('pvData');
+  if (pvData) pvData.textContent = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+}
+
+/* ── Renderizar resumo ───────────────────────────────────────── */
+function renderizarResumo() {
+  const el = document.getElementById('resumoPresente');
+  if (!el || !G.livro) return;
+  const nome  = val('nomePresenteado');
+  const email = val('emailPresenteado');
+  const wp    = val('whatsappPresenteado');
+  const ded   = document.getElementById('dedicatoria')?.value.trim() || '';
+
+  el.innerHTML = `
+    <div style="margin-bottom:1.25rem">
+      ${[
+        ['Livro',        G.livro.titulo],
+        ['Presenteado',  nome],
+        ['E-mail',       email],
+        wp ? ['WhatsApp', wp] : null,
+        ['Dedicatória',  ded ? '"' + ded.substring(0,80) + (ded.length>80?'…':'') + '"' : '(sem dedicatória)'],
+      ].filter(Boolean).map(([k,v]) =>
+        `<div class="gift-resumo-linha">
+           <span style="color:var(--texto-3)">${k}</span>
+           <span style="text-align:right;max-width:55%">${esc(v)}</span>
+         </div>`
+      ).join('')}
+      <div class="gift-resumo-linha total">
+        <span>Total</span>
+        <span>${fmtPreco(G.livro.preco)}</span>
+      </div>
+    </div>`;
+}
+
+/* ── Finalizar presente (pagamento MP) ───────────────────────── */
+async function finalizarPresente() {
+  if (!document.getElementById('aceitePolitica')?.checked) {
+    toast('Aceite a política de presentear para continuar.', 'erro'); return;
+  }
+  if (!G.usuario) { window.location.href = 'login.html'; return; }
+  if (!G.livro)   { toast('Livro não encontrado.', 'erro'); return; }
+
+  const btn = document.getElementById('btnPagar');
+  btn.classList.add('carregando'); btn.disabled = true;
+  mostrarErro('');
+
+  try {
+    const r = await fetch('backend/presentear.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        acao:               'iniciar',
+        slug:               G.slug,
+        nome_presenteado:   val('nomePresenteado'),
+        email_presenteado:  val('emailPresenteado'),
+        whatsapp_presenteado: val('whatsappPresenteado'),
+        dedicatoria:        document.getElementById('dedicatoria')?.value.trim() || '',
+      }),
+    });
+    const d = await r.json();
+
+    if (d.ok && d.checkout_url) {
+      window.location.href = d.checkout_url;
+    } else {
+      mostrarErro(d.erro || 'Erro ao iniciar pagamento. Tente novamente.');
+      btn.classList.remove('carregando'); btn.disabled = false;
+    }
+  } catch {
+    mostrarErro('Erro de conexão. Verifique sua internet e tente novamente.');
+    btn.classList.remove('carregando'); btn.disabled = false;
+  }
+}
+
+/* ── Atualizar preview e contador em tempo real ──────────────── */
+document.getElementById('dedicatoria')?.addEventListener('input', function() {
+  const n   = this.value.length;
+  const max = 600;
+  const el  = document.getElementById('charCount');
+  if (el) {
+    el.textContent = n + ' / ' + max;
+    el.className   = 'gift-char-count' + (n > 540 ? ' aviso' : '') + (n >= max ? ' limite' : '');
+  }
+  atualizarPreviewDedicatoria();
+});
+
+document.getElementById('aceitePolitica')?.addEventListener('change', function() {
+  const btn = document.getElementById('btnPagar');
+  if (btn) btn.disabled = !this.checked;
+});
+document.getElementById('aceitePoliticaPrevia')?.addEventListener('change', function() {
+  const btn = document.getElementById('btnPagarPrevia');
+  if (btn) btn.disabled = !this.checked;
+});
+
+/* ── Enviar presente gratuito ──────────────────────────────────── */
+async function enviarPresenteGratis() {
+  if (!G.usuario) { window.location.href = 'login.html'; return; }
+  if (!G.livro)   { toast('Livro não encontrado.', 'erro'); return; }
+  if (!G.gratis)  { toast('Este item não é gratuito.', 'erro'); return; }
+
+  const btn = document.getElementById('btnEnviarGratis');
+  btn.classList.add('carregando'); btn.disabled = true;
+  mostrarErro('');
+
+  try {
+    const r = await fetch('backend/presentear.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        acao:                 'enviar_gratis',
+        slug:                 G.slug,
+        nome_presenteado:     val('nomePresenteado'),
+        email_presenteado:    val('emailPresenteado'),
+        whatsapp_presenteado: val('whatsappPresenteado'),
+        dedicatoria:          document.getElementById('dedicatoria')?.value.trim() || '',
+      }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      // Mostrar sucesso
+      document.querySelectorAll('.gift-passo').forEach(p => p.classList.remove('ativo'));
+      document.getElementById('passo4')?.classList.add('ativo');
+      document.getElementById('resumoPresente').innerHTML = `
+        <div style="text-align:center;padding:2rem 0">
+          <div style="font-size:3rem;margin-bottom:.75rem">🎉</div>
+          <div style="font-family:var(--fonte-titulo);font-size:1.4rem;color:var(--ouro);margin-bottom:.5rem">Presente enviado!</div>
+          <p style="color:var(--texto-2);font-size:.9rem">
+            ${esc(val('nomePresenteado'))} receberá o presente no e-mail <strong>${esc(val('emailPresenteado'))}</strong>.
+          </p>
+          <a href="livros.html" style="display:inline-flex;align-items:center;gap:.4rem;margin-top:1.5rem;color:var(--ouro);font-family:var(--fonte-display);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase">
+            ← Voltar à biblioteca
+          </a>
+        </div>`;
+      for (let i = 1; i <= 4; i++) {
+        const s = document.getElementById('step-' + i);
+        if (s) s.classList.add('concluido');
+      }
+    } else {
+      mostrarErro(d.erro || 'Erro ao enviar. Tente novamente.');
+      btn.classList.remove('carregando'); btn.disabled = false;
+    }
+  } catch {
+    mostrarErro('Erro de conexão. Verifique sua internet e tente novamente.');
+    btn.classList.remove('carregando'); btn.disabled = false;
+  }
+}
+
+/* ── INIT ──────────────────────────────────────────────────────── */
+(async () => {
+  if (!G.slug) {
+    // Sem slug na URL → redirecionar à biblioteca
+    window.location.href = 'livros.html';
+    return;
+  }
+  carregarLivro();
+  await carregarSessao();
+})();
+</script>
+</body>
+</html>

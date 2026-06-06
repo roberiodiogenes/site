@@ -279,7 +279,10 @@
     if (r.ok) {
       mostrarAlerta(r.mensagem, 'sucesso');
       if (typeof Sons !== 'undefined') Sons.tocar('sucesso');
-      setTimeout(() => { window.location.href = 'leitor/index.html'; }, 1200);
+      // Redirecionar para ?redir= se houver, senão para o leitor
+      const redir = new URLSearchParams(window.location.search).get('redir');
+      const destino = redir ? decodeURIComponent(redir) : 'leitor/index.html';
+      setTimeout(() => { window.location.href = destino; }, 1200);
     } else {
       mostrarAlerta(r.erro || 'Erro ao fazer login.', 'erro');
       if (typeof Sons !== 'undefined') Sons.tocar('erro');

@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ══ SEO — preenchido via JS a partir da API ══════════════ -->
+  <title id="page-title">Carregando… | Diário | Robério Diógenes</title>
+  <meta name="description"  id="meta-desc"    content="" />
+  <meta name="keywords"     id="meta-keys"    content="robério diógenes, escritor, literatura brasileira, ficção" />
+  <meta name="author"                         content="Robério Diógenes" />
+  <link rel="canonical"     id="link-canonical" href="https://www.roberiodiogenes.com/blog/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="article" />
+  <meta property="og:site_name"   content="Robério Diógenes" />
+  <meta property="og:locale"      content="pt_BR" />
+  <meta property="og:title"       id="og-title"       content="" />
+  <meta property="og:description" id="og-desc"        content="" />
+  <meta property="og:url"         id="og-url"         content="" />
+  <meta property="og:image"       id="og-image"       content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+  <meta property="article:author" content="Robério Diógenes" />
+  <meta property="article:published_time" id="og-pub" content="" />
+  <meta property="article:section"        id="og-sec" content="" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       id="tw-title" content="" />
+  <meta name="twitter:description" id="tw-desc"  content="" />
+  <meta name="twitter:image"       id="tw-image" content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+
+  <!-- Schema.org Article — injetado via JS -->
+  <script type="application/ld+json" id="schema-article">{}</script>
+
+  <link rel="icon" type="image/png" href="../img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../css/variables.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fonte-corpo); background: var(--fundo); color: var(--texto); }
+    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+
+    /* ══ BARRA DE PROGRESSO ════════════════════════════════════ */
+    #leitura-progresso {
+      position: fixed; top: 0; left: 0; z-index: 9999;
+      height: 3px; width: 0%;
+      background: linear-gradient(90deg, var(--ouro) 0%, #f5c842 100%);
+      transition: width .1s linear;
+      pointer-events: none;
+      border-radius: 0 2px 2px 0;
+    }
+    #leitura-progresso::after {
+      content: '';
+      position: absolute; right: 0; top: -2px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--ouro);
+      box-shadow: 0 0 8px rgba(184,134,11,.7);
+    }
+
+    /* ══ NAV ═══════════════════════════════════════════════════ */
+    .blog-nav {
+      position: sticky; top: 0; z-index: 200;
+      background: var(--fundo-nav, rgba(13,10,7,.92));
+      border-bottom: 1px solid var(--borda-media);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 56px; gap: 1rem;
+    }
+    .blog-nav-logo {
+      font-family: var(--fonte-titulo); font-size: 1.1rem; font-weight: 400;
+      color: var(--ouro); text-decoration: none; white-space: nowrap; flex-shrink: 0;
+    }
+    .blog-nav-links { display: flex; gap: .4rem; align-items: center; }
+    .blog-nav-btn {
+      display: flex; align-items: center; gap: .4rem;
+      padding: .4rem .85rem; border-radius: var(--raio, 6px);
+      font-family: var(--fonte-display); font-size: .68rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; color: var(--texto-3);
+      border: 1px solid transparent; transition: all .2s;
+    }
+    .blog-nav-btn:hover { color: var(--ouro); border-color: var(--borda-media); }
+    .blog-nav-btn.primario { background: var(--ouro); color: #1A0F00; border-color: var(--ouro); }
+    .blog-nav-btn.primario:hover { opacity: .85; }
+
+    /* ══ HERO ══════════════════════════════════════════════════ */
+    .post-hero { position: relative; height: 480px; overflow: hidden; }
+    .post-hero-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.45); display: block; }
+    .post-hero-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #1C1408 0%, #0D0A07 60%, #2A1A00 100%);
+    }
+    .post-hero-placeholder svg { opacity: .12; width: 120px; height: 120px; }
+    .post-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(13,10,7,.94) 0%, transparent 60%);
+    }
+    .post-hero-conteudo {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 2.5rem 2rem; max-width: 800px; margin: 0 auto;
+    }
+    .post-cat {
+      font-family: var(--fonte-display); font-size: .65rem; letter-spacing: .3em;
+      text-transform: uppercase; color: var(--ouro); margin-bottom: .6rem; display: block;
+    }
+    .post-h1 {
+      font-family: var(--fonte-titulo); font-size: clamp(1.7rem, 4vw, 2.8rem);
+      font-weight: 400; color: #fff; line-height: 1.15; margin-bottom: .85rem;
+    }
+    .post-meta {
+      font-size: .8rem; color: rgba(255,255,255,.6);
+      display: flex; gap: 1.25rem; flex-wrap: wrap; align-items: center;
+    }
+    .post-meta i { color: var(--ouro); margin-right: .3rem; opacity: .8; }
+    .post-meta-sep { opacity: .3; }
+
+    /* ══ PLAYER DE ÁUDIO ═══════════════════════════════════════ */
+    #audio-player-wrap {
+      max-width: 700px; margin: 2rem auto 0;
+      padding: 0 2rem; display: none; /* visível só se tiver áudio */
+    }
+    .audio-player {
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--fundo-card, #1C1408);
+      border: 1px solid var(--borda-media);
+      border-radius: 40px; padding: .65rem 1.25rem;
+      transition: border-color .2s;
+    }
+    .audio-player:hover { border-color: var(--ouro); }
+    .audio-play-btn {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      background: var(--ouro); color: #1A0F00;
+      border: none; cursor: pointer; font-size: .85rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity .2s; box-shadow: 0 2px 12px rgba(184,134,11,.35);
+    }
+    .audio-play-btn:hover { opacity: .85; }
+    .audio-info { flex: 1; min-width: 0; }
+    .audio-titulo {
+      font-family: var(--fonte-display); font-size: .62rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--ouro); margin-bottom: .15rem;
+    }
+    .audio-timeline { display: flex; align-items: center; gap: .6rem; }
+    .audio-barra-wrap {
+      flex: 1; height: 4px; background: var(--borda);
+      border-radius: 2px; cursor: pointer; position: relative;
+    }
+    .audio-barra-fill {
+      height: 100%; background: var(--ouro); border-radius: 2px;
+      width: 0%; transition: width .2s linear;
+      pointer-events: none;
+    }
+    .audio-tempo { font-size: .7rem; color: var(--texto-3); white-space: nowrap; min-width: 70px; text-align: right; }
+    .audio-volume-btn {
+      background: transparent; border: none; color: var(--texto-3);
+      cursor: pointer; font-size: .85rem; flex-shrink: 0;
+      transition: color .2s;
+    }
+    .audio-volume-btn:hover { color: var(--ouro); }
+
+    /* ══ PLAYLIST (músicas suaves) ════════════════════════════ */
+    #playlist-wrap {
+      max-width: 700px; margin: 1rem auto 0; padding: 0 2rem;
+    }
+    .playlist-toggle {
+      display: flex; align-items: center; gap: .5rem;
+      background: transparent; border: 1px solid var(--borda);
+      border-radius: 20px; padding: .4rem 1rem; cursor: pointer;
+      font-family: var(--fonte-display); font-size: .62rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--texto-3); transition: all .2s;
+    }
+    .playlist-toggle:hover { border-color: var(--ouro); color: var(--ouro); }
+    .playlist-toggle i { color: var(--ouro); }
+    #playlist-painel {
+      display: none; background: var(--fundo-card, #1C1408);
+      border: 1px solid var(--borda-media); border-radius: var(--raio-lg, 10px);
+      padding: 1rem 1.25rem; margin-top: .75rem;
+    }
+    #playlist-painel.aberto { display: block; }
+    .playlist-titulo {
+      font-family: var(--fonte-display); font-size: .58rem;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--ouro); margin-bottom: .75rem;
+    }
+    .playlist-lista { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
+    .playlist-item {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .5rem .75rem; border-radius: var(--raio, 6px);
+      cursor: pointer; transition: background .2s;
+    }
+    .playlist-item:hover, .playlist-item.tocando { background: rgba(184,134,11,.08); }
+    .playlist-item.tocando .pl-nome { color: var(--ouro); }
+    .pl-icone { color: var(--ouro); width: 16px; text-align: center; font-size: .8rem; }
+    .pl-nome  { font-size: .85rem; color: var(--texto-2); flex: 1; }
+    .pl-dur   { font-size: .72rem; color: var(--texto-3); }
+    .playlist-stop {
+      display: block; width: 100%; margin-top: .75rem; padding: .4rem;
+      background: transparent; border: 1px solid var(--borda); border-radius: var(--raio, 6px);
+      color: var(--texto-3); font-family: var(--fonte-display); font-size: .62rem;
+      letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: all .2s;
+    }
+    .playlist-stop:hover { border-color: var(--ouro); color: var(--ouro); }
+
+    /* ══ CORPO ══════════════════════════════════════════════════ */
+    .post-corpo { max-width: 700px; margin: 0 auto; padding: 3.5rem 2rem 2rem; }
+    .post-corpo p         { font-size: 1.05rem; line-height: 1.88; margin-bottom: 1.4em; color: var(--texto-2); }
+    .post-corpo h2        { font-family: var(--fonte-titulo); font-size: 1.45rem; font-weight: 400; color: var(--ouro); margin: 2.75rem 0 .9rem; }
+    .post-corpo h3        { font-family: var(--fonte-titulo); font-size: 1.15rem; font-weight: 400; color: var(--texto); margin: 2rem 0 .7rem; }
+    .post-corpo blockquote {
+      border-left: 3px solid var(--ouro); padding: .85rem 1.5rem; margin: 2rem 0;
+      font-style: italic; color: var(--texto-3); font-size: 1.08rem; line-height: 1.78;
+      background: rgba(184,134,11,.04); border-radius: 0 6px 6px 0;
+    }
+    .post-corpo em  { font-style: italic; }
+    .post-corpo strong { color: var(--texto); font-weight: 600; }
+    .post-corpo img { max-width: 100%; border-radius: var(--raio-lg, 10px); margin: 1.5rem 0; }
+    .post-corpo ul, .post-corpo ol { padding-left: 1.5rem; margin-bottom: 1.4em; }
+    .post-corpo li { font-size: 1.05rem; line-height: 1.8; color: var(--texto-2); margin-bottom: .4em; }
+
+    /* ══ CTA LIVRO (inserido no meio do texto) ════════════════ */
+    .cta-livro {
+      margin: 3rem 0; padding: 1.75rem 2rem;
+      background: linear-gradient(135deg, rgba(184,134,11,.07) 0%, rgba(184,134,11,.03) 100%);
+      border: 1px solid rgba(184,134,11,.25);
+      border-radius: var(--raio-lg, 10px);
+      display: flex; gap: 1.5rem; align-items: center;
+    }
+    .cta-livro-capa {
+      width: 80px; flex-shrink: 0;
+      border-radius: var(--raio, 6px);
+      box-shadow: 4px 6px 20px rgba(0,0,0,.4);
+    }
+    .cta-livro-capa-placeholder {
+      width: 80px; height: 112px; flex-shrink: 0;
+      border-radius: var(--raio, 6px);
+      background: var(--fundo-3, #251800);
+      border: 1px solid var(--borda-media);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ouro); opacity: .4; font-size: 1.5rem;
+    }
+    .cta-livro-corpo { flex: 1; min-width: 0; }
+    .cta-livro-label {
+      font-family: var(--fonte-display); font-size: .58rem;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--ouro);
+      margin-bottom: .35rem; display: block;
+    }
+    .cta-livro-titulo { font-family: var(--fonte-titulo); font-size: 1.1rem; font-weight: 400; color: var(--texto); margin-bottom: .35rem; }
+    .cta-livro-desc   { font-size: .85rem; color: var(--texto-3); line-height: 1.6; margin-bottom: .9rem; }
+    .cta-livro-acoes  { display: flex; gap: .65rem; flex-wrap: wrap; }
+    .cta-livro-btn {
+      padding: .5rem 1.1rem; border-radius: var(--raio, 6px);
+      font-family: var(--fonte-display); font-size: .65rem;
+      font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; transition: all .2s; cursor: pointer; border: none;
+    }
+    .cta-livro-btn-primario { background: var(--ouro); color: #1A0F00; }
+    .cta-livro-btn-primario:hover { opacity: .85; }
+    .cta-livro-btn-secundario {
+      background: transparent; color: var(--ouro);
+      border: 1px solid rgba(184,134,11,.45);
+    }
+    .cta-livro-btn-secundario:hover { background: rgba(184,134,11,.1); }
+
+    /* ══ BARRA DE REAÇÕES ══════════════════════════════════════ */
+    .post-reacoes {
+      display: flex; align-items: center; gap: .85rem; flex-wrap: wrap;
+      max-width: 700px; margin: 0 auto;
+      padding: 1.25rem 2rem;
+      border-top: 1px solid var(--borda); border-bottom: 1px solid var(--borda);
+    }
+    .reacao-btn {
+      display: flex; align-items: center; gap: .45rem;
+      padding: .45rem 1rem; border-radius: 20px;
+      border: 1px solid var(--borda-media);
+      background: transparent; color: var(--texto-3);
+      font-size: .82rem; font-family: var(--fonte-ui);
+      cursor: pointer; transition: all .2s;
+    }
+    .reacao-btn:hover  { border-color: var(--ouro); color: var(--ouro); }
+    .reacao-btn.curtido { background: rgba(184,134,11,.12); border-color: var(--ouro); color: var(--ouro); }
+    .reacao-contador { font-weight: 600; min-width: 16px; }
+    .reacao-sep { flex: 1; }
+
+    /* ── Compartilhar expansível ─────────────────────────────── */
+    .compartilhar-wrap { position: relative; }
+    .compartilhar-toggle {
+      display: flex; align-items: center; gap: .45rem;
+      padding: .45rem 1rem; border-radius: 20px;
+      border: 1px solid var(--borda-media);
+      background: transparent; color: var(--texto-3);
+      font-size: .82rem; font-family: var(--fonte-ui);
+      cursor: pointer; transition: all .2s;
+    }
+    .compartilhar-toggle:hover,
+    .compartilhar-toggle[aria-expanded="true"] { border-color: var(--ouro); color: var(--ouro); }
+    .compartilhar-painel {
+      position: absolute; bottom: calc(100% + .5rem); right: 0;
+      background: var(--fundo-card, #1C1408);
+      border: 1px solid var(--borda-media);
+      border-radius: var(--raio-lg, 10px);
+      padding: .75rem 1rem;
+      min-width: 200px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.35);
+      z-index: 100;
+      opacity: 0; pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity .2s, transform .2s;
+    }
+    .compartilhar-painel.aberto {
+      opacity: 1; pointer-events: auto; transform: translateY(0);
+    }
+    .cp-titulo {
+      font-family: var(--fonte-display); font-size: .58rem;
+      letter-spacing: .15em; text-transform: uppercase;
+      color: var(--texto-3); margin-bottom: .65rem; padding-bottom: .5rem;
+      border-bottom: 1px solid var(--borda);
+    }
+    .cp-lista { display: flex; flex-direction: column; gap: .3rem; }
+    .cp-btn {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .5rem .65rem; border-radius: var(--raio, 6px);
+      text-decoration: none; color: var(--texto-2);
+      font-size: .85rem; cursor: pointer; border: none; background: transparent;
+      width: 100%; text-align: left; transition: background .15s, color .15s;
+    }
+    .cp-btn:hover { background: rgba(184,134,11,.08); color: var(--texto); }
+    .cp-btn i { width: 18px; text-align: center; font-size: .9rem; }
+    .cp-btn .cp-face { color: #1877F2; }
+    .cp-btn .cp-wa   { color: #25D366; }
+    .cp-btn .cp-ig   { color: #E1306C; }
+    .cp-btn .cp-x    { color: #fff; }
+    .cp-btn .cp-tktk { color: #ff0050; }
+    .cp-btn .cp-link { color: var(--ouro); }
+    .cp-divider { border: none; border-top: 1px solid var(--borda); margin: .4rem 0; }
+
+    /* ══ COMENTÁRIOS ════════════════════════════════════════════ */
+    .post-comentarios { max-width: 700px; margin: 0 auto; padding: 2.5rem 2rem 1.5rem; }
+    .coment-titulo { font-family: var(--fonte-titulo); font-size: 1.3rem; font-weight: 400; margin-bottom: 1.75rem; }
+    .coment-titulo em { color: var(--ouro); font-style: italic; }
+    .coment-form-titulo {
+      font-family: var(--fonte-display); font-size: .68rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ouro); margin-bottom: .75rem;
+    }
+    .coment-textarea {
+      width: 100%; padding: .85rem 1rem; min-height: 100px;
+      background: var(--fundo-card, #1C1408); border: 1px solid var(--borda-media);
+      border-radius: var(--raio-lg, 10px); color: var(--texto);
+      font-family: var(--fonte-corpo); font-size: .95rem; line-height: 1.65;
+      resize: vertical; transition: border-color .2s;
+    }
+    .coment-textarea:focus { outline: none; border-color: var(--ouro); }
+    .coment-form-row { display: flex; gap: .75rem; margin-top: .75rem; align-items: center; }
+    .coment-form-info { font-size: .78rem; color: var(--texto-3); flex: 1; }
+    .coment-form-info a { color: var(--ouro); text-decoration: none; }
+    .btn-comentar {
+      padding: .55rem 1.25rem; background: var(--ouro); color: #1A0F00;
+      border: none; border-radius: var(--raio, 6px);
+      font-family: var(--fonte-display); font-size: .7rem;
+      font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      cursor: pointer; transition: opacity .2s; white-space: nowrap;
+    }
+    .btn-comentar:hover { opacity: .85; }
+    .btn-comentar:disabled { opacity: .4; cursor: not-allowed; }
+    .coment-lista { display: flex; flex-direction: column; gap: 1.25rem; }
+    .coment-vazio { text-align: center; padding: 2rem; color: var(--texto-3); font-size: .88rem; }
+    .coment-vazio i { display: block; font-size: 1.8rem; color: var(--ouro); opacity: .3; margin-bottom: .5rem; }
+    .coment-card {
+      background: var(--fundo-card, #1C1408); border: 1px solid var(--borda);
+      border-radius: var(--raio-lg, 10px); padding: 1.1rem 1.25rem;
+    }
+    .coment-header { display: flex; align-items: center; gap: .75rem; margin-bottom: .65rem; }
+    .coment-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--fundo-3, #251800); border: 1px solid var(--borda-media);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; color: var(--ouro); flex-shrink: 0; overflow: hidden;
+    }
+    .coment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .coment-autor { font-weight: 600; font-size: .88rem; color: var(--texto); }
+    .coment-data  { font-size: .72rem; color: var(--texto-3); }
+    .coment-texto { font-size: .9rem; line-height: 1.7; color: var(--texto-2); }
+
+    /* ══ NAVEGAÇÃO ENTRE POSTS ══════════════════════════════════ */
+    .post-nav-entre {
+      display: flex; justify-content: space-between; align-items: stretch;
+      max-width: 700px; margin: 1.5rem auto; padding: 0 2rem 4rem; gap: 1rem;
+    }
+    .post-nav-card {
+      flex: 1; display: flex; flex-direction: column; gap: .3rem;
+      padding: 1rem 1.25rem; border: 1px solid var(--borda);
+      border-radius: var(--raio-lg, 10px); text-decoration: none; color: var(--texto);
+      background: var(--fundo-card, #1C1408); transition: border-color .2s, box-shadow .2s; min-width: 0;
+    }
+    .post-nav-card:hover { border-color: var(--ouro); box-shadow: 0 4px 20px rgba(184,134,11,.12); }
+    .post-nav-dir { align-items: flex-end; text-align: right; }
+    .post-nav-label {
+      font-family: var(--fonte-display); font-size: .62rem; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--ouro); margin-bottom: .1rem;
+    }
+    .post-nav-titulo { font-family: var(--fonte-titulo); font-size: .9rem; line-height: 1.35; color: var(--texto-2); }
+    .post-nav-espaco { flex: .5; }
+
+    /* ══ TOAST ══════════════════════════════════════════════════ */
+    .toast-rd {
+      position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%) translateY(5rem);
+      background: var(--fundo-card, #1C1408);
+      border: 1px solid var(--ouro); color: var(--texto);
+      padding: .7rem 1.5rem; border-radius: var(--raio-lg, 10px);
+      font-size: .88rem; box-shadow: 0 6px 30px rgba(0,0,0,.3);
+      z-index: 3000; opacity: 0; transition: transform .3s, opacity .3s;
+      pointer-events: none; white-space: nowrap;
+    }
+    .toast-rd.visivel { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ══ RESPONSIVE ════════════════════════════════════════════ */
+    @media (max-width: 600px) {
+      .post-hero { height: 320px; }
+      .post-corpo, .post-reacoes, .post-comentarios,
+      .post-nav-entre, #audio-player-wrap, #playlist-wrap { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .post-nav-entre { flex-direction: column; }
+      .post-nav-dir   { text-align: left; align-items: flex-start; }
+      .blog-nav       { padding: 0 1rem; }
+      .cta-livro      { flex-direction: column; text-align: center; }
+      .cta-livro-acoes { justify-content: center; }
+      .compartilhar-painel { right: auto; left: 0; }
+      .reacao-sep { display: none; }
+      .post-reacoes { gap: .5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ BARRA DE PROGRESSO ════════════════════════════════════════ -->
+<div id="leitura-progresso" role="progressbar" aria-label="Progresso de leitura" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+<!-- ══ NAV ══════════════════════════════════════════════════════ -->
+<nav class="blog-nav" aria-label="Navegação">
+  <a href="../index.html" class="blog-nav-logo">Robério Diógenes</a>
+  <div class="blog-nav-links">
+    <a href="../index.html"  class="blog-nav-btn"><i class="fa fa-home"    aria-hidden="true"></i> Início</a>
+    <a href="../blog.html"   class="blog-nav-btn"><i class="fa fa-pen-nib" aria-hidden="true"></i> Diário</a>
+    <a href="../livros.html" class="blog-nav-btn primario"><i class="fa fa-book" aria-hidden="true"></i> Biblioteca</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ═════════════════════════════════════════════════════ -->
+<header class="post-hero" id="postHero">
+  <img src="" alt="" class="post-hero-img" id="heroImg"
+       onerror="this.style.display='none';document.getElementById('heroPlaceholder').style.display='flex'">
+  <div class="post-hero-placeholder" id="heroPlaceholder" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#B8860B" stroke-width="1" stroke-linecap="round">
+      <path d="M2 6h20M2 12h20M2 18h12"/>
+    </svg>
+  </div>
+  <div class="post-hero-overlay"></div>
+  <div class="post-hero-conteudo">
+    <span class="post-cat" id="heroCat"></span>
+    <h1 class="post-h1" id="heroTitulo">Carregando…</h1>
+    <div class="post-meta" id="heroMeta"></div>
+  </div>
+</header>
+
+<!-- ══ PLAYER DE ÁUDIO DO POST ══════════════════════════════════ -->
+<div id="audio-player-wrap" aria-label="Áudio do post">
+  <div class="audio-player">
+    <button class="audio-play-btn" id="audioPlayBtn" aria-label="Reproduzir áudio do post">
+      <i class="fa fa-play" id="audioPlayIcon"></i>
+    </button>
+    <div class="audio-info">
+      <div class="audio-titulo"><i class="fa fa-headphones"></i> Ouvir este post</div>
+      <div class="audio-timeline">
+        <div class="audio-barra-wrap" id="audioBarra" role="slider" aria-label="Posição do áudio" tabindex="0">
+          <div class="audio-barra-fill" id="audioBarraFill"></div>
+        </div>
+        <span class="audio-tempo" id="audioTempo">0:00 / 0:00</span>
+      </div>
+    </div>
+    <button class="audio-volume-btn" id="audioMuteBtn" aria-label="Silenciar">
+      <i class="fa fa-volume-high"></i>
+    </button>
+  </div>
+  <audio id="audioEl" preload="none"></audio>
+</div>
+
+<!-- ══ PLAYLIST MÚSICAS ══════════════════════════════════════════ -->
+<div id="playlist-wrap">
+  <button class="playlist-toggle" id="playlistToggle" aria-expanded="false" aria-controls="playlist-painel">
+    <i class="fa fa-music"></i> Música para leitura
+  </button>
+  <div class="playlist-painel" id="playlist-painel" role="region" aria-label="Playlist de leitura">
+    <p class="playlist-titulo"><i class="fa fa-music"></i> Sons suaves para leitura</p>
+    <ul class="playlist-lista" id="playlistLista" role="list">
+      <!-- Gerado via JS -->
+    </ul>
+    <button class="playlist-stop" id="playlistStop"><i class="fa fa-stop"></i> Parar música</button>
+  </div>
+</div>
+
+<!-- ══ CORPO DO POST ════════════════════════════════════════════ -->
+<article class="post-corpo" id="postCorpo" aria-label="Conteúdo do post">
+  <p style="color:var(--texto-3);text-align:center;padding:3rem 0">Carregando conteúdo…</p>
+</article>
+
+<!-- ══ REAÇÕES ═══════════════════════════════════════════════════ -->
+<div class="post-reacoes" aria-label="Reações ao post">
+  <button class="reacao-btn" id="btnCurtir" aria-label="Curtir este post" aria-pressed="false">
+    <i class="fa fa-heart"></i>
+    <span class="reacao-contador" id="contCurtidas">0</span>
+    <span>Curtir</span>
+  </button>
+
+  <span class="reacao-sep" aria-hidden="true"></span>
+
+  <!-- Compartilhar expansível -->
+  <div class="compartilhar-wrap">
+    <button class="compartilhar-toggle" id="compartilharToggle"
+            aria-haspopup="true" aria-expanded="false" aria-controls="compartilharPainel">
+      <i class="fa fa-share-nodes"></i> Compartilhar
+      <i class="fa fa-chevron-up" style="font-size:.6rem;opacity:.6"></i>
+    </button>
+    <div class="compartilhar-painel" id="compartilharPainel" role="dialog" aria-label="Opções de compartilhamento">
+      <p class="cp-titulo">Compartilhar</p>
+      <div class="cp-lista">
+        <a class="cp-btn" id="cpFace" href="#" target="_blank" rel="noopener" aria-label="Facebook">
+          <i class="fa-brands fa-facebook-f cp-face"></i> Facebook
+        </a>
+        <a class="cp-btn" id="cpWa" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <i class="fa-brands fa-whatsapp cp-wa"></i> WhatsApp
+        </a>
+        <a class="cp-btn" id="cpIg" href="#" target="_blank" rel="noopener" aria-label="Instagram">
+          <i class="fa-brands fa-instagram cp-ig"></i> Instagram (história)
+        </a>
+        <a class="cp-btn" id="cpX" href="#" target="_blank" rel="noopener" aria-label="X / Twitter">
+          <i class="fa-brands fa-x-twitter cp-x"></i> X (Twitter)
+        </a>
+        <a class="cp-btn" id="cpTk" href="#" target="_blank" rel="noopener" aria-label="TikTok">
+          <i class="fa-brands fa-tiktok cp-tktk"></i> TikTok
+        </a>
+        <hr class="cp-divider">
+        <button class="cp-btn" id="cpLink" aria-label="Copiar link">
+          <i class="fa fa-link cp-link"></i> Copiar link
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMENTÁRIOS ════════════════════════════════════════════════ -->
+<section class="post-comentarios" aria-label="Comentários">
+  <h2 class="coment-titulo">O que você <em>achou</em>?</h2>
+  <div class="coment-form">
+    <p class="coment-form-titulo"><i class="fa fa-pen" aria-hidden="true"></i> Deixe seu comentário</p>
+    <textarea class="coment-textarea" id="comentTexto"
+              placeholder="Compartilhe sua reflexão sobre este texto…"
+              rows="3" maxlength="1500" aria-label="Seu comentário"></textarea>
+    <div class="coment-form-row">
+      <p class="coment-form-info" id="comentFormInfo">
+        <a href="../login.html">Faça login</a> para comentar.
+      </p>
+      <button class="btn-comentar" id="btnComentar" disabled>
+        <i class="fa fa-paper-plane" aria-hidden="true"></i> Comentar
+      </button>
+    </div>
+  </div>
+  <div class="coment-lista" id="listaComentarios" aria-live="polite">
+    <div class="coment-vazio"><i class="fa fa-comments"></i>Carregando comentários…</div>
+  </div>
+</section>
+
+<!-- ══ NAV ENTRE POSTS ═══════════════════════════════════════════ -->
+<nav class="post-nav-entre" id="postNavEntre" aria-label="Navegar entre posts"></nav>
+
+<!-- ══ TOAST ════════════════════════════════════════════════════ -->
+<div class="toast-rd" id="toastRD" role="status" aria-live="polite"></div>
+
+<script src="../js/global.js"></script>
+<script src="../js/api-client.js"></script>
+
+<script>
+(async function () {
+  'use strict';
+
+  /* ─────────────────────────────────────────────────────────────
+     HELPERS
+  ───────────────────────────────────────────────────────────── */
+  function esc(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function dataFmt(iso) {
+    try { return new Date(iso).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' }); }
+    catch { return iso; }
+  }
+  function dataFmtMes(iso) {
+    try { return new Date(iso).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }); }
+    catch { return iso; }
+  }
+  function fmtTempo(seg) {
+    seg = Math.floor(seg);
+    const m = Math.floor(seg / 60), s = seg % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+  function mostrarToast(msg, tipo = 'ok') {
+    const t = document.getElementById('toastRD');
+    if (!t) return;
+    t.textContent = msg;
+    t.style.borderColor = tipo === 'erro' ? '#c0392b' : 'var(--ouro)';
+    t.classList.add('visivel');
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('visivel'), 3500);
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     EXTRAIR SLUG DA URL  (suporta post-01.html e ?slug=post-01)
+  ───────────────────────────────────────────────────────────── */
+  let POST_SLUG = new URLSearchParams(location.search).get('slug');
+  if (!POST_SLUG) {
+    POST_SLUG = location.pathname.split('/').pop().replace(/\.html?$/, '');
+  }
+  if (!POST_SLUG || POST_SLUG === 'post-template') {
+    document.getElementById('heroTitulo').textContent = 'Post não encontrado.';
+    return;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     CATEGORIAS
+  ───────────────────────────────────────────────────────────── */
+  const catLabels = {
+    bastidores: 'Bastidores', reflexao: 'Reflexão',
+    escritor: 'Do Escritor', livros: 'Sobre os Livros',
+  };
+
+  /* ─────────────────────────────────────────────────────────────
+     DADOS DO LIVROS (para CTA) — centralize aqui ou carregue da API
+  ───────────────────────────────────────────────────────────── */
+  const livrosData = {
+    'setima-lei': {
+      titulo: 'A Sétima Lei',
+      desc: 'Uma história sobre regras escritas por quem não merecia escrever nada.',
+      capa: '../img/capa-setima-lei.jpg',
+      amazon: 'https://www.amazon.com.br/dp/SEU_ASIN_SETIMA_LEI',
+      presente: 'https://wa.me/5585999999999?text=Quero+presentear+com+A+Sétima+Lei',
+    },
+    'lumen': {
+      titulo: 'Lúmen',
+      desc: 'A mente de Hannah oscila entre memórias e sonhos — e você não sabe mais qual é qual.',
+      capa: '../img/capa-lumen.jpg',
+      amazon: 'https://www.amazon.com.br/dp/SEU_ASIN_LUMEN',
+      presente: 'https://wa.me/5585999999999?text=Quero+presentear+com+Lúmen',
+    },
+    'abismo-das-almas': {
+      titulo: 'O Abismo das Almas',
+      desc: 'E se a humanidade descobrisse que sentir é o maior dos perigos?',
+      capa: '../img/capa-abismo.jpg',
+      amazon: 'https://www.amazon.com.br/dp/SEU_ASIN_ABISMO',
+      presente: 'https://wa.me/5585999999999?text=Quero+presentear+com+O+Abismo+das+Almas',
+    },
+  };
+
+  /* ─────────────────────────────────────────────────────────────
+     SESSÃO DO USUÁRIO
+  ───────────────────────────────────────────────────────────── */
+  let sessao = null;
+  try {
+    const r = await fetch('../backend/auth/sessao.php', { credentials: 'same-origin' });
+    const d = await r.json();
+    if (d.ok && d.logado) sessao = d.usuario;
+  } catch {}
+
+  /* ─────────────────────────────────────────────────────────────
+     CARREGAR POST
+  ───────────────────────────────────────────────────────────── */
+  let post, anterior, proximo, totalCurtidasInicial, jaCurtiu;
+
+  try {
+    const r = await fetch(`../backend/blog_api.php?acao=post&slug=${encodeURIComponent(POST_SLUG)}`);
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.erro || 'Não encontrado');
+    post                  = d.post;
+    anterior              = d.anterior;
+    proximo               = d.proximo;
+    totalCurtidasInicial  = d.curtidas;
+    jaCurtiu              = d.ja_curtiu;
+  } catch {
+    // Fallback para funcionamento sem banco (XAMPP)
+    post = POSTS_FALLBACK[POST_SLUG];
+    if (!post) {
+      document.getElementById('postCorpo').innerHTML =
+        '<p style="text-align:center;color:var(--texto-3);padding:3rem 0">Post não encontrado.</p>';
+      return;
+    }
+    anterior = null; proximo = null;
+    totalCurtidasInicial = 0; jaCurtiu = false;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     SEO — metatags dinâmicas
+  ───────────────────────────────────────────────────────────── */
+  const catLabel    = catLabels[post.categoria] || post.categoria;
+  const pageUrl     = `https://www.roberiodiogenes.com/blog/${post.slug}.html`;
+  const imagemAbsol = post.imagem_url
+    ? `https://www.roberiodiogenes.com/${post.imagem_url}`
+    : 'https://www.roberiodiogenes.com/img/og-image.jpg';
+
+  document.title = `${post.titulo} | Diário | Robério Diógenes`;
+  document.getElementById('page-title').textContent  = document.title;
+  document.getElementById('meta-desc').content       = post.resumo || post.titulo;
+  document.getElementById('meta-keys').content       =
+    `robério diógenes, ${catLabel.toLowerCase()}, escritor brasileiro, literatura, ${post.titulo.toLowerCase()}`;
+  document.getElementById('link-canonical').href     = pageUrl;
+  document.getElementById('og-title').content        = post.titulo;
+  document.getElementById('og-desc').content         = post.resumo || post.titulo;
+  document.getElementById('og-url').content          = pageUrl;
+  document.getElementById('og-image').content        = imagemAbsol;
+  document.getElementById('og-pub').content          = post.publicado_em || '';
+  document.getElementById('og-sec').content          = catLabel;
+  document.getElementById('tw-title').content        = post.titulo;
+  document.getElementById('tw-desc').content         = post.resumo || post.titulo;
+  document.getElementById('tw-image').content        = imagemAbsol;
+
+  // Schema.org BlogPosting
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.titulo,
+    description: post.resumo || post.titulo,
+    image: imagemAbsol,
+    url: pageUrl,
+    datePublished: post.publicado_em,
+    dateModified: post.updated_at || post.publicado_em,
+    author: { '@type': 'Person', name: 'Robério Diógenes', url: 'https://www.roberiodiogenes.com/autor.html' },
+    publisher: { '@type': 'Person', name: 'Robério Diógenes' },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+    articleSection: catLabel,
+    timeRequired: `PT${post.tempo_leitura}M`,
+    inLanguage: 'pt-BR',
+  };
+  document.getElementById('schema-article').textContent = JSON.stringify(schema);
+
+  /* ─────────────────────────────────────────────────────────────
+     RENDERIZAR HERO
+  ───────────────────────────────────────────────────────────── */
+  document.getElementById('heroCat').textContent = catLabel;
+  document.getElementById('heroTitulo').textContent = post.titulo;
+
+  const audioMeta = post.audio_url
+    ? `<span><i class="fa fa-headphones"></i>Áudio disponível</span><span class="post-meta-sep">·</span>` : '';
+
+  document.getElementById('heroMeta').innerHTML = `
+    <span><i class="fa fa-calendar"></i>${dataFmtMes(post.publicado_em)}</span>
+    <span class="post-meta-sep">·</span>
+    <span><i class="fa fa-clock"></i>${post.tempo_leitura} min de leitura</span>
+    <span class="post-meta-sep">·</span>
+    ${audioMeta}
+    <span><i class="fa fa-user"></i>Robério Diógenes</span>
+  `;
+
+  if (post.imagem_url) {
+    const img = document.getElementById('heroImg');
+    img.src = `../${post.imagem_url}`;
+    img.alt = post.titulo;
+  } else {
+    document.getElementById('heroImg').style.display = 'none';
+    document.getElementById('heroPlaceholder').style.display = 'flex';
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     PLAYER DE ÁUDIO DO POST
+  ───────────────────────────────────────────────────────────── */
+  if (post.audio_url) {
+    const wrap       = document.getElementById('audio-player-wrap');
+    const audioEl    = document.getElementById('audioEl');
+    const playBtn    = document.getElementById('audioPlayBtn');
+    const playIcon   = document.getElementById('audioPlayIcon');
+    const barraFill  = document.getElementById('audioBarraFill');
+    const barra      = document.getElementById('audioBarra');
+    const tempoEl    = document.getElementById('audioTempo');
+    const muteBtn    = document.getElementById('audioMuteBtn');
+
+    audioEl.src = `../${post.audio_url}`;
+    wrap.style.display = 'block';
+
+    playBtn.addEventListener('click', () => {
+      if (audioEl.paused) { audioEl.play(); }
+      else                { audioEl.pause(); }
+    });
+    audioEl.addEventListener('play',  () => { playIcon.className = 'fa fa-pause'; });
+    audioEl.addEventListener('pause', () => { playIcon.className = 'fa fa-play'; });
+    audioEl.addEventListener('ended', () => { playIcon.className = 'fa fa-play'; barraFill.style.width = '0%'; });
+    audioEl.addEventListener('timeupdate', () => {
+      if (!audioEl.duration) return;
+      const pct = (audioEl.currentTime / audioEl.duration) * 100;
+      barraFill.style.width = pct + '%';
+      tempoEl.textContent   = `${fmtTempo(audioEl.currentTime)} / ${fmtTempo(audioEl.duration)}`;
+    });
+    barra.addEventListener('click', (e) => {
+      if (!audioEl.duration) return;
+      const rect = barra.getBoundingClientRect();
+      audioEl.currentTime = ((e.clientX - rect.left) / rect.width) * audioEl.duration;
+    });
+    muteBtn.addEventListener('click', () => {
+      audioEl.muted = !audioEl.muted;
+      muteBtn.querySelector('i').className = audioEl.muted ? 'fa fa-volume-xmark' : 'fa fa-volume-high';
+    });
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     PLAYLIST DE MÚSICAS PARA LEITURA
+     Usa arquivos de áudio livres de royalties (Lofi / Ambient).
+     Substitua os src por faixas reais que você licenciou.
+  ───────────────────────────────────────────────────────────── */
+  const PLAYLIST = [
+    { nome: 'Silêncio de Papel',     src: '../audio/playlist/silencio-de-papel.mp3',     dur: '3:20' },
+    { nome: 'Noite em Cascavel',     src: '../audio/playlist/noite-em-cascavel.mp3',     dur: '4:05' },
+    { nome: 'Páginas & Chuva',       src: '../audio/playlist/paginas-chuva.mp3',         dur: '3:55' },
+    { nome: 'Piano do Escritor',     src: '../audio/playlist/piano-do-escritor.mp3',     dur: '5:12' },
+    { nome: 'Bruma da Madrugada',    src: '../audio/playlist/bruma-madrugada.mp3',       dur: '4:30' },
+  ];
+
+  const plToggle  = document.getElementById('playlistToggle');
+  const plPainel  = document.getElementById('playlist-painel');
+  const plLista   = document.getElementById('playlistLista');
+  const plStop    = document.getElementById('playlistStop');
+  const plAudio   = new Audio();
+  plAudio.volume  = 0.35;
+  let plAtual     = -1;
+
+  plToggle.addEventListener('click', () => {
+    const aberto = plPainel.classList.toggle('aberto');
+    plToggle.setAttribute('aria-expanded', aberto);
+  });
+
+  PLAYLIST.forEach((faixa, i) => {
+    const li = document.createElement('li');
+    li.className = 'playlist-item';
+    li.setAttribute('role', 'listitem');
+    li.innerHTML = `
+      <span class="pl-icone"><i class="fa fa-music"></i></span>
+      <span class="pl-nome">${esc(faixa.nome)}</span>
+      <span class="pl-dur">${faixa.dur}</span>
+    `;
+    li.addEventListener('click', () => tocarFaixa(i));
+    plLista.appendChild(li);
+  });
+
+  function tocarFaixa(i) {
+    plAtual = i;
+    plAudio.src = PLAYLIST[i].src;
+    plAudio.play().catch(() => mostrarToast('Arquivo de áudio não encontrado. Adicione as faixas em audio/playlist/', 'erro'));
+    document.querySelectorAll('.playlist-item').forEach((el, idx) => {
+      el.classList.toggle('tocando', idx === i);
+      el.querySelector('.pl-icone i').className = idx === i ? 'fa fa-pause' : 'fa fa-music';
+    });
+  }
+
+  plAudio.addEventListener('ended', () => {
+    const prox = (plAtual + 1) % PLAYLIST.length;
+    tocarFaixa(prox);
+  });
+
+  plStop.addEventListener('click', () => {
+    plAudio.pause(); plAudio.src = '';
+    document.querySelectorAll('.playlist-item').forEach(el => {
+      el.classList.remove('tocando');
+      el.querySelector('.pl-icone i').className = 'fa fa-music';
+    });
+    mostrarToast('Música pausada.');
+  });
+
+  /* ─────────────────────────────────────────────────────────────
+     RENDERIZAR CORPO DO POST com CTA no meio
+  ───────────────────────────────────────────────────────────── */
+  function renderizarCorpo(conteudo, livroSlug) {
+    const corpo = document.getElementById('postCorpo');
+
+    // Injetar CTA no meio do conteúdo
+    if (livroSlug && livrosData[livroSlug]) {
+      const livro   = livrosData[livroSlug];
+      const capaHtml = `<img src="${livro.capa}" alt="Capa de ${esc(livro.titulo)}" class="cta-livro-capa"
+                            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="cta-livro-capa-placeholder" style="display:none"><i class="fa fa-book"></i></div>`;
+
+      const ctaHtml = `
+        <div class="cta-livro" aria-label="Sugestão de leitura">
+          ${capaHtml}
+          <div class="cta-livro-corpo">
+            <span class="cta-livro-label"><i class="fa fa-book"></i> Você vai gostar de ler</span>
+            <p class="cta-livro-titulo">${esc(livro.titulo)}</p>
+            <p class="cta-livro-desc">${esc(livro.desc)}</p>
+            <div class="cta-livro-acoes">
+              <a href="${livro.amazon}" target="_blank" rel="noopener"
+                 class="cta-livro-btn cta-livro-btn-primario">
+                <i class="fa fa-shopping-cart"></i> Comprar
+              </a>
+              <a href="${livro.presente}" target="_blank" rel="noopener"
+                 class="cta-livro-btn cta-livro-btn-secundario">
+                <i class="fa fa-gift"></i> Presentear
+              </a>
+            </div>
+          </div>
+        </div>`;
+
+      // Inserir após o 2º parágrafo (ou no meio se tiver mais de 4 parágrafos)
+      const temp = document.createElement('div');
+      temp.innerHTML = conteudo;
+      const paras = temp.querySelectorAll('p, h2, blockquote');
+      const idx   = paras.length > 4 ? Math.floor(paras.length / 2) : Math.min(2, paras.length);
+
+      if (paras[idx]) {
+        paras[idx].insertAdjacentHTML('afterend', ctaHtml);
+        conteudo = temp.innerHTML;
+      } else {
+        conteudo += ctaHtml;
+      }
+    }
+
+    corpo.innerHTML = conteudo;
+  }
+
+  renderizarCorpo(post.conteudo || '', post.livro_slug);
+
+  /* ─────────────────────────────────────────────────────────────
+     BARRA DE PROGRESSO DE LEITURA
+  ───────────────────────────────────────────────────────────── */
+  const progressBar = document.getElementById('leitura-progresso');
+  let progresso70marcado = false;
+
+  function atualizarProgresso() {
+    const corpo   = document.getElementById('postCorpo');
+    const rect    = corpo.getBoundingClientRect();
+    const total   = corpo.offsetHeight;
+    const lido    = Math.max(0, -rect.top + window.innerHeight * 0.5);
+    const pct     = Math.min(100, Math.round((lido / total) * 100));
+
+    progressBar.style.width = pct + '%';
+    progressBar.setAttribute('aria-valuenow', pct);
+
+    // Marcar como lido quando chegar a 70%
+    if (pct >= 70 && !progresso70marcado && sessao) {
+      progresso70marcado = true;
+      fetch('../backend/blog_api.php', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'marcar_lido', slug: POST_SLUG, progresso: pct }),
+      }).catch(() => {});
+    }
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => { atualizarProgresso(); ticking = false; });
+      ticking = true;
+    }
+  }, { passive: true });
+  atualizarProgresso();
+
+  /* ─────────────────────────────────────────────────────────────
+     CURTIDAS
+  ───────────────────────────────────────────────────────────── */
+  const btnCurtir    = document.getElementById('btnCurtir');
+  const contCurtidas = document.getElementById('contCurtidas');
+  let curtidasAtual  = totalCurtidasInicial;
+
+  contCurtidas.textContent = curtidasAtual;
+  if (jaCurtiu) btnCurtir.classList.add('curtido');
+
+  btnCurtir.addEventListener('click', async () => {
+    try {
+      const r = await fetch('../backend/blog_api.php', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'curtir', slug: POST_SLUG }),
+      });
+      const d = await r.json();
+      if (d.ok) {
+        curtidasAtual = d.total;
+        contCurtidas.textContent = curtidasAtual;
+        btnCurtir.classList.toggle('curtido', d.curtiu);
+        btnCurtir.setAttribute('aria-pressed', d.curtiu);
+        if (d.curtiu) mostrarToast('Obrigado pela curtida! ♥');
+      }
+    } catch {
+      // Fallback localStorage
+      const key = 'curtidas_' + POST_SLUG;
+      const curtido = localStorage.getItem(key);
+      if (curtido) { localStorage.removeItem(key); curtidasAtual = Math.max(0, curtidasAtual - 1); btnCurtir.classList.remove('curtido'); }
+      else         { localStorage.setItem(key, '1'); curtidasAtual++; btnCurtir.classList.add('curtido'); mostrarToast('Obrigado! ♥'); }
+      contCurtidas.textContent = curtidasAtual;
+    }
+  });
+
+  /* ─────────────────────────────────────────────────────────────
+     COMPARTILHAMENTO EXPANSÍVEL
+  ───────────────────────────────────────────────────────────── */
+  const toggle     = document.getElementById('compartilharToggle');
+  const painel     = document.getElementById('compartilharPainel');
+  const postUrl    = encodeURIComponent(pageUrl);
+  const postTitulo = encodeURIComponent(post.titulo);
+
+  document.getElementById('cpFace').href = `https://www.facebook.com/sharer/sharer.php?u=${postUrl}`;
+  document.getElementById('cpWa').href   = `https://wa.me/?text=${postTitulo}%20${postUrl}`;
+  document.getElementById('cpX').href    = `https://twitter.com/intent/tweet?url=${postUrl}&text=${postTitulo}`;
+  // Instagram e TikTok não suportam link de compartilhamento direto; abre instruções
+  document.getElementById('cpIg').href   = 'https://www.instagram.com/';
+  document.getElementById('cpIg').addEventListener('click', (e) => {
+    e.preventDefault();
+    navigator.clipboard?.writeText(pageUrl).catch(() => {});
+    mostrarToast('Link copiado! Cole em sua história do Instagram.');
+    painel.classList.remove('aberto'); toggle.setAttribute('aria-expanded', 'false');
+  });
+  document.getElementById('cpTk').href   = 'https://www.tiktok.com/';
+  document.getElementById('cpTk').addEventListener('click', (e) => {
+    e.preventDefault();
+    navigator.clipboard?.writeText(pageUrl).catch(() => {});
+    mostrarToast('Link copiado! Cole na sua bio ou vídeo do TikTok.');
+    painel.classList.remove('aberto'); toggle.setAttribute('aria-expanded', 'false');
+  });
+  document.getElementById('cpLink').addEventListener('click', async () => {
+    try {
+      if (navigator.share) await navigator.share({ title: post.titulo, url: pageUrl });
+      else                 await navigator.clipboard.writeText(pageUrl);
+      mostrarToast('Link copiado!');
+    } catch { mostrarToast('Não foi possível copiar.', 'erro'); }
+    painel.classList.remove('aberto'); toggle.setAttribute('aria-expanded', 'false');
+  });
+
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const aberto = painel.classList.toggle('aberto');
+    toggle.setAttribute('aria-expanded', aberto);
+  });
+  document.addEventListener('click', (e) => {
+    if (!painel.contains(e.target) && e.target !== toggle) {
+      painel.classList.remove('aberto');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { painel.classList.remove('aberto'); toggle.setAttribute('aria-expanded', 'false'); }
+  });
+
+  /* ─────────────────────────────────────────────────────────────
+     NAVEGAÇÃO ENTRE POSTS
+  ───────────────────────────────────────────────────────────── */
+  const navEl = document.getElementById('postNavEntre');
+  let navHtml = '';
+  if (anterior) {
+    navHtml += `<a href="${esc(anterior.slug)}.html" class="post-nav-card">
+      <span class="post-nav-label"><i class="fa fa-arrow-left"></i> Post anterior</span>
+      <span class="post-nav-titulo">${esc(anterior.titulo)}</span>
+    </a>`;
+  } else {
+    navHtml += `<div class="post-nav-espaco"></div>`;
+  }
+  if (proximo) {
+    navHtml += `<a href="${esc(proximo.slug)}.html" class="post-nav-card post-nav-dir">
+      <span class="post-nav-label">Próximo post <i class="fa fa-arrow-right"></i></span>
+      <span class="post-nav-titulo">${esc(proximo.titulo)}</span>
+    </a>`;
+  } else {
+    navHtml += `<div class="post-nav-espaco"></div>`;
+  }
+  navEl.innerHTML = navHtml;
+
+  /* ─────────────────────────────────────────────────────────────
+     COMENTÁRIOS
+  ───────────────────────────────────────────────────────────── */
+  const formInfo  = document.getElementById('comentFormInfo');
+  const btnEnviar = document.getElementById('btnComentar');
+  const textarea  = document.getElementById('comentTexto');
+
+  if (sessao) {
+    if (formInfo) formInfo.innerHTML = `Comentando como <strong>${esc(sessao.nome.split(' ')[0])}</strong>`;
+    if (btnEnviar) btnEnviar.disabled = false;
+  }
+
+  async function carregarComentarios() {
+    const lista = document.getElementById('listaComentarios');
+    if (!lista) return;
+    try {
+      const r = await fetch(`../backend/comentarios.php?acao=listar&slug=${POST_SLUG}`, { credentials: 'same-origin' });
+      const d = await r.json();
+      if (!d.ok || !d.comentarios?.length) {
+        lista.innerHTML = '<div class="coment-vazio"><i class="fa fa-comments"></i>Seja o primeiro a comentar este post.</div>';
+        return;
+      }
+      lista.innerHTML = d.comentarios.map(c => `
+        <div class="coment-card">
+          <div class="coment-header">
+            <div class="coment-avatar">
+              ${c.foto_url ? `<img src="${esc(c.foto_url)}" alt="${esc(c.nome)}">` : `<i class="fa fa-user"></i>`}
+            </div>
+            <div>
+              <div class="coment-autor">${esc(c.nome)}</div>
+              <div class="coment-data">${dataFmt(c.criado_em)}</div>
+            </div>
+          </div>
+          <div class="coment-texto">${esc(c.texto)}</div>
+        </div>
+      `).join('');
+    } catch {
+      lista.innerHTML = '<div class="coment-vazio"><i class="fa fa-comments"></i>Não foi possível carregar comentários.</div>';
+    }
+  }
+
+  await carregarComentarios();
+
+  if (btnEnviar && textarea) {
+    btnEnviar.addEventListener('click', async () => {
+      if (!sessao) { window.location.href = `../login.html?redir=blog/${POST_SLUG}.html`; return; }
+      const texto = textarea.value.trim();
+      if (!texto || texto.length < 5) { mostrarToast('Escreva um comentário antes de enviar.', 'erro'); return; }
+      if (texto.length > 1500)        { mostrarToast('Máximo de 1500 caracteres.', 'erro'); return; }
+      btnEnviar.disabled = true; btnEnviar.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Enviando…';
+      try {
+        const r = await fetch('../backend/comentarios.php', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ acao: 'criar', slug: POST_SLUG, texto }),
+        });
+        const d = await r.json();
+        if (d.ok) { textarea.value = ''; mostrarToast('Comentário enviado!'); await carregarComentarios(); }
+        else      { mostrarToast(d.erro || 'Erro ao enviar.', 'erro'); }
+      } catch { mostrarToast('Erro de conexão.', 'erro'); }
+      finally   { btnEnviar.disabled = false; btnEnviar.innerHTML = '<i class="fa fa-paper-plane"></i> Comentar'; }
+    });
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     FALLBACK DATA (funciona sem banco de dados)
+  ───────────────────────────────────────────────────────────── */
+  const POSTS_FALLBACK = {
+    'post-01': {
+      slug:'post-01', titulo:'Por trás da serpente e da maçã: os bastidores de A Sétima Lei',
+      subtitulo:'Como nasceu a capa, a ideia, e o silêncio que precedeu tudo isso',
+      categoria:'bastidores', resumo:'Cada livro começa muito antes da primeira palavra.',
+      conteudo:`<p>Cada livro começa muito antes da primeira palavra. Antes da sinopse, antes do nome, antes mesmo da ideia clara. Começa numa inquietação — algo que incomoda sem ter forma, que aparece nos sonhos e nos intervalos de silêncio.</p>
+      <p><em>A Sétima Lei</em> nasceu de uma pergunta que me perseguiu durante meses: o que acontece com a alma de quem descobre que as regras que sempre obedeceu foram escritas por alguém que não merecia escrever nada?</p>
+      <blockquote>"A serpente não mentiu. A maçã era boa para comer, era agradável aos olhos, e daria conhecimento. O problema nunca foi a maçã."</blockquote>
+      <h2>A capa que nasceu antes do livro</h2>
+      <p>Aconteceu algo incomum neste livro: a capa existiu antes do texto. Eu tinha uma imagem na cabeça — uma mão segurando uma serpente enrolada em torno dos dedos, não com medo, mas com familiaridade.</p>
+      <h2>O silêncio que precedeu tudo</h2>
+      <p>Escrevi os primeiros trinta páginas em três dias. Depois parei por seis semanas. Não por bloqueio — por necessidade. Havia algo que eu ainda não sabia sobre os personagens.</p>
+      <p>Quando voltei, sabia o que faltava: o protagonista não queria ser salvo. Ele queria entender. E esses são desejos completamente diferentes.</p>
+      <blockquote>"Se o bem e o mal fossem fáceis de distinguir, não precisaríamos de histórias."</blockquote>
+      <p>Foi o livro mais difícil que escrevi até hoje. Espero que seja o mais difícil de esquecer que você já leu.</p>`,
+      imagem_url:'img/post-bastidores-setima-lei.jpg', audio_url:null,
+      tempo_leitura:8, livro_slug:'setima-lei', publicado_em:'2025-04-01T10:00:00', updated_at:null,
+    },
+  };
+
+})();
+</script>
+</body>
+</html>

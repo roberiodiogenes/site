@@ -1,0 +1,7 @@
+Options -Indexes
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteRule ^([a-z0-9_-]+)\.html$ post-template.html?slug=$1 [L,QSA]

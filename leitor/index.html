@@ -3,637 +3,332 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Área do Leitor — acesse sua biblioteca pessoal, leia capítulos online e acompanhe sua leitura em Robério Diógenes. O leitor online de ficção independente brasileira." />
-  <meta name="keywords" content="leitor online, biblioteca digital, ler livros online, Robério Diógenes, ficção brasileira, thriller, romance, leitura online" />
-  <meta name="author" content="Robério Diógenes" />
-  <link rel="canonical" href="https://www.roberiodiogenes.com/leitor/index.html" />
-  <meta property="og:title" content="Área do Leitor | Robério Diógenes" />
-  <meta property="og:description" content="Acesse sua biblioteca digital, leia capítulos online e acompanhe sua leitura. Ficção independente brasileira." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.roberiodiogenes.com/leitor/index.html" />
-  <meta property="og:image" content="https://www.roberiodiogenes.com/img/og-image.jpg" />
-  <meta property="og:site_name" content="Robério Diógenes" />
-  <meta name="robots" content="index, follow" />
-  <title>Área do Leitor Online | Leia Livros de Ficção | Robério Diógenes</title>
+  <title id="page-title">Leitor Online | Robério Diógenes</title>
+  <meta name="description" content="Leia os livros e contos de Robério Diógenes diretamente no navegador, com anotações, marcações e progresso sincronizado." />
+  <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" type="image/png" href="../img/favicon.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
-  <link rel="stylesheet" href="../css/variables.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--fonte-ui); background: var(--fundo); color: var(--texto); min-height: 100svh; }
-
-    /* ── Nav ──────────────────────────────────────────────────── */
-    .leitor-nav {
-      background: var(--fundo-nav); border-bottom: 1px solid var(--borda-media);
-      padding: 0 2rem; height: var(--altura-nav);
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 100;
-      backdrop-filter: blur(12px);
-    }
-    .leitor-nav-logo {
-      font-family: var(--fonte-titulo); font-size: 1.3rem; font-weight: 400;
-      color: var(--ouro); text-decoration: none;
-    }
-    .leitor-nav-logo span {
-      font-size: 0.65rem; display: block; font-family: var(--fonte-display);
-      letter-spacing: 0.2em; text-transform: uppercase; color: var(--texto-3);
-    }
-    .leitor-nav-acoes { display: flex; align-items: center; gap: 1rem; }
-    .btn-voltar {
-      font-family: var(--fonte-display); font-size: 0.7rem; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--texto-3); text-decoration: none;
-      transition: color var(--trans);
-    }
-    .btn-voltar:hover { color: var(--ouro); }
-    .btn-sair {
-      font-family: var(--fonte-display); font-size: 0.7rem; letter-spacing: 0.1em;
-      text-transform: uppercase; background: none; border: 1px solid var(--borda-media);
-      border-radius: var(--raio); padding: 0.4rem 0.8rem; cursor: pointer;
-      color: var(--texto-3); transition: all var(--trans);
-    }
-    .btn-sair:hover { border-color: var(--ferrugem); color: var(--ferrugem); }
-
-    /* ── Loading ──────────────────────────────────────────────── */
-    .leitor-loading {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-height: calc(100svh - var(--altura-nav));
-      gap: 1rem; color: var(--texto-3);
-    }
-    .leitor-loading i { font-size: 2rem; color: var(--ouro); animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Main ─────────────────────────────────────────────────── */
-    .leitor-main {
-      max-width: 1100px; margin: 0 auto; padding: 3rem 2rem;
-      display: none;
-    }
-    .leitor-main.visivel { display: block; }
-
-    /* Boas-vindas */
-    .leitor-boas-vindas {
-      margin-bottom: 3rem; border-bottom: 1px solid var(--borda); padding-bottom: 2rem;
-    }
-    .leitor-pretitulo {
-      font-family: var(--fonte-display); font-size: 0.65rem;
-      letter-spacing: 0.3em; text-transform: uppercase;
-      color: var(--ouro); margin-bottom: 0.5rem;
-    }
-    .leitor-titulo {
-      font-family: var(--fonte-titulo); font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 400; line-height: 1.2;
-    }
-    .leitor-titulo em { color: var(--ouro); font-style: italic; }
-    .leitor-usuario-info { display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem; }
-    .leitor-avatar {
-      width: 52px; height: 52px; border-radius: 50%;
-      border: 2px solid var(--borda-media); object-fit: cover;
-    }
-    .leitor-avatar-placeholder {
-      width: 52px; height: 52px; border-radius: 50%;
-      background: var(--fundo-3); border: 2px solid var(--borda-media);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem; color: var(--ouro);
-    }
-    .leitor-nome { font-family: var(--fonte-titulo); font-size: 1.15rem; }
-    .leitor-email { font-size: 0.82rem; color: var(--texto-3); margin-top: 0.1rem; }
-
-    /* ── Seção genérica ───────────────────────────────────────── */
-    .secao-titulo-leitor {
-      font-family: var(--fonte-titulo); font-size: 1.4rem; font-weight: 400;
-      margin-bottom: 1.25rem; color: var(--texto);
-    }
-    .secao-titulo-leitor em { color: var(--ouro); font-style: italic; }
-
-    /* ── Grade de ações (cards fixos) ─────────────────────────── */
-    .leitor-grade {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 3.5rem;
-    }
-    .leitor-card {
-      background: var(--fundo-card); border: 1px solid var(--borda);
-      border-radius: var(--raio-lg); padding: 1.75rem;
-      transition: border-color var(--trans), box-shadow var(--trans);
-      text-decoration: none; color: var(--texto);
-      display: flex; flex-direction: column; gap: 0.75rem;
-    }
-    .leitor-card:hover { border-color: var(--ouro); box-shadow: var(--sombra-dourada); }
-    .leitor-card-icone { font-size: 1.8rem; color: var(--ouro); margin-bottom: 0.25rem; }
-    .leitor-card-titulo { font-family: var(--fonte-titulo); font-size: 1.2rem; font-weight: 500; }
-    .leitor-card-desc { font-size: 0.88rem; color: var(--texto-3); line-height: 1.6; }
-    .leitor-card-badge {
-      align-self: flex-start; font-size: 0.7rem; font-family: var(--fonte-display);
-      letter-spacing: 0.1em; text-transform: uppercase;
-      background: var(--fundo-2); border: 1px solid var(--borda-media);
-      border-radius: 20px; padding: 0.2rem 0.7rem; color: var(--texto-3);
-    }
-    .leitor-card-badge.novo { background: rgba(184,134,11,0.1); border-color: var(--ouro); color: var(--ouro); }
-
-    /* ════════════════════════════════════════════════════════════
-       MINHA BIBLIOTECA — livros em leitura
-    ════════════════════════════════════════════════════════════ */
-    .biblioteca-secao {
-      margin-bottom: 3.5rem;
-    }
-    .biblioteca-secao-header {
-      display: flex;
-      align-items: baseline;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .biblioteca-ver-todos {
-      font-family: var(--fonte-display);
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--texto-3);
-      text-decoration: none;
-      transition: color var(--trans);
-    }
-    .biblioteca-ver-todos:hover { color: var(--ouro); }
-
-    /* Grade dos livros em leitura */
-    .biblioteca-grade {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.25rem;
-    }
-
-    /* Card de livro em leitura */
-    .livro-leitura-card {
-      background: var(--fundo-card);
-      border: 1px solid var(--borda);
-      border-radius: var(--raio-lg);
-      overflow: hidden;
-      text-decoration: none;
-      color: var(--texto);
-      display: flex;
-      flex-direction: column;
-      transition: border-color var(--trans), box-shadow var(--trans), transform 0.2s;
-      position: relative;
-    }
-    .livro-leitura-card:hover {
-      border-color: var(--ouro);
-      box-shadow: var(--sombra-dourada);
-      transform: translateY(-2px);
-    }
-
-    /* Barra de progresso no topo do card */
-    .livro-progresso-barra {
-      height: 3px;
-      background: var(--fundo-3);
-      position: relative;
-    }
-    .livro-progresso-fill {
-      position: absolute;
-      top: 0; left: 0;
-      height: 100%;
-      background: var(--ouro);
-      border-radius: 0 2px 2px 0;
-      transition: width 0.6s ease;
-      box-shadow: 0 0 6px rgba(184,134,11,0.4);
-    }
-
-    /* Corpo do card */
-    .livro-leitura-corpo {
-      padding: 1.25rem 1.25rem 1rem;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .livro-leitura-titulo {
-      font-family: var(--fonte-titulo);
-      font-size: 1.05rem;
-      font-weight: 500;
-      line-height: 1.3;
-      color: var(--texto);
-    }
-
-    /* Metadados: capítulo e última leitura */
-    .livro-leitura-meta {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-top: 0.25rem;
-    }
-    .livro-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.78rem;
-      color: var(--texto-3);
-      font-family: var(--fonte-display);
-      letter-spacing: 0.04em;
-    }
-    .livro-meta-item i { font-size: 0.7rem; color: var(--ouro); opacity: 0.7; }
-
-    /* Rodapé do card: percentual + botão */
-    .livro-leitura-rodape {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.75rem 1.25rem 1rem;
-      border-top: 1px solid var(--borda);
-    }
-    .livro-percentual {
-      font-family: var(--fonte-display);
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      color: var(--ouro);
-    }
-    .livro-percentual-label {
-      font-size: 0.68rem;
-      color: var(--texto-3);
-      margin-left: 0.3rem;
-    }
-    .livro-btn-continuar {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.4rem 0.9rem;
-      background: var(--ouro);
-      color: #1A0F00;
-      border-radius: var(--raio);
-      font-family: var(--fonte-display);
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: opacity 0.2s, transform 0.2s;
-      white-space: nowrap;
-    }
-    .livro-btn-continuar:hover { opacity: 0.85; transform: translateY(-1px); }
-    .livro-btn-continuar.concluido {
-      background: var(--fundo-2);
-      color: var(--texto-3);
-      border: 1px solid var(--borda-media);
-    }
-
-    /* Badge "Concluído" no canto superior direito */
-    .livro-badge-concluido {
-      position: absolute;
-      top: 0.6rem; right: 0.75rem;
-      font-family: var(--fonte-display);
-      font-size: 0.6rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      background: rgba(184,134,11,0.12);
-      border: 1px solid rgba(184,134,11,0.3);
-      color: var(--ouro);
-      border-radius: 20px;
-      padding: 0.15rem 0.55rem;
-    }
-
-    /* Mensagem quando não há livros em leitura */
-    .biblioteca-vazia {
-      text-align: center;
-      padding: 3rem 2rem;
-      border: 1px dashed var(--borda-media);
-      border-radius: var(--raio-lg);
-      color: var(--texto-3);
-    }
-    .biblioteca-vazia i {
-      font-size: 2.5rem;
-      color: var(--ouro);
-      opacity: 0.4;
-      display: block;
-      margin-bottom: 1rem;
-    }
-    .biblioteca-vazia p { font-size: 0.9rem; line-height: 1.7; }
-    .biblioteca-vazia a { color: var(--ouro); text-decoration: none; }
-    .biblioteca-vazia a:hover { text-decoration: underline; }
-
-    /* Loading dos livros */
-    .biblioteca-carregando {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      color: var(--texto-3);
-      font-size: 0.88rem;
-      padding: 1rem 0;
-    }
-    .biblioteca-carregando i { color: var(--ouro); animation: spin 1s linear infinite; }
-
-    /* ── Rodapé legal discreto ────────────────────────────────── */
-    .leitor-rodape-legal {
-      border-top: 1px solid var(--borda);
-      padding: 1.5rem 0 2rem;
-      text-align: center;
-    }
-    .leitor-rodape-legal p {
-      font-size: 0.75rem;
-      color: var(--texto-3);
-      line-height: 1.7;
-    }
-    .leitor-rodape-legal a {
-      color: var(--texto-3);
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: color var(--trans), border-color var(--trans);
-    }
-    .leitor-rodape-legal a:hover { color: var(--ouro); border-bottom-color: var(--ouro); }
-
-    @media (max-width: 600px) {
-      .leitor-main { padding: 2rem 1rem; }
-      .leitor-nav { padding: 0 1rem; }
-      .biblioteca-grade { grid-template-columns: 1fr; }
-      .livro-leitura-meta { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
-    }
-  </style>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Área do Leitor — Robério Diógenes",
-    "description": "Área do leitor online do escritor Robério Diógenes. Acesse sua biblioteca digital, leia capítulos e acompanhe sua leitura.",
-    "url": "https://www.roberiodiogenes.com/leitor/index.html",
-    "author": {
-      "@type": "Person",
-      "name": "Robério Diógenes",
-      "url": "https://www.roberiodiogenes.com/autor.html"
-    },
-    "inLanguage": "pt-BR",
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "Robério Diógenes",
-      "url": "https://www.roberiodiogenes.com"
-    }
-  }
-  </script>
+  <link rel="stylesheet" href="css/leitor.css" />
 </head>
-<body>
+<body class="tema-claro fonte-serifada">
 
-<nav class="leitor-nav">
-  <a href="../index.html" class="leitor-nav-logo">
-    Robério Diógenes
-    <span>Área do Leitor</span>
-  </a>
-  <div class="leitor-nav-acoes">
-    <a href="../index.html" class="btn-voltar">
-      <i class="fa fa-arrow-left" aria-hidden="true"></i> Site
-    </a>
-    <button class="btn-sair" id="btnSair">
-      <i class="fa fa-sign-out-alt" aria-hidden="true"></i> Sair
-    </button>
+<!-- ══ TELA DE SELEÇÃO DE LIVRO ═════════════════════════════════ -->
+<div id="telaSelecao" class="tela-selecao">
+  <div class="ts-header">
+    <a href="../index.html" class="ts-logo">Robério Diógenes</a>
+    <div class="ts-header-dir">
+      <span class="ts-usuario" id="tsUsuarioNome"></span>
+      <a href="../index.html" class="ts-link"><i class="fa fa-arrow-left"></i> Voltar ao site</a>
+    </div>
   </div>
-</nav>
-
-<div class="leitor-loading" id="leitorLoading" aria-live="polite" aria-label="Verificando sessão">
-  <i class="fa fa-circle-notch" aria-hidden="true"></i>
-  <p>Verificando sua sessão…</p>
+  <div class="ts-corpo">
+    <div class="ts-titulo-wrap">
+      <h1 class="ts-titulo">Minha <em>Biblioteca</em></h1>
+      <p class="ts-subtitulo">Escolha uma obra para começar ou continuar a leitura.</p>
+    </div>
+    <div id="tsGrade" class="ts-grade">
+      <div class="ts-loading"><i class="fa fa-spinner fa-spin"></i> Carregando biblioteca…</div>
+    </div>
+  </div>
 </div>
 
-<main class="leitor-main" id="leitorMain">
+<!-- ══ LEITOR ═══════════════════════════════════════════════════ -->
+<div id="telaLeitor" class="tela-leitor" style="display:none">
 
-  <!-- Boas-vindas -->
-  <div class="leitor-boas-vindas">
-    <p class="leitor-pretitulo">Bem-vindo à</p>
-    <h1 class="leitor-titulo">Área do <em>Leitor</em></h1>
-    <div class="leitor-usuario-info" id="leitorUsuarioInfo"></div>
+  <!-- Barra de progresso de leitura -->
+  <div id="barraProgresso" class="barra-progresso" role="progressbar"
+       aria-label="Progresso de leitura" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+    <div class="barra-progresso-fill" id="barraFill"></div>
+    <span class="barra-pct" id="barraPct">0%</span>
   </div>
 
-  <!-- ══ MINHA BIBLIOTECA ══════════════════════════════════════ -->
-  <section class="biblioteca-secao" id="secao-biblioteca" aria-label="Minha biblioteca">
-
-    <div class="biblioteca-secao-header">
-      <h2 class="secao-titulo-leitor">Minha <em>Biblioteca</em></h2>
-      <a href="../livros.html" class="biblioteca-ver-todos">
-        Ver todos os livros <i class="fa fa-arrow-right" aria-hidden="true"></i>
-      </a>
+  <!-- Barra superior -->
+  <header class="leitor-header" id="leitorHeader">
+    <div class="lh-esq">
+      <button class="lh-btn" id="btnBiblioteca" title="Voltar à biblioteca" aria-label="Biblioteca">
+        <i class="fa fa-book-open"></i>
+      </button>
+      <div class="lh-titulo-wrap">
+        <span class="lh-titulo" id="lhTitulo">—</span>
+        <span class="lh-capitulo" id="lhCapitulo"></span>
+      </div>
     </div>
-
-    <!-- Carregando... -->
-    <div class="biblioteca-carregando" id="biblioteca-carregando" aria-live="polite">
-      <i class="fa fa-circle-notch" aria-hidden="true"></i>
-      <span>Carregando seus livros…</span>
+    <div class="lh-dir">
+      <!-- Relógio de metas -->
+      <div class="lh-meta" id="metaWrap">
+        <button class="lh-btn" id="btnMetaToggle" title="Meta de leitura" aria-label="Meta">
+          <i class="fa fa-clock"></i>
+        </button>
+        <span class="meta-display" id="metaDisplay" style="display:none"></span>
+      </div>
+      <button class="lh-btn" id="btnConquistas" title="Conquistas" aria-label="Conquistas">
+        <i class="fa fa-trophy"></i>
+      </button>
+      <button class="lh-btn" id="btnAnotacoes" title="Anotações" aria-label="Anotações">
+        <i class="fa fa-pen"></i>
+      </button>
+      <button class="lh-btn" id="btnConfig" title="Configurações" aria-label="Configurações">
+        <i class="fa fa-sliders"></i>
+      </button>
+      <button class="lh-btn" id="btnTelaCheia" title="Modo não perturbe" aria-label="Tela cheia">
+        <i class="fa fa-expand"></i>
+      </button>
     </div>
+  </header>
 
-    <!-- Grade preenchida pelo JS -->
-    <div class="biblioteca-grade" id="biblioteca-grade" style="display:none"></div>
-
-    <!-- Vazio -->
-    <div class="biblioteca-vazia" id="biblioteca-vazia" style="display:none">
-      <i class="fa fa-book-open" aria-hidden="true"></i>
-      <p>
-        Você ainda não começou a ler nenhum livro.<br>
-        <a href="../livros.html">Explore a biblioteca</a> e encontre sua próxima leitura.
-      </p>
-    </div>
-
-  </section>
-
-  <!-- ══ AÇÕES RÁPIDAS ═════════════════════════════════════════ -->
-  <h2 class="secao-titulo-leitor">O que você deseja fazer <em>hoje</em>?</h2>
-
-  <div class="leitor-grade">
-    <a href="perfil.html" class="leitor-card">
-      <div class="leitor-card-icone"><i class="fa fa-user-circle" aria-hidden="true"></i></div>
-      <h2 class="leitor-card-titulo">Meu Perfil</h2>
-      <p class="leitor-card-desc">Edite seus dados, altere sua senha e gerencie sua conta.</p>
-    </a>
-
-    <a href="../livros.html" class="leitor-card">
-      <div class="leitor-card-icone"><i class="fa fa-book" aria-hidden="true"></i></div>
-      <h2 class="leitor-card-titulo">Explorar Livros</h2>
-      <p class="leitor-card-desc">Descubra novos títulos, leia sinopses e adicione aos favoritos.</p>
-    </a>
-
-    <a href="../blog.html" class="leitor-card">
-      <div class="leitor-card-icone"><i class="fa fa-book-open" aria-hidden="true"></i></div>
-      <h2 class="leitor-card-titulo">Diário do Escritor</h2>
-      <p class="leitor-card-desc">Reflexões, bastidores e histórias que não cabem nos livros.</p>
-    </a>
-
-    <div class="leitor-card" style="opacity:0.6;cursor:default;">
-      <div class="leitor-card-icone"><i class="fa fa-lock" aria-hidden="true"></i></div>
-      <h2 class="leitor-card-titulo">Capítulos Exclusivos</h2>
-      <p class="leitor-card-desc">Leia capítulos antecipados antes do lançamento oficial.</p>
-      <span class="leitor-card-badge">Em breve</span>
-    </div>
-  </div>
-
-  <!-- ══ RODAPÉ LEGAL ══════════════════════════════════════════ -->
-  <footer class="leitor-rodape-legal" aria-label="Informações legais do leitor">
-    <p>
-      Ao utilizar o leitor de livros você concorda com os
-      <a href="documentacao-legal.html" target="_blank" rel="noopener">Termos de Uso do Leitor</a>
-      e a nossa
-      <a href="../privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>.
-      O conteúdo disponível é protegido por direitos autorais — Lei nº 9.610/98.
-    </p>
-  </footer>
-
-</main>
-
-<script src="../js/global.js"></script>
-<script>
-(async function () {
-  'use strict';
-
-  /* ── 1. Verificar sessão ───────────────────────────────────── */
-  let sessao;
-  try {
-    const r = await fetch('../backend/auth/sessao.php', { credentials: 'same-origin' });
-    sessao = await r.json();
-  } catch (e) {
-    sessao = { ok: false };
-  }
-
-  const loading = document.getElementById('leitorLoading');
-  const main    = document.getElementById('leitorMain');
-
-  if (!sessao.ok || !sessao.logado) {
-    window.location.href = '../login.html';
-    return;
-  }
-
-  loading.style.display = 'none';
-  main.classList.add('visivel');
-
-  const u = sessao.usuario;
-
-  /* ── 2. Info do usuário ────────────────────────────────────── */
-  const infoEl  = document.getElementById('leitorUsuarioInfo');
-  const fotoHtml = u.foto
-    ? `<img src="${u.foto}" alt="${u.nome}" class="leitor-avatar" />`
-    : `<div class="leitor-avatar-placeholder"><i class="fa fa-user" aria-hidden="true"></i></div>`;
-  infoEl.innerHTML = `
-    ${fotoHtml}
-    <div>
-      <div class="leitor-nome">${u.nome}</div>
-      <div class="leitor-email">${u.email}</div>
-    </div>`;
-
-  /* ── 3. Botão sair ─────────────────────────────────────────── */
-  document.getElementById('btnSair').addEventListener('click', async () => {
-    await fetch('../backend/auth/logout.php', { method: 'POST', credentials: 'same-origin' });
-    window.location.href = '../index.html';
-  });
-
-  /* ── 4. Carregar livros em leitura ─────────────────────────── */
-  await carregarBiblioteca();
-
-  async function carregarBiblioteca() {
-    const elCarregando = document.getElementById('biblioteca-carregando');
-    const elGrade      = document.getElementById('biblioteca-grade');
-    const elVazio      = document.getElementById('biblioteca-vazia');
-
-    try {
-      const resp = await fetch('../backend/leitor.php?acao=painel', {
-        credentials: 'same-origin'
-      });
-      const data = await resp.json();
-
-      elCarregando.style.display = 'none';
-
-      if (!data.ok || !data.leituras || data.leituras.length === 0) {
-        elVazio.style.display = 'block';
-        return;
-      }
-
-      elGrade.style.display = 'grid';
-      elGrade.innerHTML = data.leituras.map(livro => renderizarCardLivro(livro)).join('');
-
-    } catch (e) {
-      elCarregando.style.display = 'none';
-      elVazio.style.display = 'block';
-      console.warn('[Biblioteca] Erro ao carregar livros:', e);
-    }
-  }
-
-  function renderizarCardLivro(livro) {
-    const perc        = Math.round(livro.percentual || 0);
-    const cap         = livro.capitulo_atual || 1;
-    const concluido   = livro.concluido;
-    const urlLeitor   = `livro.html?livro=${livro.slug}`;
-    const ultimaLeit  = livro.ultima_leitura
-      ? formatarData(livro.ultima_leitura)
-      : 'Não iniciado';
-
-    // Imagem de capa (se existir) ou ícone
-    const capaHtml = livro.capa_img
-      ? `<img src="../${livro.capa_img}" alt="Capa de ${escHtml(livro.titulo)}"
-             style="width:100%;height:120px;object-fit:cover;display:block;"
-             onerror="this.style.display='none'">`
-      : '';
-
-    return `
-      <article class="livro-leitura-card">
-
-        ${capaHtml}
-
-        <!-- Barra de progresso -->
-        <div class="livro-progresso-barra" title="${perc}% lido" aria-label="${perc}% lido">
-          <div class="livro-progresso-fill" style="width:${perc}%"></div>
-        </div>
-
-        ${concluido ? '<span class="livro-badge-concluido"><i class="fa fa-check" aria-hidden="true"></i> Concluído</span>' : ''}
-
-        <!-- Corpo -->
-        <div class="livro-leitura-corpo">
-          <h3 class="livro-leitura-titulo">${escHtml(livro.titulo || livro.slug)}</h3>
-          <div class="livro-leitura-meta">
-            <span class="livro-meta-item">
-              <i class="fa fa-bookmark" aria-hidden="true"></i>
-              Cap. ${cap}
-            </span>
-            <span class="livro-meta-item">
-              <i class="fa fa-clock" aria-hidden="true"></i>
-              ${ultimaLeit}
-            </span>
+  <!-- Área de leitura -->
+  <main class="leitor-main" id="leitorMain">
+    <div id="epubViewer" class="epub-viewer"></div>
+    <!-- Paywall de amostra (10%) -->
+    <div id="paywallOverlay" style="display:none" aria-live="polite" aria-label="Limite da amostra gratuita">
+      <div class="paywall-card" id="paywallCard">
+        <div class="pay-header">
+          <span class="pay-header-icon">📖</span>
+          <div class="pay-header-txt">
+            <h3>Você chegou ao fim da amostra gratuita</h3>
+            <p>10% da obra — aproveite o restante!</p>
           </div>
         </div>
-
-        <!-- Rodapé do card -->
-        <div class="livro-leitura-rodape">
-          <span>
-            <span class="livro-percentual">${perc}%</span>
-            <span class="livro-percentual-label">${concluido ? 'lido' : 'concluído'}</span>
-          </span>
-          <a href="${urlLeitor}"
-             class="livro-btn-continuar ${concluido ? 'concluido' : ''}"
-             aria-label="${concluido ? 'Reler' : 'Continuar lendo'} ${escHtml(livro.titulo || livro.slug)}">
-            <i class="fa ${concluido ? 'fa-redo' : 'fa-book-open'}" aria-hidden="true"></i>
-            ${concluido ? 'Reler' : 'Continuar'}
-          </a>
+        <div class="pay-progress-bar"></div>
+        <div class="pay-corpo">
+          <div class="pay-livro" id="payLivroInfo">
+            <div style="width:46px;height:64px;border-radius:4px;background:var(--fundo-2);flex-shrink:0"></div>
+            <div>
+              <div class="pay-livro-titulo" id="payTitulo">—</div>
+              <div class="pay-livro-autor">Robério Diógenes</div>
+              <div class="pay-livro-preco" id="payPreco">R$ 19,90</div>
+            </div>
+          </div>
+          <div class="pay-btns">
+            <button class="pay-btn pay-btn-comprar" id="payBtnComprar" onclick="irComprarLivro()">
+              <i class="fa fa-cart-shopping"></i> Comprar este livro
+            </button>
+            <a href="../pagamento/assinatura.html" class="pay-btn pay-btn-assinar">
+              <i class="fa fa-crown"></i> Assinar e ler todos os livros
+            </a>
+            <button class="pay-btn pay-btn-voltar" onclick="voltarBibliotecaPaywall()">
+              ← Voltar à biblioteca
+            </button>
+          </div>
+          <p class="pay-nota">Adquira agora e continue exatamente de onde parou.</p>
         </div>
+      </div>
+    </div>
 
-      </article>`;
-  }
+  <!-- Nota do autor (aparece na margem) -->
+    <div id="notaAutorWrap" class="nota-autor-wrap" style="display:none">
+      <div class="nota-autor" id="notaAutorConteudo"></div>
+    </div>
+    <!-- Overlay de foco (TDA/Dislexia) -->
+    <div id="focoOverlay" class="foco-overlay" style="display:none">
+      <div class="foco-topo"></div>
+      <div class="foco-janela"></div>
+      <div class="foco-baixo"></div>
+    </div>
+  </main>
 
-  /* ── Utilitários ───────────────────────────────────────────── */
-  function escHtml(str) {
-    return String(str)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+  <!-- Navegação entre capítulos -->
+  <nav class="leitor-nav" id="leitorNav" aria-label="Navegação de capítulos">
+    <button class="nav-cap-btn" id="btnAnterior" title="Capítulo anterior" aria-label="Anterior" disabled>
+      <i class="fa fa-chevron-left"></i> <span>Anterior</span>
+    </button>
+    <div class="nav-cap-centro">
+      <select id="seletorCapitulo" aria-label="Ir para capítulo" class="nav-cap-select"></select>
+    </div>
+    <button class="nav-cap-btn" id="btnProximo" title="Próximo capítulo" aria-label="Próximo">
+      <span>Próximo</span> <i class="fa fa-chevron-right"></i>
+    </button>
+  </nav>
 
-  function formatarData(dataStr) {
-    try {
-      const d = new Date(dataStr);
-      const agora = new Date();
-      const diffMs = agora - d;
-      const diffMin = Math.floor(diffMs / 60000);
-      const diffH   = Math.floor(diffMin / 60);
-      const diffD   = Math.floor(diffH / 24);
+</div>
 
-      if (diffMin < 2)   return 'Agora mesmo';
-      if (diffMin < 60)  return `Há ${diffMin} min`;
-      if (diffH < 24)    return `Há ${diffH}h`;
-      if (diffD === 1)   return 'Ontem';
-      if (diffD < 7)     return `Há ${diffD} dias`;
+<!-- ══ PAINÉIS LATERAIS ══════════════════════════════════════════ -->
 
-      return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
-    } catch (e) {
-      return '—';
-    }
-  }
+<!-- Configurações tipográficas -->
+<aside id="painelConfig" class="painel-lateral" aria-label="Configurações de leitura" hidden>
+  <div class="pl-header">
+    <h2 class="pl-titulo">Configurações</h2>
+    <button class="pl-fechar" data-painel="config" aria-label="Fechar"><i class="fa fa-xmark"></i></button>
+  </div>
+  <div class="pl-corpo">
+    <div class="config-secao">
+      <label class="config-label">Fonte</label>
+      <div class="config-opcoes-fonte">
+        <button class="cfg-btn-fonte ativo" data-fonte="serifada">Serifada</button>
+        <button class="cfg-btn-fonte" data-fonte="sem-serifa">Sem Serifa</button>
+        <button class="cfg-btn-fonte" data-fonte="manuscrita">Manuscrita</button>
+      </div>
+    </div>
+    <div class="config-secao">
+      <label class="config-label">Tamanho do texto</label>
+      <div class="config-slider-wrap">
+        <span class="config-slider-a">A</span>
+        <input type="range" id="sliderTamanho" min="12" max="28" value="18" class="config-slider" aria-label="Tamanho da fonte">
+        <span class="config-slider-b">A</span>
+        <span class="config-slider-val" id="valTamanho">18px</span>
+      </div>
+    </div>
+    <div class="config-secao">
+      <label class="config-label">Espaçamento entre linhas</label>
+      <div class="config-slider-wrap">
+        <i class="fa fa-align-justify" style="opacity:.4"></i>
+        <input type="range" id="sliderEspacamento" min="12" max="25" value="18" class="config-slider" aria-label="Espaçamento">
+        <i class="fa fa-align-justify"></i>
+        <span class="config-slider-val" id="valEspacamento">1.8</span>
+      </div>
+    </div>
+    <div class="config-secao">
+      <label class="config-label">Largura da coluna</label>
+      <div class="config-opcoes">
+        <button class="cfg-btn cfg-btn-larg" data-larg="estreita">Estreita</button>
+        <button class="cfg-btn cfg-btn-larg ativo" data-larg="media">Média</button>
+        <button class="cfg-btn cfg-btn-larg" data-larg="larga">Larga</button>
+      </div>
+    </div>
+    <div class="config-secao">
+      <label class="config-label">Tema</label>
+      <div class="config-opcoes-tema">
+        <button class="cfg-btn-tema ativo" data-tema="claro" style="background:#FAF7F2;color:#2C1810;border:2px solid #B8860B">Claro</button>
+        <button class="cfg-btn-tema" data-tema="sepia" style="background:#F4ECD8;color:#3B2D1F">Sépia</button>
+        <button class="cfg-btn-tema" data-tema="escuro" style="background:#1A1208;color:#D4C5A0">Escuro</button>
+      </div>
+    </div>
+    <div class="config-secao">
+      <label class="config-label">Acessibilidade</label>
+      <label class="config-toggle">
+        <input type="checkbox" id="toggleFoco" role="switch" aria-label="Modo foco (TDA/Dislexia)">
+        <span class="toggle-track"></span>
+        <span>Modo foco <small>(TDA / Dislexia)</small></span>
+      </label>
+    </div>
+    <button class="cfg-salvar" id="btnSalvarConfig">
+      <i class="fa fa-floppy-disk"></i> Salvar preferências
+    </button>
+  </div>
+</aside>
 
-})();
-</script>
+<!-- Anotações -->
+<aside id="painelAnotacoes" class="painel-lateral" aria-label="Anotações" hidden>
+  <div class="pl-header">
+    <h2 class="pl-titulo">Anotações</h2>
+    <button class="pl-fechar" data-painel="anotacoes" aria-label="Fechar"><i class="fa fa-xmark"></i></button>
+  </div>
+  <div class="pl-corpo">
+    <div class="anot-nova">
+      <textarea id="anotNovoTexto" class="anot-textarea" placeholder="Escreva uma anotação…" rows="4"></textarea>
+      <div class="anot-cores">
+        <button class="anot-cor ativo" data-cor="#FFD700" style="background:#FFD700" aria-label="Amarelo"></button>
+        <button class="anot-cor" data-cor="#7EC8A4" style="background:#7EC8A4" aria-label="Verde"></button>
+        <button class="anot-cor" data-cor="#7EC8E0" style="background:#7EC8E0" aria-label="Azul"></button>
+        <button class="anot-cor" data-cor="#E07EC8" style="background:#E07EC8" aria-label="Rosa"></button>
+      </div>
+      <button class="anot-salvar" id="btnSalvarAnot">
+        <i class="fa fa-plus"></i> Adicionar anotação
+      </button>
+    </div>
+    <div id="listaAnotacoes" class="anot-lista"></div>
+  </div>
+</aside>
+
+<!-- Conquistas -->
+<aside id="painelConquistas" class="painel-lateral" aria-label="Conquistas" hidden>
+  <div class="pl-header">
+    <h2 class="pl-titulo">Conquistas</h2>
+    <button class="pl-fechar" data-painel="conquistas" aria-label="Fechar"><i class="fa fa-xmark"></i></button>
+  </div>
+  <div class="pl-corpo">
+    <div id="listaConquistas" class="conquistas-lista"></div>
+  </div>
+</aside>
+
+<!-- Meta / Timer -->
+<aside id="painelMeta" class="painel-lateral painel-mini" aria-label="Meta de leitura" hidden>
+  <div class="pl-header">
+    <h2 class="pl-titulo">Relógio de Meta</h2>
+    <button class="pl-fechar" data-painel="meta" aria-label="Fechar"><i class="fa fa-xmark"></i></button>
+  </div>
+  <div class="pl-corpo">
+    <div class="meta-display-grande" id="metaDisplayGrande">00:00:00</div>
+    <div class="meta-opcoes">
+      <button class="cfg-btn ativo" data-meta-tipo="relogio">Relógio</button>
+      <button class="cfg-btn" data-meta-tipo="cronometro">Cronômetro</button>
+      <button class="cfg-btn" data-meta-tipo="regressivo">Regressivo</button>
+    </div>
+    <div id="metaRegressivoWrap" style="display:none">
+      <label class="config-label">Tempo alvo (minutos)</label>
+      <input type="number" id="metaMinutos" class="meta-input" value="30" min="1" max="300" aria-label="Minutos">
+    </div>
+    <div class="meta-btns">
+      <button class="cfg-btn" id="btnMetaIniciar"><i class="fa fa-play"></i> Iniciar</button>
+      <button class="cfg-btn" id="btnMetaPausar" style="display:none"><i class="fa fa-pause"></i> Pausar</button>
+      <button class="cfg-btn" id="btnMetaReset"><i class="fa fa-rotate-left"></i> Reset</button>
+    </div>
+    <label class="config-toggle" style="margin-top:1rem">
+      <input type="checkbox" id="metaOcultar" aria-label="Ocultar relógio durante leitura">
+      <span class="toggle-track"></span>
+      <span>Ocultar durante leitura</span>
+    </label>
+  </div>
+</aside>
+
+<!-- Indicar para amigo -->
+<aside id="painelIndicar" class="painel-lateral painel-mini" aria-label="Indicar para amigo" hidden>
+  <div class="pl-header">
+    <h2 class="pl-titulo">Indicar para um amigo</h2>
+    <button class="pl-fechar" data-painel="indicar" aria-label="Fechar"><i class="fa fa-xmark"></i></button>
+  </div>
+  <div class="pl-corpo">
+    <p class="indicar-desc">Compartilhe este livro com alguém especial.</p>
+    <div id="indicarBtns" class="indicar-btns"></div>
+  </div>
+</aside>
+
+<!-- Reportar erro -->
+<div id="modalErro" class="modal-erro" hidden role="dialog" aria-label="Reportar erro">
+  <div class="modal-erro-corpo">
+    <h3><i class="fa fa-triangle-exclamation"></i> Reportar erro ortográfico</h3>
+    <p class="erro-trecho" id="erroTrechoSel"></p>
+    <textarea class="anot-textarea" id="erroDescricao" placeholder="Descreva o erro (opcional)…" rows="3"></textarea>
+    <div class="modal-erro-btns">
+      <button id="btnEnviarErro" class="cfg-salvar"><i class="fa fa-paper-plane"></i> Enviar relatório</button>
+      <button id="btnCancelarErro" class="cfg-btn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Feedback ao concluir -->
+<div id="modalFeedback" class="modal-erro" hidden role="dialog" aria-label="Feedback de leitura">
+  <div class="modal-erro-corpo" style="max-width:460px">
+    <h3>🎉 Você concluiu a leitura!</h3>
+    <p style="margin:.5rem 0 1rem;color:var(--texto-3)">Como foi a experiência?</p>
+    <div class="fb-estrelas" id="fbEstrelas">
+      <span class="fb-star" data-n="1">★</span><span class="fb-star" data-n="2">★</span>
+      <span class="fb-star" data-n="3">★</span><span class="fb-star" data-n="4">★</span>
+      <span class="fb-star" data-n="5">★</span>
+    </div>
+    <textarea class="anot-textarea" id="fbTexto" placeholder="Deixe um comentário para o autor… (opcional)" rows="3" style="margin:1rem 0"></textarea>
+    <label class="config-toggle">
+      <input type="checkbox" id="fbCompartilhou">
+      <span class="toggle-track"></span>
+      <span>Quero compartilhar este livro</span>
+    </label>
+    <div class="modal-erro-btns" style="margin-top:1rem">
+      <button id="btnEnviarFeedback" class="cfg-salvar"><i class="fa fa-paper-plane"></i> Enviar</button>
+      <button id="btnPularFeedback" class="cfg-btn">Pular</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toastWrap" class="toast-wrap" role="status" aria-live="polite"></div>
+
+<!-- Overlay lateral -->
+<div id="painelOverlay" class="painel-overlay" hidden></div>
+
+<!-- ══ SCRIPTS ════════════════════════════════════════════════════ -->
+<!-- epub.js (renderer de EPUB) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js" crossorigin="anonymous"></script>
+<script src="js/leitor.js"></script>
 </body>
 </html>

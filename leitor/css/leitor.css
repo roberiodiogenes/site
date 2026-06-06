@@ -1,0 +1,597 @@
+/* ================================================================
+   ROBÉRIO DIÓGENES — leitor/css/leitor.css
+   Leitor Online v3
+   ================================================================ */
+
+/* Garante que [hidden] nunca seja sobreposto por display:flex/grid */
+[hidden] { display: none !important; }
+
+/* ── Reset e variáveis ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Cores base (tema claro) */
+  --fundo:       #FAF7F2;
+  --fundo-2:     #F0EAE0;
+  --fundo-card:  #FFFFFF;
+  --texto:       #2C1810;
+  --texto-2:     #4A3728;
+  --texto-3:     #8C7D65;
+  --borda:       rgba(184,134,11,.15);
+  --borda-media: rgba(184,134,11,.3);
+  --ouro:        #B8860B;
+  --ouro-claro:  #D4A820;
+  --ferrugem:    #8B3A2A;
+  --sombra:      0 2px 12px rgba(44,24,16,.08);
+  --sombra-lg:   0 8px 40px rgba(44,24,16,.15);
+
+  /* Tipografia do leitor */
+  --fonte-serif:    'Georgia', 'Times New Roman', serif;
+  --fonte-sans:     'Segoe UI', system-ui, -apple-system, sans-serif;
+  --fonte-manus:    'Georgia', cursive, serif;
+
+  /* Leitor */
+  --leitor-tamanho:    18px;
+  --leitor-espacamento:1.8;
+  --leitor-largura:    680px;
+  --leitor-padding:    2rem;
+
+  /* Transições */
+  --trans: .22s ease;
+}
+
+/* ── Temas ───────────────────────────────────────────────────────── */
+body.tema-sepia {
+  --fundo:      #F4ECD8;
+  --fundo-2:    #EBE0C8;
+  --fundo-card: #F8F3E8;
+  --texto:      #3B2D1F;
+  --texto-2:    #5C4A38;
+  --texto-3:    #8C7A62;
+}
+body.tema-escuro {
+  --fundo:       #0D0A07;
+  --fundo-2:     #1A1208;
+  --fundo-card:  #1C1408;
+  --texto:       #D4C5A0;
+  --texto-2:     #B8A888;
+  --texto-3:     #6B5F4A;
+  --borda:       rgba(184,134,11,.12);
+  --borda-media: rgba(184,134,11,.25);
+}
+
+/* ── Fontes do leitor ────────────────────────────────────────────── */
+body.fonte-serifada  .epub-viewer { font-family: var(--fonte-serif)!important; }
+body.fonte-sem-serifa .epub-viewer { font-family: var(--fonte-sans)!important; }
+body.fonte-manuscrita .epub-viewer { font-family: var(--fonte-manus)!important; }
+
+/* overflow-y:auto: a tela de seleção precisa rolar quando há muitos livros.
+   O .tela-leitor usa position:fixed para isolar o reader e bloquear scroll do body. */
+body { font-family: var(--fonte-sans); background: var(--fundo); color: var(--texto); min-height: 100vh; overflow-y: auto; }
+
+/* ── TELA DE SELEÇÃO ─────────────────────────────────────────────── */
+.tela-selecao { min-height: 100vh; display: flex; flex-direction: column; background: var(--fundo); }
+.ts-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 2rem; border-bottom: 1px solid var(--borda);
+  background: var(--fundo-card); position: sticky; top: 0; z-index: 10;
+}
+.ts-logo {
+  font-family: var(--fonte-serif); font-size: 1.25rem; font-weight: 400;
+  color: var(--ouro); text-decoration: none;
+}
+.ts-header-dir { display: flex; align-items: center; gap: 1.5rem; }
+.ts-usuario   { font-size: .85rem; color: var(--texto-3); }
+.ts-link      { font-size: .82rem; color: var(--ouro); text-decoration: none; display: flex; align-items: center; gap: .35rem; }
+.ts-link:hover { opacity: .75; }
+
+.ts-corpo { flex: 1; max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; width: 100%; }
+.ts-titulo-wrap { text-align: center; margin-bottom: 2.5rem; }
+.ts-titulo {
+  font-family: var(--fonte-serif); font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 400; color: var(--texto); margin-bottom: .5rem;
+}
+.ts-titulo em   { color: var(--ouro); font-style: italic; }
+.ts-subtitulo   { font-size: .95rem; color: var(--texto-3); }
+
+.ts-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.5rem;
+}
+.ts-loading { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--texto-3); font-size: .9rem; }
+.ts-vazio   { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--texto-3); }
+.ts-vazio a { color: var(--ouro); }
+
+/* Card de livro na seleção */
+.ts-card {
+  background: var(--fundo-card); border: 1px solid var(--borda);
+  border-radius: 12px; overflow: hidden; cursor: pointer;
+  transition: transform var(--trans), box-shadow var(--trans), border-color var(--trans);
+  position: relative; display: flex; flex-direction: column;
+}
+.ts-card:hover { transform: translateY(-4px); box-shadow: var(--sombra-lg); border-color: var(--borda-media); }
+.ts-card:focus-visible { outline: 2px solid var(--ouro); outline-offset: 2px; }
+.ts-card-capa-wrap { position: relative; padding-top: 145%; background: var(--fundo-2); }
+.ts-card-capa {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; display: block; transition: transform .4s;
+}
+.ts-card:hover .ts-card-capa { transform: scale(1.04); }
+.ts-card-capa-ph {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .5rem;
+  color: var(--texto-3); font-size: .75rem; text-align: center; padding: .75rem;
+}
+.ts-card-capa-ph i { font-size: 1.75rem; color: var(--ouro); opacity: .35; }
+.ts-card-corpo { padding: .75rem; flex: 1; display: flex; flex-direction: column; gap: .3rem; }
+.ts-card-titulo { font-family: var(--fonte-serif); font-size: .88rem; font-weight: 400; line-height: 1.3; color: var(--texto); }
+.ts-card-tipo   { font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ouro); }
+
+/* Barra de progresso no card */
+.ts-prog-wrap { margin-top: .5rem; }
+.ts-prog-bar  { height: 3px; background: var(--borda); border-radius: 2px; overflow: hidden; }
+.ts-prog-fill { height: 100%; background: var(--ouro); border-radius: 2px; transition: width .4s; }
+.ts-prog-txt  { font-size: .65rem; color: var(--texto-3); margin-top: .2rem; }
+
+/* Badge no canto do card */
+.ts-badge {
+  position: absolute; top: .5rem; left: .5rem;
+  font-size: .55rem; letter-spacing: .1em; text-transform: uppercase;
+  padding: .18rem .5rem; border-radius: 8px; font-weight: 700; z-index: 2;
+}
+.ts-badge-novo    { background: var(--ferrugem); color: #fff; }
+.ts-badge-concl   { background: var(--ouro);     color: #1A0F00; }
+
+/* Botão continuar sobreposto */
+.ts-card-continuar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.65) 0%, transparent 100%);
+  color: #fff; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+  padding: .85rem .75rem .6rem; opacity: 0; transition: opacity var(--trans);
+  text-align: center; font-weight: 700;
+}
+.ts-card:hover .ts-card-continuar { opacity: 1; }
+
+/* ── LEITOR ─────────────────────────────────────────────────────── */
+.tela-leitor {
+  position: fixed; inset: 0;   /* isola o reader; body pode rolar na seleção */
+  display: flex; flex-direction: column;
+  background: var(--fundo); overflow: hidden;
+  z-index: 50;
+}
+
+/* Barra de progresso topo */
+.barra-progresso {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 4px; background: var(--fundo-2);
+  display: flex; align-items: center;
+}
+.barra-progresso-fill { height: 100%; background: var(--ouro); transition: width .3s; min-width: 0; }
+.barra-pct {
+  position: absolute; right: .5rem; top: 50%;
+  transform: translateY(-50%);
+  font-size: .6rem; color: var(--texto-3); font-family: var(--fonte-sans);
+  background: var(--fundo-card); padding: .1rem .4rem; border-radius: 4px;
+  border: 1px solid var(--borda); opacity: 0; transition: opacity .2s;
+}
+.barra-progresso:hover .barra-pct { opacity: 1; }
+
+/* Header do leitor */
+.leitor-header {
+  flex-shrink: 0; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.25rem; margin-top: 4px;
+  background: var(--fundo-card); border-bottom: 1px solid var(--borda);
+  z-index: 50; transition: opacity var(--trans), transform var(--trans);
+}
+.leitor-header.oculto { opacity: 0; transform: translateY(-100%); pointer-events: none; }
+
+.lh-esq { display: flex; align-items: center; gap: .75rem; min-width: 0; flex: 1; }
+.lh-dir { display: flex; align-items: center; gap: .25rem; flex-shrink: 0; }
+
+.lh-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: transparent; border: 1px solid transparent;
+  color: var(--texto-3); font-size: .88rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all var(--trans); flex-shrink: 0;
+}
+.lh-btn:hover  { background: var(--fundo-2); border-color: var(--borda); color: var(--texto); }
+.lh-btn.ativo  { background: rgba(184,134,11,.12); border-color: var(--borda-media); color: var(--ouro); }
+
+.lh-titulo-wrap { min-width: 0; }
+.lh-titulo  { font-family: var(--fonte-serif); font-size: .9rem; color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.lh-capitulo { font-size: .7rem; color: var(--texto-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+
+.meta-display { font-family: 'Courier New', monospace; font-size: .8rem; color: var(--ouro); padding: .2rem .5rem; }
+
+/* Área principal do leitor.
+   overflow-y:auto: scroll contínuo; o iframe do epub.js rola dentro desta área. */
+.leitor-main {
+  flex: 1; overflow-y: auto; overflow-x: hidden; position: relative;
+  display: flex; align-items: stretch;
+}
+
+.epub-viewer {
+  flex: 1; height: 100%;
+  font-size: var(--leitor-tamanho);
+  line-height: var(--leitor-espacamento);
+}
+/* epub.js injeta um iframe — garantir que ocupe tudo */
+.epub-viewer iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+}
+
+/* Nota do autor — margem lateral direita */
+.nota-autor-wrap {
+  width: 260px; flex-shrink: 0;
+  padding: 1.25rem 1rem 1.25rem 0;
+  overflow-y: auto;
+}
+.nota-autor {
+  background: rgba(184,134,11,.07);
+  border-left: 3px solid var(--ouro);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1rem 1rem 1.25rem;
+  font-size: .82rem; line-height: 1.65; color: var(--texto-2);
+}
+.nota-autor-tipo {
+  font-size: .58rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--ouro); margin-bottom: .4rem; display: block;
+}
+.nota-autor-titulo { font-family: var(--fonte-serif); font-size: .9rem; margin-bottom: .5rem; }
+.nota-autor-fechar {
+  float: right; background: transparent; border: none;
+  color: var(--texto-3); cursor: pointer; font-size: .75rem; margin-left: .5rem;
+}
+
+/* Overlay de foco (TDA/Dislexia) */
+.foco-overlay {
+  position: absolute; inset: 0; pointer-events: none; z-index: 20;
+  display: flex; flex-direction: column;
+}
+.foco-topo, .foco-baixo { flex: 1; background: rgba(0,0,0,.55); }
+.foco-janela { height: 2.8em; background: transparent; }
+body.tema-escuro .foco-topo,
+body.tema-escuro .foco-baixo { background: rgba(0,0,0,.7); }
+
+/* Navegação de capítulos */
+.leitor-nav {
+  flex-shrink: 0; height: 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1rem; border-top: 1px solid var(--borda);
+  background: var(--fundo-card); gap: .75rem;
+  transition: opacity var(--trans);
+}
+.leitor-nav.oculto { opacity: 0; pointer-events: none; }
+
+.nav-cap-btn {
+  display: flex; align-items: center; gap: .35rem;
+  padding: .4rem .85rem; border-radius: 6px;
+  border: 1px solid var(--borda-media); background: transparent;
+  color: var(--texto-3); font-size: .75rem; letter-spacing: .06em;
+  text-transform: uppercase; cursor: pointer; transition: all var(--trans);
+  flex-shrink: 0;
+}
+.nav-cap-btn:hover:not(:disabled)  { border-color: var(--ouro); color: var(--ouro); }
+.nav-cap-btn:disabled { opacity: .35; cursor: default; }
+.nav-cap-centro { flex: 1; display: flex; justify-content: center; }
+.nav-cap-select {
+  max-width: 340px; width: 100%;
+  padding: .35rem .75rem; border-radius: 6px;
+  border: 1px solid var(--borda-media); background: var(--fundo);
+  color: var(--texto); font-size: .8rem; cursor: pointer;
+}
+.nav-cap-select:focus { outline: 1px solid var(--ouro); }
+
+/* ── PAINÉIS LATERAIS ────────────────────────────────────────────── */
+.painel-overlay {
+  position: fixed; inset: 0;
+  background: transparent; /* overlay invisível — apenas capta cliques para fechar o painel */
+  z-index: 190;
+}
+.painel-lateral {
+  position: fixed; top: 0; right: -420px; bottom: 0;
+  width: min(400px, 100vw);
+  background: var(--fundo-card); border-left: 1px solid var(--borda-media);
+  z-index: 200; display: flex; flex-direction: column;
+  transition: right .28s cubic-bezier(.25,.46,.45,.94);
+  overflow: hidden;
+}
+.painel-lateral.aberto { right: 0; }
+.painel-mini { width: min(320px, 100vw); }
+.pl-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.1rem 1.25rem; border-bottom: 1px solid var(--borda); flex-shrink: 0;
+}
+.pl-titulo { font-family: var(--fonte-serif); font-size: 1.1rem; font-weight: 400; }
+.pl-fechar {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--borda-media); background: transparent;
+  color: var(--texto-3); cursor: pointer; font-size: .85rem;
+  display: flex; align-items: center; justify-content: center; transition: all var(--trans);
+}
+.pl-fechar:hover { border-color: var(--ouro); color: var(--ouro); }
+.pl-corpo { flex: 1; overflow-y: auto; padding: 1.25rem; }
+
+/* Config tipográfica */
+.config-secao  { margin-bottom: 1.5rem; }
+.config-label  { display: block; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ouro); margin-bottom: .65rem; }
+.config-opcoes { display: flex; gap: .5rem; flex-wrap: wrap; }
+.cfg-btn {
+  padding: .4rem .9rem; border-radius: 6px;
+  border: 1px solid var(--borda-media); background: transparent;
+  color: var(--texto-3); font-size: .75rem; cursor: pointer; transition: all var(--trans);
+}
+.cfg-btn:hover { border-color: var(--ouro); color: var(--ouro); }
+.cfg-btn.ativo  { background: rgba(184,134,11,.12); border-color: var(--ouro); color: var(--ouro); font-weight: 600; }
+
+.config-opcoes-fonte { display: flex; gap: .5rem; }
+.cfg-btn-fonte { padding: .5rem .85rem; border-radius: 6px; border: 1px solid var(--borda-media); background: transparent; color: var(--texto-3); cursor: pointer; font-size: .85rem; transition: all var(--trans); }
+.cfg-btn-fonte:nth-child(1) { font-family: var(--fonte-serif); }
+.cfg-btn-fonte:nth-child(2) { font-family: var(--fonte-sans); }
+.cfg-btn-fonte:nth-child(3) { font-family: var(--fonte-manus); font-style: italic; }
+.cfg-btn-fonte:hover, .cfg-btn-fonte.ativo { border-color: var(--ouro); color: var(--ouro); background: rgba(184,134,11,.08); }
+
+.config-slider-wrap {
+  display: flex; align-items: center; gap: .65rem;
+}
+.config-slider {
+  flex: 1; -webkit-appearance: none; height: 4px;
+  background: var(--borda); border-radius: 2px; cursor: pointer; outline: none;
+}
+.config-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--ouro); cursor: pointer; border: 2px solid var(--fundo-card);
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.config-slider-a { font-size: .8rem; color: var(--texto-3); }
+.config-slider-b { font-size: 1.1rem; color: var(--texto-3); }
+.config-slider-val { font-size: .75rem; color: var(--ouro); min-width: 40px; text-align: right; }
+
+.config-opcoes-tema { display: flex; gap: .5rem; }
+.cfg-btn-tema {
+  flex: 1; padding: .55rem; border-radius: 6px; border: 2px solid transparent;
+  cursor: pointer; font-size: .75rem; font-weight: 600; transition: all var(--trans);
+}
+
+.config-toggle {
+  display: flex; align-items: center; gap: .65rem; cursor: pointer; font-size: .88rem; color: var(--texto-2);
+}
+.config-toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  width: 40px; height: 22px; border-radius: 11px; background: var(--borda-media);
+  flex-shrink: 0; position: relative; transition: background var(--trans);
+}
+.toggle-track::after {
+  content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; top: 3px; left: 3px; transition: transform var(--trans);
+}
+.config-toggle input:checked + .toggle-track { background: var(--ouro); }
+.config-toggle input:checked + .toggle-track::after { transform: translateX(18px); }
+.config-toggle small { font-size: .72rem; color: var(--texto-3); }
+
+.cfg-salvar {
+  width: 100%; padding: .6rem; background: var(--ouro); color: #1A0F00;
+  border: none; border-radius: 6px; cursor: pointer;
+  font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  transition: opacity var(--trans); display: flex; align-items: center; justify-content: center; gap: .4rem;
+}
+.cfg-salvar:hover { opacity: .85; }
+
+/* Anotações */
+.anot-nova { margin-bottom: 1.25rem; }
+.anot-textarea {
+  width: 100%; padding: .75rem; border: 1px solid var(--borda-media);
+  border-radius: 8px; background: var(--fundo); color: var(--texto);
+  font-size: .88rem; line-height: 1.65; resize: vertical; min-height: 80px;
+  font-family: var(--fonte-sans); transition: border-color var(--trans);
+}
+.anot-textarea:focus { outline: none; border-color: var(--ouro); }
+.anot-cores { display: flex; gap: .5rem; margin: .65rem 0; }
+.anot-cor {
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent;
+  cursor: pointer; transition: transform var(--trans);
+}
+.anot-cor.ativo { border-color: var(--texto); transform: scale(1.2); }
+.anot-salvar {
+  width: 100%; padding: .5rem; background: rgba(184,134,11,.12);
+  border: 1px solid var(--borda-media); border-radius: 6px;
+  color: var(--ouro); font-size: .75rem; letter-spacing: .06em;
+  text-transform: uppercase; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: .4rem; transition: all var(--trans);
+}
+.anot-salvar:hover { background: rgba(184,134,11,.2); }
+.anot-lista { display: flex; flex-direction: column; gap: .75rem; }
+.anot-item {
+  padding: .85rem; border-radius: 8px; border-left: 3px solid var(--ouro);
+  background: var(--fundo); font-size: .85rem; position: relative;
+}
+.anot-item-trecho { font-style: italic; color: var(--texto-3); font-size: .78rem; margin-bottom: .35rem; border-bottom: 1px solid var(--borda); padding-bottom: .35rem; }
+.anot-item-texto  { color: var(--texto-2); line-height: 1.6; }
+.anot-item-data   { font-size: .68rem; color: var(--texto-3); margin-top: .4rem; }
+.anot-item-del    { position: absolute; top: .5rem; right: .5rem; background: transparent; border: none; color: var(--texto-3); cursor: pointer; font-size: .75rem; }
+.anot-item-del:hover { color: var(--ferrugem); }
+.anot-vazio { text-align: center; padding: 2rem; color: var(--texto-3); font-size: .88rem; }
+
+/* Conquistas */
+.conquistas-lista { display: flex; flex-direction: column; gap: .75rem; }
+.conquista-item {
+  display: flex; align-items: center; gap: 1rem;
+  padding: .85rem; border-radius: 8px;
+  border: 1px solid var(--borda); background: var(--fundo);
+  transition: border-color var(--trans);
+}
+.conquista-item.nova { border-color: var(--ouro); background: rgba(184,134,11,.06); }
+.conquista-emoji { font-size: 2rem; flex-shrink: 0; }
+.conquista-info  { flex: 1; min-width: 0; }
+.conquista-titulo { font-weight: 600; font-size: .9rem; color: var(--texto); }
+.conquista-desc   { font-size: .78rem; color: var(--texto-3); margin-top: .15rem; }
+.conquista-data   { font-size: .68rem; color: var(--texto-3); margin-top: .2rem; }
+.conquista-bloq   { opacity: .35; filter: grayscale(1); }
+
+/* Meta / Timer */
+.meta-display-grande {
+  font-family: 'Courier New', monospace; font-size: 2.5rem; text-align: center;
+  color: var(--ouro); margin: 1rem 0; letter-spacing: .1em;
+}
+.meta-opcoes { display: flex; gap: .5rem; margin-bottom: 1rem; }
+.meta-input {
+  width: 100%; padding: .55rem; border: 1px solid var(--borda-media);
+  border-radius: 6px; background: var(--fundo); color: var(--texto);
+  font-size: .9rem; text-align: center; margin: .5rem 0;
+}
+.meta-btns { display: flex; gap: .5rem; }
+
+/* Indicar para amigo */
+.indicar-desc { font-size: .88rem; color: var(--texto-3); margin-bottom: 1rem; }
+.indicar-btns { display: flex; flex-direction: column; gap: .5rem; }
+.indicar-btn {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .65rem 1rem; border-radius: 8px;
+  border: 1px solid var(--borda); background: var(--fundo);
+  color: var(--texto-2); font-size: .88rem; cursor: pointer;
+  text-decoration: none; transition: all var(--trans);
+}
+.indicar-btn:hover { border-color: var(--ouro); color: var(--texto); }
+.indicar-btn i { width: 18px; text-align: center; }
+
+/* ── PAYWALL AMOSTRA (10%) ────────────────────────────────────── */
+#paywallOverlay {
+  position: absolute; inset: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+  /* Gradiente que vai de transparente (topo) para sólido (base) */
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(var(--fundo-rgb, 250,247,242), .6) 25%,
+    rgba(var(--fundo-rgb, 250,247,242), .92) 50%,
+    var(--fundo) 70%
+  );
+  pointer-events: none; /* só o card tem eventos */
+  animation: payFadeIn .5s ease;
+}
+@keyframes payFadeIn { from{opacity:0} to{opacity:1} }
+body.tema-escuro #paywallOverlay {
+  background: linear-gradient(to bottom, transparent 0%, rgba(13,10,7,.6) 25%, rgba(13,10,7,.95) 55%, #0D0A07 70%);
+}
+body.tema-sepia #paywallOverlay {
+  background: linear-gradient(to bottom, transparent 0%, rgba(244,236,216,.6) 25%, rgba(244,236,216,.95) 55%, #F4ECD8 70%);
+}
+
+.paywall-card {
+  pointer-events: auto;
+  background: var(--fundo-card);
+  border: 1px solid var(--borda-media);
+  border-radius: 20px;
+  max-width: 420px; width: 100%;
+  box-shadow: var(--sombra-lg), 0 0 0 1px rgba(184,134,11,.15);
+  overflow: hidden;
+  margin-top: auto; /* empurrar para baixo do gradiente */
+  transform: translateY(60px);
+  animation: paySlideUp .4s .15s ease forwards;
+  opacity: 0;
+}
+@keyframes paySlideUp { to { transform: translateY(0); opacity: 1; } }
+
+.pay-header {
+  background: linear-gradient(135deg, #1A0F00 0%, #2C1810 100%);
+  padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; gap: .75rem;
+}
+.pay-header-icon { font-size: 1.5rem; }
+.pay-header-txt { flex: 1; }
+.pay-header-txt h3 {
+  font-family: var(--fonte-serif); font-size: 1rem; font-weight: 400;
+  color: #D4C5A0; margin-bottom: .15rem;
+}
+.pay-header-txt p { font-size: .72rem; color: #786858; }
+.pay-progress-bar {
+  height: 3px;
+  background: linear-gradient(to right, var(--ouro-claro), var(--ouro));
+  width: 100%;
+}
+
+.pay-corpo { padding: 1.4rem 1.5rem; }
+
+.pay-livro {
+  display: flex; gap: .85rem; align-items: center;
+  background: rgba(184,134,11,.06); border: 1px solid rgba(184,134,11,.15);
+  border-radius: 10px; padding: .85rem; margin-bottom: 1.1rem;
+}
+.pay-livro-capa {
+  width: 46px; flex-shrink: 0; border-radius: 4px;
+  box-shadow: -3px 4px 12px rgba(44,24,16,.25);
+}
+.pay-livro-titulo { font-family: var(--fonte-serif); font-size: .95rem; font-weight: 400; }
+.pay-livro-autor  { font-size: .75rem; color: var(--texto-3); margin-top: .15rem; }
+.pay-livro-preco  { font-family: var(--fonte-serif); font-size: 1rem; color: var(--ouro); margin-top: .25rem; font-weight: 600; }
+
+.pay-btns { display: flex; flex-direction: column; gap: .5rem; }
+.pay-btn {
+  display: flex; align-items: center; justify-content: center; gap: .45rem;
+  padding: .8rem; border-radius: 10px; border: none; cursor: pointer;
+  font-family: var(--fonte-sans); font-size: .72rem;
+  font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  text-decoration: none; transition: opacity .18s;
+}
+.pay-btn:hover { opacity: .88; }
+.pay-btn-comprar { background: var(--ouro); color: #1A0F00; }
+.pay-btn-assinar { background: rgba(184,134,11,.1); color: var(--ouro); border: 1px solid rgba(184,134,11,.3); }
+.pay-btn-voltar  { background: transparent; color: var(--texto-3); font-size: .68rem; margin-top: .25rem; border: none; }
+
+.pay-nota { font-size: .72rem; color: var(--texto-3); text-align: center; margin-top: .75rem; line-height: 1.5; }
+
+/* Modal reportar erro e feedback */
+.modal-erro {
+  position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+}
+.modal-erro-corpo {
+  background: var(--fundo-card); border: 1px solid var(--borda-media);
+  border-radius: 16px; padding: 1.75rem; max-width: 420px; width: 100%;
+  box-shadow: var(--sombra-lg);
+}
+.modal-erro-corpo h3 { font-family: var(--fonte-serif); font-size: 1.15rem; font-weight: 400; margin-bottom: 1rem; }
+.erro-trecho { font-size: .82rem; color: var(--texto-3); font-style: italic; margin-bottom: .75rem; padding: .5rem; background: var(--fundo-2); border-radius: 4px; }
+.modal-erro-btns { display: flex; gap: .5rem; margin-top: 1rem; }
+
+/* Feedback estrelas */
+.fb-estrelas { display: flex; gap: .4rem; margin: .5rem 0; }
+.fb-star { font-size: 2rem; color: var(--borda-media); cursor: pointer; transition: color var(--trans); }
+.fb-star.ativa { color: var(--ouro); }
+
+/* Toast */
+.toast-wrap { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 400; display: flex; flex-direction: column; gap: .5rem; align-items: center; pointer-events: none; }
+.toast {
+  background: var(--fundo-card); border: 1px solid var(--ouro);
+  color: var(--texto); padding: .6rem 1.25rem; border-radius: 20px;
+  font-size: .85rem; box-shadow: var(--sombra-lg);
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .25s, transform .25s; white-space: nowrap;
+}
+.toast.visivel { opacity: 1; transform: translateY(0); }
+.toast.erro { border-color: var(--ferrugem); }
+
+/* ── Modo não perturbe (tela cheia) ──────────────────────────────── */
+body.nao-perturbe .leitor-header,
+body.nao-perturbe .leitor-nav { opacity: 0; pointer-events: none; }
+body.nao-perturbe:hover .leitor-header,
+body.nao-perturbe:hover .leitor-nav { opacity: 1; pointer-events: auto; }
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 800px) {
+  .nota-autor-wrap { display: none; }
+  .ts-grade { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1rem; }
+  .leitor-header { padding: 0 .75rem; }
+  .lh-btn { width: 32px; height: 32px; }
+}
+@media (max-width: 480px) {
+  .ts-grade { grid-template-columns: repeat(2, 1fr); }
+  .nav-cap-btn span { display: none; }
+  .meta-display-grande { font-size: 2rem; }
+}

@@ -510,6 +510,9 @@ const API = (() => {
         btnSair?.addEventListener('click', async () => {
           try {
             await API.Auth.sair();
+            // Limpar carrinho ao sair — próximo usuário começa limpo
+            localStorage.removeItem('rd_carrinho');
+            localStorage.removeItem('rd_carrinho_uid');
             window.location.reload();
           } catch (erro) {
             Logger.erro('logout', erro);

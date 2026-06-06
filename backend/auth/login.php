@@ -45,6 +45,12 @@
     $_SESSION['usuario_id']    = $usuario['id'];
     $_SESSION['usuario_nome']  = $usuario['nome'];
     $_SESSION['usuario_email'] = $usuario['email'];
+    // Formato unificado para o leitor
+    $_SESSION['usuario'] = [
+        'id'    => $usuario['id'],
+        'nome'  => $usuario['nome'],
+        'email' => $usuario['email'],
+    ];
 
     $pdo->prepare("UPDATE usuarios SET ultimo_login = NOW() WHERE id = ?")
         ->execute([$usuario['id']]);

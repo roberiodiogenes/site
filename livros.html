@@ -3,124 +3,424 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <meta name="description" content="Explore o catálogo completo de livros de Robério Diógenes. Adquira thrillers psicológicos, romances intensos, dramas e horror gótico em e-book Kindle (ePub) ou versão física." />
-  <meta name="author" content="Robério Diógenes" />
-  
+  <title>Biblioteca | Robério Diógenes — Escritor Independente</title>
+  <meta name="description" content="Catálogo completo das obras de Robério Diógenes: romance, ficção literária e contos. Compre, presenteie ou leia gratuitamente." />
+  <meta name="keywords" content="robério diógenes, livros, comprar livros, ficção brasileira, contos, romance literário" />
   <link rel="canonical" href="https://www.roberiodiogenes.com/livros.html" />
-  
-  <meta property="og:locale" content="pt_BR" />
-  <meta property="og:title" content="Biblioteca Digital | Robério Diógenes — Livros e E-books" />
-  <meta property="og:description" content="Conheça as obras publicadas de Robério Diógenes. Ficção independente de suspense, drama e horror disponível na Amazon." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.roberiodiogenes.com/livros.html" />
-  <meta property="og:image" content="https://www.roberiodiogenes.com/img/og-image.jpg" />
-  <meta property="og:site_name" content="Robério Diógenes" />
-
-  <title>Biblioteca | Robério Diógenes — Catálogo de Livros Independentes</title>
-  
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Biblioteca | Robério Diógenes" />
+  <meta property="og:description" content="Catálogo completo de obras — romance, ficção e contos." />
+  <meta property="og:image"       content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+  <meta property="og:url"         content="https://www.roberiodiogenes.com/livros.html" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"CollectionPage","name":"Biblioteca de Robério Diógenes",
+   "description":"Catálogo completo de obras literárias","url":"https://www.roberiodiogenes.com/livros.html",
+   "author":{"@type":"Person","name":"Robério Diógenes"}}
+  </script>
   <link rel="icon" type="image/png" href="img/favicon.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="css/variables.css" />
-  <link rel="stylesheet" href="css/livros.css" />
-<style>
-  /* ── Tabs de tipo (Todos / Livros / Contos) ───────────────── */
-  .tipo-tabs {
-    display: flex;
-    gap: .5rem;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--fonte-corpo); background: var(--fundo); color: var(--texto); min-height: 100vh; }
+
+  /* ── HERO ───────────────────────────────────────────────────── */
+  .bib-hero {
+    padding: 6rem 2rem 4rem;
+    text-align: center;
+    background: linear-gradient(to bottom, var(--fundo-2), var(--fundo));
+    border-bottom: 1px solid var(--borda);
+    position: relative; overflow: hidden;
   }
-  .tipo-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: .4rem;
-    padding: .5rem 1.1rem;
-    border-radius: var(--raio-full, 20px);
-    border: 1px solid var(--borda-media, rgba(139,121,80,.3));
-    background: transparent;
-    color: var(--texto-3);
+  .bib-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(184,134,11,.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .bib-pretitulo {
+    font-family: var(--fonte-display); font-size: .65rem;
+    letter-spacing: .35em; text-transform: uppercase;
+    color: var(--ouro); margin-bottom: 1rem; display: block;
+  }
+  .bib-titulo {
+    font-family: var(--fonte-titulo); font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 400; line-height: 1.1; margin-bottom: 1rem;
+  }
+  .bib-titulo em { color: var(--ouro); font-style: italic; }
+  .bib-desc { font-size: 1rem; color: var(--texto-3); max-width: 520px; margin: 0 auto 2rem; line-height: 1.7; }
+
+  /* ── FILTROS ────────────────────────────────────────────────── */
+  .bib-filtros {
+    display: flex; gap: .5rem; justify-content: center;
+    flex-wrap: wrap; margin-bottom: .5rem;
+  }
+  .fil-btn {
+    padding: .4rem 1.1rem; border-radius: 20px;
+    border: 1px solid var(--borda-media);
+    background: transparent; color: var(--texto-3);
+    font-family: var(--fonte-display); font-size: .65rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    cursor: pointer; transition: all .2s;
+  }
+  .fil-btn:hover { border-color: var(--ouro); color: var(--ouro); }
+  .fil-btn.ativo { background: var(--ouro); color: #1A0F00; border-color: var(--ouro); font-weight: 700; }
+
+  /* ── CARRINHO FLUTUANTE ─────────────────────────────────────── */
+  #carrinhoBtn {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 500;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--ouro); color: #1A0F00;
+    border: none; cursor: pointer; font-size: 1.1rem;
+    box-shadow: 0 4px 20px rgba(184,134,11,.4);
+    transition: transform .2s, box-shadow .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #carrinhoBtn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(184,134,11,.5); }
+  #carrinhoBadge {
+    position: absolute; top: -4px; right: -4px;
+    background: var(--ferrugem, #8B3A2A); color: #fff;
+    font-size: .65rem; font-weight: 700;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: none; align-items: center; justify-content: center;
     font-family: var(--fonte-display);
-    font-size: .72rem;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    cursor: pointer;
+  }
+  #carrinhoBadge.visivel { display: flex; }
+
+  /* ── PAINEL CARRINHO ────────────────────────────────────────── */
+  .carrinho-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.5);
+    z-index: 600; opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .carrinho-overlay.aberto { opacity: 1; pointer-events: auto; }
+  .carrinho-painel {
+    position: fixed; top: 0; right: -420px; bottom: 0;
+    width: min(420px, 100vw);
+    background: var(--fundo-card); border-left: 1px solid var(--borda-media);
+    z-index: 700; transition: right .3s cubic-bezier(.25,.46,.45,.94);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .carrinho-painel.aberto { right: 0; }
+  .cp-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--borda);
+    flex-shrink: 0;
+  }
+  .cp-titulo { font-family: var(--fonte-titulo); font-size: 1.3rem; font-weight: 400; }
+  .cp-titulo em { color: var(--ouro); font-style: italic; }
+  .cp-fechar {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--borda-media); background: transparent;
+    color: var(--texto-3); cursor: pointer; font-size: .9rem;
+    display: flex; align-items: center; justify-content: center;
     transition: all .2s;
   }
-  .tipo-tab:hover { border-color: var(--ouro); color: var(--ouro); }
-  .tipo-tab.ativo {
-    background: var(--ouro);
-    color: #1A0F00;
-    border-color: var(--ouro);
-    font-weight: 700;
+  .cp-fechar:hover { border-color: var(--ouro); color: var(--ouro); }
+  .cp-lista { flex: 1; overflow-y: auto; padding: 1rem 1.5rem; }
+  .cp-vazio {
+    text-align: center; padding: 3rem 1rem; color: var(--texto-3);
   }
-  .tipo-tab-badge {
-    display: inline-block;
-    background: rgba(255,255,255,.25);
-    color: inherit;
-    border-radius: 20px;
-    padding: .05rem .45rem;
-    font-size: .6rem;
-    font-weight: 700;
-    min-width: 18px;
-    text-align: center;
+  .cp-vazio i { font-size: 2rem; color: var(--ouro); opacity: .25; margin-bottom: .75rem; display: block; }
+  .cp-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: .85rem 0; border-bottom: 1px solid var(--borda);
   }
-  .tipo-tab.ativo .tipo-tab-badge { background: rgba(0,0,0,.15); }
+  .cp-item:last-child { border-bottom: none; }
+  .cp-item-capa {
+    width: 48px; height: 66px; border-radius: 4px; object-fit: cover;
+    flex-shrink: 0; background: var(--fundo-2);
+  }
+  .cp-item-info { flex: 1; min-width: 0; }
+  .cp-item-titulo { font-size: .9rem; color: var(--texto); line-height: 1.35; margin-bottom: .2rem; }
+  .cp-item-tipo { font-family: var(--fonte-display); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--texto-3); }
+  .cp-item-preco { font-size: .95rem; color: var(--ouro); font-weight: 600; margin-top: .3rem; }
+  .cp-item-del {
+    background: transparent; border: none; color: var(--texto-3);
+    cursor: pointer; font-size: .8rem; padding: .25rem;
+    transition: color .2s; flex-shrink: 0; margin-top: .1rem;
+  }
+  .cp-item-del:hover { color: var(--ferrugem, #8B3A2A); }
+  .cp-footer {
+    padding: 1.25rem 1.5rem; border-top: 1px solid var(--borda);
+    flex-shrink: 0;
+  }
+  .cp-total {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1rem;
+  }
+  .cp-total-label { font-family: var(--fonte-display); font-size: .7rem; letter-spacing: .15em; text-transform: uppercase; color: var(--texto-3); }
+  .cp-total-valor { font-family: var(--fonte-titulo); font-size: 1.4rem; color: var(--ouro); }
+  .cp-btn-comprar {
+    width: 100%; padding: .85rem; background: var(--ouro); color: #1A0F00;
+    border: none; border-radius: var(--raio-lg, 12px); cursor: pointer;
+    font-family: var(--fonte-display); font-size: .75rem; font-weight: 700;
+    letter-spacing: .15em; text-transform: uppercase; transition: opacity .2s;
+  }
+  .cp-btn-comprar:hover { opacity: .85; }
+  .cp-btn-limpar {
+    width: 100%; padding: .55rem; background: transparent; color: var(--texto-3);
+    border: 1px solid var(--borda); border-radius: var(--raio, 6px); cursor: pointer;
+    font-family: var(--fonte-display); font-size: .65rem; letter-spacing: .1em;
+    text-transform: uppercase; margin-top: .5rem; transition: all .2s;
+  }
+  .cp-btn-limpar:hover { border-color: var(--ferrugem, #8B3A2A); color: var(--ferrugem, #8B3A2A); }
 
-  /* ── Badges extras para contos/destaque ───────────────────── */
-  .badge-azul-escuro {
-    background: rgba(21,101,192,.15);
-    color: #90CAF9;
-    border: 1px solid rgba(21,101,192,.3);
-    padding: .18rem .55rem;
-    border-radius: 20px;
-    font-size: .6rem;
-    font-weight: 700;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-    display: inline-block;
+  /* ── GRID DE LIVROS ─────────────────────────────────────────── */
+  .bib-secao { max-width: 1280px; margin: 0 auto; padding: 3rem 2rem; }
+  .bib-secao-titulo {
+    font-family: var(--fonte-titulo); font-size: 1.5rem; font-weight: 400;
+    margin-bottom: 2rem; padding-bottom: .75rem; border-bottom: 1px solid var(--borda);
+    display: flex; align-items: center; gap: .75rem;
   }
-  .badge-ferrugem {
-    background: rgba(180,60,20,.15);
-    color: #FFAB91;
-    border: 1px solid rgba(180,60,20,.3);
-    padding: .18rem .55rem;
-    border-radius: 20px;
-    font-size: .6rem;
-    font-weight: 700;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-    display: inline-block;
-  }
-
-  /* ── Leitura estimada (contos) ────────────────────────────── */
-  .livro-item-leitura {
-    font-size: .78rem;
-    color: var(--texto-3);
-    margin-bottom: .35rem;
-  }
-  .livro-item-leitura i { margin-right: .3rem; color: var(--ouro); opacity: .7; }
-
-  /* ── Paginação da biblioteca ──────────────────────────────── */
-  #paginacao {
-    gap: .4rem;
-    padding: 2rem 1rem;
-    flex-wrap: wrap;
-  }
-
-  /* ── Estado vazio ─────────────────────────────────────────── */
-  #vazioMsg {
-    align-items: center;
-    gap: 1rem;
+  .bib-secao-titulo em { color: var(--ouro); font-style: italic; }
+  .bib-secao-titulo .cont { font-family: var(--fonte-display); font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-3); }
+  .bib-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
   }
 
-</style>
+  /* ── CARD ───────────────────────────────────────────────────── */
+  .card-livro {
+    background: var(--fundo-card);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-lg, 12px);
+    /* overflow NÃO pode ser hidden: cliparia o dropdown de opções */
+    position: relative;
+    transition: box-shadow .25s, transform .25s, border-color .25s;
+    display: flex; flex-direction: column;
+  }
+  .card-livro:hover {
+    box-shadow: var(--sombra-md);
+    transform: translateY(-3px);
+    border-color: var(--borda-media);
+  }
+
+  /* Badges no topo do card */
+  .card-badges {
+    position: absolute; top: .65rem; left: .65rem;
+    display: flex; flex-direction: column; gap: .3rem; z-index: 2;
+  }
+  .badge {
+    font-family: var(--fonte-display); font-size: .55rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    padding: .2rem .55rem; border-radius: 10px;
+    display: inline-block; line-height: 1.4;
+  }
+  .badge-destaque { background: var(--ouro); color: #1A0F00; }
+  .badge-novo     { background: var(--ferrugem, #8B3A2A); color: #fff; }
+  .badge-gratis   { background: rgba(39,174,96,.85); color: #fff; }
+  .badge-conto    { background: rgba(52,152,219,.8); color: #fff; }
+
+  /* Capa */
+  .card-capa-wrap {
+    position: relative; padding-top: 140%;
+    overflow: hidden; background: var(--fundo-2);
+    flex-shrink: 0;
+    border-radius: var(--raio-lg, 12px) var(--raio-lg, 12px) 0 0;
+  }
+  .card-capa {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .4s ease;
+  }
+  .card-livro:hover .card-capa { transform: scale(1.04); }
+  .card-capa-placeholder {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: .5rem; color: var(--texto-3);
+    font-family: var(--fonte-titulo); font-size: .85rem; text-align: center;
+    padding: 1rem;
+  }
+  .card-capa-placeholder i { font-size: 2rem; color: var(--ouro); opacity: .3; }
+
+  /* Botão favorito */
+  .card-fav {
+    position: absolute; top: .65rem; right: .65rem; z-index: 3;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(var(--fundo-card, 250,247,242), .85);
+    border: 1px solid var(--borda);
+    color: var(--texto-3); font-size: .8rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all .2s; backdrop-filter: blur(4px);
+  }
+  .card-fav:hover, .card-fav.ativo { color: var(--ferrugem, #8B3A2A); border-color: var(--ferrugem, #8B3A2A); }
+  .card-fav.ativo i { font-weight: 900; }
+
+  /* Corpo do card */
+  .card-corpo { padding: .85rem 1rem 1rem; display: flex; flex-direction: column; flex: 1; }
+  .card-meta {
+    display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: .5rem;
+  }
+  .card-meta-item {
+    font-family: var(--fonte-display); font-size: .58rem;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--texto-3); display: flex; align-items: center; gap: .25rem;
+  }
+  .card-meta-item i { color: var(--ouro); opacity: .7; font-size: .55rem; }
+  .card-titulo {
+    font-family: var(--fonte-titulo); font-size: 1rem; font-weight: 500;
+    color: var(--texto); line-height: 1.3; margin-bottom: .2rem;
+  }
+  .card-subtitulo { font-size: .78rem; color: var(--texto-3); line-height: 1.45; margin-bottom: .6rem; }
+  .card-preco-wrap { display: flex; align-items: baseline; gap: .4rem; margin-bottom: .85rem; }
+  .card-preco { font-family: var(--fonte-titulo); font-size: 1.1rem; color: var(--ouro); font-weight: 600; }
+  .card-preco-orig { font-size: .8rem; color: var(--texto-3); text-decoration: line-through; }
+  .card-preco-gratis { font-family: var(--fonte-display); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: #27ae60; }
+
+  /* Estrelas */
+  .card-estrelas { display: flex; gap: .15rem; margin-bottom: .75rem; }
+  .estrela { font-size: .8rem; color: var(--borda-media); cursor: pointer; transition: color .15s; }
+  .estrela.ativa, .estrela.hover { color: var(--ouro); }
+
+  /* Área de botões */
+  .card-acoes { display: flex; flex-direction: column; gap: .45rem; margin-top: auto; }
+
+  /* Botão primário */
+  .btn-card {
+    display: flex; align-items: center; justify-content: center; gap: .45rem;
+    padding: .55rem .85rem; border-radius: var(--raio, 6px);
+    font-family: var(--fonte-display); font-size: .65rem;
+    font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    cursor: pointer; border: none; text-decoration: none;
+    transition: all .2s; width: 100%;
+  }
+  .btn-card-primario { background: var(--ouro); color: #1A0F00; }
+  .btn-card-primario:hover { opacity: .85; }
+  .btn-card-secundario { background: transparent; color: var(--texto-2); border: 1px solid var(--borda-media); }
+  .btn-card-secundario:hover { border-color: var(--ouro); color: var(--ouro); }
+  .btn-card-verde { background: rgba(39,174,96,.12); color: #27ae60; border: 1px solid #27ae60; }
+  .btn-card-verde:hover { background: rgba(39,174,96,.22); }
+  .btn-card-disabled { opacity: .4; cursor: not-allowed; pointer-events: none; }
+
+  /* Grupo expansível de botões */
+  .btn-grupo { position: relative; }
+  .btn-grupo-toggle {
+    display: flex; align-items: center; justify-content: space-between; gap: .45rem;
+    padding: .55rem .85rem; border-radius: var(--raio, 6px);
+    font-family: var(--fonte-display); font-size: .65rem;
+    font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    cursor: pointer; border: 1px solid var(--borda-media);
+    background: transparent; color: var(--texto-2); width: 100%;
+    transition: all .2s;
+  }
+  .btn-grupo-toggle:hover { border-color: var(--ouro); color: var(--ouro); }
+  .btn-grupo-toggle[aria-expanded="true"] { border-color: var(--ouro); color: var(--ouro); }
+  .btn-grupo-toggle .chevron { font-size: .55rem; transition: transform .2s; }
+  .btn-grupo-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+  .btn-grupo-painel {
+    position: absolute; left: 0; right: 0; bottom: calc(100% + .4rem);
+    background: var(--fundo-card);
+    border: 1px solid var(--borda-media);
+    border-radius: var(--raio-lg, 12px);
+    padding: .5rem;
+    box-shadow: var(--sombra-md);
+    z-index: 100;
+    opacity: 0; pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity .18s, transform .18s;
+    display: flex; flex-direction: column; gap: .3rem;
+  }
+  .btn-grupo-painel.aberto { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .btn-grupo-painel .btn-card { padding: .5rem .75rem; }
+
+  /* ── MODAL DETALHES ─────────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6);
+    z-index: 800; display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem; opacity: 0; pointer-events: none; transition: opacity .25s;
+  }
+  .modal-overlay.aberto { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--fundo-card); border: 1px solid var(--borda-media);
+    border-radius: var(--raio-xl, 20px); max-width: 680px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    transform: scale(.95); transition: transform .25s;
+    box-shadow: var(--sombra-lg);
+  }
+  .modal-overlay.aberto .modal { transform: scale(1); }
+  .modal-header {
+    display: flex; gap: 1.5rem; padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--borda);
+  }
+  .modal-capa {
+    width: 110px; flex-shrink: 0; border-radius: 6px;
+    box-shadow: var(--sombra-livro); object-fit: cover;
+  }
+  .modal-header-info { flex: 1; min-width: 0; }
+  .modal-tipo { font-family: var(--fonte-display); font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--ouro); margin-bottom: .35rem; }
+  .modal-titulo { font-family: var(--fonte-titulo); font-size: 1.5rem; font-weight: 400; line-height: 1.2; margin-bottom: .3rem; }
+  .modal-subtitulo { font-size: .88rem; color: var(--texto-3); margin-bottom: .75rem; }
+  .modal-body { padding: 1.5rem 2rem 2rem; }
+  .modal-sinopse { font-size: .95rem; line-height: 1.8; color: var(--texto-2); margin-bottom: 1.5rem; }
+  .modal-info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: .6rem;
+    margin-bottom: 1.5rem;
+  }
+  .modal-info-item { display: flex; align-items: center; gap: .5rem; font-size: .82rem; color: var(--texto-3); }
+  .modal-info-item i { color: var(--ouro); width: 14px; text-align: center; }
+  .modal-fechar {
+    position: absolute; top: 1rem; right: 1rem;
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--borda-media); background: var(--fundo-card);
+    color: var(--texto-3); cursor: pointer; font-size: .85rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s; z-index: 2;
+  }
+  .modal-fechar:hover { border-color: var(--ouro); color: var(--ouro); }
+  .modal .card-estrelas { margin-bottom: 0; }
+
+  /* ── TOAST ──────────────────────────────────────────────────── */
+  .toast-wrap { position: fixed; bottom: 5.5rem; right: 2rem; z-index: 900; display: flex; flex-direction: column; gap: .5rem; align-items: flex-end; }
+  .toast {
+    background: var(--fundo-card); border: 1px solid var(--ouro);
+    color: var(--texto); padding: .65rem 1.25rem; border-radius: var(--raio-lg, 12px);
+    font-size: .85rem; box-shadow: var(--sombra-md);
+    opacity: 0; transform: translateX(20px);
+    transition: opacity .25s, transform .25s;
+    max-width: 280px; pointer-events: none;
+  }
+  .toast.visivel { opacity: 1; transform: translateX(0); pointer-events: auto; }
+  .toast.erro { border-color: var(--ferrugem, #8B3A2A); }
+
+  /* ── COMPARTILHAR (ícones circulares compactos) ─────────────── */
+  .share-ico-row {
+    display: flex; gap: .4rem; align-items: center;
+    padding: .2rem 0 .3rem; flex-wrap: wrap;
+  }
+  .share-ico {
+    width: 30px; height: 30px; border-radius: 50%; border: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .8rem; cursor: pointer; text-decoration: none;
+    transition: transform .18s, opacity .18s;
+    flex-shrink: 0;
+  }
+  .share-ico:hover { transform: scale(1.12); opacity: .9; }
+  .share-ico-wa   { background: #25D366; color: #fff; }
+  .share-ico-fb   { background: #1877F2; color: #fff; }
+  .share-ico-tw   { background: #000;    color: #fff; }
+  .share-ico-ig   { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%); color: #fff; }
+  .share-ico-link { background: var(--fundo-2); color: var(--texto-2); border: 1px solid var(--borda-media); }
+
+  /* ── RESPONSIVE ─────────────────────────────────────────────── */
+  @media (max-width: 640px) {
+    .bib-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .modal-header { flex-direction: column; }
+    .modal-capa { width: 80px; }
+    .modal-info-grid { grid-template-columns: 1fr; }
+    #carrinhoBtn { bottom: 1.25rem; right: 1.25rem; }
+  }
+  @media (max-width: 360px) {
+    .bib-grid { grid-template-columns: 1fr; }
+  }
+  </style>
 </head>
 <body>
+<a href="#conteudo-principal" class="pular-nav" style="position:absolute;top:-999px;left:-999px">Pular para o conteúdo</a>
+<canvas id="canvas-particulas" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:0"></canvas>
 
-<a href="#conteudo-principal" class="pular-nav">Pular para o conteúdo</a>
-<canvas id="canvas-particulas" aria-hidden="true"></canvas>
-
+<!-- NAV (igual ao restante do site) -->
 <nav id="nav" role="navigation" aria-label="Navegação principal">
   <a href="index.html" class="nav-logo">Robério Diógenes<span>Escritor Independente</span></a>
   <ul class="nav-links" id="navLinks" role="list">
@@ -129,170 +429,49 @@
     <li><a href="autor.html">O Autor</a></li>
     <li><a href="blog.html">Diário</a></li>
     <li><a href="contato.html">Contato</a></li>
-  
-          <!-- Controles de acessibilidade — visíveis no menu mobile -->
-          <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
-            <span class="mobile-controles-label">Tema &amp; Fonte</span>
-            <button class="tema-btn" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
-            <button class="tema-btn" data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
-            <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
-            <button class="fonte-btn fonte-diminuir"       title="Texto menor"   aria-label="Texto menor">A-</button>
-            <button class="fonte-btn fonte-aumentar"       title="Texto maior"   aria-label="Texto maior">A+</button>
-            <button class="tema-btn som-btn"               title="Sons"          aria-label="Sons">♪</button>
-          </li>
   </ul>
   <div class="nav-acoes">
-    <div class="busca-nav" role="search"><span class="busca-nav-icone">🔍</span><input type="search" placeholder="Buscar..." aria-label="Buscar no site" /></div>
-    <div class="tema-controles" role="group" aria-label="Tema">
-      <button class="tema-btn ativo" data-tema="claro" title="Claro" aria-label="Tema claro">☀</button>
-      <button class="tema-btn" data-tema="noturno" title="Noturno" aria-label="Tema noturno">🌙</button>
-      <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+    <div class="tema-controles" role="group">
+      <button class="tema-btn ativo" data-tema="claro" aria-label="Tema claro">☀</button>
+      <button class="tema-btn" data-tema="noturno" aria-label="Tema noturno">🌙</button>
+      <button class="tema-btn" data-tema="contraste" aria-label="Alto contraste">◑</button>
     </div>
-    <div class="fonte-controles" role="group" aria-label="Fonte">
-      <button class="fonte-btn fonte-diminuir" aria-label="Diminuir texto">A-</button>
-      <button class="fonte-btn fonte-aumentar" aria-label="Aumentar texto">A+</button>
+    <div class="fonte-controles" role="group">
+      <button class="fonte-btn fonte-diminuir" aria-label="Texto menor">A-</button>
+      <button class="fonte-btn fonte-aumentar" aria-label="Texto maior">A+</button>
     </div>
-    <button class="tema-btn som-btn" title="Sons" aria-label="Sons">♪</button>
-    <a href="login.html" class="btn btn-secundario btn-entrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;"><i class="fa fa-user" aria-hidden="true"></i> Entrar</a>
+    <a href="login.html" class="btn btn-secundario btn-entrar" id="btnEntrar">
+      <i class="fa fa-user" aria-hidden="true"></i> Entrar
+    </a>
   </div>
-  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 <a href="#" class="topo-btn" id="topoBtn" aria-label="Voltar ao topo">↑</a>
 
 <main id="conteudo-principal">
 
   <!-- HERO -->
-  <header class="cat-hero">
-    <div class="cat-hero-inner">
-      <p class="secao-pretitulo reveal">Obras Publicadas</p>
-      <h1 class="cat-titulo reveal reveal-delay-1">A <em>Biblioteca</em></h1>
-      <p class="cat-subtitulo reveal reveal-delay-2">Histórias que habitam o limiar entre o que se vê e o que se cala.<br />Escolha o espelho que deseja encarar.</p>
-
-
-      <!-- Abas de tipo: Todos / Livros / Contos -->
-      <div class="tipo-tabs reveal" role="tablist" aria-label="Tipo de obra" style="margin-bottom:1.5rem">
-        <button class="tipo-tab ativo" data-tipo="todos"  role="tab" aria-selected="true">
-          <i class="fa fa-books" aria-hidden="true"></i> Todos
-        </button>
-        <button class="tipo-tab" data-tipo="livro" role="tab" aria-selected="false">
-          <i class="fa fa-book" aria-hidden="true"></i> Livros
-        </button>
-        <button class="tipo-tab" data-tipo="conto" role="tab" aria-selected="false">
-          <i class="fa fa-scroll" aria-hidden="true"></i> Contos
-          <span class="tipo-tab-badge" id="badge-contos"></span>
-        </button>
-      </div>
-
-      <!-- Filtros por gênero -->
-      <div class="filtros reveal reveal-delay-3" role="group" aria-label="Filtrar por gênero">
-        <button class="filtro-btn ativo" data-filtro="todos">Todos</button>
-        <button class="filtro-btn" data-filtro="thriller">Thriller</button>
-        <button class="filtro-btn" data-filtro="romance">Romance</button>
-        <button class="filtro-btn" data-filtro="drama">Drama</button>
-        <button class="filtro-btn" data-filtro="horror">Horror</button>
-        <button class="filtro-btn" data-filtro="autoajuda">Auto-Ajuda</button>
-        <button class="filtro-btn" data-filtro="poesia">Poesia</button>
-      </div>
+  <header class="bib-hero">
+    <span class="bib-pretitulo reveal">Catálogo Completo</span>
+    <h1 class="bib-titulo reveal reveal-delay-1">A <em>Biblioteca</em></h1>
+    <p class="bib-desc reveal reveal-delay-2">Romances, contos e ficção literária. Compre, presenteie ou leia gratuitamente.</p>
+    <div class="bib-filtros reveal reveal-delay-2" role="group" aria-label="Filtrar obras">
+      <button class="fil-btn ativo" data-fil="todos">Todos</button>
+      <button class="fil-btn" data-fil="livro">Livros</button>
+      <button class="fil-btn" data-fil="conto">Contos</button>
+      <button class="fil-btn" data-fil="gratis">Gratuitos</button>
+      <button class="fil-btn" data-fil="destaque">Em Destaque</button>
     </div>
-    <div class="cat-hero-ornamento" aria-hidden="true">❧</div>
   </header>
 
-
-  <!-- LEITOR ONLINE — Banner de acesso -->
-  <section class="secao" aria-label="Leitor Online" style="margin-bottom:0;padding-bottom:0">
-    <div style="
-      background: linear-gradient(135deg, var(--fundo-2, #EDE6D6) 0%, var(--fundo-3, #E4DBC8) 100%);
-      border: 1px solid var(--borda-media);
-      border-radius: var(--raio-lg);
-      padding: 1.5rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1.25rem;
-      margin-bottom: 2rem;
-    ">
-      <div style="display:flex;align-items:center;gap:1rem">
-        <span style="font-size:2rem;line-height:1" aria-hidden="true">📖</span>
-        <div>
-          <p style="font-family:var(--fonte-display);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ouro);margin-bottom:.2rem">Leitor Online</p>
-          <p style="font-family:var(--fonte-titulo);font-size:1.1rem;color:var(--texto);margin-bottom:.2rem">Leia capítulos diretamente no navegador</p>
-          <p style="font-size:.82rem;color:var(--texto-3)">Sem download. Sem aplicativo. Basta ter uma conta.</p>
-        </div>
-      </div>
-      <a href="leitor/index.html" class="btn btn-primario" style="white-space:nowrap">
-        <i class="fa fa-book-open" aria-hidden="true"></i> Acessar o Leitor
-      </a>
+  <!-- GRID -->
+  <div id="conteudo-principal" class="bib-secao">
+    <div id="bibGrid" class="bib-grid" aria-live="polite">
+      <!-- Renderizado via JS -->
     </div>
-  </section>
-
-  <!-- CATÁLOGO -->
-  
-
-  <!-- LEITOR ONLINE — Banner de acesso -->
-  <section class="secao" aria-label="Leitor Online" style="margin-bottom:0;padding-bottom:0">
-    <div style="
-      background: linear-gradient(135deg, var(--fundo-2, #EDE6D6) 0%, var(--fundo-3, #E4DBC8) 100%);
-      border: 1px solid var(--borda-media);
-      border-radius: var(--raio-lg);
-      padding: 1.5rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1.25rem;
-      margin-bottom: 2rem;
-    ">
-      <div style="display:flex;align-items:center;gap:1rem">
-        <span style="font-size:2rem;line-height:1" aria-hidden="true">📖</span>
-        <div>
-          <p style="font-family:var(--fonte-display);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ouro);margin-bottom:.2rem">Leitor Online</p>
-          <p style="font-family:var(--fonte-titulo);font-size:1.1rem;color:var(--texto);margin-bottom:.2rem">Leia capítulos diretamente no navegador</p>
-          <p style="font-size:.82rem;color:var(--texto-3)">Sem download. Sem aplicativo. Basta ter uma conta.</p>
-        </div>
-      </div>
-      <a href="leitor/index.html" class="btn btn-primario" style="white-space:nowrap">
-        <i class="fa fa-book-open" aria-hidden="true"></i> Acessar o Leitor
-      </a>
-    </div>
-  </section>
-
-  <!-- CATÁLOGO DINÂMICO -->
-  <section class="secao" id="catalogo" aria-label="Catálogo de obras">
-
-    <!-- Loading state -->
-    <div id="biblioteca-loading" style="text-align:center;padding:4rem 2rem;color:var(--texto-3)">
-      <i class="fa fa-circle-notch fa-spin" style="font-size:1.5rem;color:var(--ouro)" aria-hidden="true"></i>
-      <p style="margin-top:1rem;font-size:.9rem">Carregando biblioteca…</p>
-    </div>
-
-    <!-- Grade de cards (preenchida pelo JS) -->
-    <div class="livros-catalogo" id="gradeLivros" role="list" style="display:none"></div>
-
-    <!-- Estado vazio -->
-    <div id="vazioMsg" style="display:none;flex-direction:column;align-items:center;padding:4rem 2rem;text-align:center;color:var(--texto-3)">
-      <i class="fa fa-book-open" style="font-size:2.5rem;color:var(--ouro);opacity:.3;margin-bottom:1rem" aria-hidden="true"></i>
-      <p>Nenhuma obra encontrada para este filtro.</p>
-    </div>
-
-    <!-- Paginação -->
-    <nav id="paginacao" aria-label="Paginação da biblioteca"
-         style="display:none;justify-content:center;align-items:center;gap:.5rem;padding:2rem 1rem;flex-wrap:wrap">
-    </nav>
-
-  </section>
-
-<section class="cta-amazon secao" aria-labelledby="titulo-amazon">
-    <div class="cta-amazon-wrap reveal">
-      <div class="cta-amazon-texto">
-        <h2 id="titulo-amazon">Todos os livros disponíveis na <em>Amazon</em></h2>
-        <p>Adquira em e-book para leitura imediata no Kindle ou app Kindle, ou encomende o físico. Frete grátis para Prime.</p>
-      </div>
-      <a href="https://www.amazon.com.br/stores/author/B0DJCQMG7C/about" target="_blank" rel="noopener" class="btn btn-primario cta-amazon-btn">
-        <i class="fa-brands fa-amazon" aria-hidden="true"></i> Ver na Amazon
-      </a>
-    </div>
-  </section>
+  </div>
 
 </main>
 
@@ -303,34 +482,20 @@
       <a href="index.html" class="footer-logo">Robério Diógenes</a>
       <p class="footer-desc">"Escrevo sobre o que nos assombra no silêncio."</p>
       <div class="footer-social" aria-label="Redes sociais">
-        <a href="https://www.instagram.com/diogenesroberio" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-        <a href="https://www.amazon.com.br/stores/author/B0DJCQMG7C/about" target="_blank" rel="noopener" aria-label="Amazon" title="Amazon"><i class="fa-brands fa-amazon" aria-hidden="true"></i></a>
-        <a href="https://wa.me/5585999999999" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+        <a href="https://www.instagram.com/diogenesroberio" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.amazon.com.br/stores/author/B0DJCQMG7C/about" target="_blank" rel="noopener" aria-label="Amazon"><i class="fa-brands fa-amazon"></i></a>
+        <a href="https://wa.me/5585996409818" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
       </div>
     </div>
     <div>
       <p class="footer-col-titulo">Navegação</p>
       <ul class="footer-links">
-        <li><a href="index.html">Início</a></li><li><a href="livros.html">Biblioteca</a></li>
-        <li><a href="autor.html">O Autor</a></li><li><a href="blog.html">Diário</a></li>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="livros.html">Biblioteca</a></li>
+        <li><a href="autor.html">O Autor</a></li>
+        <li><a href="blog.html">Diário</a></li>
         <li><a href="contato.html">Contato</a></li>
       </ul>
-    </div>
-    <div>
-      <p class="footer-col-titulo">Gêneros</p>
-      <ul class="footer-links">
-        <li><a href="#" onclick="filtrar('thriller');return false;">Thriller</a></li>
-        <li><a href="#" onclick="filtrar('romance');return false;">Romance</a></li>
-        <li><a href="#" onclick="filtrar('horror');return false;">Horror</a></li>
-        <li><a href="#" onclick="filtrar('poesia');return false;">Poesia</a></li>
-      </ul>
-    </div>
-    <div>
-      <p class="footer-col-titulo">Newsletter</p>
-      <form onsubmit="submeterNewsletter(event)" style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.75rem;" aria-label="Newsletter">
-        <input type="email" class="finput" placeholder="seu@email.com" required aria-label="E-mail" style="font-size:0.85rem;padding:0.5rem 0.75rem;" />
-        <button type="submit" class="btn btn-primario" style="padding:0.5rem;font-size:0.8rem;">Inscrever-se</button>
-      </form>
     </div>
   </div>
   <div class="footer-bottom">
@@ -339,73 +504,771 @@
   </div>
 </footer>
 
-<div class="toast-wrap" role="status" aria-live="polite" aria-atomic="true"></div>
+<!-- CARRINHO FLUTUANTE -->
+<button id="carrinhoBtn" aria-label="Abrir carrinho" title="Carrinho de compras">
+  <i class="fa fa-cart-shopping"></i>
+  <span id="carrinhoBadge" aria-label="itens no carrinho"></span>
+</button>
+
+<!-- PAINEL DO CARRINHO -->
+<div class="carrinho-overlay" id="carrinhoOverlay" role="dialog" aria-modal="true" aria-label="Carrinho de compras"></div>
+<aside class="carrinho-painel" id="carrinhoPainel" aria-label="Carrinho">
+  <div class="cp-header">
+    <h2 class="cp-titulo">Seu <em>carrinho</em></h2>
+    <button class="cp-fechar" id="carrinhoFechar" aria-label="Fechar carrinho"><i class="fa fa-xmark"></i></button>
+  </div>
+  <div class="cp-lista" id="carrinhoLista"></div>
+  <div class="cp-footer" id="carrinhoFooter" style="display:none">
+    <div class="cp-total">
+      <span class="cp-total-label">Total</span>
+      <span class="cp-total-valor" id="carrinhoTotal">R$ 0,00</span>
+    </div>
+    <button class="cp-btn-comprar" id="btnFinalizarCompra">
+      <i class="fa fa-credit-card"></i> Finalizar compra
+    </button>
+    <button class="cp-btn-limpar" id="btnLimparCarrinho">
+      <i class="fa fa-trash"></i> Limpar carrinho
+    </button>
+  </div>
+</aside>
+
+<!-- MODAL DETALHES -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-label="Detalhes do livro">
+  <div class="modal" id="modalConteudo" style="position:relative">
+    <button class="modal-fechar" id="modalFechar" aria-label="Fechar"><i class="fa fa-xmark"></i></button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap" role="status" aria-live="polite"></div>
 
 <script src="js/global.js"></script>
 <script src="js/api-client.js"></script>
-<script src="js/biblioteca.js"></script>
 <script>
-  const btnAtivo = document.querySelector(`.filtro-btn[data-filtro="${genero}"]`);
-  if (btnAtivo) {
-    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
-    btnAtivo.classList.add('ativo');
-  }
-  const items = document.querySelectorAll('.livro-item');
-  let visiveis = 0;
-  items.forEach(item => {
-    const gen = item.dataset.genero || '';
-    const mostrar = genero === 'todos' || gen.includes(genero);
-    item.style.display = mostrar ? '' : 'none';
-    if (mostrar) visiveis++;
-  });
-  const vazio = document.getElementById('vazioMsg');
-  if (vazio) vazio.style.display = visiveis === 0 ? 'flex' : 'none';
-  if (window.Sons) Sons.tocar('clique');
+(function() {
+'use strict';
+
+/* ══ CATÁLOGO ═══════════════════════════════════════════════════
+   Dados centralizados — edite aqui para adicionar/remover obras.
+   preco: null = gratuito (0.00 no banco)
+   tempo: minutos estimados de leitura do livro completo
+   ═══════════════════════════════════════════════════════════════ */
+const CATALOGO = [
+  /* ── LIVROS ────────────────────────────────────────────────── */
+  {
+    slug: 'a-setima-lei', tipo: 'livro', destaque: true, novo: false,
+    titulo: 'A Sétima Lei',
+    subtitulo: 'O que acontece quando as regras são escritas por quem não merecia escrever nada?',
+    genero: 'Ficção literária', capitulos: 8, tempo: 420,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/a-setima-lei.jpg',
+    sinopse: 'Uma história sobre poder, culpa e a inquietação de quem descobre que obedeceu regras escritas por quem não merecia escrever nada. Oito capítulos densos, sem resposta fácil.',
+    pagina: 'livros/a-setima-lei.html',
+  },
+  {
+    slug: 'lumen', tipo: 'livro', destaque: true, novo: true,
+    titulo: 'Lúmen — A Outra Metade do Céu',
+    subtitulo: 'A mente de Hannah oscila entre memórias e sonhos.',
+    genero: 'Ficção psicológica', capitulos: 1, tempo: 90,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/lumen.jpg',
+    sinopse: 'Hannah não tem certeza se seus sonhos são memórias ou suas memórias são sonhos. Uma narrativa não-confiável que dissolve as fronteiras entre o real e o imaginado.',
+    pagina: 'livros/lumen.html',
+  },
+  {
+    slug: 'o-abismo-das-almas', tipo: 'livro', destaque: true, novo: false,
+    titulo: 'O Abismo das Almas',
+    subtitulo: 'E se sentir fosse o maior perigo?',
+    genero: 'Horror literário', capitulos: 8, tempo: 400,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/o-abismo-das-almas.jpg',
+    sinopse: 'Uma humanidade que aprendeu a não sentir mais — não por escolha, mas por necessidade. O horror não vem dos mortos. Vem dos vivos que esqueceram como ter medo.',
+    pagina: 'livros/o-abismo-das-almas.html',
+  },
+  {
+    slug: 'jogo-das-mascaras', tipo: 'livro', destaque: false, novo: false,
+    titulo: 'O Jogo das Máscaras',
+    subtitulo: null,
+    genero: 'Suspense', capitulos: 1, tempo: 110,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/jogo-das-mascaras.jpg',
+    sinopse: 'Num jogo onde identidade é moeda, ninguém sai sem perder alguma coisa.',
+    pagina: 'livros/jogo-das-mascaras.html',
+  },
+  {
+    slug: 'cartas-do-passado', tipo: 'livro', destaque: false, novo: false,
+    titulo: 'Cartas do Passado',
+    subtitulo: null,
+    genero: 'Drama', capitulos: 1, tempo: 95,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/cartas-do-passado.jpg',
+    sinopse: 'Cartas que chegaram tarde demais — ou na hora exata. Uma história sobre o que dizemos quando finalmente encontramos coragem.',
+    pagina: 'livros/cartas-do-passado.html',
+  },
+  {
+    slug: 'a-marca-da-besta', tipo: 'livro', destaque: false, novo: false,
+    titulo: 'A Marca da Besta',
+    subtitulo: null,
+    genero: 'Horror', capitulos: 9, tempo: 380,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/a-marca-da-besta.jpg',
+    sinopse: 'Alguns medos habitam a carne. Outros habitam a memória. Os mais perigosos habitam ambos.',
+    pagina: 'livros/a-marca-da-besta.html',
+  },
+  {
+    slug: 'caminhos-de-outono', tipo: 'livro', destaque: false, novo: false,
+    titulo: 'Caminhos de Outono',
+    subtitulo: null,
+    genero: 'Lírico', capitulos: 7, tempo: 300,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/caminhos-de-outono.jpg',
+    sinopse: 'As estradas que só existem quando estamos dispostos a nos perder nelas.',
+    pagina: 'livros/caminhos-de-outono.html',
+  },
+  {
+    slug: 'das-coisas-que-o-amor-faz', tipo: 'livro', destaque: false, novo: false,
+    titulo: 'Das Coisas que o Amor Faz',
+    subtitulo: null,
+    genero: 'Romance literário', capitulos: 8, tempo: 360,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/das-coisas-que-o-amor-faz.jpg',
+    sinopse: 'Um inventário honesto das coisas que o amor faz — inclusive as que preferíamos que não fizesse.',
+    pagina: 'livros/das-coisas-que-o-amor-faz.html',
+  },
+  {
+    slug: 'genesis', tipo: 'livro', destaque: false, novo: false,
+    titulo: 'Gênesis',
+    subtitulo: null,
+    genero: 'Ficção especulativa', capitulos: 10, tempo: 480,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/genesis.jpg',
+    sinopse: 'O que veio antes do começo? Uma ficção especulativa sobre origens e o peso de ser o primeiro.',
+    pagina: 'livros/genesis.html',
+  },
+  {
+    slug: 'mares-secretas-do-amor', tipo: 'livro', destaque: false, novo: false,
+    titulo: 'As Marés Secretas do Amor',
+    subtitulo: null,
+    genero: 'Romance', capitulos: 9, tempo: 390,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/mares-secretas.jpg',
+    sinopse: 'Há amores que sobem e descem como maré — sem perguntar se você quer que voltem.',
+    pagina: 'livros/mares-secretas.html',
+  },
+  {
+    slug: 'rosas-e-espinhos', tipo: 'livro', destaque: false, novo: false,
+    titulo: 'Rosas e Espinhos',
+    subtitulo: null,
+    genero: 'Drama', capitulos: 6, tempo: 260,
+    preco: 19.90, preco_promo: null, gratuito: false,
+    capa: 'img/rosas-e-espinhos.jpg',
+    sinopse: 'A beleza e a dor sempre vieram juntas. Esta história não tenta separar as duas.',
+    pagina: 'livros/rosas-e-espinhos.html',
+  },
+  /* ── CONTOS ────────────────────────────────────────────────── */
+  {
+    slug: 'o-farol-do-afogado', tipo: 'conto', destaque: false, novo: false,
+    titulo: 'O Farol do Afogado',
+    subtitulo: null,
+    genero: 'Conto', capitulos: 1, tempo: 25,
+    preco: null, preco_promo: null, gratuito: true,
+    capa: 'img/o-farol-do-afogado-conto.jpg',
+    sinopse: 'Um farol que só acende quando ninguém está olhando. Um conto sobre o que guardamos para a escuridão.',
+    pagina: 'livros/o-farol-do-afogado.html',
+  },
+  {
+    slug: 'linhas-e-agulhas', tipo: 'conto', destaque: false, novo: false,
+    titulo: 'Linhas e Agulhas',
+    subtitulo: null,
+    genero: 'Conto', capitulos: 1, tempo: 20,
+    preco: null, preco_promo: null, gratuito: true,
+    capa: 'img/linhas-e-agulhas.jpg',
+    sinopse: 'Há padrões que só ficam visíveis quando você se afasta o suficiente para ver o todo.',
+    pagina: 'livros/linhas-e-agulhas.html',
+  },
+  {
+    slug: 'o-quarto-das-moscas', tipo: 'conto', destaque: false, novo: false,
+    titulo: 'O Quarto das Moscas',
+    subtitulo: null,
+    genero: 'Conto de horror', capitulos: 1, tempo: 18,
+    preco: null, preco_promo: null, gratuito: true,
+    capa: 'img/o-quarto-das-moscas.jpg',
+    sinopse: 'O quarto estava vazio antes de ela entrar. Depois que ela saiu, já não estava mais.',
+    pagina: 'livros/o-quarto-das-moscas.html',
+  },
+  /* ── SLOT 14: adicione o 14º livro aqui quando disponível ──── */
+  /* { slug: 'novo-livro', tipo: 'livro', destaque: true, novo: true, ... } */
+];
+
+/* ══ CARRINHO — leitura com verificação de dono ════════════════ */
+function carrinhoInicial() {
+  // Se o carrinho pertence a outro uid, descartar
+  const uid  = localStorage.getItem('rd_carrinho_uid');
+  const raw  = localStorage.getItem('rd_carrinho');
+  if (!raw) return [];
+  // uid ainda não conhecido aqui; será verificado após login em carregarSessao()
+  return JSON.parse(raw) || [];
 }
 
-document.querySelectorAll('.filtro-btn').forEach(btn => {
-  btn.addEventListener('click', () => filtrar(btn.dataset.filtro));
+/* ══ ESTADO ════════════════════════════════════════════════════ */
+const state = {
+  usuario:    null,
+  assinante:  false,
+  comprados:  [],       // slugs comprados pelo usuário logado
+  favoritos:  [],       // slugs favoritos
+  avaliacoes: {},       // slug → estrelas
+  carrinho:   carrinhoInicial(),
+  filtro:     'todos',
+  grupoAberto: null,    // slug do grupo de botões aberto
+};
+
+/* ══ HELPERS ═══════════════════════════════════════════════════ */
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtPreco(v) {
+  return 'R$\u00a0' + Number(v).toFixed(2).replace('.', ',');
+}
+function tempoFmt(min) {
+  if (!min) return '';
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min/60), m = min%60;
+  return m > 0 ? `${h}h${m}min` : `${h}h`;
+}
+function toast(msg, tipo = 'ok') {
+  const wrap = document.getElementById('toastWrap');
+  if (!wrap) return;
+  const t = document.createElement('div');
+  t.className = 'toast' + (tipo === 'erro' ? ' erro' : '');
+  t.textContent = msg;
+  wrap.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('visivel'));
+  setTimeout(() => { t.classList.remove('visivel'); setTimeout(() => t.remove(), 400); }, 3200);
+}
+
+/* ══ SESSÃO ════════════════════════════════════════════════════ */
+async function carregarSessao() {
+  try {
+    const r = await fetch('backend/auth/sessao.php', { credentials: 'same-origin' });
+    const d = await r.json();
+    if (d.ok && d.logado) {
+      state.usuario   = d.usuario;
+      state.assinante = d.usuario.assinante || false;
+      limparCarrinhoSeOutroUsuario(d.usuario.id);
+      const btn = document.getElementById('btnEntrar');
+      if (btn) {
+        btn.innerHTML = `<i class="fa fa-user"></i> ${d.usuario.nome.split(' ')[0]}`;
+        btn.href = 'leitor/';
+      }
+      // Carregar comprados
+      try {
+        const rc = await fetch('backend/compras.php?acao=meus_livros', { credentials: 'same-origin' });
+        const dc = await rc.json();
+        if (dc.ok) state.comprados = dc.slugs || [];
+      } catch {}
+      // Carregar favoritos
+      try {
+        const rf = await fetch('backend/livros.php?acao=meus_favoritos', { credentials: 'same-origin' });
+        const df = await rf.json();
+        if (df.ok) {
+          state.favoritos  = (df.favoritos||[]).map(f => f.slug);
+          state.avaliacoes = {};
+          (df.favoritos||[]).forEach(f => { if (f.estrelas) state.avaliacoes[f.slug] = f.estrelas; });
+        }
+      } catch {}
+    }
+  } catch {}
+}
+
+/* ══ CARRINHO ══════════════════════════════════════════════════ */
+function salvarCarrinho() {
+  localStorage.setItem('rd_carrinho', JSON.stringify(state.carrinho));
+  if (state.usuario?.id) {
+    localStorage.setItem('rd_carrinho_uid', String(state.usuario.id));
+  }
+}
+function limparCarrinhoSeOutroUsuario(uid) {
+  const storedUid = localStorage.getItem('rd_carrinho_uid');
+  if (storedUid && storedUid !== String(uid)) {
+    // Usuário diferente — descartar carrinho anterior
+    localStorage.removeItem('rd_carrinho');
+    localStorage.removeItem('rd_carrinho_uid');
+    state.carrinho = [];
+    atualizarCarrinhoUI();
+  }
+}
+function adicionarCarrinho(slug) {
+  const livro = CATALOGO.find(l => l.slug === slug);
+  if (!livro || livro.gratuito) return;
+  if (state.carrinho.find(i => i.slug === slug)) {
+    toast('Já está no carrinho.'); return;
+  }
+  state.carrinho.push({ slug, titulo: livro.titulo, preco: livro.preco_promo || livro.preco, capa: livro.capa });
+  salvarCarrinho();
+  atualizarCarrinhoUI();
+  toast(`"${livro.titulo}" adicionado ao carrinho! 🛒`);
+}
+function removerCarrinho(slug) {
+  state.carrinho = state.carrinho.filter(i => i.slug !== slug);
+  salvarCarrinho();
+  atualizarCarrinhoUI();
+  renderizarCarrinhoLista();
+}
+function atualizarCarrinhoUI() {
+  const badge = document.getElementById('carrinhoBadge');
+  const total = state.carrinho.length;
+  if (badge) { badge.textContent = total; badge.classList.toggle('visivel', total > 0); }
+}
+function renderizarCarrinhoLista() {
+  const lista  = document.getElementById('carrinhoLista');
+  const footer = document.getElementById('carrinhoFooter');
+  const totalEl= document.getElementById('carrinhoTotal');
+  if (!lista) return;
+
+  if (!state.carrinho.length) {
+    lista.innerHTML = `<div class="cp-vazio"><i class="fa fa-cart-shopping"></i><p>Seu carrinho está vazio.</p></div>`;
+    if (footer) footer.style.display = 'none';
+    return;
+  }
+
+  let total = 0;
+  lista.innerHTML = state.carrinho.map(item => {
+    total += Number(item.preco || 0);
+    return `<div class="cp-item">
+      <img src="${esc(item.capa)}" alt="${esc(item.titulo)}" class="cp-item-capa"
+           onerror="this.style.display='none'">
+      <div class="cp-item-info">
+        <div class="cp-item-titulo">${esc(item.titulo)}</div>
+        <div class="cp-item-preco">${fmtPreco(item.preco)}</div>
+      </div>
+      <button class="cp-item-del" onclick="removerCarrinho('${item.slug}')" aria-label="Remover">
+        <i class="fa fa-xmark"></i>
+      </button>
+    </div>`;
+  }).join('');
+
+  if (footer) footer.style.display = 'block';
+  if (totalEl) totalEl.textContent = fmtPreco(total);
+}
+function abrirCarrinho() {
+  renderizarCarrinhoLista();
+  document.getElementById('carrinhoOverlay')?.classList.add('aberto');
+  document.getElementById('carrinhoPainel')?.classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+}
+function fecharCarrinho() {
+  document.getElementById('carrinhoOverlay')?.classList.remove('aberto');
+  document.getElementById('carrinhoPainel')?.classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('carrinhoBtn')?.addEventListener('click', abrirCarrinho);
+document.getElementById('carrinhoFechar')?.addEventListener('click', fecharCarrinho);
+document.getElementById('carrinhoOverlay')?.addEventListener('click', fecharCarrinho);
+document.getElementById('btnLimparCarrinho')?.addEventListener('click', () => {
+  if (!confirm('Limpar o carrinho?')) return;
+  state.carrinho = []; salvarCarrinho(); atualizarCarrinhoUI(); renderizarCarrinhoLista();
+});
+document.getElementById('btnFinalizarCompra')?.addEventListener('click', async () => {
+  if (!state.usuario) {
+    fecharCarrinho();
+    window.location.href = 'login.html?redir=livros.html';
+    return;
+  }
+  // Redirecionar para a página dedicada do carrinho com checkout MP
+  salvarCarrinho(); // garantir localStorage atualizado
+  fecharCarrinho();
+  window.location.href = 'carrinho.html';
 });
 
-// Carregar contadores de downloads de todos os livros
-(async function() {
+/* ══ FAVORITO ══════════════════════════════════════════════════ */
+async function toggleFavorito(slug, btn) {
+  if (!state.usuario) { window.location.href = 'login.html?redir=livros.html'; return; }
   try {
-    const r = await fetch('backend/livros.php?acao=todos_contadores', { credentials: 'same-origin' });
-    const data = await r.json();
-    if (!data.ok) return;
-    Object.entries(data.contadores).forEach(([slug, total]) => {
-      const el = document.querySelector(`#dl-${slug} span`);
-      if (el) el.textContent = total.toLocaleString('pt-BR');
+    const r = await fetch('backend/livros.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'favoritar', livro: slug }),
     });
-  } catch(e) { /* silencioso */ }
+    const d = await r.json();
+    if (d.ok) {
+      if (d.favorito) { state.favoritos.push(slug); toast('Adicionado aos favoritos ❤️'); }
+      else            { state.favoritos = state.favoritos.filter(s => s !== slug); toast('Removido dos favoritos.'); }
+      if (btn) btn.classList.toggle('ativo', d.favorito);
+    }
+  } catch { toast('Erro ao favoritar.', 'erro'); }
+}
+
+/* ══ AVALIAÇÃO ═════════════════════════════════════════════════ */
+async function avaliar(slug, estrelas) {
+  if (!state.usuario) { toast('Faça login para avaliar.', 'erro'); return; }
+  try {
+    const r = await fetch('backend/livros.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'avaliar', livro: slug, estrelas }),
+    });
+    const d = await r.json();
+    if (d.ok) { state.avaliacoes[slug] = estrelas; toast(d.mensagem || 'Avaliado! ⭐'); }
+  } catch {}
+}
+
+/* ══ MODAL DETALHES ════════════════════════════════════════════ */
+function abrirModal(slug) {
+  const livro = CATALOGO.find(l => l.slug === slug);
+  if (!livro) return;
+
+  const estrelasSalvas = state.avaliacoes[slug] || 0;
+  const logado         = !!state.usuario;
+  const jaComprou      = state.comprados.includes(slug);
+  const podeEler       = livro.gratuito || jaComprou || state.assinante;
+
+  const estrelas = [1,2,3,4,5].map(n =>
+    `<span class="estrela${n <= estrelasSalvas ? ' ativa' : ''}"
+           onclick="avaliar('${slug}',${n});atualizarEstrelasModal('${slug}',${n})"
+           onmouseenter="hoverEstrelasModal(${n})"
+           onmouseleave="resetEstrelasModal('${slug}')"
+           role="button" aria-label="${n} estrela${n>1?'s':''}">★</span>`
+  ).join('');
+
+  let botoesModal = '';
+  if (podeEler) {
+    botoesModal += `<a href="leitor/?livro=${slug}" class="btn-card btn-card-verde">
+      <i class="fa fa-book-open"></i> Ler agora</a>`;
+  }
+  if (livro.pagina) {
+    botoesModal += `<a href="${esc(livro.pagina)}" class="btn-card btn-card-secundario">
+      <i class="fa fa-book"></i> Ver página completa</a>`;
+  }
+  if (logado) {
+    if (!livro.gratuito && !jaComprou) {
+      botoesModal += `<button onclick="adicionarCarrinho('${slug}');fecharModal()" class="btn-card btn-card-primario">
+        <i class="fa fa-cart-shopping"></i> Adicionar ao carrinho</button>`;
+    }
+    botoesModal += `<a href="presentear.html?livro=${slug}${livro.gratuito?'&gratis=1':''}" class="btn-card btn-card-secundario">
+      <i class="fa fa-gift"></i> ${livro.gratuito ? 'Presentear (gratuito)' : 'Presentear alguém'}</a>`;
+  } else if (!logado && !livro.gratuito) {
+    botoesModal += `<a href="login.html?redir=livros.html" class="btn-card btn-card-primario">
+      <i class="fa fa-user"></i> Entre para comprar</a>`;
+    botoesModal += `<button onclick="adicionarCarrinho('${slug}');fecharModal()" class="btn-card btn-card-secundario">
+      <i class="fa fa-cart-shopping"></i> Adicionar ao carrinho</button>`;
+  }
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-header">
+      <img src="${esc(livro.capa)}" alt="${esc(livro.titulo)}" class="modal-capa"
+           onerror="this.style.background='var(--fundo-2)';this.style.minHeight='150px'">
+      <div class="modal-header-info">
+        <div class="modal-tipo">${livro.tipo === 'conto' ? 'Conto' : 'Livro'} · ${esc(livro.genero)}</div>
+        <h2 class="modal-titulo">${esc(livro.titulo)}</h2>
+        ${livro.subtitulo ? `<p class="modal-subtitulo">${esc(livro.subtitulo)}</p>` : ''}
+        <div class="card-estrelas" id="modalEstrelas">${estrelas}</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <p class="modal-sinopse">${esc(livro.sinopse || '')}</p>
+      <div class="modal-info-grid">
+        <div class="modal-info-item"><i class="fa fa-clock"></i> ${tempoFmt(livro.tempo)}</div>
+        <div class="modal-info-item"><i class="fa fa-file-lines"></i> ${livro.capitulos} capítulo${livro.capitulos>1?'s':''}</div>
+        <div class="modal-info-item"><i class="fa fa-file-code"></i> ePub</div>
+        <div class="modal-info-item"><i class="fa fa-tag"></i>
+          ${livro.gratuito ? '<span style="color:#27ae60">Gratuito</span>' : fmtPreco(livro.preco_promo || livro.preco)}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.5rem">${botoesModal}</div>
+    </div>`;
+
+  document.getElementById('modalOverlay').classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+}
+function fecharModal() {
+  document.getElementById('modalOverlay').classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+function atualizarEstrelasModal(slug, n) {
+  state.avaliacoes[slug] = n;
+  document.querySelectorAll('#modalEstrelas .estrela').forEach((el, i) => {
+    el.classList.toggle('ativa', i < n);
+  });
+}
+function hoverEstrelasModal(n) {
+  document.querySelectorAll('#modalEstrelas .estrela').forEach((el, i) => {
+    el.classList.toggle('hover', i < n);
+  });
+}
+function resetEstrelasModal(slug) {
+  const n = state.avaliacoes[slug] || 0;
+  document.querySelectorAll('#modalEstrelas .estrela').forEach((el, i) => {
+    el.classList.remove('hover');
+    el.classList.toggle('ativa', i < n);
+  });
+}
+document.getElementById('modalFechar')?.addEventListener('click', fecharModal);
+document.getElementById('modalOverlay')?.addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) fecharModal();
+});
+
+/* ══ RENDERIZAR CARDS ══════════════════════════════════════════ */
+function renderizar(filtro = 'todos') {
+  state.filtro = filtro;
+  const grid = document.getElementById('bibGrid');
+  if (!grid) return;
+
+  const filtrados = CATALOGO.filter(l => {
+    if (filtro === 'livro')    return l.tipo === 'livro';
+    if (filtro === 'conto')    return l.tipo === 'conto';
+    if (filtro === 'gratis')   return l.gratuito;
+    if (filtro === 'destaque') return l.destaque;
+    return true;
+  });
+
+  if (!filtrados.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--texto-3)">
+      <i class="fa fa-feather-pointed" style="font-size:2rem;color:var(--ouro);opacity:.3;display:block;margin-bottom:.75rem"></i>
+      Nenhuma obra encontrada.
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtrados.map(l => gerarCard(l)).join('');
+  if (window.initReveal) window.initReveal();
+
+  // Fechar grupos ao clicar fora
+  document.removeEventListener('click', fecharGrupos);
+  document.addEventListener('click', fecharGrupos);
+}
+
+function fecharGrupos(e) {
+  if (!e.target.closest('.btn-grupo')) {
+    document.querySelectorAll('.btn-grupo-painel.aberto').forEach(p => {
+      p.classList.remove('aberto');
+      p.previousElementSibling?.setAttribute('aria-expanded','false');
+    });
+  }
+}
+
+function gerarCard(l) {
+  const logado    = !!state.usuario;
+  const jaComprou = state.comprados.includes(l.slug);
+  const podeEler  = l.gratuito || jaComprou || state.assinante;
+  const eFav      = state.favoritos.includes(l.slug);
+  const estrelasSalvas = state.avaliacoes[l.slug] || 0;
+
+  /* badges */
+  let badges = '';
+  if (l.destaque) badges += `<span class="badge badge-destaque">Destaque</span>`;
+  if (l.novo)     badges += `<span class="badge badge-novo">Novo</span>`;
+  if (l.gratuito) badges += `<span class="badge badge-gratis">Grátis</span>`;
+  if (l.tipo === 'conto') badges += `<span class="badge badge-conto">Conto</span>`;
+
+  /* preço */
+  let precoHtml = '';
+  if (l.gratuito) {
+    precoHtml = `<div class="card-preco-wrap"><span class="card-preco-gratis"><i class="fa fa-unlock"></i> Gratuito</span></div>`;
+  } else if (l.preco_promo) {
+    precoHtml = `<div class="card-preco-wrap">
+      <span class="card-preco">${fmtPreco(l.preco_promo)}</span>
+      <span class="card-preco-orig">${fmtPreco(l.preco)}</span>
+    </div>`;
+  } else {
+    precoHtml = `<div class="card-preco-wrap"><span class="card-preco">${fmtPreco(l.preco)}</span></div>`;
+  }
+
+  /* estrelas */
+  const estrelas = [1,2,3,4,5].map(n =>
+    `<span class="estrela${n <= estrelasSalvas ? ' ativa' : ''}" aria-hidden="true">★</span>`
+  ).join('');
+
+  /* ── BOTÕES ──
+     1. Ler agora (se pode ler) — sempre visível
+     2. Adicionar ao carrinho — todos (se não gratuito)
+     3. Grupo expansível: Comprar / Presentear (logado) ou Detalhes (todos)
+  */
+  let acoes = '';
+
+  // Botão ler
+  if (podeEler) {
+    acoes += `<a href="leitor/?livro=${l.slug}" class="btn-card btn-card-verde">
+      <i class="fa fa-book-open"></i> Ler agora</a>`;
+  }
+
+  // Botão carrinho (se tem preço)
+  if (!l.gratuito) {
+    if (jaComprou) {
+      acoes += `<span class="btn-card btn-card-secundario btn-card-disabled">
+        <i class="fa fa-check"></i> Já adquirido</span>`;
+    } else {
+      acoes += `<button onclick="adicionarCarrinho('${l.slug}')" class="btn-card btn-card-primario">
+        <i class="fa fa-cart-shopping"></i> Adicionar ao carrinho</button>`;
+    }
+  }
+
+  // Grupo expansível: Detalhes + Compartilhar + Presentear (logado)
+  const urlLivro = encodeURIComponent('https://roberiodiogenes.com/' + (l.pagina || 'livros.html'));
+  const txtShare = encodeURIComponent(`Leia "${l.titulo}" de Robério Diógenes — https://roberiodiogenes.com/${l.pagina||'livros.html'}`);
+
+  let grupoItens = `<button onclick="abrirModal('${l.slug}')" class="btn-card btn-card-secundario">
+    <i class="fa fa-circle-info"></i> Detalhes</button>`;
+
+  if (l.pagina) {
+    grupoItens += `<a href="${esc(l.pagina)}" class="btn-card btn-card-secundario">
+      <i class="fa fa-book"></i> Ver página</a>`;
+  }
+
+  // Compartilhar — ícones compactos
+  grupoItens += `<div style="padding:.3rem .1rem .1rem">
+    <div style="font-family:var(--fonte-display);font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--texto-3);margin-bottom:.45rem">Compartilhar</div>
+    <div class="share-ico-row">
+      <a href="https://wa.me/?text=${txtShare}" target="_blank" rel="noopener"
+         class="share-ico share-ico-wa" title="Compartilhar no WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i></a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=${urlLivro}" target="_blank" rel="noopener"
+         class="share-ico share-ico-fb" title="Compartilhar no Facebook">
+        <i class="fa-brands fa-facebook-f"></i></a>
+      <a href="https://twitter.com/intent/tweet?text=${txtShare}" target="_blank" rel="noopener"
+         class="share-ico share-ico-tw" title="Compartilhar no X/Twitter">
+        <i class="fa-brands fa-x-twitter"></i></a>
+      <button onclick="copiarLink('${esc(l.titulo)}','${esc(l.pagina||'livros.html')}')"
+              class="share-ico share-ico-ig" title="Instagram — copiar link para Stories">
+        <i class="fa-brands fa-instagram"></i></button>
+      <button onclick="copiarLink('${esc(l.titulo)}','${esc(l.pagina||'livros.html')}')"
+              class="share-ico share-ico-link" title="Copiar link">
+        <i class="fa fa-link"></i></button>
+    </div>
+  </div>`;
+
+  if (logado) {
+    // Gratuitos: presentear sem custo; pagos: fluxo de pagamento
+    const labelPresente = l.gratuito
+      ? `<i class="fa fa-gift"></i> Presentear (grátis)`
+      : `<i class="fa fa-gift"></i> Presentear alguém`;
+    grupoItens += `<a href="presentear.html?livro=${l.slug}${l.gratuito?'&gratis=1':''}" class="btn-card btn-card-secundario">
+      ${labelPresente}</a>`;
+  }
+
+  acoes += `<div class="btn-grupo">
+    <button class="btn-grupo-toggle" aria-expanded="false" aria-haspopup="true"
+            onclick="toggleGrupo(this)"
+            aria-label="Mais opções para ${esc(l.titulo)}">
+      <span><i class="fa fa-ellipsis"></i> Mais opções</span>
+      <i class="fa fa-chevron-up chevron"></i>
+    </button>
+    <div class="btn-grupo-painel">${grupoItens}</div>
+  </div>`;
+
+  return `<article class="card-livro reveal" data-tipo="${l.tipo}" data-slug="${l.slug}">
+    <!-- badges -->
+    <div class="card-badges">${badges}</div>
+
+    <!-- favorito -->
+    <button class="card-fav${eFav?' ativo':''}"
+            onclick="toggleFavorito('${l.slug}',this)"
+            aria-label="${eFav?'Remover dos':'Adicionar aos'} favoritos"
+            title="Favoritar">
+      <i class="fa${eFav?' fa-solid':''} fa-heart"></i>
+    </button>
+
+    <!-- capa -->
+    <div class="card-capa-wrap">
+      <img src="${esc(l.capa)}" alt="Capa de ${esc(l.titulo)}" class="card-capa" loading="lazy"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="card-capa-placeholder" style="display:none">
+        <i class="fa fa-book"></i>${esc(l.titulo)}
+      </div>
+    </div>
+
+    <!-- corpo -->
+    <div class="card-corpo">
+      <!-- meta info -->
+      <div class="card-meta">
+        <span class="card-meta-item"><i class="fa fa-tag"></i>${l.tipo === 'conto' ? 'Conto' : 'Livro'}</span>
+        ${l.tempo ? `<span class="card-meta-item"><i class="fa fa-clock"></i>${tempoFmt(l.tempo)}</span>` : ''}
+        <span class="card-meta-item"><i class="fa fa-file-code"></i>ePub</span>
+      </div>
+
+      <h2 class="card-titulo">${esc(l.titulo)}</h2>
+      ${l.subtitulo ? `<p class="card-subtitulo">${esc(l.subtitulo)}</p>` : ''}
+
+      ${precoHtml}
+
+      <!-- estrelas -->
+      <div class="card-estrelas" aria-label="Avaliação">${estrelas}</div>
+
+      <!-- ações -->
+      <div class="card-acoes">${acoes}</div>
+    </div>
+  </article>`;
+}
+
+function toggleGrupo(btn) {
+  const painel  = btn.nextElementSibling;
+  const aberto  = painel.classList.contains('aberto');
+
+  // Fechar todos os outros
+  document.querySelectorAll('.btn-grupo-painel.aberto').forEach(p => {
+    p.classList.remove('aberto');
+    p.previousElementSibling?.setAttribute('aria-expanded','false');
+  });
+
+  if (!aberto) {
+    painel.classList.add('aberto');
+    btn.setAttribute('aria-expanded','true');
+  }
+}
+
+/* ══ FILTROS ═══════════════════════════════════════════════════ */
+document.querySelectorAll('.fil-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fil-btn').forEach(b => b.classList.remove('ativo'));
+    btn.classList.add('ativo');
+    renderizar(btn.dataset.fil);
+  });
+});
+
+/* ══ ESC para fechar modais ════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { fecharModal(); fecharCarrinho(); }
+});
+
+/* ══ COMPARTILHAR ══════════════════════════════════════════════ */
+function copiarLink(titulo, pagina) {
+  const url = 'https://roberiodiogenes.com/' + pagina;
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(url).then(() => toast(`Link de "${titulo}" copiado! 🔗`));
+  } else {
+    // Fallback para navegadores antigos
+    const el = document.createElement('input');
+    el.value = url;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    toast(`Link de "${titulo}" copiado! 🔗`);
+  }
+}
+
+/* ══ EXPOR AO ESCOPO GLOBAL (necessário para onclick inline) ══ */
+window.adicionarCarrinho    = adicionarCarrinho;
+window.removerCarrinho      = removerCarrinho;
+window.toggleGrupo          = toggleGrupo;
+window.abrirModal           = abrirModal;
+window.fecharModal          = fecharModal;
+window.toggleFavorito       = toggleFavorito;
+window.avaliar              = avaliar;
+window.atualizarEstrelasModal = atualizarEstrelasModal;
+window.hoverEstrelasModal   = hoverEstrelasModal;
+window.resetEstrelasModal   = resetEstrelasModal;
+window.copiarLink           = copiarLink;
+
+/* ══ INIT ══════════════════════════════════════════════════════ */
+(async () => {
+  await carregarSessao();
+  renderizar('todos');
+  atualizarCarrinhoUI();
 })();
 
-window.submeterNewsletter = function(e) {
-  e.preventDefault();
-  const input = e.target.querySelector('input[type="email"]');
-  mostrarToast('Inscrição realizada! 📖', 'sucesso');
-  if (input) input.value = '';
-};
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "CollectionPage",
-      "@id": "https://www.roberiodiogenes.com/livros.html",
-      "name": "Biblioteca Digital de Robério Diógenes",
-      "url": "https://www.roberiodiogenes.com/livros.html",
-      "description": "Catálogo completo de obras literárias publicadas pelo autor independente Robério Diógenes.",
-      "about": {
-        "@type": "Person",
-        "name": "Robério Diógenes",
-        "url": "https://www.roberiodiogenes.com"
-      }
-    }
-  ]
-}
+})();
 </script>
 </body>
 </html>

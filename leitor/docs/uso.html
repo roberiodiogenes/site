@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Como usar o Leitor Online | Robério Diógenes</title>
+  <meta name="description" content="Guia completo do Leitor Online de Robério Diógenes: anotações, marcações, conquistas, temas e todas as funcionalidades explicadas." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.roberiodiogenes.com/leitor/docs/uso.html" />
+  <link rel="icon" type="image/png" href="../../img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <style>
+    /* ── Reset ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Variáveis ──────────────────────────────────────────── */
+    :root {
+      --bg:      #FAFAF8;
+      --bg2:     #F4F2EE;
+      --texto:   #2C2416;
+      --texto2:  #4A3E2A;
+      --texto3:  #7A6E5C;
+      --ouro:    #8B6914;
+      --borda:   #E0D8CC;
+      --fonte:   'Georgia', serif;
+      --fonte-ui: system-ui, -apple-system, sans-serif;
+      --larg:    720px;
+    }
+
+    /* ── Base ───────────────────────────────────────────────── */
+    body {
+      font-family: var(--fonte);
+      background: var(--bg);
+      color: var(--texto);
+      line-height: 1.85;
+      font-size: 1rem;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    .doc-header {
+      border-bottom: 1px solid var(--borda);
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #fff; position: sticky; top: 0; z-index: 10;
+    }
+    .doc-logo {
+      font-size: 1.1rem; color: var(--ouro); text-decoration: none;
+      font-family: var(--fonte);
+    }
+    .doc-header-links { display: flex; gap: 1.25rem; }
+    .doc-header-links a {
+      font-family: var(--fonte-ui); font-size: .82rem;
+      color: var(--texto3); text-decoration: none;
+    }
+    .doc-header-links a:hover { color: var(--ouro); }
+
+    /* ── Layout ─────────────────────────────────────────────── */
+    .doc-wrap {
+      display: flex; max-width: 1100px; margin: 0 auto;
+      padding: 2.5rem 1.5rem; gap: 3rem;
+    }
+
+    /* ── Índice lateral ─────────────────────────────────────── */
+    .doc-indice {
+      width: 220px; flex-shrink: 0;
+      position: sticky; top: 72px; align-self: flex-start;
+      max-height: calc(100vh - 90px); overflow-y: auto;
+    }
+    .indice-titulo {
+      font-family: var(--fonte-ui); font-size: .65rem;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--ouro); margin-bottom: .85rem; display: block;
+    }
+    .indice-lista { list-style: none; display: flex; flex-direction: column; gap: .1rem; }
+    .indice-lista li a {
+      font-family: var(--fonte-ui); font-size: .82rem; color: var(--texto3);
+      text-decoration: none; padding: .25rem 0;
+      display: block; border-left: 2px solid transparent;
+      padding-left: .75rem; transition: all .15s;
+    }
+    .indice-lista li a:hover { color: var(--ouro); border-left-color: var(--ouro); }
+    .indice-lista li.sub a { padding-left: 1.5rem; font-size: .78rem; }
+
+    /* ── Conteúdo ───────────────────────────────────────────── */
+    .doc-conteudo { flex: 1; min-width: 0; max-width: var(--larg); }
+
+    /* Hero da doc */
+    .doc-hero { margin-bottom: 3rem; }
+    .doc-hero-pretitulo {
+      font-family: var(--fonte-ui); font-size: .65rem;
+      letter-spacing: .25em; text-transform: uppercase;
+      color: var(--ouro); margin-bottom: .75rem; display: block;
+    }
+    .doc-hero h1 {
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-weight: 400; line-height: 1.2; margin-bottom: .85rem; color: var(--texto);
+    }
+    .doc-hero h1 em { color: var(--ouro); font-style: italic; }
+    .doc-hero p { font-size: 1.05rem; color: var(--texto2); max-width: 560px; }
+
+    /* Seções */
+    .doc-secao { margin-bottom: 3.5rem; scroll-margin-top: 80px; }
+    .doc-secao h2 {
+      font-size: 1.35rem; font-weight: 400;
+      color: var(--texto); margin-bottom: 1.25rem;
+      padding-bottom: .6rem; border-bottom: 1px solid var(--borda);
+      display: flex; align-items: center; gap: .65rem;
+    }
+    .doc-secao h2 .sec-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--ouro); color: #fff;
+      font-size: .75rem; font-family: var(--fonte-ui);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-weight: 700;
+    }
+    .doc-secao h3 {
+      font-size: 1rem; font-weight: 600; color: var(--texto);
+      margin: 1.5rem 0 .6rem;
+    }
+    .doc-secao p  { color: var(--texto2); margin-bottom: 1rem; }
+    .doc-secao ul, .doc-secao ol {
+      padding-left: 1.35rem; margin-bottom: 1rem; color: var(--texto2);
+    }
+    .doc-secao li { margin-bottom: .35rem; }
+
+    /* Caixa de dica */
+    .dica {
+      background: #FFF8E6; border-left: 3px solid var(--ouro);
+      border-radius: 0 8px 8px 0; padding: .85rem 1.1rem;
+      margin: 1.25rem 0; font-size: .92rem; color: var(--texto2);
+    }
+    .dica strong { color: var(--ouro); }
+
+    /* Caixa de aviso */
+    .aviso {
+      background: #FFF3F3; border-left: 3px solid #C0392B;
+      border-radius: 0 8px 8px 0; padding: .85rem 1.1rem;
+      margin: 1.25rem 0; font-size: .92rem; color: #6B2020;
+    }
+
+    /* Atalhos de teclado */
+    kbd {
+      display: inline-block; padding: .15rem .45rem;
+      background: var(--bg2); border: 1px solid var(--borda);
+      border-radius: 4px; border-bottom-width: 2px;
+      font-family: var(--fonte-ui); font-size: .78rem; color: var(--texto);
+    }
+
+    /* Tabela de conquistas */
+    .conquistas-tabela {
+      width: 100%; border-collapse: collapse;
+      margin: 1rem 0; font-size: .88rem;
+    }
+    .conquistas-tabela th {
+      text-align: left; padding: .5rem .75rem;
+      background: var(--bg2); color: var(--texto3);
+      font-family: var(--fonte-ui); font-size: .72rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      border-bottom: 1px solid var(--borda);
+    }
+    .conquistas-tabela td {
+      padding: .6rem .75rem; border-bottom: 1px solid var(--borda);
+      color: var(--texto2); vertical-align: middle;
+    }
+    .conquistas-tabela tr:last-child td { border-bottom: none; }
+
+    /* Botão de acesso */
+    .doc-cta {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.5rem; background: var(--ouro); color: #fff;
+      border-radius: 8px; text-decoration: none;
+      font-family: var(--fonte-ui); font-size: .85rem; font-weight: 600;
+      letter-spacing: .05em; margin-top: 1rem;
+      transition: opacity .2s;
+    }
+    .doc-cta:hover { opacity: .85; }
+
+    /* Ícone inline */
+    .ic { color: var(--ouro); margin-right: .25rem; }
+
+    /* Direitos e rodapé */
+    .doc-direitos {
+      background: var(--bg2); border-top: 1px solid var(--borda);
+      padding: 2.5rem 2rem; margin-top: 2rem;
+    }
+    .dir-inner { max-width: 720px; margin: 0 auto; }
+    .dir-titulo {
+      font-family: var(--fonte-ui); font-size: .65rem;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--ouro); margin-bottom: 1rem; display: block;
+    }
+    .doc-direitos p { font-size: .88rem; color: var(--texto3); margin-bottom: .65rem; }
+    .doc-direitos a { color: var(--ouro); }
+
+    .doc-footer {
+      text-align: center; padding: 1.5rem;
+      font-family: var(--fonte-ui); font-size: .78rem; color: var(--texto3);
+      border-top: 1px solid var(--borda);
+    }
+    .doc-footer a { color: var(--ouro); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .doc-indice { display: none; }
+      .doc-wrap   { padding: 1.5rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="doc-header">
+  <a href="../../index.html" class="doc-logo">Robério Diógenes</a>
+  <nav class="doc-header-links" aria-label="Links rápidos">
+    <a href="../index.html"><i class="fa fa-book-open"></i> Abrir o Leitor</a>
+    <a href="../../livros.html"><i class="fa fa-book"></i> Biblioteca</a>
+    <a href="../../contato.html"><i class="fa fa-envelope"></i> Contato</a>
+  </nav>
+</header>
+
+<div class="doc-wrap">
+
+  <!-- Índice -->
+  <aside class="doc-indice" aria-label="Índice">
+    <span class="indice-titulo">Nesta página</span>
+    <ul class="indice-lista">
+      <li><a href="#inicio">Começando</a></li>
+      <li><a href="#biblioteca">Sua Biblioteca</a></li>
+      <li><a href="#leitura">Lendo um Livro</a></li>
+      <li class="sub"><a href="#navegacao">Navegação</a></li>
+      <li class="sub"><a href="#progresso">Progresso</a></li>
+      <li><a href="#tipografia">Aparência</a></li>
+      <li class="sub"><a href="#fontes">Fontes</a></li>
+      <li class="sub"><a href="#temas">Temas</a></li>
+      <li><a href="#anotacoes">Anotações</a></li>
+      <li><a href="#marcacoes">Marcações</a></li>
+      <li><a href="#conquistas">Conquistas</a></li>
+      <li><a href="#meta">Relógio de Meta</a></li>
+      <li><a href="#foco">Modo Foco</a></li>
+      <li><a href="#nao-perturbe">Modo Leitura</a></li>
+      <li><a href="#notas-autor">Notas do Autor</a></li>
+      <li><a href="#indicar">Indicar para Amigo</a></li>
+      <li><a href="#erros">Reportar Erros</a></li>
+      <li><a href="#ranking">Ranking</a></li>
+      <li><a href="#atalhos">Atalhos de Teclado</a></li>
+      <li><a href="#acesso">Tipos de Acesso</a></li>
+      <li><a href="#direitos">Direitos e Deveres</a></li>
+    </ul>
+  </aside>
+
+  <!-- Conteúdo -->
+  <main class="doc-conteudo">
+
+    <!-- Hero -->
+    <div class="doc-hero">
+      <span class="doc-hero-pretitulo">Documentação do Usuário</span>
+      <h1>Guia do <em>Leitor Online</em></h1>
+      <p>Tudo que você precisa saber para aproveitar ao máximo a experiência de leitura no site de Robério Diógenes.</p>
+      <a href="../index.html" class="doc-cta"><i class="fa fa-book-open"></i> Acessar o Leitor agora</a>
+    </div>
+
+    <!-- 1. Começando -->
+    <section class="doc-secao" id="inicio">
+      <h2><span class="sec-num">1</span> Começando</h2>
+      <p>Para usar o Leitor Online você precisa de uma conta no site. O cadastro é gratuito e leva menos de um minuto.</p>
+      <ol>
+        <li>Acesse <a href="../../login.html">roberiodiogenes.com/login.html</a> e faça login.</li>
+        <li>No menu do site, clique em <strong>Biblioteca</strong> para ver os livros disponíveis.</li>
+        <li>Clique em <strong>"Ler agora"</strong> em qualquer livro gratuito, ou adquira um livro para acessá-lo.</li>
+        <li>O Leitor abrirá automaticamente na última posição onde você parou.</li>
+      </ol>
+      <div class="dica">
+        <strong>Dica:</strong> Você também pode acessar diretamente pelo endereço
+        <code>roberiodiogenes.com/leitor/</code> — sua biblioteca aparecerá na tela inicial.
+      </div>
+    </section>
+
+    <!-- 2. Biblioteca -->
+    <section class="doc-secao" id="biblioteca">
+      <h2><span class="sec-num">2</span> Sua Biblioteca</h2>
+      <p>A tela inicial do Leitor mostra todos os livros e contos que você tem acesso: gratuitos, comprados e incluídos na sua assinatura.</p>
+      <ul>
+        <li>Cada card mostra a capa, o título e uma <strong>barra de progresso</strong> indicando quanto você já leu.</li>
+        <li>Livros concluídos recebem o badge <strong>✓ Lido</strong> no canto superior.</li>
+        <li>Clique em qualquer card para abrir o livro diretamente na última posição salva.</li>
+      </ul>
+      <p>Ao terminar uma sessão de leitura, o progresso é salvo automaticamente. Na próxima vez que abrir o livro, você continua exatamente de onde parou.</p>
+    </section>
+
+    <!-- 3. Lendo um Livro -->
+    <section class="doc-secao" id="leitura">
+      <h2><span class="sec-num">3</span> Lendo um Livro</h2>
+
+      <h3 id="navegacao"><i class="fa fa-chevron-right ic"></i> Navegação entre capítulos</h3>
+      <p>Na parte inferior da tela você encontra a barra de navegação:</p>
+      <ul>
+        <li><strong>Anterior / Próximo</strong> — avança ou retrocede um capítulo.</li>
+        <li><strong>Seletor de capítulo</strong> — clique no menu do centro para ir direto a qualquer capítulo da obra.</li>
+        <li><strong>Teclado</strong> — use <kbd>→</kbd> e <kbd>←</kbd> para navegar entre capítulos.</li>
+      </ul>
+
+      <h3 id="progresso"><i class="fa fa-chart-line ic"></i> Barra de progresso</h3>
+      <p>A barra dourada no topo da tela mostra o percentual de leitura do livro inteiro. Passe o cursor sobre ela para ver o número exato. O progresso é salvo automaticamente a cada 30 segundos e também ao fechar o leitor.</p>
+    </section>
+
+    <!-- 4. Aparência -->
+    <section class="doc-secao" id="tipografia">
+      <h2><span class="sec-num">4</span> Aparência e Tipografia</h2>
+      <p>Clique no ícone <i class="fa fa-sliders ic"></i> <strong>Configurações</strong> no canto superior direito para personalizar a leitura.</p>
+
+      <h3 id="fontes"><i class="fa fa-font ic"></i> Fontes</h3>
+      <ul>
+        <li><strong>Serifada</strong> — Estilo clássico, ideal para leitura longa. (Georgia)</li>
+        <li><strong>Sem Serifa</strong> — Moderna e limpa. Boa para telas menores.</li>
+        <li><strong>Manuscrita</strong> — Estilo levemente cursivo para uma experiência diferente.</li>
+      </ul>
+
+      <h3><i class="fa fa-text-height ic"></i> Tamanho e espaçamento</h3>
+      <p>Use os controles deslizantes para ajustar o tamanho do texto (12px a 28px) e o espaçamento entre linhas (1.2 a 2.5). Recomendamos 18px e 1.8 para leitura confortável.</p>
+
+      <h3><i class="fa fa-arrows-left-right ic"></i> Largura da coluna</h3>
+      <p>Escolha entre <strong>Estreita</strong> (560px), <strong>Média</strong> (680px) e <strong>Larga</strong> (820px) conforme o tamanho da sua tela.</p>
+
+      <h3 id="temas"><i class="fa fa-circle-half-stroke ic"></i> Temas</h3>
+      <ul>
+        <li><strong>Claro</strong> — Fundo branco creme. Ideal para ambientes iluminados.</li>
+        <li><strong>Sépia</strong> — Fundo amarelado suave. Reduz o cansaço visual.</li>
+        <li><strong>Escuro</strong> — Fundo escuro, texto dourado. Perfeito para a noite.</li>
+      </ul>
+      <p>Clique em <strong>"Salvar preferências"</strong> para que suas escolhas sejam mantidas em todos os dispositivos.</p>
+    </section>
+
+    <!-- 5. Anotações -->
+    <section class="doc-secao" id="anotacoes">
+      <h2><span class="sec-num">5</span> Anotações</h2>
+      <p>Você pode adicionar anotações pessoais a qualquer parte do livro.</p>
+
+      <h3>Como criar uma anotação</h3>
+      <ol>
+        <li>Selecione um trecho do texto com o mouse ou toque.</li>
+        <li>No menu que aparece, clique em <strong>✏ Anotar</strong>.</li>
+        <li>No painel lateral, escreva sua anotação e escolha uma cor.</li>
+        <li>Clique em <strong>"Adicionar anotação"</strong>.</li>
+      </ol>
+      <p>Ou abra o painel de anotações <i class="fa fa-pen ic"></i> diretamente e escreva sem selecionar texto.</p>
+
+      <div class="dica">
+        <strong>Cores disponíveis:</strong> Amarelo, Verde, Azul e Rosa. A cor ajuda a categorizar visualmente suas notas.
+      </div>
+
+      <h3>Gerenciar anotações</h3>
+      <p>Todas as anotações aparecem no painel lateral, ordenadas pela data de criação. Para excluir, clique no <i class="fa fa-xmark"></i> ao lado da anotação. As anotações são salvas na sua conta e ficam disponíveis em qualquer dispositivo.</p>
+    </section>
+
+    <!-- 6. Marcações -->
+    <section class="doc-secao" id="marcacoes">
+      <h2><span class="sec-num">6</span> Marcações (Highlights)</h2>
+      <p>Destaque trechos importantes do texto com cores diferentes.</p>
+      <ol>
+        <li>Selecione um trecho de texto.</li>
+        <li>No menu de contexto, clique em <strong>🖍 Destacar</strong>.</li>
+        <li>O trecho ficará marcado em amarelo e será salvo automaticamente.</li>
+      </ol>
+      <p>As marcações ficam visíveis sempre que você retornar àquela parte do livro.</p>
+      <div class="dica">
+        <strong>Dica:</strong> Use marcações para trechos que quer relembrar depois e anotações para reflexões mais longas.
+      </div>
+    </section>
+
+    <!-- 7. Conquistas -->
+    <section class="doc-secao" id="conquistas">
+      <h2><span class="sec-num">7</span> Conquistas e Medalhas</h2>
+      <p>À medida que você lê, conquistas são desbloqueadas automaticamente. Cada conquista gera pontos para o seu ranking e um e-mail comemorativo.</p>
+
+      <table class="conquistas-tabela">
+        <thead>
+          <tr>
+            <th>Medalha</th>
+            <th>Conquista</th>
+            <th>Marco</th>
+            <th>Pontos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>📖</td><td>Primeira Página</td><td>Início da leitura</td><td>5 pts</td></tr>
+          <tr><td>⭐</td><td>Um quarto lido</td><td>25% concluído</td><td>15 pts</td></tr>
+          <tr><td>🌟</td><td>Metade da Jornada</td><td>50% concluído</td><td>25 pts</td></tr>
+          <tr><td>🔥</td><td>Quase lá!</td><td>75% concluído</td><td>30 pts</td></tr>
+          <tr><td>🏆</td><td>Obra Concluída</td><td>100% — fim do livro</td><td>50 pts</td></tr>
+          <tr><td>⚡</td><td>Leitor Veloz</td><td>Tempo recorde de leitura</td><td>20 pts</td></tr>
+          <tr><td>🎖</td><td>Maratonista</td><td>Mais de 3h de leitura contínua</td><td>35 pts</td></tr>
+        </tbody>
+      </table>
+
+      <p>Clique no ícone <i class="fa fa-trophy ic"></i> para ver todas as suas conquistas naquele livro, incluindo as que ainda estão bloqueadas.</p>
+    </section>
+
+    <!-- 8. Relógio de Meta -->
+    <section class="doc-secao" id="meta">
+      <h2><span class="sec-num">8</span> Relógio de Meta</h2>
+      <p>O relógio de meta ajuda quem tem hábitos de leitura cronometrados. Clique em <i class="fa fa-clock ic"></i> para configurar.</p>
+
+      <h3>Modos disponíveis</h3>
+      <ul>
+        <li><strong>Relógio</strong> — Mostra a hora atual enquanto você lê.</li>
+        <li><strong>Cronômetro</strong> — Conta o tempo de leitura da sessão atual.</li>
+        <li><strong>Regressivo</strong> — Define um alvo (ex: 30 minutos) e conta regressivamente. Um aviso aparece quando o tempo acabar.</li>
+      </ul>
+
+      <p>Marque <strong>"Ocultar durante leitura"</strong> para que o relógio fique escondido e só apareça quando você abrir o painel — sem distrações.</p>
+    </section>
+
+    <!-- 9. Modo Foco -->
+    <section class="doc-secao" id="foco">
+      <h2><span class="sec-num">9</span> Modo Foco — TDA / Dislexia</h2>
+      <p>O modo foco é especialmente projetado para leitores com TDA, TDAH ou Dislexia. Quando ativado, apenas 2–3 linhas do texto ficam nítidas enquanto o restante é suavemente escurecido.</p>
+
+      <h3>Como ativar</h3>
+      <ol>
+        <li>Abra <i class="fa fa-sliders ic"></i> Configurações.</li>
+        <li>Na seção <strong>Acessibilidade</strong>, ative o interruptor <strong>"Modo foco (TDA / Dislexia)"</strong>.</li>
+        <li>Uma faixa de foco acompanhará sua leitura ao rolar o texto.</li>
+      </ol>
+
+      <div class="dica">
+        <strong>Dica:</strong> Combine o Modo Foco com a fonte <strong>Sem Serifa</strong> e espaçamento amplo (2.0+) para a melhor experiência em casos de dislexia.
+      </div>
+    </section>
+
+    <!-- 10. Modo Não Perturbe -->
+    <section class="doc-secao" id="nao-perturbe">
+      <h2><span class="sec-num">10</span> Modo Leitura (Não Perturbe)</h2>
+      <p>Para uma imersão total, o Modo Leitura oculta todos os botões e barras da interface, deixando apenas o texto visível.</p>
+      <ul>
+        <li>Clique em <i class="fa fa-expand ic"></i> no canto superior direito para ativar.</li>
+        <li>Mova o mouse (ou toque na tela) para que os controles reapareçam temporariamente.</li>
+        <li>Pressione <kbd>Esc</kbd> ou clique no mesmo botão para sair do modo.</li>
+      </ul>
+    </section>
+
+    <!-- 11. Notas do Autor -->
+    <section class="doc-secao" id="notas-autor">
+      <h2><span class="sec-num">11</span> Notas do Autor</h2>
+      <p>Em determinadas partes dos livros, Robério Diógenes deixou notas exclusivas: bastidores de cenas, explicações sobre personagens, curiosidades sobre a criação de cada obra.</p>
+      <p>Quando você chegar a uma passagem com nota do autor, ela aparece automaticamente numa <strong>aba lateral</strong> à direita do texto (ou num painel inferior no celular). A nota não interrompe a leitura — você pode fechá-la a qualquer momento clicando no <strong>✕</strong>.</p>
+      <div class="dica">
+        <strong>Tipos de notas:</strong> 🎬 Bastidor · 👤 Personagem · 🎭 Cena · 💡 Curiosidade · 📝 Nota geral.
+      </div>
+    </section>
+
+    <!-- 12. Indicar para Amigo -->
+    <section class="doc-secao" id="indicar">
+      <h2><span class="sec-num">12</span> Indicar para um Amigo</h2>
+      <p>Encontrou um livro que merece ser recomendado? Você pode indicar diretamente do leitor.</p>
+      <ol>
+        <li>Selecione qualquer trecho do texto.</li>
+        <li>No menu de contexto, clique em <strong>📤 Indicar</strong>.</li>
+        <li>Escolha entre WhatsApp, E-mail ou copiar o link.</li>
+      </ol>
+      <p>Ou ao concluir um livro, marque <strong>"Quero compartilhar este livro"</strong> no formulário de feedback.</p>
+    </section>
+
+    <!-- 13. Reportar Erros -->
+    <section class="doc-secao" id="erros">
+      <h2><span class="sec-num">13</span> Reportar Erros Ortográficos</h2>
+      <p>Encontrou um erro de digitação, ortografia ou gramática? Você pode nos avisar diretamente durante a leitura.</p>
+      <ol>
+        <li>Selecione o trecho com o erro.</li>
+        <li>No menu de contexto, clique em <strong>⚠ Erro</strong>.</li>
+        <li>Descreva o erro (opcional) e clique em <strong>"Enviar relatório"</strong>.</li>
+      </ol>
+      <p>O autor receberá sua sugestão e o texto será corrigido na próxima atualização do arquivo.</p>
+      <div class="aviso">
+        <strong>Limite:</strong> Máximo de 5 reportes por hora para evitar envios acidentais.
+      </div>
+    </section>
+
+    <!-- 14. Ranking -->
+    <section class="doc-secao" id="ranking">
+      <h2><span class="sec-num">14</span> Ranking de Leitores</h2>
+      <p>Cada livro concluído, conquista desbloqueada e sessão de leitura acumula pontos no seu perfil. O ranking mostra os leitores mais ativos do site, exibindo apenas o primeiro nome.</p>
+      <p>Você pode consultar o ranking na <a href="../../livros.html">página Biblioteca</a>.</p>
+    </section>
+
+    <!-- 15. Atalhos de Teclado -->
+    <section class="doc-secao" id="atalhos">
+      <h2><span class="sec-num">15</span> Atalhos de Teclado</h2>
+      <table class="conquistas-tabela">
+        <thead><tr><th>Tecla</th><th>Ação</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>→</kbd></td><td>Próximo capítulo</td></tr>
+          <tr><td><kbd>←</kbd></td><td>Capítulo anterior</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Fechar painel / Sair do modo leitura</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 16. Tipos de Acesso -->
+    <section class="doc-secao" id="acesso">
+      <h2><span class="sec-num">16</span> Tipos de Acesso</h2>
+      <ul>
+        <li><strong>Gratuito</strong> — Livros e contos gratuitos: basta ter conta no site. Acesso permanente.</li>
+        <li><strong>Compra</strong> — Livros adquiridos individualmente: acesso permanente, nunca expira.</li>
+        <li><strong>Assinatura</strong> — Acesso a toda a biblioteca enquanto a assinatura estiver ativa. Após o vencimento, somente os livros comprados individualmente ficam disponíveis.</li>
+      </ul>
+      <div class="dica">
+        <strong>Importante:</strong> Os livros <em>não podem ser baixados</em> fora do leitor. A leitura é feita exclusivamente nesta plataforma para proteção dos direitos autorais.
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Direitos e Deveres -->
+<section class="doc-direitos" id="direitos">
+  <div class="dir-inner">
+    <span class="dir-titulo">Política de Uso e Direitos Autorais</span>
+    <p>As obras disponíveis neste leitor são protegidas pela <strong>Lei nº 9.610/1998 (Lei de Direitos Autorais)</strong> e pela legislação brasileira de propriedade intelectual. Todos os direitos são reservados ao autor <strong>Robério Diógenes</strong>.</p>
+    <p><strong>É permitido:</strong> Ler as obras em sua conta pessoal em qualquer dispositivo. Fazer anotações e marcações para uso pessoal. Indicar o livro para amigos por meio das ferramentas do leitor.</p>
+    <p><strong>É proibido:</strong> Reproduzir, copiar, distribuir, vender ou compartilhar o conteúdo integral ou parcial das obras sem autorização expressa do autor. Capturar o arquivo EPUB para distribuição. Usar ferramentas automatizadas para extrair o conteúdo.</p>
+    <p>O descumprimento dessas regras sujeita o usuário às penalidades previstas na legislação brasileira, incluindo responsabilização civil e criminal.</p>
+    <p>Em caso de dúvidas sobre uso, licenciamento ou direitos, entre em contato pelo <a href="../../contato.html">formulário de contato</a> ou por <a href="mailto:contato@roberiodiogenes.com">contato@roberiodiogenes.com</a>.</p>
+  </div>
+</section>
+
+<!-- Rodapé -->
+<footer class="doc-footer">
+  <p>© 2025 Robério Diógenes · Cascavel, Ceará ·
+     <a href="../../index.html">Início</a> ·
+     <a href="../../livros.html">Biblioteca</a> ·
+     <a href="../../contato.html">Contato</a> ·
+     <a href="../index.html">Abrir o Leitor</a>
+  </p>
+</footer>
+
+<script>
+  // Destaque do item ativo no índice
+  const secoes = document.querySelectorAll('.doc-secao');
+  const links  = document.querySelectorAll('.indice-lista a');
+  const obs    = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.style.color = '');
+        const l = document.querySelector(`.indice-lista a[href="#${e.target.id}"]`);
+        if (l) { l.style.color = '#8B6914'; l.style.borderLeftColor = '#8B6914'; }
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  secoes.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

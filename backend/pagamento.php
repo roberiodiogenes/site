@@ -203,6 +203,102 @@ if ($metodo === 'POST') {
         ]);
     }
 
+    /* ── Iniciar carrinho (múltiplos livros) ── */
+    if ($acao === 'iniciar_carrinho') {
+        $slugs = array_filter(array_map(
+            fn($s) => preg_replace('/[^a-z0-9_-]/', '', trim($s)),
+            (array)($body['slugs'] ?? [])
+        ));
+        if (empty($slugs)) responderErro('Carrinho vazio.');
+        if (count($slugs) > 20) responderErro('Máximo de 20 itens por compra.');
+
+        // Verificar quais o usuário já comprou
+        $ph   = implode(',', array_fill(0, count($slugs), '?'));
+        $jaC  = $pdo->prepare(
+            "SELECT livro_slug FROM compras
+             WHERE usuario_id = ? AND status = 'aprovada' AND livro_slug IN ($ph)"
+        );
+        $jaC->execute(array_merge([$uid], array_values($slugs)));
+        $jaComprados = $jaC->fetchAll(PDO::FETCH_COLUMN, 0);
+        $novos = array_diff($slugs, $jaComprados);
+        if (empty($novos)) responderErro('Você já possui todos os livros do carrinho.', 409);
+
+        // Buscar dados dos livros
+        $ph2  = implode(',', array_fill(0, count($novos), '?'));
+        $lStmt= $pdo->prepare(
+            "SELECT slug, titulo, preco, preco_promocao FROM livros
+             WHERE slug IN ($ph2) AND ativo = 1"
+        );
+        $lStmt->execute(array_values($novos));
+        $livros = $lStmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($livros)) responderErro('Nenhum livro válido encontrado.', 404);
+
+        $refExterna = 'carrinho_' . $uid . '_' . time();
+        $mpItens    = [];
+        $totalPago  = 0;
+
+        foreach ($livros as $lv) {
+            $preco = (float)($lv['preco_promocao'] ?: $lv['preco']);
+            if ($preco <= 0) continue;
+            $mpItens[] = [
+                'id'          => $lv['slug'],
+                'title'       => $lv['titulo'],
+                'description' => 'Livro digital — acesso no leitor online',
+                'quantity'    => 1,
+                'currency_id' => 'BRL',
+                'unit_price'  => $preco,
+            ];
+            $totalPago += $preco;
+        }
+        if (empty($mpItens)) responderErro('Nenhum item com preço válido.');
+
+        // Criar preferência MP com todos os itens
+        $preference = criarPreferenciaMP([
+            'items' => $mpItens,
+            'payer' => [
+                'name'  => $usuario['nome'],
+                'email' => $usuario['email'],
+            ],
+            'back_urls' => [
+                'success' => SITE_URL . '/pagamento/sucesso.html?ref=' . $refExterna,
+                'failure' => SITE_URL . '/pagamento/falha.html?ref='   . $refExterna,
+                'pending' => SITE_URL . '/pagamento/pendente.html?ref='. $refExterna,
+            ],
+            'auto_return'        => 'approved',
+            'external_reference' => $refExterna,
+            'notification_url'   => SITE_URL . '/backend/pagamento.php?acao=webhook',
+            'expires'            => true,
+            'expiration_date_to' => date('c', strtotime('+24 hours')),
+            'metadata'           => [
+                'usuario_id' => $uid,
+                'tipo'       => 'carrinho',
+                'slugs'      => implode(',', array_column($livros, 'slug')),
+            ],
+        ]);
+
+        // Registrar cada item como compra pendente
+        $insStmt = $pdo->prepare(
+            "INSERT INTO compras (usuario_id, livro_slug, preco_pago, status, gateway, ref_externa)
+             VALUES (?, ?, ?, 'pendente', 'mercadopago', ?)
+             ON DUPLICATE KEY UPDATE status='pendente', ref_externa=VALUES(ref_externa)"
+        );
+        foreach ($livros as $lv) {
+            $preco = (float)($lv['preco_promocao'] ?: $lv['preco']);
+            $insStmt->execute([$uid, $lv['slug'], $preco, $refExterna]);
+        }
+
+        // Marcar carrinho como em checkout
+        $pdo->prepare(
+            "UPDATE carrinhos SET em_checkout=1, checkout_em=NOW() WHERE usuario_id=?"
+        )->execute([$uid]);
+
+        responderOk([
+            'checkout_url' => $preference['init_point'],
+            'ref'          => $refExterna,
+            'ja_possuia'   => array_values($jaComprados),
+        ]);
+    }
+
     /* ── Iniciar assinatura ── */
     if ($acao === 'iniciar_assinatura') {
         $planoId = (int) ($body['plano_id'] ?? 0);
@@ -356,8 +452,22 @@ function processarWebhook(): void {
     /* ── Carregar mailer (silencioso se não instalado) ── */
     @include_once __DIR__ . '/mailer.php';
 
-    /* ── Atualizar compra avulsa ── */
-    if ($tipo_tx === 'compra' && $ref) {
+    /* ── Atualizar presente ── */
+    if ($tipo_tx === 'presente' && $ref) {
+        if ($nossoStatus === 'aprovada') {
+            @include_once __DIR__ . '/presentear.php';
+            if (class_exists('Presentear')) {
+                Presentear::processarPagamento($ref, $pdo);
+            }
+        } else {
+            $pdo->prepare("UPDATE presentes SET status=? WHERE ref_externa=?")
+                ->execute([$nossoStatus, $ref]);
+        }
+        return;
+    }
+
+    /* ── Atualizar compra avulsa OU carrinho ── */
+    if (($tipo_tx === 'compra' || $tipo_tx === 'carrinho') && $ref) {
         $pdo->prepare(
             "UPDATE compras SET status = ? WHERE ref_externa = ?"
         )->execute([$nossoStatus, $ref]);

@@ -3,13 +3,197 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Diário de Robério Diógenes — Reflexões, bastidores, pensamentos de um escritor em constante criação." />
-  <title>Diário | Robério Diógenes</title>
+
+  <!-- ── SEO primário ───────────────────────────────────────── -->
+  <title>Diário do Escritor | Robério Diógenes — Reflexões e Bastidores</title>
+  <meta name="description" content="O diário literário de Robério Diógenes: bastidores da escrita, reflexões sobre dor e silêncio, e os segredos por trás de cada livro. Literatura brasileira independente." />
+  <meta name="keywords" content="robério diógenes, escritor brasileiro, diário literário, blog literário, bastidores de livros, ficção brasileira, literatura independente" />
+  <meta name="author" content="Robério Diógenes" />
+  <link rel="canonical" href="https://www.roberiodiogenes.com/blog.html" />
+
+  <!-- ── Open Graph ─────────────────────────────────────────── -->
+  <meta property="og:type"        content="blog" />
+  <meta property="og:url"         content="https://www.roberiodiogenes.com/blog.html" />
+  <meta property="og:title"       content="Diário do Escritor — Robério Diógenes" />
+  <meta property="og:description" content="Pensamentos que não cabem nos livros. Bastidores, reflexões e as histórias que precedem as histórias." />
+  <meta property="og:image"       content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+  <meta property="og:locale"      content="pt_BR" />
+  <meta property="og:site_name"   content="Robério Diógenes" />
+
+  <!-- ── Twitter Card ──────────────────────────────────────── -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Diário do Escritor — Robério Diógenes" />
+  <meta name="twitter:description" content="Pensamentos que não cabem nos livros." />
+  <meta name="twitter:image"       content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+
+  <!-- ── Schema.org Blog ───────────────────────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Diário do Escritor — Robério Diógenes",
+    "description": "Reflexões, bastidores e pensamentos de um escritor em constante criação.",
+    "url": "https://www.roberiodiogenes.com/blog.html",
+    "author": {
+      "@type": "Person",
+      "name": "Robério Diógenes",
+      "url": "https://www.roberiodiogenes.com/autor.html"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Robério Diógenes"
+    },
+    "inLanguage": "pt-BR"
+  }
+  </script>
+
   <link rel="icon" type="image/png" href="img/favicon.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="css/variables.css" />
   <link rel="stylesheet" href="css/auth.css" />
   <link rel="stylesheet" href="css/blog.css" />
+
+  <style>
+    /* ── Paginação ──────────────────────────────────────────── */
+    .paginacao {
+      display: flex; justify-content: center; align-items: center;
+      gap: .5rem; margin: 3rem 0 1rem; flex-wrap: wrap;
+    }
+    .pag-btn {
+      min-width: 40px; height: 40px; padding: 0 .75rem;
+      border: 1px solid var(--borda-media); border-radius: var(--raio);
+      background: transparent; color: var(--texto-2);
+      font-family: var(--fonte-ui); font-size: .82rem;
+      cursor: pointer; transition: all .2s; text-decoration: none;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pag-btn:hover       { border-color: var(--ouro); color: var(--ouro); }
+    .pag-btn.ativo       { background: var(--ouro); color: #1A0F00; border-color: var(--ouro); font-weight: 700; }
+    .pag-btn:disabled    { opacity: .35; cursor: default; pointer-events: none; }
+    .pag-info {
+      font-family: var(--fonte-display); font-size: .62rem;
+      letter-spacing: .15em; text-transform: uppercase;
+      color: var(--texto-3); margin: 0 .5rem;
+    }
+
+    /* ── Badge "Lido" no card ───────────────────────────────── */
+    .post-card-b { position: relative; }
+    .badge-lido {
+      position: absolute; top: .75rem; right: .75rem;
+      background: var(--ouro); color: #1A0F00;
+      font-family: var(--fonte-display); font-size: .58rem;
+      letter-spacing: .15em; text-transform: uppercase;
+      padding: .25rem .65rem; border-radius: 20px;
+      display: flex; align-items: center; gap: .3rem;
+      font-weight: 700; z-index: 2;
+    }
+    .post-destaque { position: relative; }
+    .badge-lido-destaque {
+      position: absolute; top: 1rem; left: 1rem;
+      background: var(--ouro); color: #1A0F00;
+      font-family: var(--fonte-display); font-size: .58rem;
+      letter-spacing: .15em; text-transform: uppercase;
+      padding: .25rem .65rem; border-radius: 20px;
+      display: flex; align-items: center; gap: .3rem;
+      font-weight: 700; z-index: 2;
+    }
+
+    /* ── Ícone de áudio no card ─────────────────────────────── */
+    .pcb-audio-badge {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-family: var(--fonte-display); font-size: .58rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ouro); opacity: .8;
+      margin-top: .3rem;
+    }
+
+    /* ── Skeleton loading ───────────────────────────────────── */
+    .skeleton { animation: skeleton-pulse 1.4s ease-in-out infinite; }
+    .skeleton-card {
+      border-radius: var(--raio-lg); overflow: hidden;
+      border: 1px solid var(--borda);
+    }
+    .skeleton-img  { height: 180px; background: var(--fundo-2); }
+    .skeleton-body { padding: 1rem; display: flex; flex-direction: column; gap: .75rem; }
+    .skeleton-line { height: 14px; border-radius: 4px; background: var(--fundo-2); }
+    .skeleton-line.curta  { width: 40%; }
+    .skeleton-line.media  { width: 70%; }
+    .skeleton-line.longa  { width: 90%; }
+    @keyframes skeleton-pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: .45; }
+    }
+
+    /* ── Busca no hero ──────────────────────────────────────── */
+    .blog-busca {
+      margin-top: 1.75rem;
+      display: flex; max-width: 420px; margin-left: auto; margin-right: auto;
+      border: 1px solid var(--borda-media); border-radius: 30px; overflow: hidden;
+      background: var(--fundo-card, rgba(255,255,255,.04));
+    }
+    .blog-busca input {
+      flex: 1; background: transparent; border: none; outline: none;
+      padding: .65rem 1.25rem; color: var(--texto);
+      font-family: var(--fonte-ui); font-size: .88rem;
+    }
+    .blog-busca input::placeholder { color: var(--texto-3); }
+    .blog-busca button {
+      background: transparent; border: none; padding: .65rem 1.1rem;
+      color: var(--ouro); cursor: pointer; font-size: .9rem;
+    }
+
+    /* ── Estado vazio ───────────────────────────────────────── */
+    .blog-vazio {
+      text-align: center; padding: 4rem 2rem; color: var(--texto-3);
+    }
+    .blog-vazio i { font-size: 2.5rem; color: var(--ouro); opacity: .25; margin-bottom: 1rem; display: block; }
+    .blog-vazio p { font-size: .92rem; }
+
+    /* ── Posts agendados ────────────────────────────────────────── */
+    .ag-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:2rem; gap:1rem; }
+    .ag-titulo-sec { font-family:var(--fonte-titulo); font-size:clamp(1.4rem,3vw,2rem); font-weight:400; margin:.4rem 0 .6rem; }
+    .ag-titulo-sec em { color:var(--ouro); font-style:italic; }
+    .ag-desc  { font-size:.9rem; color:var(--texto-3); max-width:420px; }
+    .ag-icon  { font-size:3rem; color:var(--ouro); opacity:.2; flex-shrink:0; }
+    .ag-grid  { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.25rem; }
+    .ag-card  { background:var(--fundo-card,#1C1408); border:1px solid var(--borda); border-radius:var(--raio-lg,10px); overflow:hidden; position:relative; transition:border-color .2s,box-shadow .2s; }
+    .ag-card:hover { border-color:var(--borda-media); box-shadow:0 4px 20px rgba(0,0,0,.2); }
+    .ag-topo  { display:flex; justify-content:space-between; align-items:center; padding:.75rem 1rem .5rem; }
+    .ag-cat   { font-family:var(--fonte-display); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ouro); }
+    .ag-prazo { font-family:var(--fonte-display); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--texto-3); display:flex; align-items:center; gap:.3rem; }
+    .ag-prazo i { color:var(--ouro); opacity:.7; }
+    .ag-img-wrap { position:relative; height:140px; overflow:hidden; }
+    .ag-img  { width:100%; height:100%; object-fit:cover; filter:blur(4px) brightness(.5); }
+    .ag-blur { position:absolute; inset:0; background:linear-gradient(to bottom,transparent 40%,var(--fundo-card,#1C1408)); }
+    .ag-corpo { padding:.85rem 1rem 1rem; }
+    .ag-titulo { font-family:var(--fonte-titulo); font-size:1rem; font-weight:400; color:var(--texto); line-height:1.35; margin-bottom:.5rem; filter:blur(.4px); }
+    .ag-resumo { font-size:.82rem; color:var(--texto-3); line-height:1.6; margin-bottom:.75rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; filter:blur(.8px); }
+    .ag-rodape { display:flex; justify-content:space-between; align-items:center; font-size:.75rem; color:var(--texto-3); }
+    .ag-rodape i { margin-right:.3rem; opacity:.7; }
+    .ag-lock { color:var(--ouro); opacity:.6; }
+    .ag-card::before { content:'EM BREVE'; position:absolute; top:18px; right:-22px; background:var(--ouro); color:#1A0F00; font-family:var(--fonte-display); font-size:.5rem; font-weight:700; letter-spacing:.15em; padding:.2rem 2rem; transform:rotate(35deg); pointer-events:none; z-index:2; }
+
+    /* ── Newsletter do blog ─────────────────────────────────────── */
+    .nl-blog { background: var(--fundo-2, #160E04); }
+    .nl-blog-wrap {
+      max-width: 560px; margin: 0 auto; padding: 4rem 2rem;
+      text-align: center; display: flex; flex-direction: column; align-items: center;
+    }
+    .nl-blog-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .nl-blog-wrap h2 {
+      font-family: var(--fonte-titulo); font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 400; margin-bottom: .75rem;
+    }
+    .nl-blog-wrap h2 em { color: var(--ouro); font-style: italic; }
+    .nl-blog-wrap > p { color: var(--texto-3); font-size: .95rem; line-height: 1.65; }
+    .nl-pref-label {
+      display: flex; align-items: center; gap: .35rem;
+      font-family: var(--fonte-display); font-size: .62rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--texto-3); cursor: pointer;
+    }
+    .nl-pref-label input { accent-color: var(--ouro); }
+  </style>
 </head>
 <body>
 
@@ -24,24 +208,20 @@
     <li><a href="autor.html">O Autor</a></li>
     <li><a href="blog.html" class="ativa" aria-current="page">Diário</a></li>
     <li><a href="contato.html">Contato</a></li>
-  
-          <!-- Controles de acessibilidade — visíveis no menu mobile -->
-          <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
-            <span class="mobile-controles-label">Tema &amp; Fonte</span>
-            <button class="tema-btn" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
-            <button class="tema-btn" data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
-            <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
-            <button class="fonte-btn fonte-diminuir"       title="Texto menor"   aria-label="Texto menor">A-</button>
-            <button class="fonte-btn fonte-aumentar"       title="Texto maior"   aria-label="Texto maior">A+</button>
-            <button class="tema-btn som-btn"               title="Sons"          aria-label="Sons">♪</button>
-          </li>
+    <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
+      <span class="mobile-controles-label">Tema &amp; Fonte</span>
+      <button class="tema-btn" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+      <button class="tema-btn" data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+      <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+      <button class="fonte-btn fonte-diminuir"       title="Texto menor"   aria-label="Texto menor">A-</button>
+      <button class="fonte-btn fonte-aumentar"       title="Texto maior"   aria-label="Texto maior">A+</button>
+    </li>
   </ul>
   <div class="nav-acoes">
     <div class="busca-nav" role="search"><span class="busca-nav-icone">🔍</span><input type="search" placeholder="Buscar..." aria-label="Buscar" /></div>
     <div class="tema-controles" role="group"><button class="tema-btn ativo" data-tema="claro" aria-label="Claro">☀</button><button class="tema-btn" data-tema="noturno" aria-label="Noturno">🌙</button><button class="tema-btn" data-tema="contraste" aria-label="Contraste">◑</button></div>
     <div class="fonte-controles" role="group"><button class="fonte-btn fonte-diminuir" aria-label="A-">A-</button><button class="fonte-btn fonte-aumentar" aria-label="A+">A+</button></div>
-    <button class="tema-btn som-btn" aria-label="Sons">♪</button>
-    <a href="login.html" class="btn btn-secundario btn-entrar"><i class="fa fa-user" aria-hidden="true"></i> Entrar</a>
+    <a href="login.html" class="btn btn-secundario btn-entrar" id="btnEntrar"><i class="fa fa-user" aria-hidden="true"></i> Entrar</a>
   </div>
   <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
 </nav>
@@ -49,12 +229,18 @@
 
 <main id="conteudo-principal">
 
-  <!-- HERO BLOG -->
+  <!-- HERO -->
   <header class="blog-hero">
     <div class="blog-hero-inner">
       <p class="secao-pretitulo reveal">Reflexões &amp; Bastidores</p>
       <h1 class="blog-hero-titulo reveal reveal-delay-1">O <em>Diário</em><br />do Escritor</h1>
       <p class="blog-hero-desc reveal reveal-delay-2">Pensamentos que não cabem nos livros. As histórias que precedem as histórias.</p>
+
+      <!-- Busca -->
+      <div class="blog-busca reveal reveal-delay-2" role="search" aria-label="Buscar posts">
+        <input type="search" id="campoBusca" placeholder="Buscar no diário…" aria-label="Buscar posts" />
+        <button id="btnBusca" aria-label="Pesquisar"><i class="fa fa-search"></i></button>
+      </div>
 
       <!-- Categorias -->
       <div class="blog-cats reveal reveal-delay-3" role="group" aria-label="Filtrar por categoria">
@@ -67,122 +253,64 @@
     </div>
   </header>
 
-  <!-- POSTS -->
-  <section class="secao" id="posts" aria-label="Posts do blog">
-    <div class="blog-layout">
-
-      <!-- Post destaque -->
-      <a href="blog/post-01.html" class="post-destaque reveal" data-cat="bastidores">
-        <div class="post-destaque-img-wrap">
-          <img src="img/post-01.jpg" alt="Por trás da serpente e da maçã" class="post-destaque-img" loading="eager" />
-          <span class="post-badge" aria-label="Post em destaque">Destaque</span>
+  <!-- POSTS GRID (renderizado via JS) -->
+  <section class="secao" id="posts" aria-label="Posts do blog" aria-live="polite">
+    <div class="blog-layout" id="blogLayout">
+      <!-- Skeleton inicial -->
+      <div id="skeletonDestaque" class="post-destaque skeleton-card skeleton">
+        <div style="height:380px;background:var(--fundo-2)"></div>
+        <div style="padding:2rem;display:flex;flex-direction:column;gap:.75rem">
+          <div class="skeleton-line curta"></div>
+          <div class="skeleton-line longa"></div>
+          <div class="skeleton-line media"></div>
         </div>
-        <div class="post-destaque-corpo">
-          <div>
-            <span class="post-cat">Bastidores</span>
-            <h2 class="post-destaque-titulo">Por trás da serpente e da maçã: os bastidores de <em>A Sétima Lei</em></h2>
-            <p class="post-destaque-resumo">Cada livro começa muito antes da primeira palavra. Aqui conto como nasceu a capa, a ideia, e o silêncio que precedeu tudo isso. Uma conversa franca sobre o processo criativo de quem escreve às margens.</p>
-          </div>
-          <div class="post-destaque-meta">
-            <span class="post-data"><i class="fa fa-calendar" aria-hidden="true"></i> Abril de 2025</span>
-            <span class="post-leitura"><i class="fa fa-clock" aria-hidden="true"></i> 8 min de leitura</span>
-            <span class="post-ler">Ler →</span>
-          </div>
-        </div>
-      </a>
-
-      <!-- Grade de posts -->
-      <div class="posts-grade" id="postsGrade">
-
-        <a href="blog/post-02.html" class="post-card-b reveal" data-cat="reflexao">
-          <div class="pcb-img-wrap">
-            <img src="img/bastidores-setima-lei.jpg" alt="O peso do silêncio" class="pcb-img" loading="lazy" />
-          </div>
-          <div class="pcb-corpo">
-            <span class="post-cat">Reflexão</span>
-            <h3 class="pcb-titulo">O peso do silêncio entre duas pessoas que se amaram</h3>
-            <p class="pcb-resumo">Existe um idioma que só existe entre pessoas que já se amaram. É feito de não-ditos, de gestos pela metade, de despedidas que ninguém sabe que foram as últimas.</p>
-            <div class="pcb-meta">
-              <span class="post-data">Mar 2025</span>
-              <span class="post-leitura">5 min</span>
-            </div>
-          </div>
-        </a>
-
-        <a href="blog/post-03.html" class="post-card-b reveal reveal-delay-1" data-cat="escritor">
-          <div class="pcb-corpo pcb-corpo-solo">
-            <span class="post-cat">Do Escritor</span>
-            <h3 class="pcb-titulo">Por que escrevo sobre dor — e por que não me arrependo</h3>
-            <p class="pcb-resumo">Há quem prefira histórias que consolam. Eu prefiro as que arrancam a venda dos olhos. Não porque gosto de machucar — mas porque acredito que a dor vista de frente perde o poder de nos destruir.</p>
-            <div class="pcb-meta">
-              <span class="post-data">Fev 2025</span>
-              <span class="post-leitura">6 min</span>
-            </div>
-          </div>
-        </a>
-
-        <a href="blog/post-04.html" class="post-card-b reveal reveal-delay-2" data-cat="reflexao">
-          <div class="pcb-corpo pcb-corpo-solo">
-            <span class="post-cat">Reflexão</span>
-            <h3 class="pcb-titulo">23h47 em Cascavel — onde as histórias nascem</h3>
-            <p class="pcb-resumo">Cada cidade tem uma hora em que se revela. Cascavel às 23h47 é um lugar que só existe quando o silêncio é profundo o suficiente para ter peso.</p>
-            <div class="pcb-meta">
-              <span class="post-data">Jan 2025</span>
-              <span class="post-leitura">4 min</span>
-            </div>
-          </div>
-        </a>
-
-        <a href="blog/post-05.html" class="post-card-b reveal" data-cat="livros">
-          <div class="pcb-corpo pcb-corpo-solo">
-            <span class="post-cat">Sobre os Livros</span>
-            <h3 class="pcb-titulo">Deus e o versículo incompleto — as origens de O Abismo das Almas</h3>
-            <p class="pcb-resumo">Todo livro de horror tem um medo real no centro. No Abismo das Almas, o medo é este: e se a humanidade descobrisse que sentir é o maior perigo de todos?</p>
-            <div class="pcb-meta">
-              <span class="post-data">Dez 2024</span>
-              <span class="post-leitura">7 min</span>
-            </div>
-          </div>
-        </a>
-
-        <a href="blog/post-06.html" class="post-card-b reveal reveal-delay-1" data-cat="livros">
-          <div class="pcb-corpo pcb-corpo-solo">
-            <span class="post-cat">Sobre os Livros</span>
-            <h3 class="pcb-titulo">O labirinto de Lúmen — como construí uma mente que não sabe se existe</h3>
-            <p class="pcb-resumo">Escrever Hannah foi o exercício mais perturbador que já fiz. Uma protagonista que não tem certeza se seus sonhos são memórias, e suas memórias são sonhos.</p>
-            <div class="pcb-meta">
-              <span class="post-data">Nov 2024</span>
-              <span class="post-leitura">9 min</span>
-            </div>
-          </div>
-        </a>
-
-        <a href="blog/post-07.html" class="post-card-b reveal reveal-delay-2" data-cat="escritor">
-          <div class="pcb-corpo pcb-corpo-solo">
-            <span class="post-cat">Do Escritor</span>
-            <h3 class="pcb-titulo">Sobre a solidão que produz — e a que apenas consome</h3>
-            <p class="pcb-resumo">Existe uma diferença entre a solidão que gera e a solidão que apenas esvazia. Aprendi a distinguir as duas — e aprendi a escolher qual cultivar.</p>
-            <div class="pcb-meta">
-              <span class="post-data">Out 2024</span>
-              <span class="post-leitura">5 min</span>
-            </div>
-          </div>
-        </a>
-
-      </div><!-- /postsGrade -->
+      </div>
+      <div id="skeletonGrade" class="posts-grade">
+        <div class="skeleton-card skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line curta"></div><div class="skeleton-line longa"></div><div class="skeleton-line media"></div></div></div>
+        <div class="skeleton-card skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line curta"></div><div class="skeleton-line longa"></div><div class="skeleton-line media"></div></div></div>
+        <div class="skeleton-card skeleton" style="background:var(--fundo-card)"><div class="skeleton-body"><div class="skeleton-line curta"></div><div class="skeleton-line longa"></div><div class="skeleton-line media"></div></div></div>
+      </div>
     </div>
+
+    <!-- Paginação -->
+    <div class="paginacao" id="paginacao" aria-label="Paginação" style="display:none"></div>
   </section>
 
-  <!-- NEWSLETTER BLOG -->
+  <!-- NEWSLETTER -->
   <section class="nl-blog secao" aria-labelledby="titulo-nl-blog">
     <div class="nl-blog-wrap reveal">
       <span class="nl-blog-icon" aria-hidden="true">✍️</span>
       <h2 id="titulo-nl-blog">Não perca nenhuma <em>reflexão</em></h2>
       <p>Novos posts, capítulos exclusivos e bastidores direto no seu e-mail.</p>
-      <form onsubmit="submeterNewsletter(event)" class="nl-blog-form" aria-label="Newsletter do blog">
+      <form id="formNl" class="nl-blog-form" aria-label="Newsletter do blog" novalidate
+            style="display:flex;flex-direction:column;align-items:center;gap:.75rem;width:100%;max-width:480px;margin:1.5rem auto 0">
+
+        <!-- Nome -->
+        <label for="nl-nome" class="sr-only">Seu nome</label>
+        <input type="text" id="nl-nome" class="finput"
+               placeholder="Seu nome..."
+               style="width:100%;padding:.7rem 1rem;border-radius:6px;font-size:.95rem" />
+
+        <!-- E-mail -->
         <label for="nl-blog-email" class="sr-only">Seu e-mail</label>
-        <input type="email" id="nl-blog-email" class="finput" placeholder="Seu e-mail..." required />
-        <button type="submit" class="btn btn-primario">Inscrever-me</button>
+        <input type="email" id="nl-blog-email" class="finput"
+               placeholder="Seu e-mail..."
+               required
+               style="width:100%;padding:.7rem 1rem;border-radius:6px;font-size:.95rem" />
+
+        <!-- Preferências de categoria -->
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem .75rem;justify-content:center;width:100%;padding:.25rem 0">
+          <label class="nl-pref-label"><input type="checkbox" name="pref" value="bastidores" checked> Bastidores</label>
+          <label class="nl-pref-label"><input type="checkbox" name="pref" value="reflexao"   checked> Reflexão</label>
+          <label class="nl-pref-label"><input type="checkbox" name="pref" value="escritor"   checked> Do Escritor</label>
+          <label class="nl-pref-label"><input type="checkbox" name="pref" value="livros"     checked> Sobre os Livros</label>
+        </div>
+
+        <!-- Botão -->
+        <button type="submit" class="btn btn-primario"
+                style="width:100%;padding:.75rem;font-size:.88rem;letter-spacing:.12em">
+          Inscrever-me
+        </button>
       </form>
     </div>
   </section>
@@ -195,39 +323,433 @@
       <a href="index.html" class="footer-logo">Robério Diógenes</a>
       <p class="footer-desc">"Escrevo sobre o que nos assombra no silêncio."</p>
       <div class="footer-social" aria-label="Redes sociais">
-        <a href="https://www.instagram.com/diogenesroberio" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-        <a href="https://www.amazon.com.br/stores/author/B0DJCQMG7C/about" target="_blank" rel="noopener" aria-label="Amazon" title="Amazon"><i class="fa-brands fa-amazon" aria-hidden="true"></i></a>
-        <a href="https://wa.me/5585999999999" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+        <a href="https://www.instagram.com/diogenesroberio" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.amazon.com.br/stores/author/B0DJCQMG7C/about" target="_blank" rel="noopener" aria-label="Amazon"><i class="fa-brands fa-amazon"></i></a>
+        <a href="https://wa.me/5585996409818" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
       </div>
     </div>
     <div><p class="footer-col-titulo">Navegação</p><ul class="footer-links"><li><a href="index.html">Início</a></li><li><a href="livros.html">Biblioteca</a></li><li><a href="autor.html">O Autor</a></li><li><a href="blog.html">Diário</a></li><li><a href="contato.html">Contato</a></li></ul></div>
-    <div><p class="footer-col-titulo">Categorias</p><ul class="footer-links"><li><a href="#" onclick="filtrarCat('bastidores');return false;">Bastidores</a></li><li><a href="#" onclick="filtrarCat('reflexao');return false;">Reflexão</a></li><li><a href="#" onclick="filtrarCat('escritor');return false;">Do Escritor</a></li></ul></div>
+    <div><p class="footer-col-titulo">Categorias</p><ul class="footer-links" id="footerCats"></ul></div>
     <div><p class="footer-col-titulo">Newsletter</p>
-      <form onsubmit="submeterNewsletter(event)" style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.75rem;">
-        <input type="email" class="finput" placeholder="seu@email.com" required aria-label="E-mail" style="font-size:0.85rem;padding:0.5rem 0.75rem;" />
-        <button type="submit" class="btn btn-primario" style="padding:0.5rem;font-size:0.8rem;">Inscrever-se</button>
+      <form id="formNlFooter" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem;">
+        <input type="email" class="finput" id="nl-footer-email" placeholder="seu@email.com" required aria-label="E-mail" style="font-size:.85rem;padding:.5rem .75rem;" />
+        <button type="submit" class="btn btn-primario" style="padding:.5rem;font-size:.8rem;">Inscrever-se</button>
       </form>
     </div>
   </div>
-  <div class="footer-bottom"><p class="footer-copy">© 2025 Robério Diógenes. Todos os direitos reservados.</p><p class="footer-copy">Cascavel, Ceará</p></div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Robério Diógenes. Todos os direitos reservados.</p>
+    <p class="footer-copy">Cascavel, Ceará</p>
+  </div>
 </footer>
 
 <div class="toast-wrap" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<style>
+  .nl-pref-label {
+    display:flex; align-items:center; gap:.35rem;
+    font-family:var(--fonte-display); font-size:.62rem;
+    letter-spacing:.1em; text-transform:uppercase;
+    color:var(--texto-3); cursor:pointer;
+  }
+  .nl-pref-label input { accent-color:var(--ouro); }
+</style>
+
 <script src="js/global.js"></script>
 <script src="js/api-client.js"></script>
 <script>
-function filtrarCat(cat) {
-  const btnAtivo = document.querySelector(`.cat-btn[data-cat="${cat}"]`);
-  if (btnAtivo) { document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('ativo')); btnAtivo.classList.add('ativo'); }
-  const posts = document.querySelectorAll('.post-card-b, .post-destaque');
-  posts.forEach(p => {
-    const c = p.dataset.cat || '';
-    p.style.display = (cat === 'todos' || c === cat) ? '' : 'none';
+(async function() {
+  'use strict';
+
+  /* ── Estado ─────────────────────────────────────────────── */
+  const state = {
+    pagina:   1,
+    cat:      'todos',
+    busca:    '',
+    porPag:   9,
+    total:    0,
+    totalPags:1,
+    lidos:    [],
+    usuario:  null,
+  };
+
+  const catLabels = {
+    todos:'Todos', bastidores:'Bastidores',
+    reflexao:'Reflexão', escritor:'Do Escritor', livros:'Sobre os Livros',
+  };
+
+  /* ── Verificar sessão ───────────────────────────────────── */
+  try {
+    const r = await fetch('backend/auth/sessao.php', { credentials: 'same-origin' });
+    const d = await r.json();
+    if (d.ok && d.logado) {
+      state.usuario = d.usuario;
+      const btnEntrar = document.getElementById('btnEntrar');
+      if (btnEntrar) {
+        btnEntrar.innerHTML = `<i class="fa fa-user"></i> ${d.usuario.nome.split(' ')[0]}`;
+        btnEntrar.href = 'leitor/';
+      }
+    }
+  } catch {}
+
+  /* ── Carregar posts lidos ─────────────────────────────── */
+  if (state.usuario) {
+    try {
+      const r = await fetch('backend/blog_api.php?acao=lidos', { credentials: 'same-origin' });
+      const d = await r.json();
+      if (d.ok) state.lidos = (d.lidos || []).map(l => l.post_slug);
+    } catch {}
+  }
+
+  /* ── Carregar e renderizar posts ─────────────────────── */
+  async function carregarPosts() {
+    const params = new URLSearchParams({
+      acao: 'listar',
+      pagina: state.pagina,
+      por_pagina: state.porPag,
+      cat: state.cat,
+      busca: state.busca,
+    });
+
+    let data;
+    try {
+      const r = await fetch('backend/blog_api.php?' + params);
+      const txt = await r.text();
+      try {
+        data = JSON.parse(txt);
+      } catch {
+        console.error('[blog.html] Resposta não-JSON da API:', txt.substring(0, 300));
+        data = gerarDadosFallback();
+      }
+      if (!data.ok) throw new Error(data.erro || 'api error');
+    } catch (err) {
+      console.warn('[blog.html] Usando fallback local. Erro:', err.message);
+      // Fallback: dados estáticos para XAMPP sem banco ou API indisponível
+      data = gerarDadosFallback();
+    }
+
+    // Mesclar lidos vindos da API
+    if (data.lidos && data.lidos.length) {
+      data.lidos.forEach(s => { if (!state.lidos.includes(s)) state.lidos.push(s); });
+    }
+
+    state.total     = data.total     ?? data.posts.length;
+    state.totalPags = data.total_pags ?? 1;
+
+    renderizarPosts(data.posts);
+    renderizarAgendados(data.agendados || []);
+    renderizarPaginacao();
+  }
+
+  /* ── Renderizar posts agendados (preview em breve) ─────────── */
+  function renderizarAgendados(agendados) {
+    document.getElementById('secAgendados')?.remove();
+    if (!agendados || agendados.length === 0) return;
+
+    const catLbls = { bastidores:'Bastidores', reflexao:'Reflexão', escritor:'Do Escritor', livros:'Sobre os Livros' };
+
+    function diasRestantes(iso) {
+      const diff = new Date(iso) - new Date();
+      const dias = Math.ceil(diff / 86400000);
+      if (dias <= 0)  return 'Hoje';
+      if (dias === 1) return 'Amanhã';
+      return `Em ${dias} dias`;
+    }
+    function dtFmt(iso) {
+      try { return new Date(iso).toLocaleDateString('pt-BR', { day:'numeric', month:'long' }); }
+      catch { return iso; }
+    }
+
+    const cards = agendados.map(p => `
+      <div class="ag-card reveal">
+        <div class="ag-topo">
+          <span class="ag-cat">${esc(catLbls[p.categoria] || p.categoria)}</span>
+          <span class="ag-prazo"><i class="fa fa-hourglass-half"></i> ${diasRestantes(p.publicado_em)}</span>
+        </div>
+        ${p.imagem_url ? `<div class="ag-img-wrap">
+            <img src="${p.imagem_url}" alt="" class="ag-img" loading="lazy" onerror="this.parentElement.style.display='none'">
+            <div class="ag-blur"></div>
+          </div>` : ''}
+        <div class="ag-corpo">
+          <h3 class="ag-titulo">${esc(p.titulo)}</h3>
+          ${p.resumo ? `<p class="ag-resumo">${esc(p.resumo)}</p>` : ''}
+          <div class="ag-rodape">
+            <span><i class="fa fa-calendar"></i> ${dtFmt(p.publicado_em)}</span>
+            <span class="ag-lock"><i class="fa fa-lock"></i> Em breve</span>
+          </div>
+        </div>
+      </div>`).join('');
+
+    const sec = document.createElement('section');
+    sec.id        = 'secAgendados';
+    sec.className = 'secao';
+    sec.setAttribute('aria-label', 'Próximas publicações');
+    sec.innerHTML = `
+      <div style="max-width:1200px;margin:0 auto;padding:0 2rem">
+        <div class="ag-header reveal">
+          <div>
+            <p class="secao-pretitulo">Próximas publicações</p>
+            <h2 class="ag-titulo-sec">Em <em>breve</em> no Diário</h2>
+            <p class="ag-desc">Textos sendo preparados. Volte nos dias marcados.</p>
+          </div>
+          <i class="fa fa-hourglass-half ag-icon" aria-hidden="true"></i>
+        </div>
+        <div class="ag-grid">${cards}</div>
+      </div>`;
+
+    document.getElementById('posts')?.insertAdjacentElement('afterend', sec);
+    if (window.initReveal) window.initReveal();
+  }
+
+  /* ── Renderizar posts ───────────────────────────────── */
+  function renderizarPosts(posts) {
+    const layout = document.getElementById('blogLayout');
+    if (!posts || posts.length === 0) {
+      layout.innerHTML = `<div class="blog-vazio"><i class="fa fa-feather-pointed"></i><p>Nenhum post encontrado.</p></div>`;
+      return;
+    }
+
+    // Gera a URL correta para cada post:
+    // - Se tem html_externo (post elaborado em arquivo próprio) → usa esse caminho
+    // - Se o arquivo slug.html existe fisicamente (posts antigos) → usa slug.html
+    // - Qualquer outro → post-template.html?slug=XXX (sem depender de .htaccess)
+    const slugsEstaticos = ['post-01','post-02','post-03','post-04','post-05','post-06','post-07'];
+    function urlPost(p) {
+      if (p.html_externo) return p.html_externo;
+      if (slugsEstaticos.includes(p.slug)) return `blog/${p.slug}.html`;
+      return `blog/post-template.html?slug=${encodeURIComponent(p.slug)}`;
+    }
+
+    const [destaque, ...restantes] = posts;
+    const lido = slug => state.lidos.includes(slug);
+
+    // Post destaque
+    const badgeLidoDest = lido(destaque.slug)
+      ? `<span class="badge-lido-destaque"><i class="fa fa-check"></i> Lido</span>` : '';
+
+    const dataFmt = (iso) => {
+      try {
+        return new Date(iso).toLocaleDateString('pt-BR', { month:'long', year:'numeric' });
+      } catch { return iso; }
+    };
+    const imgDestaque = destaque.imagem_url
+      ? `<img src="../${destaque.imagem_url}" alt="${esc(destaque.titulo)}" class="post-destaque-img" loading="eager"
+              onerror="this.style.display='none'">`
+      : `<div style="height:100%;background:linear-gradient(135deg,var(--fundo-2),var(--fundo-3));display:flex;align-items:center;justify-content:center;opacity:.5"><i class="fa fa-feather-pointed" style="font-size:3rem;color:var(--ouro)"></i></div>`;
+    const audioIconDest = destaque.audio_url
+      ? `<span style="margin-left:.5rem;color:var(--ouro);opacity:.8"><i class="fa fa-headphones"></i></span>` : '';
+
+    let html = `<a href="${urlPost(destaque)}" class="post-destaque reveal" data-cat="${esc(destaque.categoria)}">
+      ${badgeLidoDest}
+      <div class="post-destaque-img-wrap">${imgDestaque}
+        <span class="post-badge" aria-label="Post em destaque">Destaque</span>
+      </div>
+      <div class="post-destaque-corpo">
+        <div>
+          <span class="post-cat">${esc(catLabels[destaque.categoria] || destaque.categoria)}</span>
+          <h2 class="post-destaque-titulo">${esc(destaque.titulo)}</h2>
+          <p class="post-destaque-resumo">${esc(destaque.resumo || '')}</p>
+        </div>
+        <div class="post-destaque-meta">
+          <span class="post-data"><i class="fa fa-calendar"></i> ${dataFmt(destaque.publicado_em)}</span>
+          <span class="post-leitura"><i class="fa fa-clock"></i> ${destaque.tempo_leitura} min${audioIconDest}</span>
+          <span class="post-ler">Ler →</span>
+        </div>
+      </div>
+    </a>
+    <div class="posts-grade" id="postsGrade">`;
+
+    restantes.forEach((p, i) => {
+      const atraso     = i % 3 === 1 ? ' reveal-delay-1' : i % 3 === 2 ? ' reveal-delay-2' : '';
+      const badgeLido  = lido(p.slug) ? `<span class="badge-lido"><i class="fa fa-check"></i> Lido</span>` : '';
+      const audioIcon  = p.audio_url  ? `<span class="pcb-audio-badge"><i class="fa fa-headphones"></i> Áudio</span>` : '';
+      const imgHtml    = p.imagem_url
+        ? `<div class="pcb-img-wrap"><img src="../${p.imagem_url}" alt="${esc(p.titulo)}" class="pcb-img" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`
+        : '';
+
+      html += `<a href="${urlPost(p)}" class="post-card-b reveal${atraso}" data-cat="${esc(p.categoria)}">
+        ${badgeLido}
+        ${imgHtml}
+        <div class="pcb-corpo${imgHtml ? '' : ' pcb-corpo-solo'}">
+          <span class="post-cat">${esc(catLabels[p.categoria] || p.categoria)}</span>
+          <h3 class="pcb-titulo">${esc(p.titulo)}</h3>
+          <p class="pcb-resumo">${esc(p.resumo || '')}</p>
+          ${audioIcon}
+          <div class="pcb-meta">
+            <span class="post-data">${dataFmt(p.publicado_em)}</span>
+            <span class="post-leitura">${p.tempo_leitura} min</span>
+          </div>
+        </div>
+      </a>`;
+    });
+
+    html += `</div>`;
+    layout.innerHTML = html;
+
+    // Re-ativar animações reveal
+    if (window.initReveal) window.initReveal();
+  }
+
+  /* ── Renderizar paginação ─────────────────────────────── */
+  function renderizarPaginacao() {
+    const el = document.getElementById('paginacao');
+    if (state.totalPags <= 1) { el.style.display = 'none'; return; }
+    el.style.display = 'flex';
+
+    const { pagina, totalPags, total, porPag } = state;
+    let html = `<span class="pag-info">Pág. ${pagina}/${totalPags} (${total} posts)</span>`;
+
+    html += `<button class="pag-btn" ${pagina===1?'disabled':''} data-p="${pagina-1}" aria-label="Página anterior">
+      <i class="fa fa-chevron-left"></i></button>`;
+
+    const inicio = Math.max(1, pagina - 2);
+    const fim    = Math.min(totalPags, pagina + 2);
+    if (inicio > 1) html += `<button class="pag-btn" data-p="1">1</button>`;
+    if (inicio > 2) html += `<span class="pag-info">…</span>`;
+    for (let i = inicio; i <= fim; i++) {
+      html += `<button class="pag-btn${i===pagina?' ativo':''}" data-p="${i}" ${i===pagina?'aria-current="page"':''}>${i}</button>`;
+    }
+    if (fim < totalPags - 1) html += `<span class="pag-info">…</span>`;
+    if (fim < totalPags) html += `<button class="pag-btn" data-p="${totalPags}">${totalPags}</button>`;
+
+    html += `<button class="pag-btn" ${pagina===totalPags?'disabled':''} data-p="${pagina+1}" aria-label="Próxima página">
+      <i class="fa fa-chevron-right"></i></button>`;
+
+    el.innerHTML = html;
+
+    el.querySelectorAll('.pag-btn[data-p]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = parseInt(btn.dataset.p);
+        if (p >= 1 && p <= totalPags) {
+          state.pagina = p;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          carregarPosts();
+        }
+      });
+    });
+  }
+
+  /* ── Filtro por categoria ─────────────────────────────── */
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('ativo'));
+      btn.classList.add('ativo');
+      state.cat    = btn.dataset.cat;
+      state.pagina = 1;
+      carregarPosts();
+    });
   });
-  if(window.Sons) Sons.tocar('clique');
-}
-document.querySelectorAll('.cat-btn').forEach(b => b.addEventListener('click', () => filtrarCat(b.dataset.cat)));
-// Newsletter gerenciada pelo api-client.js (window.submeterNewsletter já definido)
+
+  /* ── Busca ─────────────────────────────────────────────── */
+  let buscaTimer;
+  const campoBusca = document.getElementById('campoBusca');
+  const btnBusca   = document.getElementById('btnBusca');
+
+  function executarBusca() {
+    state.busca  = campoBusca.value.trim();
+    state.pagina = 1;
+    carregarPosts();
+  }
+  campoBusca?.addEventListener('input', () => {
+    clearTimeout(buscaTimer);
+    buscaTimer = setTimeout(executarBusca, 500);
+  });
+  campoBusca?.addEventListener('keydown', e => { if (e.key === 'Enter') { clearTimeout(buscaTimer); executarBusca(); } });
+  btnBusca?.addEventListener('click', () => { clearTimeout(buscaTimer); executarBusca(); });
+
+  /* ── Categorias no rodapé ─────────────────────────────── */
+  const footerCats = document.getElementById('footerCats');
+  if (footerCats) {
+    ['bastidores','reflexao','escritor','livros'].forEach(c => {
+      const li = document.createElement('li');
+      const a  = document.createElement('a');
+      a.href = '#'; a.textContent = catLabels[c];
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const btn = document.querySelector(`.cat-btn[data-cat="${c}"]`);
+        if (btn) btn.click();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      li.appendChild(a); footerCats.appendChild(li);
+    });
+  }
+
+  /* ── Newsletter principal ─────────────────────────────── */
+  document.getElementById('formNl')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('nl-blog-email').value.trim();
+    const nome  = document.getElementById('nl-nome').value.trim();
+    const prefs = [...document.querySelectorAll('#formNl input[name="pref"]:checked')].map(c => c.value);
+    if (!email) return;
+
+    try {
+      const r = await fetch('backend/newsletter.php', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, nome, prefs }),
+      });
+      const d = await r.json();
+      mostrarToast(d.mensagem || 'Inscrito com sucesso!');
+      e.target.reset();
+    } catch { mostrarToast('Erro ao inscrever. Tente novamente.', 'erro'); }
+  });
+
+  document.getElementById('formNlFooter')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('nl-footer-email').value.trim();
+    if (!email) return;
+    try {
+      const r = await fetch('backend/newsletter.php', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const d = await r.json();
+      mostrarToast(d.mensagem || 'Inscrito!');
+      e.target.reset();
+    } catch {}
+  });
+
+  /* ── Toast ─────────────────────────────────────────────── */
+  function mostrarToast(msg, tipo = 'ok') {
+    const wrap = document.querySelector('.toast-wrap');
+    if (!wrap) return;
+    const t = document.createElement('div');
+    t.className = 'toast'; t.textContent = msg;
+    if (tipo === 'erro') t.style.borderColor = '#c0392b';
+    wrap.appendChild(t);
+    requestAnimationFrame(() => t.classList.add('visivel'));
+    setTimeout(() => { t.classList.remove('visivel'); setTimeout(() => t.remove(), 400); }, 3500);
+  }
+
+  /* ── Helpers ─────────────────────────────────────────── */
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── Fallback com dados estáticos ────────────────────── */
+  function gerarDadosFallback() {
+    return {
+      ok: true,
+      posts: [
+        { slug:'post-01', titulo:'Por trás da serpente e da maçã: os bastidores de A Sétima Lei', categoria:'bastidores', resumo:'Cada livro começa muito antes da primeira palavra. Aqui conto como nasceu a capa, a ideia, e o silêncio que precedeu tudo isso.', imagem_url:'img/post-bastidores-setima-lei.jpg', tempo_leitura:8, destaque:1, publicado_em:'2025-04-01', audio_url:null },
+        { slug:'post-02', titulo:'O peso do silêncio entre duas pessoas que se amaram', categoria:'reflexao', resumo:'Existe um idioma que só existe entre pessoas que já se amaram. É feito de não-ditos, de gestos pela metade.', imagem_url:'img/bastidores-setima-lei.jpg', tempo_leitura:5, destaque:0, publicado_em:'2025-03-01', audio_url:null },
+        { slug:'post-03', titulo:'Por que escrevo sobre dor — e por que não me arrependo', categoria:'escritor', resumo:'Há quem prefira histórias que consolam. Eu prefiro as que arrancam a venda dos olhos.', imagem_url:null, tempo_leitura:6, destaque:0, publicado_em:'2025-02-01', audio_url:null },
+        { slug:'post-04', titulo:'23h47 em Cascavel — onde as histórias nascem', categoria:'reflexao', resumo:'Cada cidade tem uma hora em que se revela. Cascavel às 23h47 é um lugar que só existe quando o silêncio é profundo o suficiente para ter peso.', imagem_url:null, tempo_leitura:4, destaque:0, publicado_em:'2025-01-01', audio_url:null },
+        { slug:'post-05', titulo:'Deus e o versículo incompleto — as origens de O Abismo das Almas', categoria:'livros', resumo:'Todo livro de horror tem um medo real no centro.', imagem_url:null, tempo_leitura:7, destaque:0, publicado_em:'2024-12-01', audio_url:null },
+        { slug:'post-06', titulo:'O labirinto de Lúmen — como construí uma mente que não sabe se existe', categoria:'livros', resumo:'Escrever Hannah foi o exercício mais perturbador que já fiz.', imagem_url:null, tempo_leitura:9, destaque:0, publicado_em:'2024-11-01', audio_url:null },
+        { slug:'post-07', titulo:'Sobre a solidão que produz — e a que apenas consome', categoria:'escritor', resumo:'Existe uma diferença entre a solidão que gera e a solidão que apenas esvazia.', imagem_url:null, tempo_leitura:5, destaque:0, publicado_em:'2024-10-01', audio_url:null },
+      ],
+      lidos: [],
+      total: 7,
+      total_pags: 1,
+      pagina: 1,
+      por_pagina: 9,
+    };
+  }
+
+  /* ── Init ─────────────────────────────────────────────── */
+  carregarPosts();
+
+})();
 </script>
 </body>
 </html>

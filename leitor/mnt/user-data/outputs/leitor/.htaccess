@@ -1,0 +1,17 @@
+Options -Indexes
+
+# Proteger a pasta backend do leitor
+<FilesMatch "^(?!(index)\.html$)">
+  # Permite index.html e arquivos estáticos
+</FilesMatch>
+
+# Bloquear acesso direto à pasta epub
+RedirectMatch 403 ^/leitor/epub/.*$
+
+# Charset e segurança
+AddDefaultCharset UTF-8
+
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+</IfModule>

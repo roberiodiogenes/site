@@ -42,16 +42,27 @@
   const preco     = livro?.preco_promocao ?? livro?.preco ?? null;
   const precoFmt  = preco ? 'R$\u00a0' + preco.toFixed(2).replace('.', ',') : '';
 
-  /* ── Gera o HTML do botão conforme estado ─────────────────── */
+  /* ── Gera o HTML dos botões conforme estado ───────────────── */
+  const btnPresentear = logado
+    ? `<a href="../presentear.html?livro=${slug}"
+          class="btn btn-ghost"
+          style="font-size:0.82rem;"
+          aria-label="Presentear este livro para alguém">
+         <i class="fa fa-gift" aria-hidden="true"></i>
+         Presentear alguém
+       </a>`
+    : '';
+
   function gerarBotaoHTML(modo) {
     if (modo === 'ler') {
       return `
-        <a href="../leitor/livro.html?livro=${slug}"
+        <a href="../leitor/index.html?livro=${slug}"
            class="btn btn-primario btn-ler-agora"
            aria-label="Ler ${slug} agora no leitor online">
           <i class="fa fa-book-open" aria-hidden="true"></i>
           Ler agora
-        </a>`;
+        </a>
+        ${btnPresentear}`;
     }
 
     if (modo === 'comprar') {
@@ -64,13 +75,21 @@
           Comprar${precoFmt ? ' · ' + precoFmt : ''}
           <i class="fa fa-circle-notch btn-spinner-compra" aria-hidden="true" style="display:none"></i>
         </button>
+        <a href="../leitor/index.html?livro=${slug}"
+           class="btn btn-ler-agora"
+           style="font-size:0.82rem;"
+           aria-label="Ler amostra gratuita">
+          <i class="fa fa-eye" aria-hidden="true"></i>
+          Ler amostra (10% grátis)
+        </a>
         <a href="../pagamento/assinatura.html"
            class="btn btn-ghost btn-ver-planos"
            style="font-size:0.82rem;"
            aria-label="Ver planos de assinatura">
           <i class="fa fa-crown" aria-hidden="true"></i>
           Ou assine e leia todos
-        </a>`;
+        </a>
+        ${btnPresentear}`;
     }
 
     // modo === 'login'

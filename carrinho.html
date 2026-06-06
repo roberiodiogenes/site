@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carrinho | Robério Diógenes</title>
+  <meta name="description" content="Seu carrinho de compras — finalize a aquisição de livros digitais." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  body { font-family: var(--fonte-corpo); background: var(--fundo); color: var(--texto); min-height: 100vh; }
+
+  /* ── HERO ─────────────────────────────────────────────────────── */
+  .cart-hero {
+    padding: 5rem 2rem 3rem;
+    background: linear-gradient(to bottom, var(--fundo-2), var(--fundo));
+    border-bottom: 1px solid var(--borda);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .cart-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(184,134,11,.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cart-pretitulo {
+    font-family: var(--fonte-display); font-size: .6rem;
+    letter-spacing: .35em; text-transform: uppercase;
+    color: var(--ouro); margin-bottom: .75rem; display: block;
+  }
+  .cart-titulo {
+    font-family: var(--fonte-titulo); font-size: clamp(1.75rem,4vw,2.75rem);
+    font-weight: 400; line-height: 1.15;
+  }
+  .cart-titulo em { color: var(--ouro); font-style: italic; }
+  .cart-voltar {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-family: var(--fonte-display); font-size: .6rem;
+    letter-spacing: .15em; text-transform: uppercase;
+    color: var(--texto-3); text-decoration: none;
+    margin-top: 1.25rem; transition: color var(--trans);
+  }
+  .cart-voltar:hover { color: var(--ouro); }
+
+  /* ── LAYOUT ───────────────────────────────────────────────────── */
+  .cart-wrap {
+    max-width: 1100px; margin: 0 auto;
+    padding: 2.5rem 2rem 5rem;
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 2rem; align-items: start;
+  }
+  @media (max-width: 800px) {
+    .cart-wrap { grid-template-columns: 1fr; }
+  }
+
+  /* ── BLOCO ESQUERDO: itens ───────────────────────────────────── */
+  .cart-secao-titulo {
+    font-family: var(--fonte-titulo); font-size: 1.2rem; font-weight: 400;
+    margin-bottom: 1.25rem; padding-bottom: .6rem;
+    border-bottom: 1px solid var(--borda);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cart-secao-titulo em { color: var(--ouro); font-style: italic; }
+  .cart-items-count {
+    font-family: var(--fonte-display); font-size: .6rem; font-weight: 400;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--texto-3);
+  }
+
+  /* Item do carrinho */
+  .cart-item {
+    display: flex; gap: 1.25rem; align-items: flex-start;
+    padding: 1.1rem 0; border-bottom: 1px solid var(--borda);
+    animation: fadeIn .3s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  .cart-item:last-child { border-bottom: none; }
+  .cart-item-capa {
+    width: 56px; height: 78px; border-radius: 6px; object-fit: cover;
+    flex-shrink: 0; background: var(--fundo-2);
+    box-shadow: var(--sombra-sm);
+  }
+  .cart-item-capa-ph {
+    width: 56px; height: 78px; border-radius: 6px;
+    background: var(--fundo-2); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--texto-3); font-size: 1.25rem;
+  }
+  .cart-item-info { flex: 1; min-width: 0; }
+  .cart-item-tipo {
+    font-family: var(--fonte-display); font-size: .58rem;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ouro); margin-bottom: .2rem;
+  }
+  .cart-item-titulo {
+    font-family: var(--fonte-titulo); font-size: 1rem; font-weight: 500;
+    line-height: 1.3; color: var(--texto); margin-bottom: .35rem;
+  }
+  .cart-item-formato {
+    font-size: .78rem; color: var(--texto-3);
+    display: flex; align-items: center; gap: .35rem;
+  }
+  .cart-item-preco {
+    font-family: var(--fonte-titulo); font-size: 1.05rem;
+    color: var(--ouro); font-weight: 600;
+    margin-top: .4rem;
+  }
+  .cart-item-del {
+    background: transparent; border: 1px solid var(--borda);
+    color: var(--texto-3); cursor: pointer; font-size: .78rem;
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s; flex-shrink: 0; margin-top: .1rem;
+  }
+  .cart-item-del:hover { border-color: var(--ferrugem); color: var(--ferrugem); }
+
+  /* Vazio */
+  .cart-vazio {
+    text-align: center; padding: 4rem 2rem;
+    background: var(--fundo-card); border: 1px solid var(--borda);
+    border-radius: var(--raio-lg);
+  }
+  .cart-vazio i {
+    font-size: 2.5rem; color: var(--ouro); opacity: .2;
+    display: block; margin-bottom: 1rem;
+  }
+  .cart-vazio p { color: var(--texto-3); margin-bottom: 1.5rem; font-size: .95rem; }
+  .cart-vazio a {
+    display: inline-flex; align-items: center; gap: .4rem;
+    background: var(--ouro); color: #1A0F00; padding: .65rem 1.5rem;
+    border-radius: var(--raio); font-family: var(--fonte-display);
+    font-size: .65rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; text-decoration: none;
+    transition: opacity .2s;
+  }
+  .cart-vazio a:hover { opacity: .85; }
+
+  /* Cupom */
+  .cart-cupom {
+    display: flex; gap: .5rem; margin-top: 1.5rem;
+  }
+  .cart-cupom input {
+    flex: 1; padding: .6rem .9rem;
+    background: var(--fundo-2); border: 1px solid var(--borda-media);
+    border-radius: var(--raio); color: var(--texto);
+    font-family: var(--fonte-display); font-size: .7rem;
+    letter-spacing: .08em; text-transform: uppercase;
+    outline: none; transition: border-color var(--trans);
+  }
+  .cart-cupom input:focus { border-color: var(--ouro); }
+  .cart-cupom input::placeholder { color: var(--texto-3); text-transform: none; letter-spacing: normal; font-family: var(--fonte-ui); font-size: .82rem; }
+  .cart-cupom button {
+    padding: .6rem 1rem; background: transparent;
+    border: 1px solid var(--borda-media); border-radius: var(--raio);
+    color: var(--texto-3); cursor: pointer;
+    font-family: var(--fonte-display); font-size: .6rem;
+    letter-spacing: .1em; text-transform: uppercase;
+    transition: all .2s; white-space: nowrap;
+  }
+  .cart-cupom button:hover { border-color: var(--ouro); color: var(--ouro); }
+
+  /* Alerta cupom */
+  .cart-cupom-msg {
+    font-size: .8rem; margin-top: .5rem;
+    padding: .45rem .8rem; border-radius: var(--raio);
+  }
+  .cart-cupom-msg.ok  { background: rgba(39,174,96,.1); color: #27ae60; }
+  .cart-cupom-msg.err { background: rgba(139,58,42,.08); color: var(--ferrugem); }
+
+  /* ── BLOCO DIREITO: resumo ───────────────────────────────────── */
+  .cart-resumo {
+    background: var(--fundo-card);
+    border: 1px solid var(--borda-media);
+    border-radius: var(--raio-xl);
+    padding: 1.75rem;
+    position: sticky; top: 5rem;
+    box-shadow: var(--sombra-sm);
+  }
+  .resumo-titulo {
+    font-family: var(--fonte-titulo); font-size: 1.15rem; font-weight: 400;
+    margin-bottom: 1.25rem; padding-bottom: .6rem;
+    border-bottom: 1px solid var(--borda);
+  }
+  .resumo-titulo em { color: var(--ouro); font-style: italic; }
+  .resumo-linha {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: .88rem; margin-bottom: .6rem; color: var(--texto-2);
+  }
+  .resumo-linha.desconto { color: #27ae60; }
+  .resumo-linha.total {
+    margin-top: 1rem; padding-top: .85rem; border-top: 1px solid var(--borda);
+    margin-bottom: 0; font-weight: 600;
+  }
+  .resumo-linha.total .resumo-label {
+    font-family: var(--fonte-display); font-size: .65rem;
+    letter-spacing: .15em; text-transform: uppercase; color: var(--texto-3);
+  }
+  .resumo-linha.total .resumo-valor {
+    font-family: var(--fonte-titulo); font-size: 1.5rem; color: var(--ouro);
+  }
+
+  /* Segurança badges */
+  .resumo-seguranca {
+    display: flex; gap: .5rem; flex-wrap: wrap;
+    margin: 1.25rem 0; padding: .75rem;
+    background: var(--fundo-2); border-radius: var(--raio);
+  }
+  .seg-item {
+    display: flex; align-items: center; gap: .3rem;
+    font-family: var(--fonte-display); font-size: .56rem;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--texto-3);
+    flex: 1; min-width: 80px;
+  }
+  .seg-item i { color: var(--ouro); font-size: .7rem; }
+
+  /* Botão de comprar */
+  .btn-checkout {
+    width: 100%; padding: 1rem; margin-top: .25rem;
+    background: var(--ouro); color: #1A0F00;
+    border: none; border-radius: var(--raio-lg);
+    font-family: var(--fonte-display); font-size: .75rem;
+    font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+    cursor: pointer; transition: opacity .2s;
+    display: flex; align-items: center; justify-content: center; gap: .5rem;
+  }
+  .btn-checkout:hover:not(:disabled) { opacity: .88; }
+  .btn-checkout:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-checkout .spinner { animation: spin .8s linear infinite; display: none; }
+  .btn-checkout.carregando .spinner { display: inline-block; }
+  .btn-checkout.carregando .icon-comprar { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .btn-ver-planos {
+    width: 100%; margin-top: .65rem; padding: .65rem;
+    background: transparent; border: 1px solid var(--borda-media);
+    border-radius: var(--raio); color: var(--texto-3);
+    font-family: var(--fonte-display); font-size: .62rem;
+    letter-spacing: .1em; text-transform: uppercase;
+    cursor: pointer; transition: all .2s; text-decoration: none;
+    display: flex; align-items: center; justify-content: center; gap: .4rem;
+  }
+  .btn-ver-planos:hover { border-color: var(--ouro); color: var(--ouro); }
+
+  .resumo-nota {
+    font-size: .75rem; color: var(--texto-3);
+    text-align: center; margin-top: .9rem; line-height: 1.55;
+  }
+  .resumo-nota a { color: var(--ouro); text-decoration: none; }
+
+  /* Login prompt */
+  .cart-login-aviso {
+    background: rgba(184,134,11,.06);
+    border: 1px solid rgba(184,134,11,.25);
+    border-radius: var(--raio); padding: .85rem 1rem;
+    font-size: .85rem; color: var(--texto-2);
+    display: flex; align-items: center; gap: .7rem;
+    margin-bottom: 1.25rem;
+  }
+  .cart-login-aviso i { color: var(--ouro); flex-shrink: 0; }
+  .cart-login-aviso a { color: var(--ouro); font-weight: 600; }
+
+  /* MP logo */
+  .mp-logo-wrap {
+    display: flex; align-items: center; justify-content: center;
+    gap: .5rem; margin-top: .85rem; opacity: .55;
+  }
+  .mp-logo-wrap span { font-family: var(--fonte-display); font-size: .55rem; letter-spacing: .1em; text-transform: uppercase; color: var(--texto-3); }
+
+  /* Toast */
+  .toast-wrap { position: fixed; bottom: 2rem; right: 2rem; z-index: 900; display: flex; flex-direction: column; gap: .5rem; align-items: flex-end; }
+  .toast {
+    background: var(--fundo-card); border: 1px solid var(--ouro);
+    color: var(--texto); padding: .65rem 1.25rem;
+    border-radius: var(--raio-lg); font-size: .85rem;
+    box-shadow: var(--sombra-md); opacity: 0; transform: translateX(20px);
+    transition: opacity .25s, transform .25s; max-width: 300px;
+    pointer-events: none;
+  }
+  .toast.visivel { opacity: 1; transform: translateX(0); }
+  .toast.erro { border-color: var(--ferrugem); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav" role="navigation" aria-label="Navegação principal">
+  <a href="index.html" class="nav-logo">Robério Diógenes<span>Escritor Independente</span></a>
+  <ul class="nav-links" id="navLinks" role="list">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="livros.html">Biblioteca</a></li>
+    <li><a href="autor.html">O Autor</a></li>
+    <li><a href="blog.html">Diário</a></li>
+    <li><a href="contato.html">Contato</a></li>
+  </ul>
+  <div class="nav-acoes">
+    <div class="tema-controles" role="group">
+      <button class="tema-btn ativo" data-tema="claro" aria-label="Tema claro">☀</button>
+      <button class="tema-btn" data-tema="noturno" aria-label="Tema noturno">🌙</button>
+      <button class="tema-btn" data-tema="contraste" aria-label="Alto contraste">◑</button>
+    </div>
+    <a href="login.html" class="btn btn-secundario" id="btnEntrar">
+      <i class="fa fa-user" aria-hidden="true"></i> Entrar
+    </a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<header class="cart-hero">
+  <span class="cart-pretitulo">Compra segura</span>
+  <h1 class="cart-titulo">Seu <em>Carrinho</em></h1>
+  <a href="livros.html" class="cart-voltar">
+    <i class="fa fa-arrow-left"></i> Continuar na biblioteca
+  </a>
+</header>
+
+<!-- CONTEÚDO PRINCIPAL -->
+<main>
+  <div class="cart-wrap" id="cartWrap">
+
+    <!-- ── COLUNA ITENS ─────────────────────────────────────── -->
+    <section aria-label="Itens do carrinho">
+      <div class="cart-secao-titulo">
+        <span>Itens <em>selecionados</em></span>
+        <span class="cart-items-count" id="cartCount"></span>
+      </div>
+
+      <div id="cartItems"></div>
+
+      <!-- Cupom de desconto -->
+      <div id="cupomWrap" hidden>
+        <div class="cart-cupom">
+          <input type="text" id="cupomInput" placeholder="Código de desconto" maxlength="30" autocomplete="off" spellcheck="false" />
+          <button id="btnAplicarCupom"><i class="fa fa-tag"></i> Aplicar</button>
+        </div>
+        <div id="cupomMsg" class="cart-cupom-msg" hidden></div>
+      </div>
+    </section>
+
+    <!-- ── COLUNA RESUMO ────────────────────────────────────── -->
+    <aside class="cart-resumo" aria-label="Resumo do pedido" id="cartResumo" hidden>
+
+      <h2 class="resumo-titulo">Resumo <em>do pedido</em></h2>
+
+      <div id="resumoLinhas"></div>
+
+      <div class="resumo-seguranca" aria-label="Recursos de segurança">
+        <div class="seg-item"><i class="fa fa-lock"></i> Criptografado</div>
+        <div class="seg-item"><i class="fa fa-shield-halved"></i> Pagamento seguro</div>
+        <div class="seg-item"><i class="fa fa-rotate-left"></i> Acesso imediato</div>
+      </div>
+
+      <!-- Aviso de login (se não autenticado) -->
+      <div class="cart-login-aviso" id="loginAviso" hidden>
+        <i class="fa fa-circle-info"></i>
+        <span>Faça <a href="login.html?redir=carrinho.html">login</a> para finalizar a compra com segurança.</span>
+      </div>
+
+      <button class="btn-checkout" id="btnCheckout" disabled>
+        <i class="fa fa-lock icon-comprar"></i>
+        <i class="fa fa-circle-notch spinner"></i>
+        <span class="btn-label">Pagar com segurança</span>
+      </button>
+
+      <a href="pagamento/assinatura.html" class="btn-ver-planos">
+        <i class="fa fa-crown"></i> Assine e leia tudo por R$ 19,90/mês
+      </a>
+
+      <p class="resumo-nota">
+        Após o pagamento você terá acesso imediato ao leitor online.<br>
+        Dúvidas? <a href="contato.html">Fale conosco</a>.
+      </p>
+
+      <!-- Logo MP -->
+      <div class="mp-logo-wrap" aria-label="Pagamento processado pelo Mercado Pago">
+        <i class="fa fa-credit-card" style="color:var(--ouro);font-size:.9rem"></i>
+        <span>Mercado Pago · Pix · Cartão · Boleto</span>
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<!-- RODAPÉ -->
+<footer role="contentinfo">
+  <div class="footer-wrap">
+    <div>
+      <a href="index.html" class="footer-logo">Robério Diógenes</a>
+      <p class="footer-desc">"Escrevo sobre o que nos assombra no silêncio."</p>
+    </div>
+    <div>
+      <p class="footer-col-titulo">Navegação</p>
+      <ul class="footer-links">
+        <li><a href="livros.html">Biblioteca</a></li>
+        <li><a href="pagamento/assinatura.html">Planos</a></li>
+        <li><a href="contato.html">Contato</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Robério Diógenes. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<div class="toast-wrap" id="toastWrap" role="status" aria-live="polite"></div>
+
+<script src="js/global.js"></script>
+<script>
+'use strict';
+/* ================================================================
+   carrinho.html — Script principal
+   ================================================================ */
+
+/* ── Helpers ────────────────────────────────────────────────────── */
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtPreco(v) {
+  return 'R$ ' + Number(v||0).toFixed(2).replace('.', ',');
+}
+function toast(msg, tipo = 'ok', dur = 3500) {
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast' + (tipo === 'erro' ? ' erro' : '');
+  t.textContent = msg;
+  wrap.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('visivel'));
+  setTimeout(() => { t.classList.remove('visivel'); setTimeout(() => t.remove(), 400); }, dur);
+}
+
+/* ── Estado ────────────────────────────────────────────────────── */
+const S = {
+  carrinho:  JSON.parse(localStorage.getItem('rd_carrinho') || '[]'),
+  usuario:   null,
+  // Verificação de dono feita após carregarSessao()
+  desconto:  0,       // valor em R$ de desconto por cupom
+  cupomCod:  '',
+  carregando: false,
+};
+
+/* ── Salvar no localStorage ────────────────────────────────────── */
+function salvarLocal() {
+  localStorage.setItem('rd_carrinho', JSON.stringify(S.carrinho));
+  if (S.usuario?.id) localStorage.setItem('rd_carrinho_uid', String(S.usuario.id));
+}
+function limparCarrinhoSeOutroUsuario(uid) {
+  const stored = localStorage.getItem('rd_carrinho_uid');
+  if (stored && stored !== String(uid)) {
+    localStorage.removeItem('rd_carrinho');
+    localStorage.removeItem('rd_carrinho_uid');
+    S.carrinho = [];
+  }
+}
+
+/* ── Salvar no BD (se logado) ──────────────────────────────────── */
+async function sincronizarBD() {
+  if (!S.usuario) return;
+  try {
+    await fetch('backend/carrinho.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'salvar', itens: S.carrinho }),
+    });
+  } catch {}
+}
+
+/* ── Remover item ──────────────────────────────────────────────── */
+function removerItem(slug) {
+  S.carrinho = S.carrinho.filter(i => i.slug !== slug);
+  salvarLocal();
+  sincronizarBD();
+  renderizar();
+}
+
+/* ── Renderizar ────────────────────────────────────────────────── */
+function renderizar() {
+  const itemsEl = document.getElementById('cartItems');
+  const countEl = document.getElementById('cartCount');
+  const resumoEl= document.getElementById('cartResumo');
+  const cupomW  = document.getElementById('cupomWrap');
+  const linhasEl= document.getElementById('resumoLinhas');
+
+  const n = S.carrinho.length;
+  if (countEl) countEl.textContent = `${n} item${n !== 1 ? 's' : ''}`;
+
+  if (!n) {
+    if (resumoEl) resumoEl.hidden = true;
+    if (cupomW)  cupomW.hidden  = true;
+    itemsEl.innerHTML = `
+      <div class="cart-vazio">
+        <i class="fa fa-cart-shopping"></i>
+        <p>Seu carrinho está vazio.</p>
+        <a href="livros.html"><i class="fa fa-book-open"></i> Explorar a biblioteca</a>
+      </div>`;
+    return;
+  }
+
+  if (resumoEl) resumoEl.hidden = false;
+  if (cupomW)  cupomW.hidden  = false;
+
+  let subtotal = 0;
+  itemsEl.innerHTML = S.carrinho.map(item => {
+    subtotal += Number(item.preco || 0);
+    return `<div class="cart-item" data-slug="${esc(item.slug)}">
+      ${item.capa
+        ? `<img src="${esc(item.capa)}" alt="${esc(item.titulo)}" class="cart-item-capa"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        : ''}
+      <div class="cart-item-capa-ph" ${item.capa ? 'style="display:none"' : ''}>
+        <i class="fa fa-book"></i>
+      </div>
+      <div class="cart-item-info">
+        <div class="cart-item-tipo">Livro digital · EPUB</div>
+        <div class="cart-item-titulo">${esc(item.titulo)}</div>
+        <div class="cart-item-formato">
+          <i class="fa fa-book-open" style="color:var(--ouro);opacity:.7"></i>
+          Acesso no leitor online
+        </div>
+        <div class="cart-item-preco">${fmtPreco(item.preco)}</div>
+      </div>
+      <button class="cart-item-del" onclick="removerItem('${esc(item.slug)}')"
+              title="Remover" aria-label="Remover ${esc(item.titulo)}">
+        <i class="fa fa-xmark"></i>
+      </button>
+    </div>`;
+  }).join('');
+
+  // Resumo
+  const total = Math.max(0, subtotal - S.desconto);
+  let linhasHtml = `
+    <div class="resumo-linha">
+      <span>Subtotal (${n} item${n!==1?'s':''})</span>
+      <span>${fmtPreco(subtotal)}</span>
+    </div>`;
+  if (S.desconto > 0) {
+    linhasHtml += `
+      <div class="resumo-linha desconto">
+        <span><i class="fa fa-tag"></i> Cupom "${esc(S.cupomCod)}"</span>
+        <span>− ${fmtPreco(S.desconto)}</span>
+      </div>`;
+  }
+  linhasHtml += `
+    <div class="resumo-linha total">
+      <span class="resumo-label">Total</span>
+      <span class="resumo-valor">${fmtPreco(total)}</span>
+    </div>`;
+  if (linhasEl) linhasEl.innerHTML = linhasHtml;
+
+  // Estado do botão de checkout
+  const btnCk = document.getElementById('btnCheckout');
+  const loginAviso = document.getElementById('loginAviso');
+  if (S.usuario) {
+    if (btnCk) btnCk.disabled = false;
+    if (loginAviso) loginAviso.hidden = true;
+  } else {
+    if (btnCk) btnCk.disabled = true;
+    if (loginAviso) loginAviso.hidden = false;
+  }
+}
+
+/* ── Sessão ────────────────────────────────────────────────────── */
+async function carregarSessao() {
+  try {
+    const r = await fetch('backend/auth/sessao.php', { credentials: 'same-origin' });
+    const d = await r.json();
+    if (d.ok && d.logado) {
+      S.usuario = d.usuario;
+      limparCarrinhoSeOutroUsuario(d.usuario.id); // ← limpa se mudou de user
+      const btn = document.getElementById('btnEntrar');
+      if (btn) {
+        btn.innerHTML = `<i class="fa fa-user"></i> ${d.usuario.nome.split(' ')[0]}`;
+        btn.href = 'leitor/';
+      }
+      // Sincronizar carrinho local → BD
+      await sincronizarBD();
+    }
+  } catch {}
+}
+
+/* ── Cupom ─────────────────────────────────────────────────────── */
+document.getElementById('btnAplicarCupom')?.addEventListener('click', async () => {
+  const input  = document.getElementById('cupomInput');
+  const msgEl  = document.getElementById('cupomMsg');
+  const codigo = input.value.trim().toUpperCase();
+  if (!codigo) return;
+
+  // Validar com backend (se disponível)
+  try {
+    const r = await fetch('backend/cupons.php?codigo=' + encodeURIComponent(codigo), {
+      credentials: 'same-origin'
+    });
+    const d = await r.json();
+    if (d.ok && d.desconto > 0) {
+      S.desconto  = d.desconto;
+      S.cupomCod  = codigo;
+      msgEl.textContent = `✓ Cupom aplicado! Desconto de ${fmtPreco(d.desconto)}.`;
+      msgEl.className   = 'cart-cupom-msg ok';
+      msgEl.hidden      = false;
+      renderizar();
+      return;
+    }
+  } catch {
+    // backend de cupons ainda não implementado — apenas ignorar
+  }
+  msgEl.textContent = 'Cupom inválido ou expirado.';
+  msgEl.className   = 'cart-cupom-msg err';
+  msgEl.hidden      = false;
+});
+
+/* ── Checkout ──────────────────────────────────────────────────── */
+document.getElementById('btnCheckout')?.addEventListener('click', async () => {
+  if (!S.usuario) {
+    window.location.href = 'login.html?redir=carrinho.html';
+    return;
+  }
+  if (!S.carrinho.length) { toast('Seu carrinho está vazio.', 'erro'); return; }
+  if (S.carregando) return;
+
+  S.carregando = true;
+  const btn = document.getElementById('btnCheckout');
+  const lbl = btn.querySelector('.btn-label');
+  btn.classList.add('carregando');
+  btn.disabled = true;
+  if (lbl) lbl.textContent = 'Preparando pagamento…';
+
+  // Marcar como checkout no BD
+  try {
+    await fetch('backend/carrinho.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'checkout' }),
+    });
+  } catch {}
+
+  try {
+    const slugs = S.carrinho.map(i => i.slug);
+    const r = await fetch('backend/pagamento.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'iniciar_carrinho', slugs }),
+    });
+    const d = await r.json();
+
+    if (d.ok && d.checkout_url) {
+      // Limpar carrinho local após redirecionar para o MP
+      localStorage.removeItem('rd_carrinho');
+      window.location.href = d.checkout_url;
+    } else {
+      toast(d.erro || 'Erro ao iniciar pagamento. Tente novamente.', 'erro', 5000);
+      btn.classList.remove('carregando');
+      btn.disabled = false;
+      if (lbl) lbl.textContent = 'Pagar com segurança';
+      S.carregando = false;
+    }
+  } catch {
+    toast('Erro de conexão. Verifique sua internet e tente novamente.', 'erro');
+    btn.classList.remove('carregando');
+    btn.disabled = false;
+    if (lbl) lbl.textContent = 'Pagar com segurança';
+    S.carregando = false;
+  }
+});
+
+/* ── Expor removerItem ao escopo global (onclick inline) ───────── */
+window.removerItem = removerItem;
+
+/* ── INIT ──────────────────────────────────────────────────────── */
+(async () => {
+  await carregarSessao();
+
+  // ?add=slug: adicionar item via URL (ex: vindo do paywall do leitor)
+  const addSlug = new URLSearchParams(window.location.search).get('add');
+  if (addSlug) {
+    // Buscar dados do livro para adicionar ao carrinho
+    try {
+      const r = await fetch('backend/pagamento.php?acao=livro&slug=' + encodeURIComponent(addSlug));
+      const d = await r.json();
+      if (d.ok && d.livro && d.livro.preco > 0) {
+        const { slug, titulo, preco, preco_promocao, capa_img } = d.livro;
+        if (!S.carrinho.find(i => i.slug === slug)) {
+          S.carrinho.push({ slug, titulo, preco: preco_promocao || preco, capa: capa_img || '' });
+          salvarLocal();
+        }
+      }
+    } catch {}
+    // Limpar parâmetro da URL sem recarregar
+    history.replaceState({}, '', 'carrinho.html');
+  }
+
+  renderizar();
+})();
+</script>
+</body>
+</html>
