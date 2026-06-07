@@ -396,13 +396,29 @@ const API = (() => {
        * @param {string} email
        * @returns {Promise<object>}
        */
-      async inscrever(email) {
+      async inscrever(email, origem = '') {
         if (!Validadores.email(email)) {
           return { ok: false, erro: 'E-mail inválido.' };
         }
 
+        // Detecta origem automaticamente se não fornecida
+        if (!origem) {
+          const path = window.location.pathname;
+          if (path.includes('/livros/')) {
+            origem = 'livro_' + path.split('/').pop().replace('.html', '');
+          } else if (path.includes('/blog/')) {
+            origem = 'post';
+          } else if (path.includes('blog.html')) {
+            origem = 'blog';
+          } else if (path.includes('pre-lancamento')) {
+            origem = 'pre_lancamento';
+          } else {
+            origem = 'home';
+          }
+        }
+
         return requisicao('newsletter.php', {
-          dados: { email: email.toLowerCase().trim() },
+          dados: { email: email.toLowerCase().trim(), origem },
         });
       },
     },

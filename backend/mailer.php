@@ -284,6 +284,36 @@ class Mailer {
         ]);
     }
 
+    /** Lembrete de carrinho abandonado */
+    public static function enviarLembreteCarrinho(string $email, string $nome, array $titulos, string $totalFmt): bool {
+        $primeiroNome = explode(' ', trim($nome))[0];
+        $listaHtml    = implode('', array_map(
+            fn($t) => "<li style='margin-bottom:6px;color:#2C2418'>📖 " . htmlspecialchars($t, ENT_QUOTES) . "</li>",
+            $titulos
+        ));
+        return self::enviar([
+            'para_email' => $email,
+            'para_nome'  => $nome,
+            'assunto'    => 'Você deixou algo para trás — Robério Diógenes',
+            'html'       => "
+<p>Olá, <strong>{$primeiroNome}</strong>.</p>
+<p>Você adicionou livros ao carrinho e ainda não concluiu a compra. Suas histórias estão esperando:</p>
+<ul style='background:#F5F0E8;border-radius:8px;padding:1rem 1rem 1rem 2rem;margin:1.25rem 0;line-height:1.9'>
+  {$listaHtml}
+</ul>
+<p>Total do pedido: <strong style='color:#B8860B'>{$totalFmt}</strong></p>
+<p style='text-align:center;margin:2rem 0'>
+  <a href='" . SITE_URL . "/carrinho.html' class='btn-email'>Finalizar minha compra →</a>
+</p>
+<p style='font-size:.82rem;color:#8C7D65'>
+  Se não quiser mais receber estes lembretes,
+  <a href='" . SITE_URL . "/contato.html' style='color:#8C7D65'>entre em contato</a>.
+</p>
+",
+            'texto' => "Olá {$primeiroNome},\n\nVocê deixou itens no carrinho ({$totalFmt}).\nFinalize sua compra em: " . SITE_URL . "/carrinho.html",
+        ]);
+    }
+
     /** Reencaminha mensagem do formulário de contato */
     public static function enviarContato(array $dados): bool {
         $nome    = htmlspecialchars($dados['nome']    ?? 'Visitante', ENT_QUOTES);

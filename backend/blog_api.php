@@ -441,10 +441,33 @@ if ($acao === 'marcar_lido' && $_SERVER['REQUEST_METHOD'] === 'POST') {
                progresso = GREATEST(progresso, VALUES(progresso)),
                lido_em   = IF(VALUES(progresso) >= 70, NOW(), lido_em)"
         )->execute([$usuario['id'], $slug, $progresso]);
-        _blog_jsonOk();
     } catch (PDOException $e) {
         _blog_jsonOk(['aviso' => 'posts_lidos indisponível']);
     }
+
+    /* ── Rastrear interesse por categoria ──────────────────────
+       Só registra se o progresso for >= 30% (leitura real,
+       não apenas abertura do post).                           */
+    if ($progresso >= 30) {
+        try {
+            $stCat = $pdo->prepare("SELECT categoria FROM posts WHERE slug = ? LIMIT 1");
+            $stCat->execute([$slug]);
+            $cat = $stCat->fetchColumn();
+            if ($cat) {
+                $pdo->prepare(
+                    "INSERT INTO usuario_interesses (usuario_id, categoria, contagem)
+                     VALUES (?, ?, 1)
+                     ON DUPLICATE KEY UPDATE
+                       contagem     = contagem + 1,
+                       ultima_vista = NOW()"
+                )->execute([$usuario['id'], $cat]);
+            }
+        } catch (PDOException $e) {
+            /* Silencioso — migration pode não ter rodado ainda */
+        }
+    }
+
+    _blog_jsonOk();
 }
 
 /* ================================================================

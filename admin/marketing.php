@@ -24,6 +24,18 @@ if ($_isAjax) {
 
 /* ── Helpers de segmento ── */
 function _contarSegmento(PDO $pdo, string $seg): int {
+    /* Segmentos dinâmicos por interesse literário (categoria) */
+    if (str_starts_with($seg, 'interesse_')) {
+        $cat = urldecode(substr($seg, strlen('interesse_')));
+        try {
+            $st = $pdo->prepare(
+                "SELECT COUNT(DISTINCT usuario_id) FROM usuario_interesses WHERE categoria = ?"
+            );
+            $st->execute([$cat]);
+            return (int) $st->fetchColumn();
+        } catch (Throwable $e) { return 0; }
+    }
+
     return match($seg) {
         'newsletter'  => (int)$pdo->query("SELECT COUNT(*) FROM newsletter WHERE status='ativo'")->fetchColumn(),
         'compradores' => (int)$pdo->query("SELECT COUNT(DISTINCT usuario_id) FROM compras WHERE status='aprovada'")->fetchColumn(),
@@ -36,6 +48,22 @@ function _contarSegmento(PDO $pdo, string $seg): int {
 }
 
 function _emailsSegmento(PDO $pdo, string $seg): array {
+    /* Segmentos dinâmicos por interesse literário */
+    if (str_starts_with($seg, 'interesse_')) {
+        $cat = urldecode(substr($seg, strlen('interesse_')));
+        try {
+            $st = $pdo->prepare(
+                "SELECT DISTINCT u.email, u.nome
+                 FROM usuarios u
+                 JOIN usuario_interesses ui ON ui.usuario_id = u.id
+                 WHERE ui.categoria = ? AND u.ativo = 1
+                 ORDER BY u.nome"
+            );
+            $st->execute([$cat]);
+            return $st->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $e) { return []; }
+    }
+
     // 1. O match apenas define a String da Query SQL de forma limpa
     $sql = match($seg) {
         'newsletter'  => "SELECT email, COALESCE(nome,'') AS nome FROM newsletter WHERE status='ativo'",
@@ -168,6 +196,29 @@ $ultimosCad = $pdo->query(
     "SELECT nome,email,created_at FROM usuarios ORDER BY created_at DESC LIMIT 8"
 )->fetchAll();
 
+// Interesses literários por categoria (segmentação dinâmica)
+$interesses = [];
+try {
+    $interesses = $pdo->query(
+        "SELECT categoria,
+                COUNT(DISTINCT usuario_id) AS total_usuarios,
+                SUM(contagem)             AS total_leituras
+         FROM usuario_interesses
+         GROUP BY categoria
+         ORDER BY total_usuarios DESC"
+    )->fetchAll();
+} catch (Throwable $e) { /* migration não executada ainda */ }
+
+// Origens das inscrições da newsletter
+$origens = [];
+try {
+    $origens = $pdo->query(
+        "SELECT COALESCE(origem,'desconhecida') AS origem, COUNT(*) AS total
+         FROM newsletter WHERE status='ativo'
+         GROUP BY origem ORDER BY total DESC LIMIT 10"
+    )->fetchAll();
+} catch (Throwable $e) { /* coluna ainda não existe */ }
+
 $TIPOS_CAMP = [
     'lancamento'    => '📢 Lançamento',
     'promocao'      => '🏷️ Promoção',
@@ -222,6 +273,61 @@ $SEGS_LABEL = [
   </div>
   <?php endforeach; ?>
 </div>
+
+<!-- ══ INTERESSES LITERÁRIOS ════════════════════════════════════ -->
+<?php if ($interesses): ?>
+<h2 style="font-family:Georgia,serif;font-size:1rem;color:var(--ouro);margin-bottom:.85rem;letter-spacing:.05em">
+  <i class="fa fa-book-open-reader"></i> Segmentos por interesse literário
+</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.85rem;margin-bottom:2rem">
+  <?php foreach ($interesses as $int): ?>
+  <?php $seg = 'interesse_' . urlencode($int['categoria']); ?>
+  <div class="stat-card" style="flex-direction:column;align-items:flex-start;gap:.35rem;cursor:pointer"
+       onclick="exportar('<?= adm_esc($seg) ?>')"
+       title="Exportar leitores de <?= adm_esc($int['categoria']) ?>">
+    <div style="display:flex;align-items:center;gap:.5rem;width:100%">
+      <i class="fa fa-bookmark" style="color:var(--ouro);font-size:1rem"></i>
+      <span style="font-size:1.4rem;font-weight:700;color:var(--texto)"><?= number_format((int)$int['total_usuarios']) ?></span>
+    </div>
+    <span style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-3)">
+      <?= adm_esc($int['categoria']) ?>
+    </span>
+    <span style="font-size:.6rem;color:var(--texto-3)"><?= number_format((int)$int['total_leituras']) ?> leituras</span>
+    <span style="font-size:.62rem;color:var(--ouro);opacity:.7"><i class="fa fa-download" style="font-size:.58rem"></i> Exportar CSV</span>
+  </div>
+  <?php endforeach; ?>
+</div>
+<?php elseif (empty($interesses)): ?>
+<div class="secao" style="margin-bottom:1.5rem">
+  <div class="estado-vazio" style="padding:1.5rem">
+    <i class="fa fa-book-open-reader"></i>
+    <p>Nenhum dado de interesse ainda. Execute <code>database/migration_email_marketing.sql</code> e os interesses aparecerão aqui conforme os usuários leem posts do Diário.</p>
+  </div>
+</div>
+<?php endif; ?>
+
+<!-- ══ ORIGENS DAS INSCRIÇÕES ═══════════════════════════════════ -->
+<?php if ($origens): ?>
+<h2 style="font-family:Georgia,serif;font-size:1rem;color:var(--ouro);margin-bottom:.85rem;letter-spacing:.05em">
+  <i class="fa fa-map-pin"></i> Origem das inscrições (newsletter ativa)
+</h2>
+<div class="secao" style="margin-bottom:2rem">
+  <table>
+    <thead><tr><th>Origem</th><th style="text-align:right">Inscritos</th></tr></thead>
+    <tbody>
+      <?php foreach ($origens as $o): ?>
+      <tr>
+        <td style="font-size:.83rem">
+          <i class="fa fa-location-dot" style="color:var(--ouro);font-size:.7rem;margin-right:.3rem"></i>
+          <?= adm_esc($o['origem']) ?>
+        </td>
+        <td style="text-align:right;font-weight:600;font-size:.83rem"><?= number_format((int)$o['total']) ?></td>
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+<?php endif; ?>
 
 <div class="grade-2">
 
@@ -391,6 +497,17 @@ $SEGS_LABEL = [
           <?php foreach ($SEGS_LABEL as $v=>$l): ?>
           <option value="<?= $v ?>"><?= $l ?> (<?= number_format((int)($segs[$v]??0)) ?>)</option>
           <?php endforeach; ?>
+          <?php if ($interesses): ?>
+          <optgroup label="── Por interesse literário ──">
+            <?php foreach ($interesses as $int):
+              $segKey = 'interesse_' . urlencode($int['categoria']);
+            ?>
+            <option value="<?= adm_esc($segKey) ?>">
+              <?= adm_esc($int['categoria']) ?> (<?= number_format((int)$int['total_usuarios']) ?> leitores)
+            </option>
+            <?php endforeach; ?>
+          </optgroup>
+          <?php endif; ?>
         </select>
       </div>
 

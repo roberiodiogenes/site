@@ -56,18 +56,21 @@ if ($arquivo['size'] > 5 * 1024 * 1024) {
     exit;
 }
 
-/* ── Pasta de destino ────────────────────────────────────────── */
-$destDir = realpath(__DIR__ . '/../') . '/img/posts/';
-if (!is_dir($destDir)) {
-    mkdir($destDir, 0755, true);
-}
-$destFile = $destDir . $slug . '.jpg';
+/* ── Destino: WebP se GD suportar, senão JPEG ───────────────── */
+$destDir  = realpath(__DIR__ . '/../') . '/img/posts/';
+if (!is_dir($destDir)) mkdir($destDir, 0755, true);
+
+$useWebp  = extension_loaded('gd') && function_exists('imagewebp');
+$ext      = $useWebp ? 'webp' : 'jpg';
+$destFile = $destDir . $slug . '.' . $ext;
+$urlRetorno = 'img/posts/' . $slug . '.' . $ext;
+$LIMITE_KB  = 100; // ← 100 KB máximo
 
 /* ── Sem GD: apenas mover ────────────────────────────────────── */
 if (!extension_loaded('gd')) {
     move_uploaded_file($arquivo['tmp_name'], $destFile);
-    echo json_encode(['ok' => true, 'url' => 'img/posts/' . $slug . '.jpg',
-                      'mensagem' => 'Salvo (GD não disponível, sem redimensionamento).']);
+    echo json_encode(['ok' => true, 'url' => $urlRetorno,
+                      'mensagem' => 'Salvo (GD não disponível, sem otimização).']);
     exit;
 }
 
@@ -85,39 +88,47 @@ if (!$src) {
 }
 
 /* ── Redimensionar mantendo proporção (max 1200×630) ─────────── */
-$w = imagesx($src);
-$h = imagesy($src);
+$w     = imagesx($src);
+$h     = imagesy($src);
 $ratio = min(1200 / $w, 630 / $h, 1.0);
-$nw = (int)round($w * $ratio);
-$nh = (int)round($h * $ratio);
+$nw    = (int)round($w * $ratio);
+$nh    = (int)round($h * $ratio);
 
 $dst = imagecreatetruecolor($nw, $nh);
+// Fundo branco (importante para PNG com transparência)
 imagefill($dst, 0, 0, imagecolorallocate($dst, 255, 255, 255));
 imagecopyresampled($dst, $src, 0, 0, 0, 0, $nw, $nh, $w, $h);
 imagedestroy($src);
 
-/* ── Salvar JPEG com qualidade progressiva até ≤150KB ────────── */
-$tmpFile = $destDir . $slug . '_tmp.jpg';
+/* ── Salvar com qualidade progressiva até ≤ LIMITE_KB ──────── */
+$tmpFile  = $destDir . $slug . '_tmp.' . $ext;
+$limiteB  = $LIMITE_KB * 1024;
 $q = 85;
+
 do {
-    imagejpeg($dst, $tmpFile, $q);
+    if ($useWebp) {
+        imagewebp($dst, $tmpFile, $q);
+    } else {
+        imagejpeg($dst, $tmpFile, $q);
+    }
     $sz = filesize($tmpFile);
     $q -= 5;
-} while ($sz > 150 * 1024 && $q >= 30);
+} while ($sz > $limiteB && $q >= 25);
 
-/* ── Se ainda >150KB, reduzir dimensões ─────────────────────── */
-if ($sz > 150 * 1024) {
-    $fator = sqrt((150 * 1024) / $sz);
-    $nw2 = (int)round($nw * $fator);
-    $nh2 = (int)round($nh * $fator);
-    $dst2 = imagecreatetruecolor($nw2, $nh2);
+/* ── Se ainda acima do limite, reduzir dimensões ────────────── */
+if ($sz > $limiteB) {
+    $fator = sqrt($limiteB / $sz);
+    $nw2   = max(320, (int)round($nw * $fator));
+    $nh2   = max(180, (int)round($nh * $fator));
+    $dst2  = imagecreatetruecolor($nw2, $nh2);
     imagefill($dst2, 0, 0, imagecolorallocate($dst2, 255, 255, 255));
-    $tmp2 = @imagecreatefromjpeg($tmpFile);
+    $tmp2  = $useWebp ? @imagecreatefromwebp($tmpFile) : @imagecreatefromjpeg($tmpFile);
     if ($tmp2) {
         imagecopyresampled($dst2, $tmp2, 0, 0, 0, 0, $nw2, $nh2, $nw, $nh);
         imagedestroy($tmp2);
     }
-    imagejpeg($dst2, $tmpFile, 72);
+    if ($useWebp) imagewebp($dst2, $tmpFile, 70);
+    else          imagejpeg($dst2, $tmpFile, 70);
     imagedestroy($dst2);
     $sz = filesize($tmpFile);
     $nw = $nw2; $nh = $nh2;
@@ -129,7 +140,7 @@ rename($tmpFile, $destFile);
 $kb = round($sz / 1024, 1);
 echo json_encode([
     'ok'       => true,
-    'url'      => 'img/posts/' . $slug . '.jpg',
+    'url'      => $urlRetorno,
     'kb'       => $kb,
-    'mensagem' => "Imagem salva: {$kb}KB, {$nw}×{$nh}px.",
+    'mensagem' => "Imagem salva em {$ext}: {$kb}KB ({$nw}×{$nh}px).",
 ]);

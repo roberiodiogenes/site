@@ -49,6 +49,28 @@ $email = trim(strtolower($body['email'] ?? ''));
 $nome  = mb_substr(trim($body['nome'] ?? ''), 0, 120, 'UTF-8');
 // Preferências de categoria (array de strings)
 $prefs = is_array($body['prefs'] ?? null) ? $body['prefs'] : [];
+
+// ── Origem da inscrição ──────────────────────────────────────────
+// Usa o campo 'origem' do body; se ausente, detecta pelo Referer.
+$origem = mb_substr(trim($body['origem'] ?? ''), 0, 80, 'UTF-8');
+if (!$origem) {
+    $referer = $_SERVER['HTTP_REFERER'] ?? '';
+    $path    = parse_url($referer, PHP_URL_PATH) ?? '';
+    if (str_contains($path, '/livros/')) {
+        $slugLivro = basename($path, '.html');
+        $origem    = 'livro_' . preg_replace('/[^a-z0-9-]/', '', $slugLivro);
+    } elseif (str_contains($path, '/blog/')) {
+        $origem = 'post';
+    } elseif (str_contains($path, 'blog.html')) {
+        $origem = 'blog';
+    } elseif (str_contains($path, 'pre-lancamento')) {
+        $origem = 'pre_lancamento';
+    } elseif ($path === '/' || str_contains($path, 'index.html') || $path === '') {
+        $origem = 'home';
+    } else {
+        $origem = 'site';
+    }
+}
 $prefCats = ['bastidores', 'reflexao', 'escritor', 'livros'];
 $prefVals = [];
 foreach ($prefCats as $c) {
@@ -78,10 +100,10 @@ if ($existente) {
     try {
         $pdo->prepare(
             "UPDATE newsletter SET status='pendente', token_verificacao=?, token_expira=?,
-             ip=?, descad_em=NULL, nome=?,
+             ip=?, descad_em=NULL, nome=?, origem=COALESCE(origem, ?),
              pref_bastidores=?, pref_reflexao=?, pref_escritor=?, pref_livros=?
              WHERE id=?"
-        )->execute([$token, $expira, getIP(), $nome ?: null,
+        )->execute([$token, $expira, getIP(), $nome ?: null, $origem ?: null,
             $prefVals['pref_bastidores'], $prefVals['pref_reflexao'],
             $prefVals['pref_escritor'],  $prefVals['pref_livros'],
             $existente['id']]);
@@ -103,10 +125,10 @@ $expira = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
 try {
     $pdo->prepare(
-        "INSERT INTO newsletter (email, nome, ip, status, token_verificacao, token_expira,
+        "INSERT INTO newsletter (email, nome, ip, origem, status, token_verificacao, token_expira,
                                   pref_bastidores, pref_reflexao, pref_escritor, pref_livros)
-         VALUES (?, ?, ?, 'pendente', ?, ?, ?, ?, ?, ?)"
-    )->execute([$email, $nome ?: null, getIP(), $token, $expira,
+         VALUES (?, ?, ?, ?, 'pendente', ?, ?, ?, ?, ?, ?)"
+    )->execute([$email, $nome ?: null, getIP(), $origem ?: null, $token, $expira,
         $prefVals['pref_bastidores'], $prefVals['pref_reflexao'],
         $prefVals['pref_escritor'],  $prefVals['pref_livros']]);
 } catch (Throwable $e) {

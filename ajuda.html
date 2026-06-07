@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ══ SEO ══════════════════════════════════════════════════════ -->
+  <title>Central de Ajuda | Robério Diógenes — Perguntas Frequentes</title>
+  <meta name="description" content="Tire suas dúvidas sobre o site do escritor Robério Diógenes: como criar conta, usar o leitor online, assinar, pagar e muito mais. Guia simples e completo." />
+  <meta name="author" content="Robério Diógenes" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.roberiodiogenes.com/ajuda.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:locale"      content="pt_BR" />
+  <meta property="og:site_name"   content="Robério Diógenes" />
+  <meta property="og:title"       content="Central de Ajuda | Robério Diógenes" />
+  <meta property="og:description" content="Guia completo para usar o site: cadastro, leitor online, assinaturas, pagamentos e mais." />
+  <meta property="og:url"         content="https://www.roberiodiogenes.com/ajuda.html" />
+  <meta property="og:image"       content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+
+  <!-- hreflang -->
+  <link rel="alternate" hreflang="pt-BR"    href="https://www.roberiodiogenes.com/ajuda.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.roberiodiogenes.com/ajuda.html" />
+
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/variables.css" />
+
+  <style>
+    /* ── Reset e base ────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: var(--fundo, #0D0A07);
+      color: var(--texto, #E8DCC8);
+      line-height: 1.7;
+    }
+    a { color: var(--ouro, #B8860B); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Navegação ────────────────────────────────────────────────── */
+    .aj-nav {
+      background: rgba(13,10,7,.95);
+      border-bottom: 1px solid rgba(184,134,11,.2);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .aj-logo {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 1.15rem;
+      color: #B8860B;
+      text-decoration: none;
+      letter-spacing: .08em;
+    }
+    .aj-nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .aj-nav-links a {
+      font-size: .78rem;
+      color: var(--texto-3, #8C7D65);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      transition: color .2s;
+    }
+    .aj-nav-links a:hover { color: #B8860B; text-decoration: none; }
+
+    /* ── Hero ─────────────────────────────────────────────────────── */
+    .aj-hero {
+      background: linear-gradient(160deg, #1A0F00 0%, #0D0A07 60%);
+      border-bottom: 1px solid rgba(184,134,11,.15);
+      padding: 4rem 2rem 3.5rem;
+      text-align: center;
+    }
+    .aj-hero-eyebrow {
+      font-size: .65rem;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: #B8860B;
+      margin-bottom: .75rem;
+    }
+    .aj-hero-titulo {
+      font-family: Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 400;
+      color: #E8DCC8;
+      margin-bottom: .75rem;
+    }
+    .aj-hero-titulo em { color: #B8860B; font-style: italic; }
+    .aj-hero-desc {
+      font-size: 1rem;
+      color: #8C7D65;
+      max-width: 540px;
+      margin: 0 auto 2rem;
+      line-height: 1.65;
+    }
+
+    /* Barra de busca rápida */
+    .aj-busca-wrap { max-width: 480px; margin: 0 auto; position: relative; }
+    .aj-busca {
+      width: 100%;
+      padding: .85rem 3rem .85rem 1.25rem;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(184,134,11,.3);
+      border-radius: 8px;
+      font-family: Georgia, serif;
+      font-size: .95rem;
+      color: #E8DCC8;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .aj-busca::placeholder { color: #5C4F3A; }
+    .aj-busca:focus { border-color: #B8860B; }
+    .aj-busca-icone {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #5C4F3A;
+      pointer-events: none;
+    }
+
+    /* Resultados de busca */
+    #ajBuscaResultados {
+      display: none;
+      background: #1C1408;
+      border: 1px solid rgba(184,134,11,.2);
+      border-radius: 8px;
+      margin-top: .5rem;
+      text-align: left;
+      overflow: hidden;
+    }
+    .aj-busca-item {
+      padding: .75rem 1.25rem;
+      font-size: .88rem;
+      color: #C8B898;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(184,134,11,.08);
+      transition: background .15s;
+    }
+    .aj-busca-item:last-child { border-bottom: none; }
+    .aj-busca-item:hover { background: rgba(184,134,11,.1); color: #E8DCC8; }
+    .aj-busca-item mark { background: none; color: #B8860B; font-weight: bold; }
+    .aj-sem-resultado { padding: .85rem 1.25rem; font-size: .85rem; color: #5C4F3A; }
+
+    /* ── Âncoras de categoria ─────────────────────────────────────── */
+    .aj-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .aj-cat-btn {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .55rem 1.1rem;
+      background: rgba(184,134,11,.08);
+      border: 1px solid rgba(184,134,11,.2);
+      border-radius: 50px;
+      font-family: Georgia, serif;
+      font-size: .8rem;
+      color: #B8A888;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .aj-cat-btn:hover, .aj-cat-btn:focus {
+      background: rgba(184,134,11,.18);
+      border-color: #B8860B;
+      color: #E8DCC8;
+      text-decoration: none;
+    }
+    .aj-cat-btn i { font-size: .75rem; color: #B8860B; }
+
+    /* ── Seções de FAQ ────────────────────────────────────────────── */
+    .aj-main {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 5rem;
+    }
+
+    .aj-secao { margin-bottom: 3rem; scroll-margin-top: 80px; }
+
+    .aj-secao-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: .75rem;
+      border-bottom: 1px solid rgba(184,134,11,.15);
+    }
+    .aj-secao-icone {
+      width: 42px;
+      height: 42px;
+      background: rgba(184,134,11,.12);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .aj-secao-icone i { color: #B8860B; font-size: 1.1rem; }
+    .aj-secao-titulo {
+      font-family: Georgia, serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #E8DCC8;
+    }
+    .aj-secao-titulo em { color: #B8860B; font-style: italic; }
+
+    /* ── Item do acordeão ─────────────────────────────────────────── */
+    .faq-item {
+      border: 1px solid rgba(184,134,11,.12);
+      border-radius: 8px;
+      margin-bottom: .6rem;
+      overflow: hidden;
+      transition: border-color .25s;
+    }
+    .faq-item.aberto {
+      border-color: rgba(184,134,11,.35);
+    }
+
+    .faq-pergunta {
+      width: 100%;
+      background: rgba(255,255,255,.03);
+      border: none;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      cursor: pointer;
+      text-align: left;
+      font-family: Georgia, serif;
+      font-size: .95rem;
+      color: #C8B898;
+      transition: background .2s, color .2s;
+    }
+    .faq-pergunta:hover { background: rgba(184,134,11,.07); color: #E8DCC8; }
+    .faq-item.aberto .faq-pergunta {
+      background: rgba(184,134,11,.08);
+      color: #E8DCC8;
+    }
+
+    .faq-pergunta-texto { flex: 1; line-height: 1.45; }
+
+    .faq-seta {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(184,134,11,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform .3s ease, background .2s;
+    }
+    .faq-seta i { color: #B8860B; font-size: .7rem; }
+    .faq-item.aberto .faq-seta {
+      transform: rotate(180deg);
+      background: rgba(184,134,11,.22);
+    }
+
+    .faq-resposta {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .35s ease, padding .25s ease;
+    }
+    .faq-item.aberto .faq-resposta {
+      max-height: 800px;
+    }
+    .faq-resposta-inner {
+      padding: 0 1.25rem 1.25rem;
+      font-size: .9rem;
+      color: #B8A888;
+      line-height: 1.75;
+    }
+    .faq-resposta-inner p { margin-bottom: .75rem; }
+    .faq-resposta-inner p:last-child { margin-bottom: 0; }
+    .faq-resposta-inner strong { color: #E8DCC8; }
+    .faq-resposta-inner a { color: #B8860B; }
+    .faq-resposta-inner ul, .faq-resposta-inner ol {
+      padding-left: 1.4rem;
+      margin-bottom: .75rem;
+    }
+    .faq-resposta-inner li { margin-bottom: .4rem; }
+
+    /* Destaque de passo a passo */
+    .passo {
+      display: flex;
+      gap: .85rem;
+      align-items: flex-start;
+      margin-bottom: .6rem;
+    }
+    .passo-num {
+      min-width: 26px;
+      height: 26px;
+      background: #B8860B;
+      color: #1A0F00;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .72rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: .1rem;
+    }
+    .dica {
+      background: rgba(184,134,11,.07);
+      border-left: 3px solid #B8860B;
+      padding: .6rem .9rem;
+      border-radius: 0 6px 6px 0;
+      font-size: .85rem;
+      margin: .75rem 0;
+    }
+    .dica i { color: #B8860B; margin-right: .35rem; }
+
+    /* ── CTA de contato ───────────────────────────────────────────── */
+    .aj-cta {
+      background: linear-gradient(135deg, #1A0F00 0%, #2C1A00 100%);
+      border: 1px solid rgba(184,134,11,.25);
+      border-radius: 12px;
+      padding: 2.5rem;
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .aj-cta i { font-size: 2rem; color: #B8860B; margin-bottom: 1rem; display: block; }
+    .aj-cta h2 {
+      font-family: Georgia, serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: #E8DCC8;
+      margin-bottom: .5rem;
+    }
+    .aj-cta p { font-size: .9rem; color: #8C7D65; margin-bottom: 1.5rem; }
+    .aj-cta-btn {
+      display: inline-block;
+      background: #B8860B;
+      color: #1A0F00;
+      padding: .8rem 2rem;
+      border-radius: 6px;
+      font-family: Georgia, serif;
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      transition: opacity .2s;
+    }
+    .aj-cta-btn:hover { opacity: .85; text-decoration: none; }
+
+    /* ── Rodapé ───────────────────────────────────────────────────── */
+    .aj-footer {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      font-size: .75rem;
+      color: #5C4F3A;
+      border-top: 1px solid rgba(184,134,11,.1);
+    }
+    .aj-footer a { color: #5C4F3A; }
+    .aj-footer a:hover { color: #B8860B; }
+
+    /* ── Responsivo ───────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .aj-nav { padding: 0 1rem; }
+      .aj-hero { padding: 2.5rem 1rem 2rem; }
+      .aj-main { padding: 1rem 1rem 4rem; }
+      .aj-cta { padding: 1.75rem 1.25rem; }
+      .aj-nav-links { gap: .85rem; }
+    }
+
+    /* ── Scroll suave ─────────────────────────────────────────────── */
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAVEGAÇÃO ════════════════════════════════════════════════ -->
+<nav class="aj-nav" aria-label="Navegação principal">
+  <a href="index.html" class="aj-logo">Robério Diógenes</a>
+  <div class="aj-nav-links">
+    <a href="livros.html"><i class="fa fa-book" aria-hidden="true"></i> Biblioteca</a>
+    <a href="index.html"><i class="fa fa-arrow-left" aria-hidden="true"></i> Início</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ═════════════════════════════════════════════════════ -->
+<header class="aj-hero">
+  <p class="aj-hero-eyebrow">Central de Ajuda</p>
+  <h1 class="aj-hero-titulo">Como podemos <em>ajudar?</em></h1>
+  <p class="aj-hero-desc">Encontre respostas rápidas para as dúvidas mais comuns sobre o site, o leitor online, assinaturas e pagamentos.</p>
+
+  <!-- Busca rápida -->
+  <div class="aj-busca-wrap" role="search">
+    <input
+      type="search"
+      id="ajBusca"
+      class="aj-busca"
+      placeholder="Buscar nas perguntas frequentes..."
+      aria-label="Buscar nas perguntas frequentes"
+      autocomplete="off"
+    />
+    <i class="fa fa-magnifying-glass aj-busca-icone" aria-hidden="true"></i>
+    <div id="ajBuscaResultados" role="listbox" aria-label="Resultados da busca"></div>
+  </div>
+</header>
+
+<!-- ══ ATALHOS DE CATEGORIA ══════════════════════════════════════ -->
+<nav aria-label="Categorias de ajuda">
+  <div class="aj-categorias">
+    <a href="#primeiros-passos" class="aj-cat-btn"><i class="fa fa-star"></i> Primeiros passos</a>
+    <a href="#leitor-online"    class="aj-cat-btn"><i class="fa fa-book-open"></i> Leitor online</a>
+    <a href="#assinaturas"      class="aj-cat-btn"><i class="fa fa-crown"></i> Assinaturas</a>
+    <a href="#pagamentos"       class="aj-cat-btn"><i class="fa fa-credit-card"></i> Pagamentos</a>
+    <a href="#newsletter"       class="aj-cat-btn"><i class="fa fa-envelope"></i> Newsletter</a>
+    <a href="#privacidade"      class="aj-cat-btn"><i class="fa fa-shield-halved"></i> Privacidade</a>
+  </div>
+</nav>
+
+<!-- ══ CONTEÚDO PRINCIPAL ════════════════════════════════════════ -->
+<main class="aj-main" id="conteudo-principal">
+
+
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <!-- SEÇÃO 1: PRIMEIROS PASSOS                                    -->
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <section class="aj-secao" id="primeiros-passos" aria-labelledby="titulo-primeiros-passos">
+    <div class="aj-secao-header">
+      <div class="aj-secao-icone"><i class="fa fa-star"></i></div>
+      <h2 class="aj-secao-titulo" id="titulo-primeiros-passos">Primeiros <em>Passos</em></h2>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Como faço para criar uma conta?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Criar uma conta é rápido e gratuito. Siga os passos abaixo:</p>
+          <div class="passo"><span class="passo-num">1</span><span>Clique em <strong>"Entrar"</strong> no canto superior direito do site.</span></div>
+          <div class="passo"><span class="passo-num">2</span><span>Selecione <strong>"Criar conta"</strong>.</span></div>
+          <div class="passo"><span class="passo-num">3</span><span>Informe seu nome, e-mail e crie uma senha.</span></div>
+          <div class="passo"><span class="passo-num">4</span><span>Clique em <strong>"Cadastrar"</strong>. Pronto — você já tem acesso!</span></div>
+          <div class="dica"><i class="fa fa-lightbulb"></i> <strong>Dica:</strong> Você também pode entrar usando a sua conta do Google, clicando em <em>"Entrar com Google"</em>. É mais rápido e você não precisa lembrar de mais uma senha.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Esqueci minha senha. O que faço?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <div class="passo"><span class="passo-num">1</span><span>Vá até <strong>"Entrar"</strong> e clique em <strong>"Esqueci minha senha"</strong>.</span></div>
+          <div class="passo"><span class="passo-num">2</span><span>Informe o e-mail que usou no cadastro.</span></div>
+          <div class="passo"><span class="passo-num">3</span><span>Você receberá um e-mail com um link seguro. Clique nele.</span></div>
+          <div class="passo"><span class="passo-num">4</span><span>Crie uma nova senha. O link expira em 2 horas.</span></div>
+          <div class="dica"><i class="fa fa-envelope"></i> Se não encontrar o e-mail, verifique a <strong>caixa de spam</strong> ou a pasta <strong>"Lixo eletrônico"</strong>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Posso entrar com minha conta do Google?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Sim! Na tela de login, clique em <strong>"Entrar com Google"</strong>. Você será redirecionado para uma tela segura do Google, fará login com o seu e-mail do Gmail e voltará automaticamente para o site já conectado.</p>
+          <p>Se for seu primeiro acesso pelo Google, uma conta é criada automaticamente com os dados do seu perfil. Nenhuma senha adicional é necessária.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Como altero meu nome, e-mail ou senha?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Acesse seu <strong>Perfil</strong> clicando no seu nome no canto superior direito. Lá você pode editar seu nome e outros dados.</p>
+          <p>Para trocar a senha, vá ao perfil e clique em <strong>"Alterar senha"</strong>. Se entrou pelo Google, não há senha para alterar — o login é gerenciado pelo Google.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Como excluo minha conta?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Você pode solicitar a exclusão da sua conta — e de todos os seus dados — a qualquer momento pelo <a href="contato.html">formulário de contato</a>. Informe no assunto: <em>"Exclusão de conta"</em> e seu e-mail de cadastro.</p>
+          <p>Seus dados serão removidos em até <strong>30 dias</strong> após a confirmação, conforme nossa <a href="privacidade.html">Política de Privacidade</a>. Compras não são estornadas automaticamente pela exclusão da conta.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <!-- SEÇÃO 2: LEITOR ONLINE                                       -->
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <section class="aj-secao" id="leitor-online" aria-labelledby="titulo-leitor">
+    <div class="aj-secao-header">
+      <div class="aj-secao-icone"><i class="fa fa-book-open"></i></div>
+      <h2 class="aj-secao-titulo" id="titulo-leitor">Leitor <em>Online</em></h2>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Como começo a ler um livro?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <div class="passo"><span class="passo-num">1</span><span>Acesse <a href="livros.html">a biblioteca</a> e escolha o livro que deseja ler.</span></div>
+          <div class="passo"><span class="passo-num">2</span><span>Clique em <strong>"Ler agora"</strong> ou <strong>"Comprar"</strong>, dependendo do livro.</span></div>
+          <div class="passo"><span class="passo-num">3</span><span>Se a obra exige assinatura ou compra, conclua o pagamento primeiro.</span></div>
+          <div class="passo"><span class="passo-num">4</span><span>Após o acesso ser liberado, clique em <strong>"Abrir no leitor"</strong>. O livro abrirá direto no seu navegador — sem instalar nenhum aplicativo.</span></div>
+          <div class="dica"><i class="fa fa-lightbulb"></i> O leitor funciona em qualquer navegador atualizado: Chrome, Firefox, Safari, Edge.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">O site salva onde parei de ler?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p><strong>Sim!</strong> O seu progresso de leitura é salvo automaticamente a cada página que você avança. Se fechar o navegador, voltar no dia seguinte ou trocar de dispositivo, o leitor abre exatamente onde você parou.</p>
+          <p>Você pode ver o percentual lido na página da obra e, se clicar em <strong>"Continuar lendo"</strong>, vai direto para o capítulo e a posição onde parou.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Posso mudar o tamanho da letra, a cor do fundo ou a fonte?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p><strong>Sim!</strong> O leitor tem um botão de configurações (ícone ⚙️ ou <i class="fa fa-gear" style="color:#B8860B"></i>) no topo da tela. Clique nele para ajustar:</p>
+          <ul>
+            <li><strong>Tamanho da letra</strong> — menor ou maior, como preferir</li>
+            <li><strong>Fundo</strong> — branco, bege, cinza ou preto (modo noturno)</li>
+            <li><strong>Fonte</strong> — serifada, sem serifa, manuscrita ou clássica</li>
+            <li><strong>Largura do texto</strong> — estreita, média ou larga</li>
+          </ul>
+          <p>Suas preferências ficam salvas automaticamente para o próximo acesso.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">O leitor funciona no celular ou tablet?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p><strong>Sim!</strong> O leitor foi desenvolvido para funcionar bem em celulares, tablets e computadores. Abra o site no navegador do seu celular (Chrome, Safari, Firefox) e acesse normalmente.</p>
+          <div class="dica"><i class="fa fa-mobile-screen"></i> No celular, deslize para os lados para avançar capítulos ou use os botões de navegação na parte inferior da tela.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Posso baixar o livro para ler sem internet?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p><strong>Não</strong> — por proteção dos direitos autorais, os livros estão disponíveis apenas para leitura online no leitor do site. Não é possível baixar o arquivo do livro.</p>
+          <p>O leitor precisa de uma conexão com a internet para funcionar. Para leitura offline, recomendamos uma conexão Wi-Fi de qualidade antes de começar para garantir uma boa experiência.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Por que não consigo abrir um livro?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>As causas mais comuns são:</p>
+          <ul>
+            <li><strong>Você não está logado:</strong> clique em "Entrar" e faça login.</li>
+            <li><strong>A obra é exclusiva para assinantes:</strong> você precisa ter uma assinatura ativa ou ter comprado o livro avulso.</li>
+            <li><strong>Assinatura vencida:</strong> verifique se seu plano está ativo no painel da conta.</li>
+            <li><strong>Problema temporário:</strong> tente recarregar a página (F5 ou o botão ↻ do navegador).</li>
+          </ul>
+          <p>Se o problema persistir, <a href="contato.html">entre em contato</a> informando o nome do livro e o erro que aparece.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Posso fazer anotações e marcar trechos?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p><strong>Sim!</strong> Selecione qualquer trecho do texto com o mouse (ou pressione e segure no celular) e um menu aparecerá com opções para:</p>
+          <ul>
+            <li><strong>Marcar em amarelo</strong> — highlight no texto</li>
+            <li><strong>Adicionar nota</strong> — escreva um comentário pessoal sobre o trecho</li>
+          </ul>
+          <p>Suas marcações ficam salvas na sua conta e você pode consultá-las a qualquer momento no painel de leitura.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <!-- SEÇÃO 3: ASSINATURAS                                         -->
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <section class="aj-secao" id="assinaturas" aria-labelledby="titulo-assinaturas">
+    <div class="aj-secao-header">
+      <div class="aj-secao-icone"><i class="fa fa-crown"></i></div>
+      <h2 class="aj-secao-titulo" id="titulo-assinaturas">Clube de <em>Assinaturas</em></h2>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">O que inclui a assinatura?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Com a assinatura ativa, você tem acesso completo a:</p>
+          <ul>
+            <li><strong>Todos os livros da biblioteca</strong> durante o período do plano</li>
+            <li><strong>Conteúdo exclusivo</strong> para assinantes: rascunhos, notas do autor, capítulos inéditos</li>
+            <li><strong>Posts completos</strong> do Diário que são exclusivos para assinantes</li>
+          </ul>
+          <div class="dica"><i class="fa fa-info-circle"></i> A assinatura é pessoal e intransferível. Não compartilhe suas credenciais com outras pessoas.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Quais são os planos disponíveis?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Oferecemos quatro planos:</p>
+          <ul>
+            <li><strong>Mensal:</strong> R$ 29,90 por mês — ideal para testar</li>
+            <li><strong>Trimestral:</strong> R$ 69,90 por 3 meses (equivale a R$ 23,30/mês)</li>
+            <li><strong>Semestral:</strong> R$ 119,90 por 6 meses (equivale a R$ 19,98/mês)</li>
+            <li><strong>Anual:</strong> R$ 154,80 por 1 ano (equivale a R$ 12,90/mês)</li>
+          </ul>
+          <p>Quanto maior o período, mais você economiza. Todos os planos incluem exatamente os mesmos benefícios.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">A cobrança é automática? Como funciona a renovação?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Atualmente, <strong>a cobrança não é automática</strong> — você receberá um aviso por e-mail próximo ao vencimento para renovar manualmente, se quiser. Isso significa que você nunca será cobrado por surpresa.</p>
+          <p>Quando a assinatura vencer, seu acesso ao conteúdo exclusivo é suspenso automaticamente. O conteúdo gratuito continua disponível normalmente.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Como cancelo minha assinatura?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Como a renovação não é automática, você não precisa "cancelar" — basta não renovar no vencimento. Seu acesso continua até o último dia do período pago.</p>
+          <p>Se quiser interromper antes do vencimento, entre em <a href="contato.html">contato</a>. Reembolsos proporcionais estão sujeitos à nossa <a href="reembolso.html">Política de Reembolso</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Posso comprar um livro avulso sem assinar?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p><strong>Sim!</strong> Cada livro pode ser adquirido individualmente por <strong>R$ 19,90</strong>. O acesso à obra é vitalício — uma vez comprada, você lê quantas vezes quiser, pelo tempo que quiser.</p>
+          <p>A assinatura só vale a pena se você pretende ler vários livros. Para um livro específico, a compra avulsa pode ser mais econômica.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <!-- SEÇÃO 4: PAGAMENTOS                                          -->
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <section class="aj-secao" id="pagamentos" aria-labelledby="titulo-pagamentos">
+    <div class="aj-secao-header">
+      <div class="aj-secao-icone"><i class="fa fa-credit-card"></i></div>
+      <h2 class="aj-secao-titulo" id="titulo-pagamentos">Compras e <em>Pagamentos</em></h2>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Quais formas de pagamento são aceitas?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Aceitamos todas as principais formas de pagamento disponíveis no Brasil, processadas pelo <strong>Mercado Pago</strong>:</p>
+          <ul>
+            <li><strong>Pix</strong> — aprovação instantânea</li>
+            <li><strong>Cartão de crédito</strong> — todas as bandeiras, parcelamento disponível</li>
+            <li><strong>Cartão de débito</strong></li>
+            <li><strong>Boleto bancário</strong> — aprovação em até 3 dias úteis após pagamento</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">O pagamento é seguro?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p><strong>Sim.</strong> Todos os pagamentos são processados pelo <strong>Mercado Pago</strong>, uma das maiores plataformas de pagamento da América Latina, com certificação PCI-DSS (padrão internacional de segurança).</p>
+          <p>Nós <strong>nunca vemos</strong> os dados do seu cartão — eles são enviados diretamente ao Mercado Pago de forma criptografada. O site usa <strong>HTTPS</strong> em todas as páginas, garantindo a segurança da conexão.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Quando meu acesso é liberado após o pagamento?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <ul>
+            <li><strong>Pix:</strong> imediatamente após o pagamento</li>
+            <li><strong>Cartão de crédito:</strong> em poucos minutos após a aprovação</li>
+            <li><strong>Boleto:</strong> em até 1 dia útil após a compensação bancária (normalmente 1 a 3 dias após o pagamento)</li>
+          </ul>
+          <p>Você receberá um e-mail de confirmação assim que o acesso for liberado.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Posso pedir reembolso?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p><strong>Sim</strong>, dentro das condições previstas:</p>
+          <ul>
+            <li><strong>Compra avulsa:</strong> reembolso integral em até 7 dias corridos, <em>desde que você não tenha aberto o livro no leitor</em>.</li>
+            <li><strong>Assinatura:</strong> reembolso integral em até 7 dias após a contratação, se nenhum benefício foi utilizado.</li>
+          </ul>
+          <p>Para detalhes completos, consulte nossa <a href="reembolso.html">Política de Reembolso</a>. Para solicitar, envie uma mensagem pelo <a href="contato.html">formulário de contato</a> com o número do pedido.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Posso presentear alguém com um livro?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p><strong>Sim!</strong> Acesse a página <a href="presentear.html">Presentear alguém</a>, escolha o livro e insira o e-mail da pessoa que vai receber. Você pode incluir uma dedicatória personalizada.</p>
+          <p>Ela receberá um e-mail especial com o código de acesso e a sua mensagem.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <!-- SEÇÃO 5: NEWSLETTER E NOTIFICAÇÕES                           -->
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <section class="aj-secao" id="newsletter" aria-labelledby="titulo-newsletter">
+    <div class="aj-secao-header">
+      <div class="aj-secao-icone"><i class="fa fa-envelope"></i></div>
+      <h2 class="aj-secao-titulo" id="titulo-newsletter">Newsletter e <em>Notificações</em></h2>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">O que recebo se assinar a newsletter?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>A newsletter é gratuita. Quem se inscreve recebe diretamente no e-mail:</p>
+          <ul>
+            <li>Avisos de <strong>novos lançamentos</strong> antes de qualquer divulgação</li>
+            <li><strong>Trechos inéditos</strong> de obras em produção</li>
+            <li>Novos posts do <strong>Diário do Escritor</strong></li>
+            <li>Reflexões e bastidores do processo criativo</li>
+          </ul>
+          <p><strong>Nada de spam.</strong> Você pode cancelar quando quiser.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Como me inscrevo na newsletter?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Você pode se inscrever de várias formas:</p>
+          <ul>
+            <li>No <strong>rodapé do site</strong> (em qualquer página)</li>
+            <li>Na <a href="blog.html#newsletter">página do Diário</a></li>
+          </ul>
+          <p>Após se inscrever, você receberá um e-mail de confirmação. Clique no link para ativar. Verifique também a caixa de spam se não encontrar o e-mail em alguns minutos.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Como cancelo a inscrição da newsletter?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Em qualquer e-mail que você receber de nós, há um link <strong>"Cancelar inscrição"</strong> (geralmente no rodapé do e-mail). Clique nele e sua inscrição é cancelada imediatamente — sem confirmações extras.</p>
+          <p>Você também pode solicitar o cancelamento pelo <a href="contato.html">formulário de contato</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">O que são as notificações do navegador (push)?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>As notificações push são pequenos avisos que aparecem na tela do seu computador ou celular, mesmo quando o site está fechado. Funcionam assim:</p>
+          <ul>
+            <li>O site pergunta se você quer receber notificações (aparece um balão no navegador)</li>
+            <li>Se você clicar em <strong>"Permitir"</strong>, receberá avisos de novos posts e lançamentos</li>
+            <li>Se clicar em <strong>"Bloquear"</strong> ou fechar, nenhuma notificação será enviada</li>
+          </ul>
+          <div class="dica"><i class="fa fa-bell-slash"></i> Para desativar as notificações a qualquer momento: no Chrome, clique no cadeado 🔒 ao lado do endereço do site → Notificações → Bloquear.</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <!-- SEÇÃO 6: PRIVACIDADE E DADOS                                 -->
+  <!-- ──────────────────────────────────────────────────────────── -->
+  <section class="aj-secao" id="privacidade" aria-labelledby="titulo-privacidade">
+    <div class="aj-secao-header">
+      <div class="aj-secao-icone"><i class="fa fa-shield-halved"></i></div>
+      <h2 class="aj-secao-titulo" id="titulo-privacidade">Privacidade e <em>Dados</em></h2>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">O site coleta meus dados? Para quê?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Sim, coletamos apenas o necessário para que o site funcione:</p>
+          <ul>
+            <li><strong>E-mail e nome:</strong> para criar sua conta e enviar comunicações (com seu consentimento)</li>
+            <li><strong>Progresso de leitura:</strong> para salvar onde você parou</li>
+            <li><strong>IP anonimizado:</strong> para segurança e prevenção de spam (armazenado como código irreversível — não é o IP real)</li>
+          </ul>
+          <p><strong>Não vendemos seus dados.</strong> Nunca. Para detalhes completos, veja nossa <a href="privacidade.html">Política de Privacidade</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">O que são cookies? O site usa?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Cookies são pequenos arquivos que o site salva no seu navegador para lembrar informações entre visitas. Usamos:</p>
+          <ul>
+            <li><strong>Cookies essenciais:</strong> para manter você logado enquanto navega</li>
+            <li><strong>Preferências:</strong> para lembrar o tema (claro/noturno) e o tamanho da letra que você escolheu</li>
+          </ul>
+          <p><strong>Não usamos</strong> cookies de rastreamento de terceiros (Google Analytics, Facebook Pixel, etc.). O banner de cookies no rodapé do site permite que você escolha aceitar apenas os essenciais, se preferir.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">Como solicito a exclusão dos meus dados?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p>Você tem o direito de solicitar a exclusão dos seus dados a qualquer momento. Para isso:</p>
+          <div class="passo"><span class="passo-num">1</span><span>Acesse o <a href="contato.html">formulário de contato</a>.</span></div>
+          <div class="passo"><span class="passo-num">2</span><span>No assunto, escreva: <strong>"Exclusão de dados — LGPD"</strong>.</span></div>
+          <div class="passo"><span class="passo-num">3</span><span>Informe o e-mail da sua conta.</span></div>
+          <p style="margin-top:.75rem">Responderemos em até <strong>15 dias úteis</strong> e seus dados serão removidos em até 30 dias, conforme a LGPD.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-pergunta" aria-expanded="false">
+        <span class="faq-pergunta-texto">O site tem rastreamento de terceiros?</span>
+        <span class="faq-seta"><i class="fa fa-chevron-down"></i></span>
+      </button>
+      <div class="faq-resposta" aria-hidden="true">
+        <div class="faq-resposta-inner">
+          <p><strong>Não.</strong> Este site não usa Google Analytics, Facebook Pixel, pixels de remarketing nem qualquer ferramenta de rastreamento de terceiros. Toda análise de acesso é feita internamente com dados do próprio site, sem compartilhamento externo.</p>
+          <p>O único serviço externo que pode receber dados é o <strong>Mercado Pago</strong> (para processar pagamentos) e, se você optou por notificações push, o <strong>OneSignal</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ══ CTA DE CONTATO ════════════════════════════════════════ -->
+  <div class="aj-cta">
+    <i class="fa fa-comments" aria-hidden="true"></i>
+    <h2>Não encontrou o que procurava?</h2>
+    <p>Estou aqui para ajudar. Mande sua dúvida diretamente — costumo responder em até 1 dia útil.</p>
+    <a href="contato.html" class="aj-cta-btn">
+      <i class="fa fa-envelope" aria-hidden="true"></i> Enviar mensagem
+    </a>
+  </div>
+
+</main>
+
+<!-- ══ RODAPÉ ════════════════════════════════════════════════════ -->
+<footer class="aj-footer">
+  <p>
+    © 2026 Robério Diógenes ·
+    <a href="termos.html">Termos</a> ·
+    <a href="privacidade.html">Privacidade</a> ·
+    <a href="reembolso.html">Reembolso</a> ·
+    <button onclick="window.rdCookieAbrir?.()" style="background:none;border:none;color:inherit;cursor:pointer;font:inherit;padding:0;text-decoration:underline">Cookies</button>
+  </p>
+</footer>
+
+<script src="js/global.js"></script>
+<script src="js/cookies-lgpd.js" defer></script>
+
+<!-- ══ ACORDEÃO ════════════════════════════════════════════════ -->
+<script>
+/* ── Dados de todas as perguntas para a busca ──────────────────── */
+const _FAQ = [];
+document.querySelectorAll('.faq-item').forEach(item => {
+  const pergunta = item.querySelector('.faq-pergunta-texto')?.textContent?.trim() || '';
+  const resposta = item.querySelector('.faq-resposta-inner')?.textContent?.trim() || '';
+  _FAQ.push({ item, pergunta, resposta: resposta.replace(/\s+/g, ' ') });
+});
+
+/* ── Accordion ──────────────────────────────────────────────────── */
+document.querySelectorAll('.faq-pergunta').forEach(btn => {
+  btn.addEventListener('click', function () {
+    const item = this.closest('.faq-item');
+    const aberto = item.classList.contains('aberto');
+
+    /* Fecha todos */
+    document.querySelectorAll('.faq-item.aberto').forEach(el => {
+      el.classList.remove('aberto');
+      el.querySelector('.faq-pergunta').setAttribute('aria-expanded', 'false');
+      el.querySelector('.faq-resposta').setAttribute('aria-hidden', 'true');
+    });
+
+    /* Abre este se estava fechado */
+    if (!aberto) {
+      item.classList.add('aberto');
+      this.setAttribute('aria-expanded', 'true');
+      item.querySelector('.faq-resposta').setAttribute('aria-hidden', 'false');
+    }
+  });
+});
+
+/* ── Busca em tempo real ────────────────────────────────────────── */
+const buscaInput   = document.getElementById('ajBusca');
+const buscaResultados = document.getElementById('ajBuscaResultados');
+
+function highlight(texto, termo) {
+  const re = new RegExp(`(${termo.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return texto.replace(re, '<mark>$1</mark>');
+}
+
+buscaInput.addEventListener('input', function () {
+  const termo = this.value.trim().toLowerCase();
+  buscaResultados.innerHTML = '';
+
+  if (!termo || termo.length < 2) {
+    buscaResultados.style.display = 'none';
+    return;
+  }
+
+  const encontrados = _FAQ.filter(f =>
+    f.pergunta.toLowerCase().includes(termo) ||
+    f.resposta.toLowerCase().includes(termo)
+  ).slice(0, 6);
+
+  if (!encontrados.length) {
+    buscaResultados.innerHTML = `<div class="aj-sem-resultado"><i class="fa fa-face-frown" style="color:#B8860B;margin-right:.4rem"></i>Nenhum resultado para "<em>${this.value}</em>".</div>`;
+  } else {
+    encontrados.forEach(({ item, pergunta }) => {
+      const div = document.createElement('div');
+      div.className = 'aj-busca-item';
+      div.setAttribute('role', 'option');
+      div.innerHTML = highlight(pergunta, this.value.trim());
+      div.addEventListener('click', () => {
+        buscaInput.value = '';
+        buscaResultados.style.display = 'none';
+        /* Abre o item e rola até ele */
+        item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => item.querySelector('.faq-pergunta').click(), 350);
+      });
+      buscaResultados.appendChild(div);
+    });
+  }
+
+  buscaResultados.style.display = 'block';
+});
+
+/* Fechar resultados ao clicar fora */
+document.addEventListener('click', e => {
+  if (!buscaInput.contains(e.target) && !buscaResultados.contains(e.target)) {
+    buscaResultados.style.display = 'none';
+  }
+});
+buscaInput.addEventListener('keydown', e => {
+  if (e.key === 'Escape') buscaResultados.style.display = 'none';
+});
+
+/* ── Abrir item se URL tiver #âncora de categoria ───────────────── */
+if (location.hash) {
+  const alvo = document.querySelector(location.hash);
+  if (alvo) setTimeout(() => alvo.scrollIntoView({ behavior: 'smooth' }), 150);
+}
+</script>
+
+<!-- ══ SCHEMA.ORG FAQPage ════════════════════════════════════════ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Como faço para criar uma conta?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Clique em 'Entrar' no canto superior direito, selecione 'Criar conta', informe nome, e-mail e senha. Você também pode entrar com o Google para não precisar de mais uma senha."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Esqueci minha senha. O que faço?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Na tela de login, clique em 'Esqueci minha senha'. Informe seu e-mail e você receberá um link seguro válido por 2 horas. Se não encontrar o e-mail, verifique a caixa de spam."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como começo a ler um livro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Acesse a biblioteca, escolha o livro e clique em 'Ler agora' ou 'Comprar'. Após o acesso ser liberado, clique em 'Abrir no leitor'. O livro abre no navegador — sem instalar nenhum aplicativo."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O site salva onde parei de ler?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim. O progresso de leitura é salvo automaticamente. Ao retornar, o leitor abre exatamente onde você parou, mesmo em dispositivos diferentes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O leitor funciona no celular ou tablet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim. O leitor funciona em qualquer navegador atualizado em celulares, tablets e computadores — Chrome, Safari, Firefox, Edge."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Posso baixar o livro para ler sem internet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não. Por proteção dos direitos autorais, os livros estão disponíveis apenas para leitura online no leitor do site. O download do arquivo não é possível."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O que inclui a assinatura?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A assinatura dá acesso completo a todos os livros da biblioteca, conteúdo exclusivo para assinantes e posts completos do Diário do Escritor durante o período do plano."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quais formas de pagamento são aceitas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Aceitamos Pix (aprovação instantânea), cartão de crédito (todas as bandeiras), cartão de débito e boleto bancário. Os pagamentos são processados pelo Mercado Pago."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Posso pedir reembolso?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim. Para compras avulsas, você tem 7 dias corridos para pedir reembolso, desde que não tenha aberto o livro no leitor. Para assinaturas, o prazo é de 7 dias após a contratação sem uso. Consulte a Política de Reembolso em roberiodiogenes.com/reembolso.html."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O site vende meus dados pessoais?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não. Seus dados nunca são vendidos ou compartilhados com terceiros para fins comerciais. O site não usa Google Analytics, Facebook Pixel ou qualquer rastreador de terceiros. Veja a Política de Privacidade em roberiodiogenes.com/privacidade.html."
+      }
+    }
+  ]
+}
+</script>
+
+</body>
+</html>

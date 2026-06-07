@@ -74,8 +74,11 @@ $MENU = [
     ['slug'=>'comentarios', 'href'=>'comentarios.php', 'icon'=>'fa-comments',    'label'=>'Comentários',
      'badge' => $_nComentariosPendentes > 0 ? $_nComentariosPendentes : null],
     'sep',
-    ['slug'=>'marketing',   'href'=>'marketing.php',   'icon'=>'fa-bullhorn',    'label'=>'Marketing'],
-    ['slug'=>'bio',         'href'=>'bio.php',         'icon'=>'fa-link',        'label'=>'Bio / Links'],
+    ['slug'=>'marketing',      'href'=>'marketing.php',      'icon'=>'fa-bullhorn',       'label'=>'Marketing'],
+    ['slug'=>'pre-lancamento', 'href'=>'pre-lancamento.php', 'icon'=>'fa-hourglass-start', 'label'=>'Lista de Espera'],
+    ['slug'=>'crons',          'href'=>'crons.php',          'icon'=>'fa-robot',           'label'=>'Automações'],
+    ['slug'=>'push',           'href'=>'push.php',           'icon'=>'fa-bell',            'label'=>'Push'],
+    ['slug'=>'bio',            'href'=>'bio.php',            'icon'=>'fa-link',            'label'=>'Bio / Links'],
     'sep',
     ['slug'=>'_site',       'href'=>'../index.html',   'icon'=>'fa-globe',       'label'=>'Ver site', 'target'=>'_blank'],
 ];

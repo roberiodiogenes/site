@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title id="doc-title">Em Breve — Robério Diógenes</title>
+  <meta name="description" id="doc-desc" content="Inscreva-se na lista de espera e seja o primeiro a saber quando o próximo livro de Robério Diógenes for lançado. Receba um trecho exclusivo imediatamente." />
+  <meta name="robots" content="noindex, follow" />
+
+  <!-- OG básico — atualizado via JS após carregar dados da campanha -->
+  <meta property="og:type"      content="website" />
+  <meta property="og:site_name" content="Robério Diógenes" />
+  <meta property="og:title"     id="og-title"  content="Em Breve — Robério Diógenes" />
+  <meta property="og:image"     id="og-image"  content="" />
+
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+
+  <style>
+    /* ── Layout geral ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--fundo, #FAF7F2);
+      color: var(--texto, #2C2418);
+      font-family: Georgia, 'Times New Roman', serif;
+      min-height: 100vh;
+    }
+
+    /* ── Hero ──────────────────────────────────────────────────── */
+    .pl-hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding-top: var(--altura-nav, 64px);
+    }
+
+    /* Lado esquerdo — atmosfera visual */
+    .pl-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1A0F00;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .pl-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 40% 60%, rgba(184,134,11,.18) 0%, transparent 60%);
+    }
+    .pl-visual-capa {
+      position: relative;
+      z-index: 1;
+      max-width: 260px;
+      width: 70%;
+      box-shadow: 0 30px 80px rgba(0,0,0,.6);
+      border-radius: 4px;
+      display: block;
+    }
+    /* Placeholder de capa enquanto carrega ou sem imagem */
+    .pl-visual-placeholder {
+      position: relative;
+      z-index: 1;
+      width: 200px;
+      height: 300px;
+      background: linear-gradient(145deg, #2C2418 0%, #1A0F00 100%);
+      border: 1px solid rgba(184,134,11,.3);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      box-shadow: 0 30px 80px rgba(0,0,0,.6);
+    }
+    .pl-visual-placeholder i { font-size: 3rem; color: rgba(184,134,11,.6); }
+    .pl-visual-placeholder span {
+      font-size: .65rem;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: rgba(184,134,11,.7);
+    }
+    .pl-visual-ribbon {
+      position: absolute;
+      top: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      background: #B8860B;
+      color: #1A0F00;
+      font-size: .62rem;
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      padding: .35rem 1.2rem;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    /* Lado direito — formulário */
+    .pl-form-side {
+      padding: 3rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 560px;
+    }
+    .pl-eyebrow {
+      font-size: .68rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: #B8860B;
+      margin-bottom: 1rem;
+    }
+    .pl-title {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 400;
+      line-height: 1.25;
+      color: var(--texto, #2C2418);
+      margin: 0 0 .6rem;
+    }
+    .pl-subtitle {
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--texto-2, #5C4F3A);
+      margin: 0 0 1.5rem;
+    }
+    .pl-desc {
+      font-size: .92rem;
+      line-height: 1.75;
+      color: var(--texto-2, #5C4F3A);
+      margin: 0 0 2rem;
+    }
+
+    /* Contador */
+    .pl-counter {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      font-size: .82rem;
+      color: var(--texto-3, #8C7D65);
+      margin-bottom: 1.5rem;
+    }
+    .pl-counter-n {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #B8860B;
+    }
+
+    /* Benefícios */
+    .pl-benefits {
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      margin-bottom: 2rem;
+    }
+    .pl-benefit {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      font-size: .87rem;
+      color: var(--texto-2, #5C4F3A);
+      line-height: 1.5;
+    }
+    .pl-benefit i {
+      color: #B8860B;
+      font-size: .85rem;
+      margin-top: .15rem;
+      flex-shrink: 0;
+    }
+
+    /* Formulário */
+    .pl-form {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+    .pl-input {
+      width: 100%;
+      padding: .75rem 1rem;
+      border: 1px solid var(--borda, #D4C9B0);
+      border-radius: 6px;
+      font-family: Georgia, serif;
+      font-size: .95rem;
+      color: var(--texto, #2C2418);
+      background: var(--fundo, #FAF7F2);
+      transition: border-color .2s;
+      outline: none;
+    }
+    .pl-input:focus { border-color: #B8860B; box-shadow: 0 0 0 3px rgba(184,134,11,.12); }
+
+    .pl-btn {
+      padding: .85rem 1.5rem;
+      background: #B8860B;
+      color: #1A0F00;
+      border: none;
+      border-radius: 6px;
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .04em;
+      transition: background .2s, transform .1s;
+    }
+    .pl-btn:hover { background: #9A7009; }
+    .pl-btn:active { transform: scale(.98); }
+    .pl-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+    .pl-privacidade {
+      font-size: .72rem;
+      color: var(--texto-3, #8C7D65);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .pl-privacidade a { color: var(--texto-3, #8C7D65); }
+
+    /* Estado de sucesso */
+    .pl-sucesso {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      background: rgba(184,134,11,.07);
+      border: 1px solid rgba(184,134,11,.2);
+      border-radius: 8px;
+    }
+    .pl-sucesso i { font-size: 2.5rem; color: #B8860B; margin-bottom: 1rem; display: block; }
+    .pl-sucesso h3 { margin: 0 0 .5rem; font-size: 1.2rem; color: var(--texto, #2C2418); }
+    .pl-sucesso p  { margin: 0; font-size: .9rem; color: var(--texto-2, #5C4F3A); line-height: 1.6; }
+
+    /* Alerta de erro inline */
+    .pl-alerta {
+      display: none;
+      font-size: .83rem;
+      color: var(--vermelho, #b71c1c);
+      background: rgba(183,28,28,.06);
+      border: 1px solid rgba(183,28,28,.2);
+      border-radius: 6px;
+      padding: .6rem .9rem;
+    }
+
+    /* ── Responsivo ──────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .pl-hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .pl-visual {
+        min-height: 40vh;
+        padding: 2rem 0;
+      }
+      .pl-form-side {
+        padding: 2rem 1.25rem;
+        max-width: 100%;
+      }
+      .pl-visual-ribbon { top: 1rem; }
+    }
+
+    /* Loading skeleton */
+    .pl-skeleton {
+      background: linear-gradient(90deg, var(--fundo-2,#F0E8D8) 25%, var(--borda,#D4C9B0) 50%, var(--fundo-2,#F0E8D8) 75%);
+      background-size: 200% 100%;
+      animation: pl-shimmer 1.4s infinite;
+      border-radius: 4px;
+    }
+    @keyframes pl-shimmer { to { background-position: -200% 0; } }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════════════════════ -->
+<nav id="nav" role="navigation" aria-label="Navegação principal">
+  <a href="index.html" class="nav-logo" aria-label="Robério Diógenes - Página inicial">
+    Robério Diógenes
+    <span>Escritor Independente</span>
+  </a>
+  <ul class="nav-links" id="navLinks" role="list">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="livros.html">Biblioteca</a></li>
+    <li><a href="autor.html">O Autor</a></li>
+    <li><a href="blog.html">Diário</a></li>
+    <li><a href="contato.html">Contato</a></li>
+  </ul>
+  <div class="nav-acoes">
+    <div class="tema-controles" role="group" aria-label="Selecionar tema">
+      <button class="tema-btn ativo" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+      <button class="tema-btn"       data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+      <button class="tema-btn"       data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+    </div>
+    <div class="fonte-controles" role="group" aria-label="Tamanho do texto">
+      <button class="fonte-btn fonte-diminuir" title="Diminuir texto" aria-label="Diminuir texto">A-</button>
+      <button class="fonte-btn fonte-aumentar" title="Aumentar texto" aria-label="Aumentar texto">A+</button>
+    </div>
+    <a href="login.html" class="btn btn-secundario btn-entrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;">
+      <i class="fa fa-user" aria-hidden="true"></i> Entrar
+    </a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════════════════════ -->
+<main id="conteudo-principal">
+<section class="pl-hero" aria-label="Lista de espera">
+
+  <!-- Lado visual -->
+  <div class="pl-visual" id="plVisual">
+    <div class="pl-visual-ribbon" id="plRibbon">Em Breve</div>
+    <!-- Imagem de capa ou placeholder (preenchido por JS) -->
+    <div class="pl-visual-placeholder" id="plCapaPlaceholder">
+      <i class="fa fa-book-open"></i>
+      <span>Novo livro</span>
+    </div>
+    <img id="plCapaImg" class="pl-visual-capa" src="" alt="" style="display:none" loading="eager" />
+  </div>
+
+  <!-- Lado formulário -->
+  <div class="pl-form-side" id="plFormSide">
+
+    <!-- Skeleton enquanto carrega -->
+    <div id="plLoading">
+      <div class="pl-skeleton" style="height:1rem;width:40%;margin-bottom:1.2rem"></div>
+      <div class="pl-skeleton" style="height:2.5rem;width:85%;margin-bottom:.5rem"></div>
+      <div class="pl-skeleton" style="height:1.2rem;width:65%;margin-bottom:1.5rem"></div>
+      <div class="pl-skeleton" style="height:5rem;margin-bottom:2rem"></div>
+      <div class="pl-skeleton" style="height:3rem;margin-bottom:.75rem"></div>
+      <div class="pl-skeleton" style="height:3rem;margin-bottom:.75rem"></div>
+      <div class="pl-skeleton" style="height:3.2rem"></div>
+    </div>
+
+    <!-- Conteúdo real (oculto até JS preencher) -->
+    <div id="plConteudo" style="display:none">
+      <p class="pl-eyebrow" id="plEyebrow">Lista de espera</p>
+      <h1 class="pl-title" id="plTitulo">—</h1>
+      <p class="pl-subtitle" id="plSubtitulo"></p>
+      <p class="pl-desc" id="plDescricao"></p>
+
+      <div class="pl-counter" id="plCounter" style="display:none">
+        <i class="fa fa-users" style="color:#B8860B"></i>
+        <span><strong class="pl-counter-n" id="plTotal">0</strong> leitores já estão na espera</span>
+      </div>
+
+      <div class="pl-benefits">
+        <div class="pl-benefit">
+          <i class="fa fa-gift"></i>
+          <span>Receba <strong id="plBrindeTitulo">um trecho exclusivo</strong> imediatamente ao se inscrever</span>
+        </div>
+        <div class="pl-benefit">
+          <i class="fa fa-bell"></i>
+          <span>Seja notificado antes de qualquer outra pessoa no dia do lançamento</span>
+        </div>
+        <div class="pl-benefit">
+          <i class="fa fa-envelope-open-text"></i>
+          <span>Nada de spam — apenas um e-mail agora e um no lançamento</span>
+        </div>
+      </div>
+
+      <!-- Formulário -->
+      <form class="pl-form" id="plForm" novalidate>
+        <input
+          type="text"
+          id="plNome"
+          class="pl-input"
+          placeholder="Seu nome (opcional)"
+          autocomplete="name"
+          maxlength="120"
+          aria-label="Seu nome"
+        />
+        <input
+          type="email"
+          id="plEmail"
+          class="pl-input"
+          placeholder="Seu melhor e-mail *"
+          autocomplete="email"
+          required
+          aria-label="E-mail"
+        />
+        <div class="pl-alerta" id="plAlerta" role="alert"></div>
+        <button type="submit" class="pl-btn" id="plBtn">
+          <i class="fa fa-hourglass-start"></i> Entrar na lista de espera
+        </button>
+        <p class="pl-privacidade">
+          Ao se inscrever, você concorda com a nossa
+          <a href="privacidade.html">política de privacidade</a>.
+          Sem spam, prometido.
+        </p>
+      </form>
+
+      <!-- Sucesso -->
+      <div class="pl-sucesso" id="plSucesso" role="status">
+        <i class="fa fa-circle-check"></i>
+        <h3>Você está na lista!</h3>
+        <p id="plSucessoMsg">Verifique seu e-mail — enviamos algo especial para você.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+</main>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════════ -->
+<footer style="text-align:center;padding:2rem 1rem;font-size:.78rem;color:var(--texto-3,#8C7D65);border-top:1px solid var(--borda,#D4C9B0);background:var(--fundo-2,#F0E8D8)">
+  <p>© <script>document.write(new Date().getFullYear())</script> Robério Diógenes ·
+    <a href="privacidade.html" style="color:inherit">Privacidade</a> ·
+    <a href="contato.html"    style="color:inherit">Contato</a>
+  </p>
+</footer>
+
+<script>
+/* ================================================================
+   CONFIGURAÇÃO: slug da campanha
+   Passado via URL: ?slug=nome-do-livro
+   Ou defina o padrão abaixo.
+   ================================================================ */
+const SLUG_PADRAO = 'proximo-livro';
+const slug = new URLSearchParams(location.search).get('slug') || SLUG_PADRAO;
+const API  = 'backend/pre-lancamento.php';
+
+/* ── Carregar dados da campanha ─────────────────────────────── */
+async function carregarCampanha() {
+  try {
+    const res  = await fetch(`${API}?acao=dados&slug=${encodeURIComponent(slug)}`);
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.erro || 'Campanha não encontrada.');
+    renderCampanha(json.campanha);
+  } catch (e) {
+    // Campanha não encontrada — mostra versão genérica
+    renderGenerica();
+  }
+}
+
+function renderCampanha(c) {
+  /* Título e meta */
+  document.getElementById('doc-title').textContent = `${c.titulo} — Lista de Espera | Robério Diógenes`;
+  document.getElementById('doc-desc').content = c.subtitulo || `Inscreva-se na lista de espera de ${c.titulo}.`;
+  document.getElementById('og-title').content  = `${c.titulo} — Em Breve | Robério Diógenes`;
+
+  /* Textos */
+  document.getElementById('plTitulo').textContent    = c.titulo;
+  document.getElementById('plSubtitulo').textContent = c.subtitulo || '';
+  document.getElementById('plSubtitulo').style.display = c.subtitulo ? '' : 'none';
+  document.getElementById('plDescricao').textContent = c.descricao || '';
+  document.getElementById('plDescricao').style.display = c.descricao ? '' : 'none';
+
+  /* Brinde */
+  if (c.brinde_titulo) {
+    document.getElementById('plBrindeTitulo').textContent = c.brinde_titulo;
+  }
+
+  /* Data prevista */
+  if (c.data_lancamento) {
+    const d = new Date(c.data_lancamento + 'T00:00:00');
+    const fmt = d.toLocaleDateString('pt-BR', { year:'numeric', month:'long', day:'numeric' });
+    document.getElementById('plEyebrow').textContent = `Lançamento previsto: ${fmt}`;
+  }
+
+  /* Capa */
+  if (c.capa_img) {
+    const img = document.getElementById('plCapaImg');
+    img.src = c.capa_img;
+    img.alt = `Capa de ${c.titulo}`;
+    img.style.display = 'block';
+    document.getElementById('plCapaPlaceholder').style.display = 'none';
+    document.getElementById('og-image').content = c.capa_img;
+  }
+
+  /* Contador */
+  const n = parseInt(c.total_leads) || 0;
+  if (n > 0) {
+    document.getElementById('plTotal').textContent = n.toLocaleString('pt-BR');
+    document.getElementById('plCounter').style.display = 'flex';
+  }
+
+  mostrarConteudo();
+}
+
+function renderGenerica() {
+  /* Versão sem campanha cadastrada — conteúdo placeholder editável */
+  document.getElementById('plTitulo').textContent    = 'Um novo livro está chegando';
+  document.getElementById('plSubtitulo').textContent = 'Algo novo está sendo escrito...';
+  document.getElementById('plDescricao').textContent =
+    'Entre na lista de espera e seja um dos primeiros a saber quando estiver disponível.';
+  mostrarConteudo();
+}
+
+function mostrarConteudo() {
+  document.getElementById('plLoading').style.display  = 'none';
+  document.getElementById('plConteudo').style.display = 'block';
+}
+
+/* ── Submissão ──────────────────────────────────────────────── */
+document.getElementById('plForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('plEmail').value.trim();
+  const nome  = document.getElementById('plNome').value.trim();
+  const btn   = document.getElementById('plBtn');
+  const alerta = document.getElementById('plAlerta');
+
+  alerta.style.display = 'none';
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alerta.textContent = 'Por favor, informe um e-mail válido.';
+    alerta.style.display = 'block';
+    document.getElementById('plEmail').focus();
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Inscrevendo...';
+
+  try {
+    const res  = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'inscrever', slug, nome, email }),
+    });
+    const json = await res.json();
+
+    if (!json.ok) throw new Error(json.erro || 'Erro ao processar inscrição.');
+
+    /* Sucesso */
+    document.getElementById('plSucessoMsg').textContent = json.mensagem;
+    document.getElementById('plForm').style.display    = 'none';
+    document.getElementById('plSucesso').style.display = 'block';
+
+    /* Atualizar contador */
+    const totalEl = document.getElementById('plTotal');
+    const counterEl = document.getElementById('plCounter');
+    const atual = parseInt(totalEl.textContent.replace(/\D/g,'')) || 0;
+    totalEl.textContent = (atual + 1).toLocaleString('pt-BR');
+    counterEl.style.display = 'flex';
+
+  } catch(err) {
+    alerta.textContent = err.message || 'Ocorreu um erro. Tente novamente em instantes.';
+    alerta.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa fa-hourglass-start"></i> Entrar na lista de espera';
+  }
+});
+
+/* ── Menu mobile (reutiliza lógica do site) ─────────────────── */
+const toggle = document.getElementById('navToggle');
+const links  = document.getElementById('navLinks');
+if (toggle && links) {
+  toggle.addEventListener('click', () => {
+    const aberto = links.classList.toggle('aberto');
+    toggle.setAttribute('aria-expanded', aberto);
+    toggle.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+  });
+}
+
+/* ── Inicializar ────────────────────────────────────────────── */
+carregarCampanha();
+</script>
+
+</body>
+</html>

@@ -1,6 +1,51 @@
 <?php
 ob_start();
 
+function _admin_push_novo_post(PDO $pdo, int $postId): void {
+    /* Silencioso — não bloqueia o fluxo do admin se falhar */
+    try {
+        $pushFile = __DIR__ . '/../backend/push.php';
+        if (!file_exists($pushFile)) return;
+        require_once $pushFile;
+
+        /* Buscar dados do post */
+        $st = $pdo->prepare("SELECT titulo, subtitulo, slug, imagem_url FROM posts WHERE id=? LIMIT 1");
+        $st->execute([$postId]);
+        $post = $st->fetch();
+        if (!$post) return;
+
+        $titulo   = 'Novo no Diário — ' . mb_substr($post['titulo'], 0, 50, 'UTF-8');
+        $mensagem = $post['subtitulo']
+                  ? mb_substr($post['subtitulo'], 0, 150, 'UTF-8')
+                  : 'Robério Diógenes publicou um novo post. Leia agora.';
+        $url      = SITE_URL . '/blog/' . $post['slug'] . '.html';
+        $imagem   = $post['imagem_url'] ? (SITE_URL . '/img/' . $post['imagem_url']) : '';
+
+        PushNotification::enviar([
+            'titulo'   => $titulo,
+            'mensagem' => $mensagem,
+            'url'      => $url,
+            'imagem'   => $imagem,
+            'segmento' => 'todos',
+        ]);
+    } catch (Throwable $e) {
+        error_log('[Push blog] ' . $e->getMessage());
+    }
+}
+
+function _admin_ping_sitemap(): void {
+    if(AMBIENTE !== 'producao') return; // não pingar no XAMPP local
+    $sm = 'https://roberiodiogenes.com/sitemap.xml';
+    $urls = [
+        'https://www.google.com/ping?sitemap=' . urlencode($sm),
+        'https://www.bing.com/ping?sitemap='   . urlencode($sm),
+    ];
+    foreach($urls as $u){
+        $ctx = stream_context_create(['http'=>['method'=>'GET','timeout'=>3,'ignore_errors'=>true]]);
+        @file_get_contents($u, false, $ctx);
+    }
+}
+
 function rd_slugify(string $t): string {
     $m=['á'=>'a','à'=>'a','â'=>'a','ã'=>'a','é'=>'e','ê'=>'e','í'=>'i',
         'ó'=>'o','ô'=>'o','õ'=>'o','ú'=>'u','ü'=>'u','ç'=>'c','ñ'=>'n'];
@@ -151,7 +196,18 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         $ex=$ns==='publicado'?', publicado_em=COALESCE(publicado_em,NOW())':'';
         $pdo->prepare("UPDATE posts SET status=? $ex WHERE id=?")->execute([$ns,$id]);
         rd_flash('Status: '.ucfirst($ns).'.');
+        // Notifica buscadores ao publicar
+        if($ns==='publicado') _admin_ping_sitemap();
+        // Notificação push automática ao publicar
+        if($ns==='publicado') _admin_push_novo_post($pdo, $id);
         echo json_encode(['ok'=>true,'novo_status'=>$ns]);
+        exit;
+    }
+
+    /* ── ping_sitemap (manual) ── */
+    if($acao==='ping_sitemap'){
+        _admin_ping_sitemap();
+        echo json_encode(['ok'=>true,'msg'=>'Sitemaps notificados.']);
         exit;
     }
 

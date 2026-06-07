@@ -6,10 +6,16 @@
 Options -Indexes
 ServerSignature Off
 
-# ── HTTPS: descomentar após ativar SSL no Hostgator ──────────
-# RewriteEngine On
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # ── HTTPS: descomentar após ativar SSL no Hostgator ──────────
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # ── Sitemap amigável: /sitemap.xml → sitemap.php ─────────────
+  RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
+</IfModule>
 
 # ── Páginas de erro personalizadas ───────────────────────────
 ErrorDocument 403 /404.html
