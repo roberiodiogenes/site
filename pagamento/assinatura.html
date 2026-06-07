@@ -321,6 +321,7 @@
       <tr>
         <th>Recurso</th>
         <th>Mensal</th>
+        <th>Trimestral</th>
         <th>Semestral</th>
         <th>Anual</th>
       </tr>
@@ -331,9 +332,11 @@
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
+        <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
       </tr>
       <tr>
         <td>Novos lançamentos incluídos</td>
+        <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
@@ -343,9 +346,11 @@
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
+        <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
       </tr>
       <tr>
         <td>Retomada automática de leitura</td>
+        <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
@@ -355,18 +360,28 @@
         <td><i class="fa fa-xmark comp-x" aria-label="Não"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
+        <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
       </tr>
       <tr>
         <td>Prioridade em novos lançamentos</td>
         <td><i class="fa fa-xmark comp-x" aria-label="Não"></i></td>
         <td><i class="fa fa-xmark comp-x" aria-label="Não"></i></td>
+        <td><i class="fa fa-xmark comp-x" aria-label="Não"></i></td>
         <td><i class="fa fa-check comp-check" aria-label="Sim"></i></td>
       </tr>
       <tr>
-        <td>Economia em relação ao mensal</td>
+        <td>Economia vs. mensal</td>
         <td>—</td>
-        <td>~16%</td>
-        <td>~25%</td>
+        <td>~22%</td>
+        <td>~33%</td>
+        <td>~57%</td>
+      </tr>
+      <tr>
+        <td>Equivale a</td>
+        <td>R$29,90/mês</td>
+        <td>R$23,30/mês</td>
+        <td>R$19,98/mês</td>
+        <td>R$12,90/mês</td>
       </tr>
     </tbody>
   </table>
@@ -455,14 +470,19 @@
     if (d.ok) planos = d.planos;
   } catch (e) {}
 
-  // Fallback com planos padrão caso o backend falhe
+  // Fallback com planos corretos caso o backend falhe
   if (!planos.length) {
     planos = [
-      { id: 1, slug: 'mensal',    nome: 'Plano Mensal',    preco: 19.90, duracao_dias: 30,  descricao: 'Acesso completo à biblioteca por 30 dias.' },
-      { id: 2, slug: 'semestral', nome: 'Plano Semestral', preco: 99.90, duracao_dias: 180, descricao: 'Acesso completo à biblioteca por 6 meses.' },
-      { id: 3, slug: 'anual',     nome: 'Plano Anual',     preco: 179.90,duracao_dias: 365, descricao: 'Acesso completo à biblioteca por 1 ano.' },
+      { id: 1, slug: 'mensal',     nome: 'Plano Mensal',     preco: 29.90,  duracao_dias: 30  },
+      { id: 4, slug: 'trimestral', nome: 'Plano Trimestral', preco: 69.90,  duracao_dias: 90  },
+      { id: 2, slug: 'semestral',  nome: 'Plano Semestral',  preco: 119.90, duracao_dias: 180 },
+      { id: 3, slug: 'anual',      nome: 'Plano Anual',      preco: 154.80, duracao_dias: 365 },
     ];
   }
+
+  // Ordenar: mensal → trimestral → semestral → anual
+  const ORDEM_SLUG = ['mensal','trimestral','semestral','anual'];
+  planos.sort((a, b) => (ORDEM_SLUG.indexOf(a.slug) - ORDEM_SLUG.indexOf(b.slug)));
 
   /* ── Renderizar cards ──────────────────────────────────────── */
   const loading = document.getElementById('loading-planos');
@@ -471,25 +491,32 @@
   loading.style.display = 'none';
   grade.style.display   = 'grid';
 
-  // Dados extras por slug
+  // Metadados de exibição por slug
   const extras = {
-    mensal:    { periodo: '/mês',  economia: null,   destaque: false },
-    semestral: { periodo: '/mês',  economia: '16% de economia', destaque: false },
-    anual:     { periodo: '/mês',  economia: '25% de economia', destaque: true  },
+    mensal:     { meses: 1,  economia: null,            destaque: false },
+    trimestral: { meses: 3,  economia: '22% de economia', destaque: false },
+    semestral:  { meses: 6,  economia: '33% de economia', destaque: false },
+    anual:      { meses: 12, economia: '57% de economia', destaque: true  },
   };
 
+  function durLabel(dias) {
+    if (dias <= 31)  return '30 dias';
+    if (dias <= 95)  return '3 meses';
+    if (dias <= 185) return '6 meses';
+    return '12 meses';
+  }
+
   grade.innerHTML = planos.map(p => {
-    const ex        = extras[p.slug] || {};
-    const precoMes  = p.slug === 'anual'     ? (p.preco / 12).toFixed(2)
-                    : p.slug === 'semestral' ? (p.preco / 6).toFixed(2)
-                    : p.preco.toFixed(2);
+    const ex       = extras[p.slug] || { meses: 1, economia: null, destaque: false };
+    const precoMes = (p.preco / ex.meses).toFixed(2);
     const [reais, centavos] = precoMes.split('.');
+    const totalFmt = p.preco.toFixed(2).replace('.', ',');
 
     return `
     <article class="plano-card ${ex.destaque ? 'destaque' : ''}" role="listitem">
-      ${ex.destaque ? '<span class="plano-badge-destaque">★ Mais vantajoso</span>' : ''}
+      ${ex.destaque ? '<span class="plano-badge-destaque">★ Melhor custo-benefício</span>' : ''}
       <div>
-        <p class="plano-nome">${p.slug}</p>
+        <p class="plano-nome">${durLabel(p.duracao_dias)}</p>
         <h2 class="plano-titulo">${p.nome}</h2>
       </div>
       <div>
@@ -497,17 +524,20 @@
           <span class="plano-preco-rs">R$</span>
           <span class="plano-preco-valor">${reais}</span>
           <span class="plano-preco-centavos">,${centavos}</span>
-          <span class="plano-preco-periodo">${ex.periodo ?? ''}</span>
+          <span class="plano-preco-periodo">/mês</span>
         </div>
         ${ex.economia ? `<span class="plano-economia"><i class="fa fa-tag" aria-hidden="true"></i> ${ex.economia}</span>` : ''}
-        ${p.slug !== 'mensal' ? `<p style="font-size:0.78rem;color:var(--texto-3);margin-top:0.5rem">Cobrado R$&nbsp;${p.preco.toFixed(2).replace('.',',')} à vista</p>` : ''}
+        ${p.slug !== 'mensal'
+          ? `<p style="font-size:0.78rem;color:var(--texto-3);margin-top:0.5rem">Cobrado R$&nbsp;${totalFmt} à vista</p>`
+          : ''}
       </div>
       <ul class="plano-recursos" aria-label="Recursos do ${p.nome}">
-        <li class="plano-recurso"><i class="fa fa-check" aria-hidden="true"></i> ${p.duracao_dias === 30 ? '30 dias' : p.duracao_dias === 180 ? '6 meses' : '12 meses'} de acesso completo</li>
+        <li class="plano-recurso"><i class="fa fa-check" aria-hidden="true"></i> ${durLabel(p.duracao_dias)} de acesso completo</li>
         <li class="plano-recurso"><i class="fa fa-check" aria-hidden="true"></i> Todos os livros publicados</li>
         <li class="plano-recurso"><i class="fa fa-check" aria-hidden="true"></i> Anotações e marcações salvas</li>
+        <li class="plano-recurso"><i class="fa fa-check" aria-hidden="true"></i> Retomada automática de leitura</li>
         ${p.slug !== 'mensal' ? '<li class="plano-recurso"><i class="fa fa-check" aria-hidden="true"></i> Capítulos exclusivos antecipados</li>' : ''}
-        ${p.slug === 'anual'  ? '<li class="plano-recurso"><i class="fa fa-check" aria-hidden="true"></i> Prioridade em novos lançamentos</li>' : ''}
+        ${p.slug === 'anual'  ? '<li class="plano-recurso"><i class="fa fa-check" aria-hidden="true"></i> Prioridade em lançamentos</li>' : ''}
         <li class="plano-recurso"><i class="fa fa-check" aria-hidden="true"></i> Cancele quando quiser</li>
       </ul>
       <button

@@ -8,7 +8,16 @@
 ob_start();
 require_once __DIR__ . '/config.php';
 
-$acao = trim($_GET['acao'] ?? $_POST['acao'] ?? '');
+// Suporta ação via GET, POST form-data ou JSON body (Content-Type: application/json)
+// PHP 8+ permite reler php://input sem buffer extra.
+$_blog_jb = [];
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+    $ct = strtolower($_SERVER['HTTP_CONTENT_TYPE'] ?? $_SERVER['CONTENT_TYPE'] ?? '');
+    if (str_contains($ct, 'application/json')) {
+        $_blog_jb = json_decode(file_get_contents('php://input'), true) ?? [];
+    }
+}
+$acao = trim($_GET['acao'] ?? $_POST['acao'] ?? ($_blog_jb['acao'] ?? ''));
 
 try {
     $pdo = db();
@@ -42,7 +51,7 @@ function _blog_jsonErro(string $msg, int $status = 400): void {
     exit;
 }
 
-/* Detecta colunas disponíveis — evita erro se html_externo não existir */
+/* Detecta colunas disponíveis — evita erro se coluna não existir */
 function _blog_campos(PDO $pdo, bool $comConteudo = false): string {
     static $cols = null;
     if ($cols === null) {
@@ -53,13 +62,58 @@ function _blog_campos(PDO $pdo, bool $comConteudo = false): string {
             $cols = [];
         }
     }
-    $base   = ['id','slug','titulo','subtitulo','categoria','resumo',
-               'imagem_url','audio_url','tempo_leitura','destaque',
-               'livro_slug','publicado_em'];
-    if ($comConteudo)              $base[] = 'conteudo';
-    if (in_array('html_externo', $cols)) $base[] = 'html_externo';
-    if (in_array('updated_at',   $cols)) $base[] = 'updated_at';
+    $base = ['id','slug','titulo','subtitulo','categoria','resumo',
+             'imagem_url','audio_url','tempo_leitura','destaque',
+             'livro_slug','publicado_em'];
+    if ($comConteudo) $base[] = 'conteudo';
+    foreach (['html_externo','updated_at','exclusivo','percentual_livre',
+              'enquete_id','cluster_id','newsletter_enviado'] as $col) {
+        if (in_array($col, $cols)) $base[] = $col;
+    }
     return implode(', ', $base);
+}
+
+/* Verifica se usuário tem assinatura ativa (ou tipo admin/assinante) */
+function _blog_temAssinatura(PDO $pdo, ?array $usuario): bool {
+    if (!$usuario) return false;
+
+    // ── Passo 1: verificar campo tipo na tabela usuarios ─────────────────────
+    // Try separado: se a coluna não existir, não interrompe o restante da função.
+    try {
+        $stTipo = $pdo->prepare("SELECT tipo FROM usuarios WHERE id=? LIMIT 1");
+        $stTipo->execute([$usuario['id']]);
+        $tipo = (string)($stTipo->fetchColumn() ?? '');
+        if (in_array($tipo, ['admin', 'assinante'], true)) return true;
+    } catch (Throwable $e) {
+        // Coluna tipo não existe ou falha na query — continua para verificar assinaturas
+    }
+
+    // ── Passo 2: verificar assinatura ativa na tabela assinaturas ────────────
+    try {
+        $st = $pdo->prepare(
+            "SELECT COUNT(*) FROM assinaturas
+             WHERE usuario_id = ? AND status = 'ativa' AND expira_em > NOW()"
+        );
+        $st->execute([$usuario['id']]);
+        return (bool)(int)$st->fetchColumn();
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
+/* Trunca HTML mantendo apenas os primeiros N% dos parágrafos */
+function _blog_truncarConteudo(string $html, int $percentual): string {
+    $dom = new DOMDocument();
+    @$dom->loadHTML('<?xml encoding="utf-8"?>' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    $paras  = $dom->getElementsByTagName('p');
+    $total  = $paras->length;
+    if ($total <= 2) return $html; // post muito curto — não truncar
+    $limite = max(1, (int)ceil($total * $percentual / 100));
+    $trecho = '';
+    for ($i = 0; $i < $limite; $i++) {
+        $trecho .= $dom->saveHTML($paras->item($i));
+    }
+    return $trecho;
 }
 
 /* ================================================================
@@ -221,6 +275,58 @@ if ($acao === 'post' && $_SERVER['REQUEST_METHOD'] === 'GET') {
         }
     } catch (PDOException $e) {}
 
+    /* ── Paywall: posts exclusivos para assinantes ── */
+    $exclusivo = (bool)(int)($post['exclusivo'] ?? 0);
+    $temAssin  = _blog_temAssinatura($pdo, $usuario);
+    $acessoTotal = !$exclusivo || $temAssin;
+
+    if ($exclusivo && !$acessoTotal && !empty($post['conteudo'])) {
+        $pct = (int)($post['percentual_livre'] ?? 35);
+        $post['conteudo'] = _blog_truncarConteudo($post['conteudo'], $pct);
+    }
+
+    /* ── Enquete vinculada ── */
+    $enquete = null;
+    if (!empty($post['enquete_id'])) {
+        try {
+            $stE = $pdo->prepare(
+                "SELECT e.id, e.titulo, e.descricao, e.multipla,
+                        (SELECT COUNT(*) FROM enquetes_respostas WHERE enquete_id=e.id) AS total_votos
+                 FROM enquetes e WHERE e.id=? AND e.ativo=1 LIMIT 1"
+            );
+            $stE->execute([$post['enquete_id']]);
+            $enquete = $stE->fetch(PDO::FETCH_ASSOC);
+            if ($enquete) {
+                $stO = $pdo->prepare(
+                    "SELECT o.id, o.texto, o.icone, o.ordem,
+                            COUNT(r.id) AS votos
+                     FROM enquetes_opcoes o
+                     LEFT JOIN enquetes_respostas r ON r.opcao_id=o.id
+                     WHERE o.enquete_id=?
+                     GROUP BY o.id ORDER BY o.ordem ASC"
+                );
+                $stO->execute([$post['enquete_id']]);
+                $opcoes = $stO->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($opcoes as &$o) $o['votos'] = (int)$o['votos'];
+                $enquete['opcoes']      = $opcoes;
+                $enquete['total_votos'] = (int)$enquete['total_votos'];
+
+                // Verificar se usuário já votou
+                if ($usuario) {
+                    $stV = $pdo->prepare("SELECT opcao_id FROM enquetes_respostas WHERE enquete_id=? AND usuario_id=? LIMIT 1");
+                    $stV->execute([$post['enquete_id'], $usuario['id']]);
+                    $votei = $stV->fetchColumn();
+                } else {
+                    $ipH  = hash('sha256', getIP());
+                    $stV  = $pdo->prepare("SELECT opcao_id FROM enquetes_respostas WHERE enquete_id=? AND ip_hash=? LIMIT 1");
+                    $stV->execute([$post['enquete_id'], $ipH]);
+                    $votei = $stV->fetchColumn();
+                }
+                $enquete['ja_votei']    = $votei ? (int)$votei : null;
+            }
+        } catch (Throwable $e) { /* enquetes pode não existir ainda */ }
+    }
+
     _blog_jsonOk([
         'post'           => $post,
         'anterior'       => $anterior,
@@ -229,6 +335,10 @@ if ($acao === 'post' && $_SERVER['REQUEST_METHOD'] === 'GET') {
         'ja_curtiu'      => $jaCurtiu,
         'ja_leu'         => $jaLeu,
         'usuario_logado' => $usuario !== null,
+        'exclusivo'      => $exclusivo,
+        'acesso_total'   => $acessoTotal,
+        'tem_assinatura' => $temAssin,
+        'enquete'        => $enquete,
     ]);
 }
 
@@ -253,7 +363,7 @@ if ($acao === 'lidos' && $_SERVER['REQUEST_METHOD'] === 'GET') {
    POST curtir
    ================================================================ */
 if ($acao === 'curtir' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $body = json_decode(file_get_contents('php://input'), true) ?? [];
+    $body = $_blog_jb; // JSON já lido no início do arquivo
     $slug = trim($body['slug'] ?? $_POST['slug'] ?? '');
     if (!$slug) _blog_jsonErro('Slug obrigatório.', 400);
 
@@ -318,7 +428,7 @@ if ($acao === 'marcar_lido' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = _blog_usuarioLogado();
     if (!$usuario) _blog_jsonErro('Login necessário.', 401);
 
-    $body      = json_decode(file_get_contents('php://input'), true) ?? [];
+    $body      = $_blog_jb; // JSON já lido no início do arquivo
     $slug      = trim($body['slug'] ?? $_POST['slug'] ?? '');
     $progresso = min(100, max(0, (int)($body['progresso'] ?? 100)));
     if (!$slug) _blog_jsonErro('Slug obrigatório.', 400);
@@ -334,6 +444,211 @@ if ($acao === 'marcar_lido' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         _blog_jsonOk();
     } catch (PDOException $e) {
         _blog_jsonOk(['aviso' => 'posts_lidos indisponível']);
+    }
+}
+
+/* ================================================================
+   POST votar_enquete
+   ================================================================ */
+if ($acao === 'votar_enquete' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $body     = $_blog_jb; // JSON já lido no início do arquivo
+    $enqId    = (int)($body['enquete_id'] ?? 0);
+    $opcaoId  = (int)($body['opcao_id']  ?? 0);
+    if (!$enqId || !$opcaoId) _blog_jsonErro('Dados inválidos.');
+
+    $usuario = _blog_usuarioLogado();
+    $ipHash  = hash('sha256', getIP());
+
+    try {
+        // Verifica se opção pertence à enquete
+        $stChk = $pdo->prepare("SELECT id FROM enquetes_opcoes WHERE id=? AND enquete_id=?");
+        $stChk->execute([$opcaoId, $enqId]);
+        if (!$stChk->fetchColumn()) _blog_jsonErro('Opção inválida.');
+
+        // Verifica se já votou
+        if ($usuario) {
+            $stV = $pdo->prepare("SELECT id FROM enquetes_respostas WHERE enquete_id=? AND usuario_id=?");
+            $stV->execute([$enqId, $usuario['id']]);
+        } else {
+            $stV = $pdo->prepare("SELECT id FROM enquetes_respostas WHERE enquete_id=? AND ip_hash=?");
+            $stV->execute([$enqId, $ipHash]);
+        }
+        if ($stV->fetchColumn()) _blog_jsonErro('Você já votou nesta enquete.', 409);
+
+        // Registra voto
+        $pdo->prepare(
+            "INSERT INTO enquetes_respostas (enquete_id, opcao_id, usuario_id, ip_hash)
+             VALUES (?,?,?,?)"
+        )->execute([$enqId, $opcaoId, $usuario['id'] ?? null, $ipHash]);
+
+        // Retorna resultados atualizados
+        $stR = $pdo->prepare(
+            "SELECT o.id, o.texto, COUNT(r.id) AS votos
+             FROM enquetes_opcoes o
+             LEFT JOIN enquetes_respostas r ON r.opcao_id=o.id
+             WHERE o.enquete_id=? GROUP BY o.id ORDER BY o.ordem ASC"
+        );
+        $stR->execute([$enqId]);
+        $resultados = $stR->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($resultados as &$r) $r['votos'] = (int)$r['votos'];
+
+        $total = array_sum(array_column($resultados, 'votos'));
+        _blog_jsonOk(['resultados' => $resultados, 'total' => $total, 'meu_voto' => $opcaoId]);
+    } catch (Throwable $e) {
+        _blog_jsonErro('Erro ao registrar voto: ' . $e->getMessage(), 500);
+    }
+}
+
+/* ================================================================
+   POST enviar_newsletter — disparo de post para lista (admin only)
+   ================================================================ */
+if ($acao === 'enviar_newsletter' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Verificar sessão admin — usa o mesmo nome de sessão do painel (rd_admin_sess)
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_name('rd_admin_sess');
+        iniciarSessao();
+    }
+    if (empty($_SESSION['admin_id'])) _blog_jsonErro('Não autorizado.', 401);
+
+    $body = $_blog_jb; // JSON já lido no início do arquivo
+    $slug = trim($body['slug'] ?? '');
+    if (!$slug) _blog_jsonErro('Slug obrigatório.');
+
+    try {
+        // Buscar post
+        $stP = $pdo->prepare("SELECT titulo, resumo, imagem_url, publicado_em FROM posts WHERE slug=? AND status='publicado' LIMIT 1");
+        $stP->execute([$slug]);
+        $post = $stP->fetch();
+        if (!$post) _blog_jsonErro('Post não encontrado ou não publicado.', 404);
+
+        // Verificar se já foi enviado
+        $stJ = $pdo->prepare("SELECT newsletter_enviado FROM posts WHERE slug=?");
+        $stJ->execute([$slug]);
+        if ((int)$stJ->fetchColumn()) _blog_jsonErro('Newsletter já foi enviada para este post.', 409);
+
+        // Buscar assinantes da newsletter
+        $stN = $pdo->prepare("SELECT email, nome FROM newsletter WHERE status='ativo' LIMIT 5000");
+        $stN->execute();
+        $lista = $stN->fetchAll();
+
+        if (empty($lista)) _blog_jsonErro('Nenhum inscrito na newsletter.', 404);
+
+        require_once __DIR__ . '/mailer.php';
+        $urlPost  = SITE_URL . '/blog/' . $slug . '.html';
+        $titulo   = $post['titulo'];
+        $resumo   = $post['resumo'] ?: 'Novo post do Diário de Robério Diógenes.';
+        $imgUrl   = $post['imagem_url'] ? SITE_URL . '/' . $post['imagem_url'] : '';
+
+        $enviados = 0; $erros = 0;
+        foreach ($lista as $assinante) {
+            $primeiroNome = explode(' ', trim($assinante['nome'] ?: 'Leitor'))[0];
+            $ok = Mailer::enviar([
+                'para_email' => $assinante['email'],
+                'para_nome'  => $assinante['nome'] ?: 'Leitor',
+                'assunto'    => "Novo no Diário: {$titulo}",
+                'html'       => "
+                    <p>Olá, <strong>{$primeiroNome}</strong>.</p>
+                    " . ($imgUrl ? "<p><img src='{$imgUrl}' alt='{$titulo}' style='width:100%;max-width:520px;border-radius:8px;display:block;margin:0 auto 1rem'></p>" : "") . "
+                    <p style='font-family:Georgia,serif;font-size:1.05rem;line-height:1.75'>{$resumo}</p>
+                    <p style='text-align:center;margin:2rem 0'>
+                      <a href='{$urlPost}' class='btn-email'>Ler o post completo</a>
+                    </p>
+                    <p style='font-size:.8em;color:#888'>
+                      Você recebe este e-mail por estar inscrito no Diário de Robério Diógenes.<br>
+                      <a href='" . SITE_URL . "/newsletter/descadastrar?email={$assinante['email']}' style='color:#888'>Descadastrar</a>
+                    </p>
+                ",
+                'texto' => "Olá {$primeiroNome},\n\nNovo no Diário: {$titulo}\n\n{$resumo}\n\nLer: {$urlPost}",
+            ]);
+            $ok ? $enviados++ : $erros++;
+        }
+
+        // Marcar post como disparado
+        $pdo->prepare("UPDATE posts SET newsletter_enviado=1 WHERE slug=?")->execute([$slug]);
+
+        // Registrar disparo
+        $adminNome = $_SESSION['admin_nome'] ?? 'Admin';
+        $pdo->prepare(
+            "INSERT INTO newsletter_disparos (post_slug, total_envios, total_erros, disparado_por)
+             VALUES (?,?,?,?)"
+        )->execute([$slug, $enviados, $erros, $adminNome]);
+
+        _blog_jsonOk([
+            'mensagem' => "Newsletter enviada! {$enviados} e-mails, {$erros} erros.",
+            'enviados' => $enviados,
+            'erros'    => $erros,
+        ]);
+    } catch (Throwable $e) {
+        _blog_jsonErro('Erro ao enviar newsletter: ' . $e->getMessage(), 500);
+    }
+}
+
+/* ================================================================
+   GET clusters — lista todos os clusters ativos com post count
+   ================================================================ */
+if ($acao === 'clusters' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    try {
+        $stC = $pdo->query(
+            "SELECT c.id, c.slug, c.titulo, c.descricao, c.imagem_url, c.pilar_slug,
+                    COUNT(p.id) AS total_posts
+             FROM clusters c
+             LEFT JOIN posts p ON p.cluster_id = c.id AND p.status = 'publicado'
+             WHERE c.ativo = 1
+             GROUP BY c.id
+             ORDER BY c.id ASC"
+        );
+        $clusters = $stC->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($clusters as &$cl) $cl['total_posts'] = (int)$cl['total_posts'];
+        _blog_jsonOk(['clusters' => $clusters]);
+    } catch (Throwable $e) {
+        _blog_jsonOk(['clusters' => []]);
+    }
+}
+
+/* ================================================================
+   GET cluster — detalhe de um cluster com seus posts satélites
+   ================================================================ */
+if ($acao === 'cluster' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    $slug = trim($_GET['slug'] ?? '');
+    if (!$slug) _blog_jsonErro('Slug obrigatório.', 400);
+
+    try {
+        $stC = $pdo->prepare(
+            "SELECT id, slug, titulo, descricao, imagem_url, pilar_slug
+             FROM clusters WHERE slug = ? AND ativo = 1 LIMIT 1"
+        );
+        $stC->execute([$slug]);
+        $cluster = $stC->fetch(PDO::FETCH_ASSOC);
+        if (!$cluster) _blog_jsonErro('Cluster não encontrado.', 404);
+
+        // Post pilar (se existir)
+        $pilar = null;
+        if (!empty($cluster['pilar_slug'])) {
+            $campos = _blog_campos($pdo, false);
+            $stP = $pdo->prepare(
+                "SELECT $campos FROM posts WHERE slug = ? AND status = 'publicado' LIMIT 1"
+            );
+            $stP->execute([$cluster['pilar_slug']]);
+            $pilar = $stP->fetch(PDO::FETCH_ASSOC) ?: null;
+        }
+
+        // Posts satélites do cluster
+        $campos = _blog_campos($pdo, false);
+        $stS = $pdo->prepare(
+            "SELECT $campos FROM posts
+             WHERE cluster_id = ? AND status = 'publicado'
+             ORDER BY publicado_em DESC"
+        );
+        $stS->execute([$cluster['id']]);
+        $posts = $stS->fetchAll(PDO::FETCH_ASSOC);
+
+        _blog_jsonOk([
+            'cluster' => $cluster,
+            'pilar'   => $pilar,
+            'posts'   => $posts,
+        ]);
+    } catch (Throwable $e) {
+        _blog_jsonErro('Erro: ' . $e->getMessage(), 500);
     }
 }
 

@@ -1,0 +1,16 @@
+Options -Indexes
+
+# ── Roteia posts dinâmicos criados via painel admin ──────────────────────────
+# Se o arquivo .html não existe fisicamente (ex: blog/meu-post.html),
+# serve o template dinâmico que carrega o conteúdo via API.
+# Arquivos existentes (post-01.html ... post-11.html) são servidos normalmente.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Não reescreve se o arquivo já existe
+  RewriteCond %{REQUEST_FILENAME} !-f
+
+  # Slug: letras minúsculas, números e hifens, terminando em .html
+  RewriteRule ^([a-z0-9][a-z0-9-]*)\.html$ post-template.html [L,QSA]
+</IfModule>

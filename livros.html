@@ -8,10 +8,18 @@
   <meta name="keywords" content="robério diógenes, livros, comprar livros, ficção brasileira, contos, romance literário" />
   <link rel="canonical" href="https://www.roberiodiogenes.com/livros.html" />
   <meta property="og:type"        content="website" />
+  <meta property="og:locale"      content="pt_BR" />
+  <meta property="og:site_name"   content="Robério Diógenes" />
   <meta property="og:title"       content="Biblioteca | Robério Diógenes" />
-  <meta property="og:description" content="Catálogo completo de obras — romance, ficção e contos." />
+  <meta property="og:description" content="Catálogo completo de obras — romance, ficção e contos do escritor independente Robério Diógenes." />
   <meta property="og:image"       content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+  <meta property="og:image:alt"   content="Biblioteca de obras de Robério Diógenes" />
   <meta property="og:url"         content="https://www.roberiodiogenes.com/livros.html" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Biblioteca | Robério Diógenes" />
+  <meta name="twitter:description" content="Romances, ficção literária e contos do escritor independente brasileiro Robério Diógenes." />
+  <meta name="twitter:image"       content="https://www.roberiodiogenes.com/img/og-image.jpg" />
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"CollectionPage","name":"Biblioteca de Robério Diógenes",
    "description":"Catálogo completo de obras literárias","url":"https://www.roberiodiogenes.com/livros.html",
@@ -747,6 +755,36 @@ function toast(msg, tipo = 'ok') {
   setTimeout(() => { t.classList.remove('visivel'); setTimeout(() => t.remove(), 400); }, 3200);
 }
 
+/* ══ PREÇOS DINÂMICOS — sincroniza CATALOGO com o banco ════════ */
+async function sincronizarPrecos() {
+  try {
+    const r = await fetch('backend/livros.php?acao=catalogo');
+    const d = await r.json();
+    if (!d.ok || !d.catalogo) return;
+
+    d.catalogo.forEach(item => {
+      const local = CATALOGO.find(c => c.slug === item.slug);
+      if (!local) return;
+
+      // Preço normal (pode ter mudado no admin)
+      if (item.preco !== null) local.preco = item.preco;
+
+      // Promoção: só aplica se promo_ativa E preco_promo existir
+      local.preco_promo = (item.promo_ativa && item.preco_promo) ? item.preco_promo : null;
+
+      // Gratuito: padrão do banco OU temporário
+      local.gratuito    = item.gratuito;
+
+      // Salva flags extras para uso no modal e botões
+      local._promo_ativa   = item.promo_ativa;
+      local._gratuito_temp = item.gratuito_temp;
+    });
+
+    // Re-renderiza cards com preços atualizados
+    renderizar(state.filtro || 'todos');
+  } catch { /* Fallback: usa o CATALOGO estático — preços podem estar desatualizados */ }
+}
+
 /* ══ SESSÃO ════════════════════════════════════════════════════ */
 async function carregarSessao() {
   try {
@@ -1263,7 +1301,11 @@ window.copiarLink           = copiarLink;
 
 /* ══ INIT ══════════════════════════════════════════════════════ */
 (async () => {
-  await carregarSessao();
+  // Carrega sessão e preços em paralelo para máxima velocidade
+  await Promise.all([
+    carregarSessao(),
+    sincronizarPrecos(),  // Atualiza preços do banco antes de renderizar
+  ]);
   renderizar('todos');
   atualizarCarrinhoUI();
 })();

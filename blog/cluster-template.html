@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Carregando… | Diário | Robério Diógenes</title>
+  <meta name="description"  id="meta-desc"  content="" />
+  <meta name="author"                        content="Robério Diógenes" />
+  <link rel="canonical"     id="link-canonical" href="https://www.roberiodiogenes.com/blog/" />
+  <meta property="og:type"        content="article" />
+  <meta property="og:site_name"   content="Robério Diógenes" />
+  <meta property="og:locale"      content="pt_BR" />
+  <meta property="og:title"       id="og-title" content="" />
+  <meta property="og:description" id="og-desc"  content="" />
+  <meta property="og:url"         id="og-url"   content="" />
+  <meta property="og:image"       id="og-image" content="https://www.roberiodiogenes.com/img/og-image.jpg" />
+  <script type="application/ld+json" id="schema-cp">{}</script>
+
+  <link rel="icon" type="image/png" href="../img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../css/variables.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fonte-corpo); background: var(--fundo); color: var(--texto); }
+    .sr-only { position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0); }
+
+    /* ── NAV ── */
+    .cl-nav {
+      position: sticky; top: 0; z-index: 200;
+      background: var(--fundo-nav, rgba(245,240,232,.95));
+      border-bottom: 1px solid var(--borda-media);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 56px; gap: 1rem;
+    }
+    .cl-nav-logo { font-family: var(--fonte-titulo); font-size: 1.1rem; font-weight: 400; color: var(--ouro); text-decoration: none; white-space: nowrap; }
+    .cl-nav-links { display: flex; gap: .4rem; align-items: center; }
+    .cl-nav-btn {
+      display: flex; align-items: center; gap: .4rem;
+      padding: .4rem .85rem; border-radius: 6px;
+      font-family: var(--fonte-display); font-size: .68rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; color: var(--texto-3);
+      border: 1px solid transparent; transition: all .2s;
+    }
+    .cl-nav-btn:hover { color: var(--ouro); border-color: var(--borda-media); }
+    .cl-nav-btn.primario { background: var(--ouro); color: #1A0F00; border-color: var(--ouro); }
+    .cl-nav-btn.primario:hover { opacity: .85; }
+
+    /* ── HERO ── */
+    .cl-hero { position: relative; min-height: 420px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+    .cl-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.35); }
+    .cl-hero-placeholder {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--fundo-2) 0%, var(--fundo-3) 60%, var(--fundo) 100%);
+      display: flex; align-items: center; justify-content: center; font-size: 5rem; color: var(--ouro); opacity: .08;
+    }
+    .cl-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--fundo) 0%, rgba(0,0,0,.2) 70%, transparent 100%); }
+    .cl-hero-conteudo {
+      position: relative; z-index: 1;
+      max-width: 800px; margin: 0 auto; width: 100%;
+      padding: 3rem 2rem 2.5rem;
+    }
+    .cl-label { font-family: var(--fonte-display); font-size: .62rem; letter-spacing: .3em; text-transform: uppercase; color: var(--ouro); margin-bottom: .75rem; display: flex; align-items: center; gap: .5rem; }
+    .cl-h1 { font-family: var(--fonte-titulo); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 400; line-height: 1.1; margin-bottom: 1rem; color: var(--texto); }
+    .cl-desc { font-size: 1.05rem; color: var(--texto-2); line-height: 1.75; max-width: 620px; margin-bottom: 1.5rem; }
+    .cl-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .cl-stat { font-family: var(--fonte-display); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--texto-3); display: flex; align-items: center; gap: .4rem; }
+    .cl-stat i { color: var(--ouro); }
+
+    /* ── POST PILAR ── */
+    .cl-pilar-wrap { max-width: 900px; margin: 3rem auto 0; padding: 0 2rem; }
+    .cl-pilar-label { font-family: var(--fonte-display); font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ouro); margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; border-bottom: 1px solid var(--borda); padding-bottom: .75rem; }
+    .cl-pilar-card {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      background: var(--fundo-card); border: 2px solid var(--ouro);
+      border-radius: 12px; overflow: hidden; text-decoration: none; color: inherit;
+      transition: box-shadow .25s; margin-bottom: 3rem;
+    }
+    .cl-pilar-card:hover { box-shadow: 0 8px 40px rgba(184,134,11,.2); }
+    .cl-pilar-img { width: 100%; height: 100%; object-fit: cover; min-height: 260px; display: block; }
+    .cl-pilar-img-ph { min-height: 260px; background: linear-gradient(135deg, var(--fundo-2), var(--fundo-3)); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--ouro); opacity: .2; }
+    .cl-pilar-corpo { padding: 2rem; display: flex; flex-direction: column; justify-content: center; gap: .75rem; }
+    .cl-pilar-badge { font-family: var(--fonte-display); font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; background: var(--ouro); color: #1A0F00; padding: .2rem .65rem; border-radius: 20px; display: inline-block; width: fit-content; }
+    .cl-pilar-titulo { font-family: var(--fonte-titulo); font-size: clamp(1.2rem, 2.5vw, 1.7rem); font-weight: 400; color: var(--texto); line-height: 1.25; }
+    .cl-pilar-resumo { font-size: .9rem; color: var(--texto-2); line-height: 1.7; }
+    .cl-pilar-cta { font-family: var(--fonte-display); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ouro); margin-top: .5rem; }
+
+    /* ── POSTS SATÉLITES ── */
+    .cl-posts-wrap { max-width: 900px; margin: 0 auto; padding: 0 2rem 4rem; }
+    .cl-posts-label { font-family: var(--fonte-display); font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ouro); margin-bottom: 1.5rem; display: flex; align-items: center; gap: .5rem; border-bottom: 1px solid var(--borda); padding-bottom: .75rem; }
+    .cl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.5rem; }
+    .cl-sat-card {
+      display: flex; flex-direction: column;
+      background: var(--fundo-card); border: 1px solid var(--borda);
+      border-radius: 10px; overflow: hidden; text-decoration: none; color: inherit;
+      transition: all .25s;
+    }
+    .cl-sat-card:hover { transform: translateY(-4px); box-shadow: 0 6px 30px rgba(0,0,0,.15); border-color: var(--borda-media); }
+    .cl-sat-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+    .cl-sat-img-ph { aspect-ratio: 16/9; background: linear-gradient(135deg, var(--fundo-2), var(--fundo-3)); display: flex; align-items: center; justify-content: center; color: var(--ouro); opacity: .2; font-size: 1.5rem; }
+    .cl-sat-corpo { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; gap: .5rem; }
+    .cl-sat-cat { font-family: var(--fonte-display); font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ouro); }
+    .cl-sat-titulo { font-family: var(--fonte-titulo); font-size: 1rem; font-weight: 500; color: var(--texto); line-height: 1.3; }
+    .cl-sat-resumo { font-size: .85rem; color: var(--texto-2); line-height: 1.65; }
+    .cl-sat-meta { display: flex; gap: 1rem; margin-top: auto; padding-top: .5rem; font-family: var(--fonte-display); font-size: .68rem; color: var(--texto-3); letter-spacing: .05em; }
+    .cl-sat-meta i { color: var(--ouro); margin-right: .25rem; opacity: .7; }
+
+    /* ── NEWSLETTER inline ── */
+    .cl-nl { background: var(--fundo-2); border-top: 1px solid var(--borda); margin-top: 2rem; }
+    .cl-nl-wrap { max-width: 520px; margin: 0 auto; padding: 3.5rem 2rem; text-align: center; }
+    .cl-nl-wrap h2 { font-family: var(--fonte-titulo); font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 400; margin-bottom: .5rem; }
+    .cl-nl-wrap h2 em { color: var(--ouro); }
+    .cl-nl-wrap p { color: var(--texto-2); font-size: .92rem; line-height: 1.65; margin-bottom: 1.5rem; }
+    .cl-nl-form { display: flex; gap: .6rem; max-width: 420px; margin: 0 auto; }
+    .cl-nl-input { flex: 1; padding: .65rem 1rem; background: var(--fundo-card); border: 1px solid var(--borda-media); border-radius: 6px; color: var(--texto); font-family: var(--fonte-corpo); font-size: .9rem; }
+    .cl-nl-input:focus { outline: none; border-color: var(--ouro); }
+    .cl-nl-btn { padding: .65rem 1.25rem; background: var(--ouro); color: #1A0F00; border: none; border-radius: 6px; font-family: var(--fonte-display); font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; white-space: nowrap; transition: opacity .2s; }
+    .cl-nl-btn:hover { opacity: .85; }
+
+    /* ── TOAST ── */
+    .toast-rd { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(5rem); background: var(--fundo-card); border: 1px solid var(--ouro); color: var(--texto); padding: .7rem 1.5rem; border-radius: 10px; font-size: .88rem; z-index: 3000; opacity: 0; transition: transform .3s, opacity .3s; pointer-events: none; white-space: nowrap; }
+    .toast-rd.visivel { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── VAZIO ── */
+    .cl-vazio { text-align: center; padding: 3rem 1rem; color: var(--texto-3); font-size: .92rem; }
+    .cl-vazio i { display: block; font-size: 2rem; color: var(--ouro); opacity: .25; margin-bottom: .75rem; }
+
+    @media (max-width: 600px) {
+      .cl-pilar-card { grid-template-columns: 1fr; }
+      .cl-pilar-img, .cl-pilar-img-ph { min-height: 200px; }
+      .cl-nav { padding: 0 1rem; }
+      .cl-nl-form { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="cl-nav" aria-label="Navegação">
+  <a href="../index.html" class="cl-nav-logo">Robério Diógenes</a>
+  <div class="cl-nav-links">
+    <a href="../index.html" class="cl-nav-btn"><i class="fa fa-home"></i> Início</a>
+    <a href="../blog.html"  class="cl-nav-btn"><i class="fa fa-pen-nib"></i> Diário</a>
+    <a href="../livros.html" class="cl-nav-btn primario"><i class="fa fa-book"></i> Biblioteca</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="cl-hero" id="clHero">
+  <img id="heroImg" src="" alt="" class="cl-hero-img" style="display:none">
+  <div class="cl-hero-placeholder" id="heroPlaceholder"><i class="fa fa-layer-group"></i></div>
+  <div class="cl-hero-overlay"></div>
+  <div class="cl-hero-conteudo">
+    <p class="cl-label" id="clLabel"><i class="fa fa-layer-group"></i> Tema em Profundidade</p>
+    <h1 class="cl-h1" id="clTitulo">Carregando…</h1>
+    <p class="cl-desc" id="clDesc"></p>
+    <div class="cl-stats" id="clStats"></div>
+  </div>
+</header>
+
+<!-- POST PILAR -->
+<div class="cl-pilar-wrap" id="pilarWrap" style="display:none">
+  <p class="cl-pilar-label"><i class="fa fa-crown"></i> Post Pilar — Leitura Central</p>
+  <a class="cl-pilar-card" id="pilarCard" href="#">
+    <div id="pilarImgWrap"></div>
+    <div class="cl-pilar-corpo">
+      <span class="cl-pilar-badge"><i class="fa fa-crown"></i> Hub Central</span>
+      <h2 class="cl-pilar-titulo" id="pilarTitulo"></h2>
+      <p class="cl-pilar-resumo" id="pilarResumo"></p>
+      <span class="cl-pilar-cta">Ler o post pilar →</span>
+    </div>
+  </a>
+</div>
+
+<!-- POSTS SATÉLITES -->
+<div class="cl-posts-wrap">
+  <p class="cl-posts-label" id="postsLabel"><i class="fa fa-satellite"></i> Posts Satélites</p>
+  <div class="cl-grid" id="clGrid">
+    <div class="cl-vazio"><i class="fa fa-feather-pointed"></i>Carregando posts…</div>
+  </div>
+</div>
+
+<!-- NEWSLETTER -->
+<section class="cl-nl" aria-label="Newsletter">
+  <div class="cl-nl-wrap">
+    <h2>Não perca nenhuma <em>reflexão</em></h2>
+    <p>Novos posts e capítulos exclusivos direto no seu e-mail.</p>
+    <form class="cl-nl-form" id="clNlForm" novalidate>
+      <input type="email" class="cl-nl-input" id="clNlEmail" placeholder="seu@email.com" required aria-label="E-mail">
+      <button type="submit" class="cl-nl-btn">Inscrever-me</button>
+    </form>
+  </div>
+</section>
+
+<!-- TOAST -->
+<div class="toast-rd" id="toastRD" role="status" aria-live="polite"></div>
+
+<script>
+(async function () {
+  'use strict';
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function dataFmt(iso) {
+    try { return new Date(iso).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' }); }
+    catch { return iso; }
+  }
+  function mostrarToast(msg, tipo = 'ok') {
+    const t = document.getElementById('toastRD');
+    if (!t) return;
+    t.textContent = msg;
+    t.style.borderColor = tipo === 'erro' ? '#c0392b' : 'var(--ouro)';
+    t.classList.add('visivel');
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('visivel'), 3500);
+  }
+
+  const catLabels = { bastidores:'Bastidores', reflexao:'Reflexão', escritor:'Do Escritor', livros:'Sobre os Livros' };
+
+  /* ── Extrair slug da URL ── */
+  const CLUSTER_SLUG = new URLSearchParams(location.search).get('slug') || '';
+  if (!CLUSTER_SLUG) {
+    document.getElementById('clTitulo').textContent = 'Cluster não encontrado.';
+    return;
+  }
+
+  /* ── Carregar cluster ── */
+  let cluster, pilar, posts;
+  try {
+    const r = await fetch(`../backend/blog_api.php?acao=cluster&slug=${encodeURIComponent(CLUSTER_SLUG)}`);
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.erro || 'Não encontrado');
+    cluster = d.cluster;
+    pilar   = d.pilar;
+    posts   = d.posts || [];
+  } catch (err) {
+    document.getElementById('clTitulo').textContent = 'Cluster não encontrado.';
+    document.getElementById('clDesc').textContent = err.message;
+    return;
+  }
+
+  /* ── SEO ── */
+  const pageUrl  = `https://www.roberiodiogenes.com/blog/cluster-template.html?slug=${CLUSTER_SLUG}`;
+  const imgAbsol = cluster.imagem_url
+    ? `https://www.roberiodiogenes.com/${cluster.imagem_url}`
+    : 'https://www.roberiodiogenes.com/img/og-image.jpg';
+
+  document.title = `${cluster.titulo} | Temas | Robério Diógenes`;
+  document.getElementById('page-title').textContent    = document.title;
+  document.getElementById('meta-desc').content         = cluster.descricao || cluster.titulo;
+  document.getElementById('link-canonical').href       = pageUrl;
+  document.getElementById('og-title').content          = cluster.titulo;
+  document.getElementById('og-desc').content           = cluster.descricao || cluster.titulo;
+  document.getElementById('og-url').content            = pageUrl;
+  document.getElementById('og-image').content          = imgAbsol;
+
+  // Schema CollectionPage
+  document.getElementById('schema-cp').textContent = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: cluster.titulo,
+    description: cluster.descricao || cluster.titulo,
+    url: pageUrl,
+    image: imgAbsol,
+    author: { '@type': 'Person', name: 'Robério Diógenes', url: 'https://www.roberiodiogenes.com/autor.html' },
+    hasPart: posts.map(p => ({
+      '@type': 'BlogPosting',
+      headline: p.titulo,
+      url: `https://www.roberiodiogenes.com/blog/post-template.html?slug=${p.slug}`,
+      datePublished: p.publicado_em,
+    })),
+    inLanguage: 'pt-BR',
+  });
+
+  /* ── Hero ── */
+  document.getElementById('clTitulo').textContent = cluster.titulo;
+  document.getElementById('clDesc').textContent   = cluster.descricao || '';
+
+  if (cluster.imagem_url) {
+    const img = document.getElementById('heroImg');
+    img.src = `../${cluster.imagem_url}`;
+    img.style.display = 'block';
+    document.getElementById('heroPlaceholder').style.display = 'none';
+  }
+
+  const n = posts.length;
+  document.getElementById('clStats').innerHTML = `
+    <span class="cl-stat"><i class="fa fa-file-lines"></i> ${n} post${n !== 1 ? 's' : ''}</span>
+    ${pilar ? `<span class="cl-stat"><i class="fa fa-crown"></i> Post pilar incluído</span>` : ''}
+  `;
+
+  /* ── Post Pilar ── */
+  if (pilar) {
+    const wrap     = document.getElementById('pilarWrap');
+    const card     = document.getElementById('pilarCard');
+    const imgWrap  = document.getElementById('pilarImgWrap');
+
+    card.href = `post-template.html?slug=${encodeURIComponent(pilar.slug)}`;
+    document.getElementById('pilarTitulo').textContent = pilar.titulo;
+    document.getElementById('pilarResumo').textContent = pilar.resumo || '';
+
+    if (pilar.imagem_url) {
+      imgWrap.innerHTML = `<img src="../${pilar.imagem_url}" alt="${esc(pilar.titulo)}" class="cl-pilar-img" loading="eager" onerror="this.style.display='none'">`;
+    } else {
+      imgWrap.innerHTML = `<div class="cl-pilar-img-ph"><i class="fa fa-feather-pointed"></i></div>`;
+    }
+    wrap.style.display = 'block';
+  }
+
+  /* ── Posts Satélites ── */
+  const grid = document.getElementById('clGrid');
+  const postsLabel = document.getElementById('postsLabel');
+
+  // Exclui o pilar da lista de satélites se ele também estiver nos posts
+  const satelites = pilar ? posts.filter(p => p.slug !== pilar.slug) : posts;
+
+  postsLabel.innerHTML = `<i class="fa fa-satellite"></i> Posts Satélites (${satelites.length})`;
+
+  if (!satelites.length) {
+    grid.innerHTML = `<div class="cl-vazio"><i class="fa fa-feather-pointed"></i>Nenhum post satélite neste cluster ainda.</div>`;
+  } else {
+    grid.innerHTML = satelites.map(p => {
+      const imgHtml = p.imagem_url
+        ? `<img src="../${p.imagem_url}" alt="${esc(p.titulo)}" class="cl-sat-img" loading="lazy" onerror="this.style.display='none'">`
+        : `<div class="cl-sat-img-ph"><i class="fa fa-feather-pointed"></i></div>`;
+      const audioIcon = p.audio_url ? `<i class="fa fa-headphones" title="Áudio disponível" style="color:var(--ouro);opacity:.7"></i>` : '';
+      return `<a href="post-template.html?slug=${encodeURIComponent(p.slug)}" class="cl-sat-card">
+        ${imgHtml}
+        <div class="cl-sat-corpo">
+          <span class="cl-sat-cat">${esc(catLabels[p.categoria] || p.categoria)}</span>
+          <h3 class="cl-sat-titulo">${esc(p.titulo)}</h3>
+          <p class="cl-sat-resumo">${esc(p.resumo || '')}</p>
+          <div class="cl-sat-meta">
+            <span><i class="fa fa-calendar"></i>${dataFmt(p.publicado_em)}</span>
+            <span><i class="fa fa-clock"></i>${p.tempo_leitura} min</span>
+            ${audioIcon}
+          </div>
+        </div>
+      </a>`;
+    }).join('');
+  }
+
+  /* ── Newsletter ── */
+  document.getElementById('clNlForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('clNlEmail').value.trim();
+    if (!email) return;
+    try {
+      const r = await fetch('../backend/newsletter.php', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const d = await r.json();
+      mostrarToast(d.mensagem || 'Inscrito!');
+      e.target.reset();
+    } catch { mostrarToast('Erro ao inscrever.', 'erro'); }
+  });
+
+})();
+</script>
+</body>
+</html>

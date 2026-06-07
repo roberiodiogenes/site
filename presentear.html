@@ -944,21 +944,51 @@ function mostrarErro(msg) {
 }
 function val(id) { return document.getElementById(id)?.value.trim() || ''; }
 
-/* ── Carregar livro ──────────────────────────────────────────── */
-function carregarLivro() {
+/* ── Carregar livro (preços dinâmicos da API) ────────────────── */
+async function carregarLivro() {
+  // Tenta buscar preço atual da API primeiro
+  try {
+    const r = await fetch('backend/livros.php?acao=catalogo');
+    const d = await r.json();
+    if (d.ok && d.catalogo) {
+      const item = d.catalogo.find(c => c.slug === G.slug);
+      if (item && CATALOGO[G.slug]) {
+        // Atualiza apenas o preço (mantém título, capa, etc. do catálogo local)
+        CATALOGO[G.slug].preco    = item.preco;
+        CATALOGO[G.slug].gratuito = item.gratuito;
+      }
+    }
+  } catch { /* Fallback: usa CATALOGO local */ }
+
   G.livro = CATALOGO[G.slug] || null;
   if (!G.livro) {
     document.getElementById('livroTitulo').textContent = 'Livro não encontrado.';
     return;
   }
   const l = G.livro;
-  // Sincronizar flag gratis com o catálogo
   if (l.gratuito) G.gratis = true;
 
-  document.getElementById('livroTitulo').textContent  = l.titulo;
-  document.getElementById('livroGenero').textContent  = l.genero;
-  document.getElementById('livroTipo').textContent    = (l.tipo === 'conto' ? 'Conto' : 'Livro') + ' · ' + l.genero;
-  document.getElementById('livroPreco').textContent   = l.gratuito ? 'Gratuito' : fmtPreco(l.preco);
+  // Preço com 20% de desconto para presente
+  const precoOriginal = l.preco;
+  const precoDesconto = precoOriginal ? Math.round(precoOriginal * 0.80 * 100) / 100 : null;
+
+  document.getElementById('livroTitulo').textContent = l.titulo;
+  document.getElementById('livroGenero').textContent = l.genero;
+  document.getElementById('livroTipo').textContent   = (l.tipo === 'conto' ? 'Conto' : 'Livro') + ' · ' + l.genero;
+
+  // Mostrar preço com desconto
+  const elPreco = document.getElementById('livroPreco');
+  if (l.gratuito) {
+    elPreco.textContent = 'Gratuito';
+  } else if (precoDesconto) {
+    elPreco.innerHTML = `
+      <span style="text-decoration:line-through;opacity:.45;font-size:.7em">${fmtPreco(precoOriginal)}</span>
+      <strong>${fmtPreco(precoDesconto)}</strong>
+      <span style="font-size:.65em;color:#4CAF50;margin-left:.3rem">(-20% ao presentear)</span>`;
+  } else {
+    elPreco.textContent = '—';
+  }
+
   document.title = 'Presentear — ' + l.titulo + ' | Robério Diógenes';
 
   if (l.capa) {
@@ -1306,8 +1336,7 @@ async function enviarPresenteGratis() {
     window.location.href = 'livros.html';
     return;
   }
-  carregarLivro();
-  await carregarSessao();
+  await Promise.all([carregarLivro(), carregarSessao()]);
 })();
 </script>
 </body>

@@ -58,13 +58,13 @@ if ($metodo === 'POST') {
         $token = bin2hex(random_bytes(24));
         $ref   = 'gratis_' . $uid . '_' . $slug . '_' . time();
 
-        // Salvar presente já aprovado
+        // Salvar presente já aprovado (colunas existentes)
         $pdo->prepare(
             "INSERT INTO presentes
                 (comprador_id, livro_slug, nome_presenteado, email_presenteado,
-                 whatsapp_presenteado, dedicatoria, preco_pago, status, ref_externa, token_acesso, aprovado_em)
-             VALUES (?,?,?,?,?,?,0,'aprovado',?,?,NOW())"
-        )->execute([$uid, $slug, $nomePresPh, $emailPres, $wpPres ?: null, $dedicatoria, $ref, $token]);
+                 dedicatoria, preco_pago, status, ref_externa, token_acesso, gateway)
+             VALUES (?,?,?,?,?,0,'aprovado',?,?,'gratuito')"
+        )->execute([$uid, $slug, $nomePresPh, $emailPres, $dedicatoria, $ref, $token]);
 
         $presenteId = (int)$pdo->lastInsertId();
 
@@ -115,8 +115,10 @@ if ($metodo === 'POST') {
     $livro = $stL->fetch(PDO::FETCH_ASSOC);
     if (!$livro) responderErro('Livro não encontrado.', 404);
 
-    $preco = (float)($livro['preco_promocao'] ?: $livro['preco']);
-    if ($preco <= 0) responderErro('Este livro não pode ser presenteado (sem preço).');
+    $precoBase = (float)($livro['preco_promocao'] ?: $livro['preco']);
+    if ($precoBase <= 0) responderErro('Este livro não pode ser presenteado (sem preço).');
+    // 20% de desconto para presente (estratégia de venda)
+    $preco = round($precoBase * 0.80, 2);
 
     // Buscar dados do comprador
     $stU = $pdo->prepare("SELECT nome, email FROM usuarios WHERE id=? LIMIT 1");
@@ -157,13 +159,13 @@ if ($metodo === 'POST') {
         ],
     ]);
 
-    // Salvar presente no BD
+    // Salvar presente no BD (colunas que existem na migration_vendas.sql)
     $pdo->prepare(
         "INSERT INTO presentes
             (comprador_id, livro_slug, nome_presenteado, email_presenteado,
-             whatsapp_presenteado, dedicatoria, preco_pago, status, ref_externa)
-         VALUES (?,?,?,?,?,?,?,'pendente',?)"
-    )->execute([$uid, $slug, $nomePresPh, $emailPres, $wpPres ?: null, $dedicatoria, $preco, $refExterna]);
+             dedicatoria, preco_pago, status, ref_externa, gateway)
+         VALUES (?,?,?,?,?,?,'pendente',?,'mercadopago')"
+    )->execute([$uid, $slug, $nomePresPh, $emailPres, $dedicatoria, $preco, $refExterna]);
 
     responderOk([
         'checkout_url' => $preference['init_point'],
@@ -238,49 +240,35 @@ class Presentear {
         $assunto = '🎁 Você ganhou um livro de ' . $p['comprador_nome'] . '!';
         $corpo   = self::gerarEmailPresenteado($p);
 
+        // Envia e-mail ao presenteado (sem anexo PDF por enquanto — HTML embutido no corpo)
         if (class_exists('Mailer')) {
             try {
-                Mailer::enviarComAnexo(
-                    $p['email_presenteado'],
-                    $p['nome_presenteado'],
-                    $assunto,
-                    $corpo,
-                    $pdfPath,
-                    'Seu-Presente-' . date('Y-m-d') . '.pdf'
-                );
+                Mailer::enviar([
+                    'para_email' => $p['email_presenteado'],
+                    'para_nome'  => $p['nome_presenteado'] ?? 'Leitor',
+                    'assunto'    => $assunto,
+                    'html'       => $corpo,
+                ]);
             } catch (\Throwable $e) {
-                error_log('[Presentear] Erro PHPMailer: ' . $e->getMessage());
-                self::enviarMailNativo($p['email_presenteado'], $p['nome_presenteado'], $assunto, $corpo, $pdfPath);
+                error_log('[Presentear] Erro ao enviar e-mail: ' . $e->getMessage());
+                self::enviarMailNativo($p['email_presenteado'], $p['nome_presenteado'] ?? '', $assunto, $corpo, '');
             }
         } else {
-            self::enviarMailNativo($p['email_presenteado'], $p['nome_presenteado'], $assunto, $corpo, $pdfPath);
+            self::enviarMailNativo($p['email_presenteado'], $p['nome_presenteado'] ?? '', $assunto, $corpo, '');
         }
 
-        // Enviar cópia ao comprador
+        // Envia confirmação ao comprador
         $corpoComprador = self::gerarEmailComprador($p);
-        if (class_exists('Mailer')) {
+        if (class_exists('Mailer') && !empty($p['comprador_email'])) {
             try {
-                Mailer::enviar($p['comprador_email'], $p['comprador_nome'],
-                    'Seu presente para ' . $p['nome_presenteado'] . ' foi enviado! 🎁',
-                    $corpoComprador);
-            } catch (\Throwable $e) {}
+                Mailer::enviar([
+                    'para_email' => $p['comprador_email'],
+                    'para_nome'  => $p['comprador_nome'] ?? '',
+                    'assunto'    => 'Seu presente para ' . ($p['nome_presenteado'] ?? 'alguém') . ' foi enviado! 🎁',
+                    'html'       => $corpoComprador,
+                ]);
+            } catch (\Throwable $e) { /* silencioso */ }
         }
-
-        // Enviar via WhatsApp (link do voucher) se tiver número
-        if (!empty($p['whatsapp_presenteado'])) {
-            $num = preg_replace('/[^0-9]/', '', $p['whatsapp_presenteado']);
-            $linkAcesso = SITE_URL . '/presente.html?token=' . $p['token_acesso'];
-            $msg = urlencode(
-                "🎁 Você recebeu um presente de " . $p['comprador_nome'] . "!\n" .
-                "Livro: " . $p['titulo'] . "\n" .
-                "Acesse seu presente aqui: " . $linkAcesso
-            );
-            error_log('[Presentear] WhatsApp link: https://wa.me/' . $num . '?text=' . $msg);
-        }
-
-        // Marcar como voucher enviado
-        $pdo->prepare("UPDATE presentes SET voucher_enviado=1, voucher_enviado_em=NOW() WHERE ref_externa=?")
-            ->execute([$p['ref_externa']]);
     }
 
     /** Gera o HTML lindo do voucher (usado como corpo de e-mail e base para PDF) */

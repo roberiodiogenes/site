@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Robério Diógenes — Escritor</title>
+  <meta name="description" content="Escritor independente brasileiro. Romances, contos, ficção literária e muito mais."/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://roberiodiogenes.com/bio.html"/>
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="profile"/>
+  <meta property="og:locale"      content="pt_BR"/>
+  <meta property="og:site_name"   content="Robério Diógenes"/>
+  <meta property="og:title"       content="Robério Diógenes — Escritor"/>
+  <meta property="og:description" content="Acesse os livros, diário, leitor online e redes sociais do escritor independente Robério Diógenes."/>
+  <meta property="og:image"       content="https://roberiodiogenes.com/img/autor2.jpg"/>
+  <meta property="og:image:alt"   content="Robério Diógenes — Escritor Independente"/>
+  <meta property="og:url"         content="https://roberiodiogenes.com/bio.html"/>
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary"/>
+  <meta name="twitter:title"       content="Robério Diógenes — Escritor"/>
+  <meta name="twitter:description" content="Livros, diário literário, leitor online e redes sociais do escritor."/>
+  <meta name="twitter:image"       content="https://roberiodiogenes.com/img/autor2.jpg"/>
+
+  <link rel="icon" type="image/png" href="img/favicon.png"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous"/>
+
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --fundo:   #0D0A07;
+      --fundo-2: #151008;
+      --ouro:    #B8860B;
+      --ouro-cl: #D4A843;
+      --texto:   #E8DCC8;
+      --texto-2: #C8B898;
+      --texto-3: #8C7D65;
+      --borda:   rgba(184,134,11,.20);
+      --raio:    14px;
+    }
+
+    html { height: 100%; }
+
+    body {
+      min-height: 100%;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
+               env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+    }
+
+    /* ── Fundo com textura sutil ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(184,134,11,.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(184,134,11,.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* ── Container principal ── */
+    .bio-wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 480px;
+      padding: 2.5rem 1.25rem 4rem;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0;
+    }
+
+    /* ── Cabeçalho do autor ── */
+    .bio-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+
+    .bio-pretitulo {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: .6rem; letter-spacing: .35em;
+      text-transform: uppercase; color: var(--ouro);
+      margin-bottom: 1.1rem; display: block;
+    }
+
+    .bio-foto-wrap {
+      position: relative; display: inline-block;
+      margin-bottom: 1.1rem;
+    }
+    .bio-foto {
+      width: 108px; height: 108px; border-radius: 50%;
+      object-fit: cover; object-position: center top;
+      border: 2.5px solid var(--ouro);
+      box-shadow:
+        0 0 0 5px rgba(184,134,11,.12),
+        0 12px 40px rgba(0,0,0,.55);
+      display: block;
+    }
+    /* Anel animado dourado */
+    .bio-foto-wrap::before {
+      content: '';
+      position: absolute; inset: -7px; border-radius: 50%;
+      border: 1px solid rgba(184,134,11,.3);
+      animation: girar 12s linear infinite;
+    }
+    .bio-foto-wrap::after {
+      content: '';
+      position: absolute; inset: -13px; border-radius: 50%;
+      border: 1px dashed rgba(184,134,11,.12);
+      animation: girar 20s linear infinite reverse;
+    }
+    @keyframes girar { to { transform: rotate(360deg); } }
+
+    .bio-nome {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(1.65rem, 7vw, 2.1rem);
+      font-weight: 400; letter-spacing: .02em;
+      line-height: 1.1; color: var(--texto);
+      margin-bottom: .4rem;
+    }
+    .bio-nome em { color: var(--ouro); font-style: italic; }
+
+    .bio-subtitulo {
+      font-size: .72rem; letter-spacing: .22em;
+      text-transform: uppercase; color: var(--texto-3);
+    }
+
+    /* ── Divisor ornamental ── */
+    .bio-ornamento {
+      display: flex; align-items: center; gap: .75rem;
+      width: 100%; max-width: 280px;
+      margin: 1.25rem auto 1.5rem;
+    }
+    .bio-ornamento-linha {
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, transparent, var(--borda));
+    }
+    .bio-ornamento-linha:last-child {
+      background: linear-gradient(to left, transparent, var(--borda));
+    }
+    .bio-ornamento-icone { color: var(--ouro); font-size: .9rem; opacity: .6; }
+
+    /* ── Ícones sociais ── */
+    .bio-sociais {
+      display: flex; gap: .55rem;
+      justify-content: center; flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .bio-social-btn {
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--borda);
+      color: var(--texto-3); font-size: .95rem;
+      text-decoration: none;
+      transition: all .25s;
+      position: relative;
+    }
+    .bio-social-btn:hover, .bio-social-btn:focus {
+      color: var(--ouro);
+      border-color: var(--ouro);
+      background: rgba(184,134,11,.1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(184,134,11,.2);
+    }
+    .bio-social-btn[title]::after {
+      content: attr(title);
+      position: absolute; bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20,14,6,.95); color: var(--texto-2);
+      font-size: .6rem; letter-spacing: .05em;
+      white-space: nowrap; padding: .2rem .55rem;
+      border-radius: 6px; border: 1px solid var(--borda);
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .bio-social-btn:hover::after { opacity: 1; }
+
+    /* ── Lista de links ── */
+    .bio-links {
+      width: 100%;
+      display: flex; flex-direction: column; gap: .7rem;
+    }
+
+    .bio-link {
+      display: flex; align-items: center;
+      padding: 1rem 1.1rem;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--borda);
+      border-radius: var(--raio);
+      text-decoration: none; color: var(--texto);
+      transition: all .25s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Linha dourada à esquerda no hover */
+    .bio-link::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--ouro);
+      transform: scaleY(0); transform-origin: center;
+      transition: transform .25s;
+    }
+    .bio-link:hover::before, .bio-link:focus::before {
+      transform: scaleY(1);
+    }
+    .bio-link:hover, .bio-link:focus {
+      border-color: rgba(184,134,11,.45);
+      background: rgba(184,134,11,.07);
+      transform: translateX(3px);
+      box-shadow: 0 4px 20px rgba(0,0,0,.3);
+      outline: none;
+    }
+    .bio-link.destaque {
+      background: rgba(184,134,11,.1);
+      border-color: rgba(184,134,11,.35);
+    }
+    .bio-link.destaque:hover {
+      background: rgba(184,134,11,.18);
+      border-color: var(--ouro);
+    }
+
+    .bio-link-num {
+      font-family: Georgia, serif;
+      font-size: .6rem; letter-spacing: .18em;
+      color: var(--ouro); opacity: .6;
+      width: 26px; flex-shrink: 0;
+      text-align: right; margin-right: .85rem;
+    }
+
+    .bio-link-icone {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: rgba(184,134,11,.12);
+      border: 1px solid var(--borda);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ouro); font-size: .85rem;
+      flex-shrink: 0; margin-right: .9rem;
+    }
+    .bio-link.destaque .bio-link-icone {
+      background: rgba(184,134,11,.2);
+    }
+
+    .bio-link-texto { flex: 1; min-width: 0; }
+    .bio-link-titulo {
+      font-size: .9rem; font-weight: 600;
+      color: var(--texto); line-height: 1.25;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .bio-link.destaque .bio-link-titulo { color: var(--ouro-cl); }
+    .bio-link-sub {
+      font-size: .68rem; color: var(--texto-3);
+      margin-top: .15rem; line-height: 1.4;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .bio-link-seta {
+      color: var(--texto-3); font-size: .7rem;
+      margin-left: .6rem; flex-shrink: 0;
+      transition: transform .2s, color .2s;
+    }
+    .bio-link:hover .bio-link-seta {
+      transform: translateX(3px);
+      color: var(--ouro);
+    }
+
+    /* Skeleton loader */
+    .bio-skeleton {
+      width: 100%; display: flex; flex-direction: column; gap: .7rem;
+    }
+    .skel-item {
+      height: 64px; border-radius: var(--raio);
+      background: linear-gradient(90deg,
+        rgba(255,255,255,.04) 0%,
+        rgba(255,255,255,.08) 50%,
+        rgba(255,255,255,.04) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── Rodapé ── */
+    .bio-rodape {
+      margin-top: 2.5rem; text-align: center;
+    }
+    .bio-rodape-logo {
+      font-family: Georgia, serif; font-size: .8rem;
+      color: var(--texto-3); letter-spacing: .08em;
+      opacity: .5;
+    }
+    .bio-rodape-logo strong { color: var(--ouro); opacity: .7; }
+
+    /* ── Badge NOVO (links dinâmicos) ── */
+    .bio-badge-novo {
+      display: inline-flex; align-items: center;
+      font-size: .5rem; letter-spacing: .15em; text-transform: uppercase;
+      background: var(--ouro); color: #1A0F00;
+      padding: .1rem .45rem; border-radius: 20px;
+      font-weight: 700; margin-left: .5rem;
+      vertical-align: middle; flex-shrink: 0;
+    }
+    .bio-link.tipo-novo  { border-color: rgba(184,134,11,.4); background: rgba(184,134,11,.06); }
+    .bio-link.tipo-livro { border-color: rgba(184,134,11,.2); }
+    .bio-link.tipo-novo .bio-link-icone  { background: rgba(184,134,11,.22); }
+    /* Capa miniatura (livros) */
+    .bio-link-capa {
+      width: 34px; height: 48px; border-radius: 4px;
+      object-fit: cover; flex-shrink: 0; margin-right: .9rem;
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 2px 3px 8px rgba(0,0,0,.4);
+    }
+
+    /* ── Responsivo ── */
+    @media (max-width: 360px) {
+      .bio-wrap { padding: 2rem .9rem 3rem; }
+      .bio-foto  { width: 88px; height: 88px; }
+      .bio-nome  { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bio-wrap" id="bioWrap">
+
+  <!-- Header -->
+  <header class="bio-header" id="bioHeader">
+    <span class="bio-pretitulo" id="bioPretitulo">Escritor Independente</span>
+
+    <div class="bio-foto-wrap">
+      <img src="img/autor2.jpg" alt="Robério Diógenes" class="bio-foto" id="bioFoto"
+           onerror="this.style.display='none'"/>
+    </div>
+
+    <h1 class="bio-nome" id="bioNome">Robério <em>Diógenes</em></h1>
+    <p class="bio-subtitulo" id="bioSubtitulo">Escritor · Literatura Brasileira</p>
+  </header>
+
+  <!-- Ornamento -->
+  <div class="bio-ornamento" aria-hidden="true">
+    <div class="bio-ornamento-linha"></div>
+    <span class="bio-ornamento-icone"><i class="fa fa-feather-pointed"></i></span>
+    <div class="bio-ornamento-linha"></div>
+  </div>
+
+  <!-- Ícones sociais -->
+  <nav class="bio-sociais" id="bioSociais" aria-label="Redes sociais">
+    <a href="https://instagram.com/diogenesroberio" target="_blank" rel="noopener"
+       class="bio-social-btn" title="Instagram" aria-label="Instagram @diogenesroberio">
+      <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+    </a>
+    <a href="https://wa.me/5585996409818" target="_blank" rel="noopener"
+       class="bio-social-btn" title="WhatsApp" aria-label="WhatsApp">
+      <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+    </a>
+    <a href="https://t.me/5585996409818" target="_blank" rel="noopener"
+       class="bio-social-btn" title="Telegram" aria-label="Telegram">
+      <i class="fa-brands fa-telegram" aria-hidden="true"></i>
+    </a>
+    <a href="https://linkedin.com/in/roberio-diogenes" target="_blank" rel="noopener"
+       class="bio-social-btn" title="LinkedIn" aria-label="LinkedIn">
+      <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+    </a>
+    <a href="mailto:contato@roberiodiogenes.com"
+       class="bio-social-btn" title="E-mail" aria-label="E-mail">
+      <i class="fa fa-envelope" aria-hidden="true"></i>
+    </a>
+  </nav>
+
+  <!-- Links skeleton (substituído pelo JS) -->
+  <section class="bio-links" id="bioLinks" aria-label="Links">
+    <div class="bio-skeleton">
+      <div class="skel-item"></div>
+      <div class="skel-item"></div>
+      <div class="skel-item"></div>
+      <div class="skel-item"></div>
+      <div class="skel-item"></div>
+    </div>
+  </section>
+
+  <!-- Rodapé -->
+  <footer class="bio-rodape" aria-label="Rodapé">
+    <p class="bio-rodape-logo"><strong>©</strong> <span id="bioAno"></span> Robério Diógenes</p>
+  </footer>
+
+</div>
+
+<script>
+(async function () {
+  'use strict';
+
+  document.getElementById('bioAno').textContent = new Date().getFullYear();
+
+  /* ── Helpers ── */
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── UTM source (para rastrear origem do tráfego) ── */
+  const UTM_SOURCE = new URLSearchParams(location.search).get('utm_source')
+    || new URLSearchParams(location.search).get('from')
+    || document.referrer.match(/instagram\.com|wa\.me|whatsapp|t\.me|telegram|twitter|tiktok|facebook|linkedin/i)?.[0]
+    || null;
+
+  /* ── Detecta se URL é externa ao site ── */
+  const DOMINIOS_PROPRIOS = ['roberiodiogenes.com', location.hostname];
+  function isExterno(url) {
+    if (!url || url.startsWith('mailto:') || url.startsWith('#')) return false;
+    try {
+      const h = new URL(url).hostname;
+      return !DOMINIOS_PROPRIOS.some(d => h === d || h.endsWith('.' + d));
+    } catch { return false; }
+  }
+
+  /* ── Rastreamento de cliques ── */
+  function rastrearClique(linkId, linkSlug) {
+    navigator.sendBeacon
+      ? navigator.sendBeacon('backend/bio.php', JSON.stringify({
+          acao: 'click', link_id: linkId || 0, link_slug: linkSlug || '', origem: UTM_SOURCE,
+        }))
+      : fetch('backend/bio.php', {
+          method: 'POST', keepalive: true,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ acao:'click', link_id: linkId||0, link_slug: linkSlug||'', origem: UTM_SOURCE }),
+        }).catch(() => {});
+  }
+
+  const SOCIAL_ICONES = {
+    instagram:'fa-brands fa-instagram', whatsapp:'fa-brands fa-whatsapp',
+    telegram:'fa-brands fa-telegram',   linkedin:'fa-brands fa-linkedin-in',
+    email:'fa fa-envelope',             tiktok:'fa-brands fa-tiktok',
+    youtube:'fa-brands fa-youtube',     twitter:'fa-brands fa-x-twitter',
+    facebook:'fa-brands fa-facebook-f',
+  };
+  const SOCIAL_LABELS = {
+    instagram:'Instagram', whatsapp:'WhatsApp', telegram:'Telegram',
+    linkedin:'LinkedIn',   email:'E-mail',      tiktok:'TikTok',
+    youtube:'YouTube',     twitter:'X/Twitter', facebook:'Facebook',
+  };
+
+  /* ── Carregar dados da API ── */
+  let config = {}, links = [], dinamicos = [];
+  try {
+    const r = await fetch('backend/bio.php?acao=dados');
+    const d = await r.json();
+    if (d.ok) {
+      config    = d.config    || {};
+      links     = d.links     || [];
+      dinamicos = d.dinamicos || [];
+    }
+  } catch {}
+
+  /* ── Header ── */
+  if (config.nome) {
+    const partes = config.nome.trim().split(' ');
+    const ultimo = partes.pop();
+    document.getElementById('bioNome').innerHTML =
+      partes.join(' ') + (partes.length ? ' ' : '') + `<em>${esc(ultimo)}</em>`;
+  }
+  if (config.subtitulo) document.getElementById('bioSubtitulo').textContent = config.subtitulo;
+  if (config.foto) {
+    const img = document.getElementById('bioFoto');
+    img.src = config.foto;
+    img.alt = config.nome || 'Autor';
+  }
+
+  /* ── Ícones sociais ── */
+  if (Object.keys(config).some(k => SOCIAL_ICONES[k])) {
+    const nav = document.getElementById('bioSociais');
+    nav.innerHTML = '';
+    ['instagram','whatsapp','telegram','linkedin','email','tiktok','youtube','twitter','facebook']
+      .forEach(rede => {
+        const url = config[rede];
+        if (!url) return;
+        const a = document.createElement('a');
+        a.href = url;
+        if (rede !== 'email') { a.target = '_blank'; a.rel = 'noopener'; }
+        a.className = 'bio-social-btn';
+        a.title = a.ariaLabel = SOCIAL_LABELS[rede] || rede;
+        a.innerHTML = `<i class="${SOCIAL_ICONES[rede]}" aria-hidden="true"></i>`;
+        // Rastrear clique em rede social
+        a.addEventListener('click', () => rastrearClique(0, 'social-' + rede));
+        nav.appendChild(a);
+      });
+  }
+
+  /* ── Renderizar um link ── */
+  function renderLink(l, idx) {
+    const num    = String(idx + 1).padStart(2, '0');
+    const isNovo = l.tipo === 'novo';
+    const isLivro = l.tipo === 'livro';
+    const isDestaque = l.tipo === 'destaque';
+    const classe = `bio-link${isDestaque ? ' destaque' : ''}${isNovo ? ' tipo-novo' : ''}${isLivro ? ' tipo-livro' : ''}`;
+    const badge  = isNovo  ? `<span class="bio-badge-novo">novo</span>` : '';
+    const sub    = l.subtitulo ? `<div class="bio-link-sub">${esc(l.subtitulo)}</div>` : '';
+    const externo = isExterno(l.url || '') ? 'target="_blank" rel="noopener"' : '';
+    const dataId  = l.id   ? `data-lid="${l.id}"` : '';
+    const dataSlug= l.link_slug ? `data-slug="${esc(l.link_slug)}"` : '';
+
+    // Capa para livros
+    let iconeHtml = '';
+    if (isLivro && l.capa) {
+      iconeHtml = `<img src="${esc(l.capa)}" alt="${esc(l.titulo)}" class="bio-link-capa" loading="lazy" onerror="this.style.display='none'">`;
+    } else {
+      const faClass = l.icone || 'fa-link';
+      iconeHtml = `<div class="bio-link-icone"><i class="fa ${esc(faClass)}" aria-hidden="true"></i></div>`;
+    }
+
+    return `
+      <a href="${esc(l.url || '#')}" class="${classe}" ${externo} ${dataId} ${dataSlug}
+         aria-label="${esc(l.titulo)}">
+        ${isLivro && l.capa ? '' : `<span class="bio-link-num">${num}</span>`}
+        ${iconeHtml}
+        <div class="bio-link-texto">
+          <div class="bio-link-titulo">${esc(l.titulo)}${badge}</div>
+          ${sub}
+        </div>
+        <i class="fa fa-arrow-right bio-link-seta" aria-hidden="true"></i>
+      </a>`;
+  }
+
+  /* ── Renderizar todos os links ── */
+  const bioLinksEl = document.getElementById('bioLinks');
+
+  // Combinar: [links dinâmicos (novo post + livros)] + [links do DB]
+  const todosLinks = [...dinamicos, ...links];
+
+  if (!todosLinks.length) {
+    bioLinksEl.innerHTML = '<p style="text-align:center;color:var(--texto-3);font-size:.85rem;padding:2rem 0">Nenhum link disponível.</p>';
+    return;
+  }
+
+  bioLinksEl.innerHTML = todosLinks.map((l, i) => renderLink(l, i)).join('');
+
+  /* ── Animação de entrada ── */
+  document.querySelectorAll('.bio-link').forEach((el, i) => {
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateY(12px)';
+    el.style.transition = `opacity .35s ${i * 0.055}s ease, transform .35s ${i * 0.055}s ease`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      el.style.opacity   = '1';
+      el.style.transform = 'translateY(0)';
+    }));
+  });
+
+  /* ── Rastrear cliques em todos os links ── */
+  bioLinksEl.addEventListener('click', (e) => {
+    const link = e.target.closest('.bio-link');
+    if (!link) return;
+    const lid  = parseInt(link.dataset.lid  || '0') || 0;
+    const slug = link.dataset.slug || '';
+    rastrearClique(lid, slug);
+  });
+
+})();
+</script>
+</body>
+</html>

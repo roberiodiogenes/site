@@ -173,6 +173,25 @@
     .ag-lock { color:var(--ouro); opacity:.6; }
     .ag-card::before { content:'EM BREVE'; position:absolute; top:18px; right:-22px; background:var(--ouro); color:#1A0F00; font-family:var(--fonte-display); font-size:.5rem; font-weight:700; letter-spacing:.15em; padding:.2rem 2rem; transform:rotate(35deg); pointer-events:none; z-index:2; }
 
+    /* ── Clusters Hub & Spoke ──────────────────────────────────── */
+    .cl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem; }
+    .cl-card {
+      background:var(--fundo-card,#1C1408); border:1px solid var(--borda);
+      border-radius:var(--raio-lg,10px); overflow:hidden; text-decoration:none;
+      color:inherit; transition:all .25s; display:flex; flex-direction:column;
+      border-top:3px solid var(--ouro);
+    }
+    .cl-card:hover { transform:translateY(-4px); box-shadow:var(--sombra-md,0 6px 30px rgba(0,0,0,.15)); border-color:var(--borda-media); }
+    .cl-img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
+    .cl-img-placeholder { aspect-ratio:16/9; background:linear-gradient(135deg,var(--fundo-2),var(--fundo-3)); display:flex; align-items:center; justify-content:center; }
+    .cl-corpo { padding:1.35rem 1.5rem 1.5rem; flex:1; display:flex; flex-direction:column; gap:.5rem; }
+    .cl-label { font-family:var(--fonte-display,system-ui); font-size:.58rem; letter-spacing:.22em; text-transform:uppercase; color:var(--ouro); }
+    .cl-titulo { font-family:var(--fonte-titulo,Georgia); font-size:1.1rem; font-weight:500; color:var(--texto); line-height:1.3; }
+    .cl-desc { font-size:.875rem; color:var(--texto-2,#C8B898); line-height:1.65; }
+    .cl-footer { display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:.75rem; font-family:var(--fonte-display,system-ui); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; }
+    .cl-count { color:var(--texto-3); }
+    .cl-cta { color:var(--ouro); }
+
     /* ── Newsletter do blog ─────────────────────────────────────── */
     .nl-blog { background: var(--fundo-2, #160E04); }
     .nl-blog-wrap {
@@ -276,8 +295,23 @@
     <div class="paginacao" id="paginacao" aria-label="Paginação" style="display:none"></div>
   </section>
 
+  <!-- HUB & SPOKE — clusters temáticos (renderizado via JS se houver clusters) -->
+  <section id="secClusters" class="secao" aria-label="Temas em profundidade" style="display:none">
+    <div style="max-width:1200px;margin:0 auto;padding:0 2rem">
+      <div class="ag-header reveal">
+        <div>
+          <p class="secao-pretitulo">Temas em Profundidade</p>
+          <h2 class="ag-titulo-sec">Leituras <em>Organizadas</em></h2>
+          <p class="ag-desc">Séries temáticas que aprofundam um assunto através de vários ângulos.</p>
+        </div>
+        <i class="fa fa-layer-group ag-icon" aria-hidden="true"></i>
+      </div>
+      <div id="gridClusters" class="cl-grid"></div>
+    </div>
+  </section>
+
   <!-- NEWSLETTER -->
-  <section class="nl-blog secao" aria-labelledby="titulo-nl-blog">
+  <section class="nl-blog secao" id="newsletter" aria-labelledby="titulo-nl-blog">
     <div class="nl-blog-wrap reveal">
       <span class="nl-blog-icon" aria-hidden="true">✍️</span>
       <h2 id="titulo-nl-blog">Não perca nenhuma <em>reflexão</em></h2>
@@ -533,9 +567,9 @@
       } catch { return iso; }
     };
     const imgDestaque = destaque.imagem_url
-      ? `<img src="../${destaque.imagem_url}" alt="${esc(destaque.titulo)}" class="post-destaque-img" loading="eager"
+      ? `<img src="${destaque.imagem_url}" alt="${esc(destaque.titulo)}" class="post-destaque-img" loading="eager"
               onerror="this.style.display='none'">`
-      : `<div style="height:100%;background:linear-gradient(135deg,var(--fundo-2),var(--fundo-3));display:flex;align-items:center;justify-content:center;opacity:.5"><i class="fa fa-feather-pointed" style="font-size:3rem;color:var(--ouro)"></i></div>`;
+      : `<div style="height:100%;min-height:320px;background:linear-gradient(135deg,var(--fundo-2),var(--fundo-3));display:flex;align-items:center;justify-content:center;opacity:.5"><i class="fa fa-feather-pointed" style="font-size:3rem;color:var(--ouro)"></i></div>`;
     const audioIconDest = destaque.audio_url
       ? `<span style="margin-left:.5rem;color:var(--ouro);opacity:.8"><i class="fa fa-headphones"></i></span>` : '';
 
@@ -564,8 +598,8 @@
       const badgeLido  = lido(p.slug) ? `<span class="badge-lido"><i class="fa fa-check"></i> Lido</span>` : '';
       const audioIcon  = p.audio_url  ? `<span class="pcb-audio-badge"><i class="fa fa-headphones"></i> Áudio</span>` : '';
       const imgHtml    = p.imagem_url
-        ? `<div class="pcb-img-wrap"><img src="../${p.imagem_url}" alt="${esc(p.titulo)}" class="pcb-img" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`
-        : '';
+        ? `<div class="pcb-img-wrap"><img src="${p.imagem_url}" alt="${esc(p.titulo)}" class="pcb-img" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`
+        : `<div class="pcb-img-wrap pcb-img-placeholder"><i class="fa fa-feather-pointed" style="font-size:1.75rem;color:var(--ouro);opacity:.25"></i></div>`;
 
       html += `<a href="${urlPost(p)}" class="post-card-b reveal${atraso}" data-cat="${esc(p.categoria)}">
         ${badgeLido}
@@ -746,8 +780,45 @@
     };
   }
 
+  /* ── Carregar clusters Hub & Spoke ───────────────────── */
+  async function carregarClusters() {
+    try {
+      const r = await fetch('backend/blog_api.php?acao=clusters');
+      const d = await r.json();
+      if (!d.ok || !d.clusters?.length) return;
+
+      const sec  = document.getElementById('secClusters');
+      const grid = document.getElementById('gridClusters');
+      if (!sec || !grid) return;
+
+      grid.innerHTML = d.clusters.map(cl => {
+        const img = cl.imagem_url
+          ? `<img src="${esc(cl.imagem_url)}" alt="${esc(cl.titulo)}" class="cl-img" loading="lazy" onerror="this.style.display='none'">`
+          : `<div class="cl-img-placeholder"><i class="fa fa-layer-group" style="font-size:1.75rem;color:var(--ouro);opacity:.25"></i></div>`;
+        const url = `blog/cluster-template.html?slug=${encodeURIComponent(cl.slug)}`;
+        const n   = cl.total_posts;
+        return `<a href="${url}" class="cl-card reveal" aria-label="Cluster: ${esc(cl.titulo)}">
+          ${img}
+          <div class="cl-corpo">
+            <span class="cl-label"><i class="fa fa-layer-group"></i> Tema</span>
+            <h3 class="cl-titulo">${esc(cl.titulo)}</h3>
+            ${cl.descricao ? `<p class="cl-desc">${esc(cl.descricao)}</p>` : ''}
+            <div class="cl-footer">
+              <span class="cl-count"><i class="fa fa-file-lines"></i> ${n} post${n !== 1 ? 's' : ''}</span>
+              <span class="cl-cta">Explorar →</span>
+            </div>
+          </div>
+        </a>`;
+      }).join('');
+
+      sec.style.display = 'block';
+      if (window.initReveal) window.initReveal();
+    } catch {}
+  }
+
   /* ── Init ─────────────────────────────────────────────── */
   carregarPosts();
+  carregarClusters();
 
 })();
 </script>

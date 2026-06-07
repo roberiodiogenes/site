@@ -3,6 +3,7 @@
    admin/livros.php
    AJAX handlers antes de qualquer saída HTML.
    ================================================================ */
+ob_start(); // Captura qualquer output acidental (warnings/notices) para não quebrar JSON
 
 /* ── Detecta se é requisição AJAX ── */
 $_isAjax = (
@@ -12,6 +13,8 @@ $_isAjax = (
 
 if ($_isAjax) {
     /* AJAX: inicia sessão e PDO manualmente, sem incluir _admin.php */
+    ini_set('display_errors', '0');  // Garante que erros PHP não contaminem o JSON
+    ob_end_clean();                  // Descarta qualquer output buffered antes de enviar headers
     session_name('rd_admin_sess');
     session_start();
     if (empty($_SESSION['admin_id'])) {
@@ -20,7 +23,13 @@ if ($_isAjax) {
         exit;
     }
     require_once __DIR__ . '/../backend/config.php';
-    $pdo = db();
+    try {
+        $pdo = db();
+    } catch (Throwable $e) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['ok' => false, 'erro' => 'Erro de conexão com o banco de dados.']);
+        exit;
+    }
 }
 
 /* ── Helper: slugify ── */
@@ -39,13 +48,17 @@ function _slugify(string $s): string {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['acao'] ?? '') === 'buscar') {
     header('Content-Type: application/json; charset=utf-8');
     $id = (int)($_GET['id'] ?? 0);
-    $st = $pdo->prepare('SELECT * FROM livros WHERE id = ?');
-    $st->execute([$id]);
-    $item = $st->fetch(PDO::FETCH_ASSOC);
-    echo json_encode($item
-        ? ['ok' => true,  'item' => $item]
-        : ['ok' => false, 'erro' => 'Item não encontrado.']
-    );
+    try {
+        $st = $pdo->prepare('SELECT * FROM livros WHERE id = ?');
+        $st->execute([$id]);
+        $item = $st->fetch(PDO::FETCH_ASSOC);
+        echo json_encode($item
+            ? ['ok' => true,  'item' => $item]
+            : ['ok' => false, 'erro' => 'Item não encontrado.']
+        );
+    } catch (Throwable $e) {
+        echo json_encode(['ok' => false, 'erro' => 'Erro ao buscar item: ' . $e->getMessage()]);
+    }
     exit;
 }
 
@@ -55,96 +68,119 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acao = $_POST['acao'] ?? '';
 
     if ($acao === 'toggle_ativo') {
-        $id = (int)($_POST['id'] ?? 0);
-        $st = $pdo->prepare('SELECT ativo FROM livros WHERE id=?');
-        $st->execute([$id]);
-        $novo = $st->fetchColumn() ? 0 : 1;
-        $pdo->prepare('UPDATE livros SET ativo=? WHERE id=?')->execute([$novo, $id]);
-        echo json_encode(['ok'=>true,'novo'=>$novo]);
+        try {
+            $id = (int)($_POST['id'] ?? 0);
+            $st = $pdo->prepare('SELECT ativo FROM livros WHERE id=?');
+            $st->execute([$id]);
+            $novo = $st->fetchColumn() ? 0 : 1;
+            $pdo->prepare('UPDATE livros SET ativo=? WHERE id=?')->execute([$novo, $id]);
+            echo json_encode(['ok'=>true,'novo'=>$novo]);
+        } catch (Throwable $e) {
+            echo json_encode(['ok'=>false,'erro'=>'Erro ao alterar status: '.$e->getMessage()]);
+        }
         exit;
     }
 
     if ($acao === 'salvar_preco') {
-        $id    = (int)($_POST['id']   ?? 0);
-        $preco = (float)str_replace(',','.',($_POST['preco'] ?? '0'));
-        $prom  = trim($_POST['preco_promocao'] ?? '') !== ''
-                 ? (float)str_replace(',','.',($_POST['preco_promocao']??'0'))
-                 : null;
-        $pdo->prepare('UPDATE livros SET preco=?,preco_promocao=? WHERE id=?')->execute([$preco,$prom,$id]);
-        echo json_encode(['ok'=>true]);
+        try {
+            $id    = (int)($_POST['id']   ?? 0);
+            $preco = (float)str_replace(',','.',($_POST['preco'] ?? '0'));
+            $prom  = trim($_POST['preco_promocao'] ?? '') !== ''
+                     ? (float)str_replace(',','.',($_POST['preco_promocao']??'0'))
+                     : null;
+            $pdo->prepare('UPDATE livros SET preco=?,preco_promocao=? WHERE id=?')->execute([$preco,$prom,$id]);
+            echo json_encode(['ok'=>true]);
+        } catch (Throwable $e) {
+            echo json_encode(['ok'=>false,'erro'=>'Erro ao salvar preço: '.$e->getMessage()]);
+        }
         exit;
     }
 
     if ($acao === 'salvar_caps') {
-        $id   = (int)($_POST['id']              ?? 0);
-        $caps = (int)($_POST['total_capitulos'] ?? 0);
-        $pdo->prepare('UPDATE livros SET total_capitulos=? WHERE id=?')->execute([$caps,$id]);
-        echo json_encode(['ok'=>true]);
+        try {
+            $id   = (int)($_POST['id']              ?? 0);
+            $caps = (int)($_POST['total_capitulos'] ?? 0);
+            $pdo->prepare('UPDATE livros SET total_capitulos=? WHERE id=?')->execute([$caps,$id]);
+            echo json_encode(['ok'=>true]);
+        } catch (Throwable $e) {
+            echo json_encode(['ok'=>false,'erro'=>'Erro ao salvar capítulos: '.$e->getMessage()]);
+        }
         exit;
     }
 
     if ($acao === 'deletar') {
-        $id = (int)($_POST['id'] ?? 0);
-        $pdo->prepare('DELETE FROM livros WHERE id=?')->execute([$id]);
-        echo json_encode(['ok'=>true]);
+        try {
+            $id = (int)($_POST['id'] ?? 0);
+            $pdo->prepare('DELETE FROM livros WHERE id=?')->execute([$id]);
+            echo json_encode(['ok'=>true]);
+        } catch (Throwable $e) {
+            echo json_encode(['ok'=>false,'erro'=>'Erro ao deletar: '.$e->getMessage()]);
+        }
         exit;
     }
 
     if ($acao === 'salvar_item') {
-        $id     = (int)($_POST['id'] ?? 0);
-        $titulo = trim($_POST['titulo'] ?? '');
-        $tipo   = in_array($_POST['tipo']??'',['livro','conto']) ? $_POST['tipo'] : 'livro';
+        try {
+            $id     = (int)($_POST['id'] ?? 0);
+            $titulo = trim($_POST['titulo'] ?? '');
+            $tipo   = in_array($_POST['tipo']??'',['livro','conto']) ? $_POST['tipo'] : 'livro';
 
-        if (!$titulo) { echo json_encode(['ok'=>false,'erro'=>'Título obrigatório.']); exit; }
+            if (!$titulo) { echo json_encode(['ok'=>false,'erro'=>'Título obrigatório.']); exit; }
 
-        $slug = trim($_POST['slug'] ?? '');
-        $slug = $slug ? _slugify($slug) : _slugify($titulo);
+            $slug = trim($_POST['slug'] ?? '');
+            $slug = $slug ? _slugify($slug) : _slugify($titulo);
 
-        $stS = $pdo->prepare('SELECT id FROM livros WHERE slug=? AND id!=?');
-        $stS->execute([$slug, $id]);
-        if ($stS->fetch()) $slug .= '-' . substr(time(),-4);
+            $stS = $pdo->prepare('SELECT id FROM livros WHERE slug=? AND id!=?');
+            $stS->execute([$slug, $id]);
+            if ($stS->fetch()) $slug .= '-' . substr(time(),-4);
 
-        $preco    = trim($_POST['preco']          ?? '') !== '' ? (float)str_replace(',','.',($_POST['preco']??'0'))           : null;
-        $promocao = trim($_POST['preco_promocao'] ?? '') !== '' ? (float)str_replace(',','.',($_POST['preco_promocao']??'0'))  : null;
-        $pasta    = trim($_POST['pasta_conteudo'] ?? '') ?: "livros-conteudo/{$slug}/";
+            $preco    = trim($_POST['preco']          ?? '') !== '' ? (float)str_replace(',','.',($_POST['preco']??'0'))           : null;
+            $promocao = trim($_POST['preco_promocao'] ?? '') !== '' ? (float)str_replace(',','.',($_POST['preco_promocao']??'0'))  : null;
+            $pasta    = trim($_POST['pasta_conteudo'] ?? '') ?: "livros-conteudo/{$slug}/";
 
-        $badgesArr = array_filter(array_map('trim', explode(',', $_POST['badges'] ?? '')));
-        $badges    = $badgesArr ? implode(',', $badgesArr) : null;
+            $badgesArr = array_filter(array_map('trim', explode(',', $_POST['badges'] ?? '')));
+            $badges    = $badgesArr ? implode(',', $badgesArr) : null;
 
-        $campos = [
-            'slug'            => $slug,
-            'tipo'            => $tipo,
-            'titulo'          => $titulo,
-            'subtitulo'       => trim($_POST['subtitulo']      ?? '') ?: null,
-            'genero'          => trim($_POST['genero']         ?? '') ?: null,
-            'sinopse'         => trim($_POST['sinopse']        ?? '') ?: null,
-            'capa_img'        => trim($_POST['capa_img']       ?? '') ?: null,
-            'preco'           => $preco,
-            'preco_promocao'  => $promocao,
-            'total_capitulos' => (int)($_POST['total_capitulos'] ?? 0) ?: null,
-            'pasta_conteudo'  => $pasta,
-            'ativo'           => isset($_POST['ativo'])    ? 1 : 0,
-            'destaque'        => isset($_POST['destaque']) ? 1 : 0,
-            'gratuito'        => isset($_POST['gratuito']) ? 1 : 0,
-            'novo'            => isset($_POST['novo'])     ? 1 : 0,
-            'badges'          => $badges,
-            'link_amazon'     => trim($_POST['link_amazon'] ?? '') ?: null,
-            'data_pub'        => trim($_POST['data_pub']    ?? '') ?: null,
-            'ordem'           => (int)($_POST['ordem'] ?? 99),
-        ];
+            $campos = [
+                'slug'            => $slug,
+                'tipo'            => $tipo,
+                'titulo'          => $titulo,
+                'subtitulo'       => trim($_POST['subtitulo']      ?? '') ?: null,
+                'genero'          => trim($_POST['genero']         ?? '') ?: null,
+                'sinopse'         => trim($_POST['sinopse']        ?? '') ?: null,
+                'capa_img'        => trim($_POST['capa_img']       ?? '') ?: null,
+                'preco'           => $preco,
+                'preco_promocao'  => $promocao,
+                'total_capitulos' => (int)($_POST['total_capitulos'] ?? 0) ?: null,
+                'pasta_conteudo'  => $pasta,
+                // ativo vem de um <select> (não checkbox), então usar o valor diretamente
+                'ativo'           => (int)($_POST['ativo'] ?? 0) === 1 ? 1 : 0,
+                'destaque'        => isset($_POST['destaque']) ? 1 : 0,
+                'gratuito'        => isset($_POST['gratuito']) ? 1 : 0,
+                'novo'            => isset($_POST['novo'])     ? 1 : 0,
+                'badges'          => $badges,
+                'link_amazon'     => trim($_POST['link_amazon'] ?? '') ?: null,
+                'data_pub'        => trim($_POST['data_pub']    ?? '') ?: null,
+                'ordem'           => (int)($_POST['ordem'] ?? 99),
+                'promo_ate'       => trim($_POST['promo_ate']    ?? '') ?: null,
+                'gratuito_ate'    => trim($_POST['gratuito_ate'] ?? '') ?: null,
+            ];
 
-        if ($id) {
-            $sets   = implode(',', array_map(fn($k) => "`$k`=?", array_keys($campos)));
-            $vals   = array_values($campos);
-            $vals[] = $id;
-            $pdo->prepare("UPDATE livros SET $sets WHERE id=?")->execute($vals);
-            echo json_encode(['ok'=>true,'mensagem'=>'Salvo!','slug'=>$slug,'id'=>$id]);
-        } else {
-            $cols  = implode(',', array_map(fn($k) => "`$k`", array_keys($campos)));
-            $marks = implode(',', array_fill(0, count($campos), '?'));
-            $pdo->prepare("INSERT INTO livros ($cols) VALUES ($marks)")->execute(array_values($campos));
-            $novoId = (int)$pdo->lastInsertId();
-            echo json_encode(['ok'=>true,'mensagem'=>'Criado!','slug'=>$slug,'id'=>$novoId]);
+            if ($id) {
+                $sets   = implode(',', array_map(fn($k) => "`$k`=?", array_keys($campos)));
+                $vals   = array_values($campos);
+                $vals[] = $id;
+                $pdo->prepare("UPDATE livros SET $sets WHERE id=?")->execute($vals);
+                echo json_encode(['ok'=>true,'mensagem'=>'Salvo!','slug'=>$slug,'id'=>$id]);
+            } else {
+                $cols  = implode(',', array_map(fn($k) => "`$k`", array_keys($campos)));
+                $marks = implode(',', array_fill(0, count($campos), '?'));
+                $pdo->prepare("INSERT INTO livros ($cols) VALUES ($marks)")->execute(array_values($campos));
+                $novoId = (int)$pdo->lastInsertId();
+                echo json_encode(['ok'=>true,'mensagem'=>'Criado!','slug'=>$slug,'id'=>$novoId]);
+            }
+        } catch (Throwable $e) {
+            echo json_encode(['ok'=>false,'erro'=>'Erro ao salvar: '.$e->getMessage()]);
         }
         exit;
     }
@@ -159,21 +195,36 @@ require_once __DIR__ . '/_admin.php';
 
 /* ── Dados da listagem ── */
 $filtroTipo = $_GET['tipo'] ?? 'todos';
-$where = $filtroTipo !== 'todos' ? "WHERE tipo='".($filtroTipo==='conto'?'conto':'livro')."'" : '';
-$livros = $pdo->query(
-    "SELECT l.id,l.slug,l.tipo,l.titulo,l.subtitulo,l.genero,l.preco,l.preco_promocao,
-     l.ativo,l.destaque,l.gratuito,l.novo,l.total_capitulos,l.capa_img,l.ordem,l.data_pub,
-     (SELECT COUNT(*) FROM compras WHERE livro_slug=l.slug AND status='aprovada') AS n_compras,
-     (SELECT COALESCE(SUM(preco_pago),0) FROM compras WHERE livro_slug=l.slug AND status='aprovada') AS receita,
-     (SELECT ROUND(AVG(estrelas),1) FROM avaliacoes WHERE livro_slug=l.slug) AS media_aval,
-     (SELECT COUNT(*) FROM leitor_progresso WHERE livro_slug=l.slug) AS n_leitores
-     FROM livros l $where ORDER BY l.tipo ASC, l.ordem ASC, l.titulo ASC"
-)->fetchAll();
+$tipoFiltro = $filtroTipo === 'conto' ? 'conto' : 'livro';
+$where      = $filtroTipo !== 'todos' ? "WHERE l.tipo = '$tipoFiltro'" : '';
 
-$nLivros = $pdo->query("SELECT COUNT(*) FROM livros WHERE tipo='livro'")->fetchColumn();
-$nContos = $pdo->query("SELECT COUNT(*) FROM livros WHERE tipo='conto'")->fetchColumn();
-$nAtivos = $pdo->query("SELECT COUNT(*) FROM livros WHERE ativo=1")->fetchColumn();
-$recTotal= $pdo->query("SELECT COALESCE(SUM(preco_pago),0) FROM compras WHERE status='aprovada'")->fetchColumn();
+// Query adaptável: subqueries de tabelas opcionais são ignoradas se a tabela não existir
+try {
+    $livros = $pdo->query(
+        "SELECT l.id,l.slug,l.tipo,l.titulo,l.subtitulo,l.genero,l.preco,l.preco_promocao,
+         l.ativo,l.destaque,l.gratuito,l.novo,l.total_capitulos,l.capa_img,l.ordem,l.data_pub,
+         (SELECT COUNT(*) FROM compras WHERE livro_slug=l.slug AND status='aprovada') AS n_compras,
+         (SELECT COALESCE(SUM(preco_pago),0) FROM compras WHERE livro_slug=l.slug AND status='aprovada') AS receita,
+         0 AS media_aval, 0 AS n_leitores,
+         l.promo_ate, l.gratuito_ate
+         FROM livros l $where ORDER BY l.tipo ASC, l.ordem ASC, l.titulo ASC"
+    )->fetchAll();
+} catch (Throwable $e) {
+    // Fallback sem colunas de promoção (migration pendente)
+    try {
+        $livros = $pdo->query(
+            "SELECT l.id,l.slug,l.tipo,l.titulo,l.subtitulo,l.genero,l.preco,l.preco_promocao,
+             l.ativo,l.destaque,l.gratuito,l.novo,l.total_capitulos,l.capa_img,l.ordem,l.data_pub,
+             0 AS n_compras, 0 AS receita, 0 AS media_aval, 0 AS n_leitores,
+             NULL AS promo_ate, NULL AS gratuito_ate
+             FROM livros l $where ORDER BY l.tipo ASC, l.ordem ASC, l.titulo ASC"
+        )->fetchAll();
+    } catch (Throwable $e2) { $livros = []; }
+}
+try { $nLivros = $pdo->query("SELECT COUNT(*) FROM livros WHERE tipo='livro'")->fetchColumn(); } catch (Throwable $e) { $nLivros = 0; }
+try { $nContos = $pdo->query("SELECT COUNT(*) FROM livros WHERE tipo='conto'")->fetchColumn(); } catch (Throwable $e) { $nContos = 0; }
+try { $nAtivos = $pdo->query("SELECT COUNT(*) FROM livros WHERE ativo=1")->fetchColumn(); } catch (Throwable $e) { $nAtivos = 0; }
+try { $recTotal = $pdo->query("SELECT COALESCE(SUM(preco_pago),0) FROM compras WHERE status='aprovada'")->fetchColumn(); } catch (Throwable $e) { $recTotal = 0; }
 ?>
 <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
   <div>
@@ -259,7 +310,22 @@ $recTotal= $pdo->query("SELECT COALESCE(SUM(preco_pago),0) FROM compras WHERE st
         <?= $l['novo']     ? '<span class="badge badge-ouro">Novo</span> '   : '' ?>
         <?= $l['n_leitores'] ? '<span style="color:var(--texto-3)">'.$l['n_leitores'].' leit.</span>' : '' ?>
       </td>
-      <td><?= adm_badge($l['ativo'] ? 'ativo' : 'inativo') ?></td>
+      <td>
+        <?= adm_badge($l['ativo'] ? 'ativo' : 'inativo') ?>
+        <?php
+          // Badge de promoção ativa
+          if (!empty($l['promo_ate']) && strtotime($l['promo_ate']) > time()): ?>
+          <span class="badge badge-ouro" style="margin-top:.2rem;display:block" title="Promoção até <?= date('d/m H:i', strtotime($l['promo_ate'])) ?>">
+            <i class="fa fa-tag"></i> Promo
+          </span>
+        <?php endif;
+          // Badge de gratuito temporário
+          if (!empty($l['gratuito_ate']) && strtotime($l['gratuito_ate']) > time()): ?>
+          <span class="badge badge-verde" style="margin-top:.2rem;display:block" title="Grátis até <?= date('d/m H:i', strtotime($l['gratuito_ate'])) ?>">
+            <i class="fa fa-gift"></i> Grátis
+          </span>
+        <?php endif; ?>
+      </td>
       <td>
         <div style="display:flex;gap:.3rem;flex-wrap:wrap">
           <button class="btn btn-sm btn-ghost" onclick="editarItem(<?= $l['id'] ?>)" title="Editar">
@@ -367,15 +433,43 @@ $recTotal= $pdo->query("SELECT COALESCE(SUM(preco_pago),0) FROM compras WHERE st
         <input type="text" name="capa_img" id="itemCapa" placeholder="img/nome-do-livro.jpg">
       </div>
 
-      <!-- Preços -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
-        <div class="modal-campo">
-          <label>Preço (R$)</label>
-          <input type="text" name="preco" id="itemPreco" placeholder="19,90">
+      <!-- Preços e Promoção -->
+      <div style="background:var(--fundo-input);border:1px solid var(--borda);border-radius:var(--raio);padding:.85rem;margin-bottom:.85rem">
+        <p style="font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ouro);margin-bottom:.6rem">
+          <i class="fa fa-tag"></i> Preços e Promoção
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.6rem">
+          <div class="modal-campo" style="margin-bottom:0">
+            <label>Preço normal (R$)</label>
+            <input type="text" name="preco" id="itemPreco" placeholder="29,90">
+          </div>
+          <div class="modal-campo" style="margin-bottom:0">
+            <label>Preço promocional (R$)</label>
+            <input type="text" name="preco_promocao" id="itemPromo" placeholder="Ex: 14,90">
+          </div>
         </div>
-        <div class="modal-campo">
-          <label>Preço promocional (R$)</label>
-          <input type="text" name="preco_promocao" id="itemPromo" placeholder="Opcional">
+        <div class="modal-campo" style="margin-bottom:0">
+          <label>Promoção ativa até <span style="color:var(--texto-3);font-size:.6rem">(deixe vazio para desativar)</span></label>
+          <input type="datetime-local" name="promo_ate" id="itemPromoAte"
+                 style="font-size:.8rem">
+          <p style="font-size:.65rem;color:var(--texto-3);margin-top:.25rem">
+            Enquanto esta data não passar, o preço promocional será exibido e cobrado.
+          </p>
+        </div>
+      </div>
+
+      <!-- Gratuito temporário -->
+      <div style="background:rgba(46,125,50,.07);border:1px solid rgba(46,125,50,.2);border-radius:var(--raio);padding:.85rem;margin-bottom:.85rem">
+        <p style="font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:#4CAF50;margin-bottom:.6rem">
+          <i class="fa fa-gift"></i> Gratuito temporário
+        </p>
+        <div class="modal-campo" style="margin-bottom:0">
+          <label>Livro gratuito até <span style="color:var(--texto-3);font-size:.6rem">(deixe vazio para não aplicar)</span></label>
+          <input type="datetime-local" name="gratuito_ate" id="itemGratuitoAte"
+                 style="font-size:.8rem">
+          <p style="font-size:.65rem;color:var(--texto-3);margin-top:.25rem">
+            Durante este período, o livro fica disponível gratuitamente para qualquer usuário.
+          </p>
         </div>
       </div>
 
@@ -490,6 +584,9 @@ async function editarItem(id) {
     document.getElementById('itemDestaque').checked   = !!i.destaque;
     document.getElementById('itemNovo').checked       = !!i.novo;
     document.getElementById('itemGratuito').checked   = !!i.gratuito;
+    // Promoção e gratuito temporário
+    document.getElementById('itemPromoAte').value     = i.promo_ate    ? i.promo_ate.replace(' ','T').slice(0,16)    : '';
+    document.getElementById('itemGratuitoAte').value  = i.gratuito_ate ? i.gratuito_ate.replace(' ','T').slice(0,16) : '';
     atualizarDicasTipo();
     abrirModal('modalItem');
   } catch(e) { toast('Erro de conexão.','erro'); }

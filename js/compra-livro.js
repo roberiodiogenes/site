@@ -43,13 +43,18 @@
   const precoFmt  = preco ? 'R$\u00a0' + preco.toFixed(2).replace('.', ',') : '';
 
   /* ── Gera o HTML dos botões conforme estado ───────────────── */
+  // Preço de presente = 20% de desconto
+  const precoPresente    = preco ? Math.round(preco * 0.80 * 100) / 100 : null;
+  const precoPresenteFmt = precoPresente ? 'R$ ' + precoPresente.toFixed(2).replace('.', ',') : '';
+
   const btnPresentear = logado
     ? `<a href="../presentear.html?livro=${slug}"
           class="btn btn-ghost"
           style="font-size:0.82rem;"
-          aria-label="Presentear este livro para alguém">
+          aria-label="Presentear este livro para alguém com 20% de desconto">
          <i class="fa fa-gift" aria-hidden="true"></i>
-         Presentear alguém
+         Presentear${precoPresenteFmt ? ' · ' + precoPresenteFmt : ''}
+         ${precoPresente ? '<span style="font-size:.68em;opacity:.65;margin-left:.1rem">(-20%)</span>' : ''}
        </a>`
     : '';
 

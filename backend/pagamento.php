@@ -18,16 +18,13 @@ require_once __DIR__ . '/config.php';
 iniciarSessao();
 
 /* ── Credenciais Mercado Pago ─────────────────────────────────
-   Crie suas credenciais em: https://www.mercadopago.com.br/developers
-   → Suas integrações → Credenciais de produção / teste               */
-define('MP_ACCESS_TOKEN', AMBIENTE === 'local'
-    ? 'TEST-4691823925683572-052605-c0a7c3d4700d19dfa5ef338ab35f1a56-78507919'   // ← token de teste (sandbox)
-    : 'APP_USR-COLE_SEU_ACCESS_TOKEN_PRODUCAO_AQUI' // ← token de produção
-);
-define('MP_PUBLIC_KEY', AMBIENTE === 'local'
-    ? 'TEST-2374bdf2-771f-44e1-b4c0-76278701240e'
-    : 'APP_USR-COLE_SUA_PUBLIC_KEY_PRODUCAO_AQUI'
-);
+   Aplicação única "roberiodiogenes" — cobre todos os produtos:
+   livros avulsos, contos, assinaturas, presentes e promoções.
+
+   Painel: https://www.mercadopago.com.br/developers/panel/app
+   ─────────────────────────────────────────────────────────── */
+define('MP_PUBLIC_KEY',   'APP_USR-fbf67b6a-e0c1-49e9-a52e-d6ad8972382a');
+define('MP_ACCESS_TOKEN', 'APP_USR-184457053197001-060614-f0bef50c0b779f99134bbf42cc24e77f-3452806373');
 
 /* ── Roteamento ──────────────────────────────────────────────── */
 $metodo = $_SERVER['REQUEST_METHOD'];
@@ -131,6 +128,42 @@ if ($metodo === 'POST') {
     $usuario = $uStmt->fetch();
     if (!$usuario) responderErro('Usuário não encontrado.', 404);
 
+    /* ── Adquirir livro gratuito (sem pagamento) ── */
+    if ($acao === 'adquirir_gratis') {
+        $slug = trim($body['livro_slug'] ?? '');
+        if (!$slug) responderErro('Livro não informado.');
+
+        $lStmt = $pdo->prepare(
+            "SELECT titulo, gratuito, promo_ate, gratuito_ate
+             FROM livros WHERE slug = ? AND ativo = 1"
+        );
+        $lStmt->execute([$slug]);
+        $livro = $lStmt->fetch();
+        if (!$livro) responderErro('Livro não encontrado.', 404);
+
+        $ehGratuito = $livro['gratuito']
+            || ($livro['gratuito_ate'] && strtotime($livro['gratuito_ate']) > time());
+
+        if (!$ehGratuito) responderErro('Este livro não está disponível gratuitamente.', 403);
+
+        // Verifica se já tem na biblioteca
+        $jaC = $pdo->prepare("SELECT id FROM compras WHERE usuario_id=? AND livro_slug=? AND status='aprovada'");
+        $jaC->execute([$uid, $slug]);
+        if ($jaC->fetch()) responderErro('Você já possui este livro.', 409);
+
+        // Adiciona direto à biblioteca
+        $pdo->prepare(
+            "INSERT INTO compras (usuario_id, livro_slug, preco_pago, status, gateway, ref_externa)
+             VALUES (?, ?, 0.00, 'aprovada', 'gratuito', ?)
+             ON DUPLICATE KEY UPDATE status='aprovada', gateway='gratuito'"
+        )->execute([$uid, $slug, 'gratis_' . $uid . '_' . time()]);
+
+        responderOk([
+            'mensagem'   => 'Livro adicionado à sua biblioteca!',
+            'leitor_url' => SITE_URL . '/leitor/index.html',
+        ]);
+    }
+
     /* ── Iniciar compra avulsa ── */
     if ($acao === 'iniciar_compra') {
         $slug = trim($body['livro_slug'] ?? '');
@@ -145,15 +178,41 @@ if ($metodo === 'POST') {
             responderErro('Você já possui este livro.', 409);
         }
 
-        // Busca dados do livro
-        $lStmt = $pdo->prepare(
-            "SELECT titulo, preco, preco_promocao FROM livros WHERE slug = ? AND ativo = 1"
-        );
+        // Busca dados do livro (com suporte a promoções temporárias)
+        try {
+            $lStmt = $pdo->prepare(
+                "SELECT titulo, preco, preco_promocao, gratuito, promo_ate, gratuito_ate
+                 FROM livros WHERE slug = ? AND ativo = 1"
+            );
+        } catch (Throwable $e) {
+            // Colunas promo ainda não existem (migration pendente)
+            $lStmt = $pdo->prepare(
+                "SELECT titulo, preco, preco_promocao, gratuito,
+                        NULL AS promo_ate, NULL AS gratuito_ate
+                 FROM livros WHERE slug = ? AND ativo = 1"
+            );
+        }
         $lStmt->execute([$slug]);
         $livro = $lStmt->fetch();
         if (!$livro) responderErro('Livro não encontrado.', 404);
 
-        $preco = $livro['preco_promocao'] ?? $livro['preco'];
+        // Checar se está gratuito temporariamente
+        $ehGratuito = $livro['gratuito']
+            || ($livro['gratuito_ate'] && strtotime($livro['gratuito_ate']) > time());
+        if ($ehGratuito) {
+            // Redirecionar para adquirir_gratis
+            $pdo->prepare(
+                "INSERT INTO compras (usuario_id, livro_slug, preco_pago, status, gateway, ref_externa)
+                 VALUES (?, ?, 0.00, 'aprovada', 'gratuito', ?)
+                 ON DUPLICATE KEY UPDATE status='aprovada', gateway='gratuito'"
+            )->execute([$uid, $slug, 'gratis_' . $uid . '_' . time()]);
+            responderOk(['gratis' => true, 'leitor_url' => SITE_URL . '/leitor/index.html']);
+        }
+
+        // Calcular preço: promo ativa > preco_promocao > preco
+        $promoAtiva = $livro['promo_ate'] && strtotime($livro['promo_ate']) > time()
+                      && $livro['preco_promocao'] > 0;
+        $preco = $promoAtiva ? (float)$livro['preco_promocao'] : (float)$livro['preco'];
         if (!$preco || $preco <= 0) responderErro('Preço não configurado para este livro.');
 
         // Gera ID externo único
@@ -357,6 +416,100 @@ if ($metodo === 'POST') {
         ]);
     }
 
+    /* ── Iniciar presente (gift purchase) ── */
+    if ($acao === 'iniciar_presente') {
+        $slug             = trim($body['livro_slug']       ?? '');
+        $emailPresenteado = trim($body['email_presenteado'] ?? '');
+        $nomePresenteado  = trim($body['nome_presenteado']  ?? '');
+        $dedicatoria      = trim($body['dedicatoria']       ?? '');
+
+        if (!$slug)                       responderErro('Livro não informado.');
+        if (!filter_var($emailPresenteado, FILTER_VALIDATE_EMAIL)) {
+            responderErro('E-mail do presenteado inválido.');
+        }
+
+        // Busca dados do livro
+        try {
+            $lStmt = $pdo->prepare(
+                "SELECT titulo, preco, preco_promocao, promo_ate, gratuito, gratuito_ate, capa_img
+                 FROM livros WHERE slug = ? AND ativo = 1"
+            );
+        } catch (Throwable $e) {
+            $lStmt = $pdo->prepare(
+                "SELECT titulo, preco, preco_promocao, NULL AS promo_ate, gratuito,
+                        NULL AS gratuito_ate, capa_img
+                 FROM livros WHERE slug = ? AND ativo = 1"
+            );
+        }
+        $lStmt->execute([$slug]);
+        $livro = $lStmt->fetch();
+        if (!$livro) responderErro('Livro não encontrado.', 404);
+
+        // Preço base: usa promoção ativa se houver, senão preço normal
+        $promoAtiva = $livro['promo_ate'] && strtotime($livro['promo_ate']) > time()
+                      && $livro['preco_promocao'] > 0;
+        $precoBase = $promoAtiva ? (float)$livro['preco_promocao'] : (float)$livro['preco'];
+        if (!$precoBase || $precoBase <= 0) responderErro('Este livro não está disponível para presente.');
+
+        // Desconto de 20% no presente (estratégia de venda)
+        $preco = round($precoBase * 0.80, 2);
+
+        // Gera token único para o presenteado resgatar
+        $token      = bin2hex(random_bytes(20)); // 40 chars
+        $refExterna = 'pres_' . $uid . '_' . $slug . '_' . time();
+
+        // Salva o presente como pendente
+        $pdo->prepare(
+            "INSERT INTO presentes
+               (comprador_id, livro_slug, email_presenteado, nome_presenteado, dedicatoria,
+                preco_pago, token_acesso, status, ref_externa, gateway)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 'pendente', ?, 'mercadopago')"
+        )->execute([
+            $uid, $slug, $emailPresenteado, $nomePresenteado ?: null,
+            $dedicatoria ?: null, $preco, $token, $refExterna,
+        ]);
+
+        // Cria preferência MP
+        $nomePresent = $nomePresenteado ? " para {$nomePresenteado}" : '';
+        $descontoFmt = 'R$ ' . number_format($preco, 2, ',', '.');
+        $preference = criarPreferenciaMP([
+            'items' => [[
+                'id'          => $slug,
+                'title'       => "Presente{$nomePresent}: {$livro['titulo']} (20% off)",
+                'description' => "Livro digital com 20% de desconto — presenteado recebe por e-mail.",
+                'quantity'    => 1,
+                'currency_id' => 'BRL',
+                'unit_price'  => $preco, // já com 20% de desconto
+            ]],
+            'payer' => [
+                'name'  => $usuario['nome'],
+                'email' => $usuario['email'],
+            ],
+            'back_urls' => [
+                'success' => SITE_URL . '/pagamento/sucesso.html?ref=' . $refExterna . '&tipo=presente',
+                'failure' => SITE_URL . '/pagamento/falha.html?ref=' . $refExterna,
+                'pending' => SITE_URL . '/pagamento/pendente.html?ref=' . $refExterna,
+            ],
+            'auto_return'        => 'approved',
+            'external_reference' => $refExterna,
+            'notification_url'   => SITE_URL . '/backend/pagamento.php?acao=webhook',
+            'expires'            => true,
+            'expiration_date_to' => date('c', strtotime('+24 hours')),
+            'metadata'           => [
+                'usuario_id'       => $uid,
+                'tipo'             => 'presente',
+                'livro_slug'       => $slug,
+                'email_presenteado' => $emailPresenteado,
+                'token'            => $token,
+            ],
+        ]);
+
+        responderOk([
+            'checkout_url' => $preference['init_point'],
+            'ref'          => $refExterna,
+        ]);
+    }
+
     responderErro('Ação inválida.');
 }
 
@@ -369,8 +522,18 @@ if ($metodo === 'POST') {
  * Retorna o objeto de preferência com init_point (URL do checkout).
  */
 function criarPreferenciaMP(array $dados): array {
-    $url  = 'https://api.mercadopago.com/checkout/preferences';
-    $json = json_encode($dados);
+    $url = 'https://api.mercadopago.com/checkout/preferences';
+
+    // ── Ajustes para ambiente local ──────────────────────────────
+    // 1. notification_url com localhost é rejeitada pelo MP (não acessível externamente)
+    // 2. SSL_VERIFYPEER false porque o XAMPP frequentemente não tem bundle CA atualizado
+    if (AMBIENTE === 'local') {
+        unset($dados['notification_url']);
+        unset($dados['expires']);
+        unset($dados['expiration_date_to']);
+    }
+
+    $json = json_encode($dados, JSON_UNESCAPED_UNICODE);
 
     $ch = curl_init($url);
     curl_setopt_array($ch, [
@@ -379,10 +542,14 @@ function criarPreferenciaMP(array $dados): array {
         CURLOPT_POSTFIELDS     => $json,
         CURLOPT_HTTPHEADER     => [
             'Content-Type: application/json',
+            'Accept: application/json',
             'Authorization: Bearer ' . MP_ACCESS_TOKEN,
         ],
-        CURLOPT_TIMEOUT        => 15,
-        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_TIMEOUT        => 20,
+        // Em produção sempre verificar SSL. Em local, XAMPP muitas vezes
+        // não tem o bundle CA correto e a requisição falha por isso.
+        CURLOPT_SSL_VERIFYPEER => AMBIENTE === 'producao',
+        CURLOPT_SSL_VERIFYHOST => AMBIENTE === 'producao' ? 2 : 0,
     ]);
 
     $resposta = curl_exec($ch);
@@ -392,14 +559,24 @@ function criarPreferenciaMP(array $dados): array {
 
     if ($erro) {
         error_log('[MP] Erro cURL: ' . $erro);
-        responderErro('Não foi possível conectar ao gateway de pagamento. Tente novamente.', 503);
+        $msg = AMBIENTE === 'local'
+            ? "Erro de conexão com MP: {$erro}"
+            : 'Não foi possível conectar ao gateway de pagamento. Tente novamente.';
+        responderErro($msg, 503);
     }
 
-    $obj = json_decode($resposta, true);
+    $obj     = json_decode($resposta, true) ?? [];
+    $mpErro  = $obj['message'] ?? ($obj['error'] ?? '');
+    $mpCausa = isset($obj['cause']) ? ' — ' . json_encode($obj['cause'], JSON_UNESCAPED_UNICODE) : '';
 
     if ($status !== 201 || empty($obj['init_point'])) {
-        error_log('[MP] Resposta inesperada (' . $status . '): ' . $resposta);
-        responderErro('Erro ao criar sessão de pagamento. Tente novamente.', 502);
+        error_log("[MP] HTTP {$status}: {$mpErro}{$mpCausa} | Payload: " . substr($json, 0, 500));
+
+        // Em local: mostrar o erro real do MP para diagnóstico mais fácil
+        $msg = AMBIENTE === 'local'
+            ? "MP retornou HTTP {$status}: {$mpErro}{$mpCausa}"
+            : 'Erro ao criar sessão de pagamento. Tente novamente.';
+        responderErro($msg, 502);
     }
 
     return $obj;
@@ -455,9 +632,49 @@ function processarWebhook(): void {
     /* ── Atualizar presente ── */
     if ($tipo_tx === 'presente' && $ref) {
         if ($nossoStatus === 'aprovada') {
-            @include_once __DIR__ . '/presentear.php';
-            if (class_exists('Presentear')) {
-                Presentear::processarPagamento($ref, $pdo);
+            // Marca presente como aprovado
+            $pdo->prepare("UPDATE presentes SET status='aprovado' WHERE ref_externa=?")
+                ->execute([$ref]);
+
+            // Busca dados para o e-mail
+            $stPres = $pdo->prepare(
+                "SELECT p.email_presenteado, p.nome_presenteado, p.dedicatoria,
+                        p.token_acesso, l.titulo, l.capa_img,
+                        u.nome AS comprador_nome
+                 FROM presentes p
+                 JOIN livros   l ON l.slug = p.livro_slug
+                 JOIN usuarios u ON u.id   = p.comprador_id
+                 WHERE p.ref_externa = ? LIMIT 1"
+            );
+            $stPres->execute([$ref]);
+            $pres = $stPres->fetch();
+
+            if ($pres && class_exists('Mailer')) {
+                $nomeDestinatario = $pres['nome_presenteado'] ?: 'você';
+                $linkResgate      = SITE_URL . '/presente.html?token=' . $pres['token_acesso'];
+                $dedicatoriaHtml  = $pres['dedicatoria']
+                    ? '<blockquote style="border-left:3px solid #B8860B;padding:.5rem 1rem;margin:1rem 0;
+                                         color:#666;font-style:italic">' . nl2br(htmlspecialchars($pres['dedicatoria'])) . '</blockquote>'
+                    : '';
+
+                Mailer::enviar([
+                    'para_email' => $pres['email_presenteado'],
+                    'para_nome'  => $pres['nome_presenteado'] ?: 'Leitor',
+                    'assunto'    => "{$pres['comprador_nome']} te enviou um presente: {$pres['titulo']}",
+                    'html'       => "
+                        <p>Olá, <strong>{$nomeDestinatario}</strong>! 🎁</p>
+                        <p><strong>{$pres['comprador_nome']}</strong> te enviou o livro
+                           <em>{$pres['titulo']}</em> como presente.</p>
+                        {$dedicatoriaHtml}
+                        <p>Clique no botão abaixo para acessar o seu presente:</p>
+                        <p style='text-align:center;margin:2rem 0'>
+                          <a href='{$linkResgate}' class='btn-email'>Resgatar meu presente</a>
+                        </p>
+                        <p style='font-size:.8em;color:#888'>O link é pessoal e intransferível.
+                           Crie uma conta gratuita ou faça login para ativar o livro na sua biblioteca.</p>
+                    ",
+                    'texto' => "Olá {$nomeDestinatario}!\n\n{$pres['comprador_nome']} te enviou {$pres['titulo']} como presente.\n\nResgate em: {$linkResgate}",
+                ]);
             }
         } else {
             $pdo->prepare("UPDATE presentes SET status=? WHERE ref_externa=?")

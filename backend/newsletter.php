@@ -46,6 +46,14 @@ verificarRateLimit('newsletter', 3, 3600);
 
 $body  = json_decode(file_get_contents('php://input'), true) ?? [];
 $email = trim(strtolower($body['email'] ?? ''));
+$nome  = mb_substr(trim($body['nome'] ?? ''), 0, 120, 'UTF-8');
+// Preferências de categoria (array de strings)
+$prefs = is_array($body['prefs'] ?? null) ? $body['prefs'] : [];
+$prefCats = ['bastidores', 'reflexao', 'escritor', 'livros'];
+$prefVals = [];
+foreach ($prefCats as $c) {
+    $prefVals['pref_'.$c] = in_array($c, $prefs, true) ? 1 : (empty($prefs) ? 1 : 0);
+}
 
 if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     responderErro('E-mail inválido.');
@@ -67,10 +75,23 @@ if ($existente) {
     // Estava descadastrado ou pendente — gera novo token e reenvia
     $token    = bin2hex(random_bytes(32));
     $expira   = date('Y-m-d H:i:s', strtotime('+24 hours'));
-    $pdo->prepare(
-        "UPDATE newsletter SET status='pendente', token_verificacao=?, token_expira=?,
-         ip=?, descad_em=NULL WHERE id=?"
-    )->execute([$token, $expira, getIP(), $existente['id']]);
+    try {
+        $pdo->prepare(
+            "UPDATE newsletter SET status='pendente', token_verificacao=?, token_expira=?,
+             ip=?, descad_em=NULL, nome=?,
+             pref_bastidores=?, pref_reflexao=?, pref_escritor=?, pref_livros=?
+             WHERE id=?"
+        )->execute([$token, $expira, getIP(), $nome ?: null,
+            $prefVals['pref_bastidores'], $prefVals['pref_reflexao'],
+            $prefVals['pref_escritor'],  $prefVals['pref_livros'],
+            $existente['id']]);
+    } catch (Throwable $e) {
+        // Fallback sem colunas de preferência (migration não executada)
+        $pdo->prepare(
+            "UPDATE newsletter SET status='pendente', token_verificacao=?, token_expira=?,
+             ip=?, descad_em=NULL WHERE id=?"
+        )->execute([$token, $expira, getIP(), $existente['id']]);
+    }
 
     _enviarEmailVerificacao($email, $token);
     responderOk(['mensagem' => 'Enviamos um e-mail de confirmação. Verifique sua caixa de entrada.']);
@@ -80,9 +101,20 @@ if ($existente) {
 $token  = bin2hex(random_bytes(32));
 $expira = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
-$pdo->prepare(
-    "INSERT INTO newsletter (email, ip, status, token_verificacao, token_expira) VALUES (?, ?, 'pendente', ?, ?)"
-)->execute([$email, getIP(), $token, $expira]);
+try {
+    $pdo->prepare(
+        "INSERT INTO newsletter (email, nome, ip, status, token_verificacao, token_expira,
+                                  pref_bastidores, pref_reflexao, pref_escritor, pref_livros)
+         VALUES (?, ?, ?, 'pendente', ?, ?, ?, ?, ?, ?)"
+    )->execute([$email, $nome ?: null, getIP(), $token, $expira,
+        $prefVals['pref_bastidores'], $prefVals['pref_reflexao'],
+        $prefVals['pref_escritor'],  $prefVals['pref_livros']]);
+} catch (Throwable $e) {
+    // Fallback sem colunas de preferência
+    $pdo->prepare(
+        "INSERT INTO newsletter (email, ip, status, token_verificacao, token_expira) VALUES (?, ?, 'pendente', ?, ?)"
+    )->execute([$email, getIP(), $token, $expira]);
+}
 
 _enviarEmailVerificacao($email, $token);
 

@@ -53,14 +53,30 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         $tempo     =max(1,(int)($_POST['tempo_leitura']??5));
         $status    =in_array($_POST['status']??'',['rascunho','publicado','oculto','agendado'])?$_POST['status']:'rascunho';
         $destaque  =!empty($_POST['destaque'])?1:0;
+        $exclusivo =!empty($_POST['exclusivo'])?1:0;
+        $enquete_id=(int)($_POST['enquete_id']??0)?:(null);
+        $cluster_id=(int)($_POST['cluster_id']??0)?:(null);
         $slug      =trim($_POST['slug']??'')?:rd_slugify($titulo);
         $stC=$pdo->prepare("SELECT id FROM posts WHERE slug=? LIMIT 1");$stC->execute([$slug]);
         if($stC->fetchColumn()) $slug.='-'.substr(md5(uniqid('',true)),0,5);
         $pub=null;
         if($status==='publicado'||$status==='agendado') $pub=trim($_POST['publicado_em']??'')?:date('Y-m-d H:i:s');
         try{
-            $pdo->prepare("INSERT INTO posts(slug,titulo,subtitulo,categoria,resumo,conteudo,imagem_url,audio_url,tempo_leitura,livro_slug,html_externo,status,destaque,publicado_em) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
-               ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$html_ext,$status,$destaque,$pub]);
+            // Tenta INSERT com todas as colunas (migration_blog_avancado executada)
+            try{
+                $pdo->prepare("INSERT INTO posts(slug,titulo,subtitulo,categoria,resumo,conteudo,imagem_url,audio_url,tempo_leitura,livro_slug,html_externo,status,destaque,exclusivo,enquete_id,cluster_id,publicado_em) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+                   ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$html_ext,$status,$destaque,$exclusivo,$enquete_id,$cluster_id,$pub]);
+            }catch(PDOException $ex1){
+                // Fallback 2: sem colunas da migration avançada, mas com html_externo
+                try{
+                    $pdo->prepare("INSERT INTO posts(slug,titulo,subtitulo,categoria,resumo,conteudo,imagem_url,audio_url,tempo_leitura,livro_slug,html_externo,status,destaque,publicado_em) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+                       ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$html_ext,$status,$destaque,$pub]);
+                }catch(PDOException $ex2){
+                    // Fallback 3: schema base (sem html_externo, sem colunas avançadas)
+                    $pdo->prepare("INSERT INTO posts(slug,titulo,subtitulo,categoria,resumo,conteudo,imagem_url,audio_url,tempo_leitura,livro_slug,status,destaque,publicado_em) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)")
+                       ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$status,$destaque,$pub]);
+                }
+            }
             rd_flash('Post criado!');
             echo json_encode(['ok'=>true,'msg'=>'Post criado!']);
         }catch(PDOException $e){
@@ -86,12 +102,28 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         $tempo     =max(1,(int)($_POST['tempo_leitura']??5));
         $status    =in_array($_POST['status']??'',['rascunho','publicado','oculto','agendado'])?$_POST['status']:'rascunho';
         $destaque  =!empty($_POST['destaque'])?1:0;
+        $exclusivo =!empty($_POST['exclusivo'])?1:0;
+        $enquete_id=(int)($_POST['enquete_id']??0)?:(null);
+        $cluster_id=(int)($_POST['cluster_id']??0)?:(null);
         $slug      =trim($_POST['slug']??'')?:rd_slugify($titulo);
         $pub=null;
         if($status==='publicado'||$status==='agendado') $pub=trim($_POST['publicado_em']??'')?:date('Y-m-d H:i:s');
         try{
-            $pdo->prepare("UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,conteudo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,html_externo=?,status=?,destaque=?,publicado_em=? WHERE id=?")
-               ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$html_ext,$status,$destaque,$pub,$id]);
+            // Tenta UPDATE com todas as colunas (migration_blog_avancado executada)
+            try{
+                $pdo->prepare("UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,conteudo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,html_externo=?,status=?,destaque=?,exclusivo=?,enquete_id=?,cluster_id=?,publicado_em=? WHERE id=?")
+                   ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$html_ext,$status,$destaque,$exclusivo,$enquete_id,$cluster_id,$pub,$id]);
+            }catch(PDOException $ex1){
+                // Fallback 2: sem colunas da migration avançada, mas com html_externo
+                try{
+                    $pdo->prepare("UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,conteudo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,html_externo=?,status=?,destaque=?,publicado_em=? WHERE id=?")
+                       ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$html_ext,$status,$destaque,$pub,$id]);
+                }catch(PDOException $ex2){
+                    // Fallback 3: schema base (sem html_externo, sem colunas avançadas)
+                    $pdo->prepare("UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,conteudo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,status=?,destaque=?,publicado_em=? WHERE id=?")
+                       ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$status,$destaque,$pub,$id]);
+                }
+            }
             rd_flash('Post atualizado!');
             echo json_encode(['ok'=>true,'msg'=>'Post atualizado!']);
         }catch(PDOException $e){
@@ -429,6 +461,57 @@ if(!empty($_SESSION['blog_flash'])){$flash=$_SESSION['blog_flash'];unset($_SESSI
     </label>
   </div>
 </div>
+
+<!-- ── Exclusivo + Enquete + Cluster ── -->
+<div class="fr" style="gap:.75rem;margin-bottom:.25rem">
+  <div class="fg" style="background:rgba(184,134,11,.07);border:1px solid var(--borda);border-radius:6px;padding:.85rem">
+    <label style="font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:.5rem;display:block">
+      <i class="fa fa-crown"></i> Conteúdo exclusivo
+    </label>
+    <label class="ck">
+      <input type="checkbox" name="exclusivo" value="1" <?=!empty($postEditar['exclusivo'])?'checked':''?>>
+      Post exclusivo para assinantes
+    </label>
+    <p style="font-size:.65rem;color:var(--texto-3);margin-top:.35rem;line-height:1.5">
+      Exibe ~35% do conteúdo publicamente e trava o restante com CTA de assinatura.
+    </p>
+  </div>
+  <div class="fg">
+    <label>Enquete vinculada</label>
+    <select name="enquete_id" class="fi">
+      <option value="">— Nenhuma enquete —</option>
+      <?php
+      try {
+        $enqs = $pdo->query("SELECT id, titulo FROM enquetes WHERE ativo=1 ORDER BY id DESC")->fetchAll();
+        foreach ($enqs as $eq):
+      ?>
+        <option value="<?=(int)$eq['id']?>" <?=(($postEditar['enquete_id']??0)==$eq['id'])?'selected':''?>>
+          <?=htmlspecialchars($eq['titulo'])?>
+        </option>
+      <?php endforeach; } catch(Throwable $e){} ?>
+    </select>
+  </div>
+</div>
+
+<!-- ── Disparo de newsletter ── -->
+<?php if(!empty($postEditar['id']) && ($postEditar['status']??'')==='publicado'): ?>
+<div style="background:rgba(52,152,219,.07);border:1px solid rgba(52,152,219,.3);border-radius:6px;padding:.9rem 1rem;margin-bottom:.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+  <div style="flex:1">
+    <div style="font-size:.75rem;font-weight:700;color:#42A5F5;margin-bottom:.2rem">
+      <i class="fa fa-paper-plane"></i> Newsletter
+    </div>
+    <div style="font-size:.72rem;color:var(--texto-3)">
+      <?= empty($postEditar['newsletter_enviado']) ? 'Ainda não enviada. Dispara e-mail para toda a lista de inscritos.' : '✓ Newsletter já enviada para este post.' ?>
+    </div>
+  </div>
+  <?php if(empty($postEditar['newsletter_enviado'])): ?>
+  <button type="button" class="ba bn" style="width:auto;padding:.45rem 1rem;font-size:.75rem;white-space:nowrap"
+          onclick="dispararNewsletter('<?=htmlspecialchars($postEditar['slug']??'')?>')">
+    <i class="fa fa-paper-plane"></i> Disparar newsletter
+  </button>
+  <?php endif; ?>
+</div>
+<?php endif; ?>
 <div class="fa2">
   <button type="submit" class="bs" id="bSv">
     <i class="fa fa-<?=$acao==='criar'?'plus':'floppy-disk'?>"></i>
@@ -498,7 +581,10 @@ if(!empty($_SESSION['blog_flash'])){$flash=$_SESSION['blog_flash'];unset($_SESSI
         <button class="ba bn" title="<?=$nE?'NL enviada':'Enviar NL'?>"
                 <?=($p['status']!=='publicado'||$nE)?'disabled':''?>
                 onclick="eN(<?=$p['id']?>,this)"><i class="fa fa-envelope"></i></button>
-        <a href="../blog/<?=adm_esc(!empty($p['html_externo'])?$p['html_externo']:$p['slug'].'.html')?>" target="_blank" class="ba bw" title="Ver"><i class="fa fa-arrow-up-right-from-square"></i></a>
+        <a href="<?= !empty($p['html_externo'])
+            ? '../blog/'.adm_esc($p['html_externo'])
+            : '../blog/post-template.html?slug='.adm_esc($p['slug'])
+        ?>" target="_blank" class="ba bw" title="Ver"><i class="fa fa-arrow-up-right-from-square"></i></a>
         <button class="ba bd" title="Excluir" onclick="eX(<?=$p['id']?>,this)"><i class="fa fa-trash"></i></button>
       </div>
     </td>
@@ -552,6 +638,25 @@ async function _p(d){const f=new FormData();Object.entries(d).forEach(([k,v])=>f
 async function tS(id,ns,btn){btn.disabled=true;try{const d=await _p({acao:'toggle_status',id,status:ns});if(d.ok){toast(ns==='publicado'?'Publicado!':'Ocultado.');setTimeout(()=>location.reload(),700);}else{toast(d.erro||'Erro.','erro');btn.disabled=false;}}catch{toast('Erro.','erro');btn.disabled=false;}}
 async function eX(id,btn){if(!confirm('Excluir permanentemente?'))return;btn.disabled=true;try{const d=await _p({acao:'excluir',id});if(d.ok){const r=document.getElementById('row-'+id);if(r){r.style.opacity='0';r.style.transition='opacity .3s';setTimeout(()=>r.remove(),350);}toast('Excluído.');}else{toast(d.erro||'Erro.','erro');btn.disabled=false;}}catch{toast('Erro.','erro');btn.disabled=false;}}
 async function eN(id,btn){if(!confirm('Enviar newsletter?'))return;btn.disabled=true;try{const d=await _p({acao:'newsletter',post_id:id});if(d.ok){toast(`Enviado! ${d.enviados} e-mails.`);setTimeout(()=>location.reload(),1200);}else{toast(d.erro||'Erro.','erro');btn.disabled=false;}}catch{toast('Erro.','erro');btn.disabled=false;}}
+
+/* ── Disparar newsletter para um post ── */
+async function dispararNewsletter(slug) {
+  if (!confirm('Disparar newsletter agora para TODOS os inscritos?\nEsta ação não pode ser desfeita.')) return;
+  try {
+    const r = await fetch('../backend/blog_api.php', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'enviar_newsletter', slug }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      toast(`✓ Newsletter disparada! ${d.enviados} e-mails enviados.`);
+      setTimeout(() => location.reload(), 1500);
+    } else {
+      toast(d.erro || 'Erro ao disparar.', 'erro');
+    }
+  } catch { toast('Erro de conexão.', 'erro'); }
+}
 
 /* ── Upload imagem ── */
 const dZ=document.getElementById('dZ'),iF=document.getElementById('iF'),uPg=document.getElementById('uPg'),uRs=document.getElementById('uRs'),iU=document.getElementById('iU'),iUM=document.getElementById('iUM');

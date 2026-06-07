@@ -417,6 +417,154 @@
     }
     .toast-rd.visivel { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+    /* ══ PAYWALL — muralha de conteúdo exclusivo ════════════════ */
+    .paywall-wrap {
+      position: relative; margin-top: -6rem;
+    }
+    .paywall-gradiente {
+      position: absolute; top: 0; left: 0; right: 0; height: 200px;
+      background: linear-gradient(to bottom, transparent, var(--fundo));
+      pointer-events: none; z-index: 1;
+    }
+    .paywall-card {
+      position: relative; z-index: 2;
+      background: var(--fundo-card, #1C1408);
+      border: 1px solid var(--borda-2, rgba(184,134,11,.3));
+      border-radius: var(--raio-lg, 10px);
+      padding: 2.25rem 2rem; text-align: center;
+      max-width: 560px; margin: 0 auto 2rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    }
+    .paywall-icone  { font-size: 2rem; color: var(--ouro); margin-bottom: .75rem; }
+    .paywall-titulo {
+      font-family: Georgia, serif; font-size: 1.25rem; font-weight: 400;
+      color: var(--texto); margin-bottom: .5rem;
+    }
+    .paywall-desc   { font-size: .88rem; color: var(--texto-3); line-height: 1.65; margin-bottom: 1.5rem; }
+    .paywall-btns   { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+    .paywall-btn {
+      padding: .65rem 1.4rem; border-radius: var(--raio, 6px);
+      font-family: var(--fonte-display, system-ui); font-size: .72rem;
+      font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; cursor: pointer; transition: all .2s; border: none;
+    }
+    .paywall-btn-primario { background: var(--ouro); color: #1A0F00; }
+    .paywall-btn-primario:hover { opacity: .85; }
+    .paywall-btn-sec { background: transparent; border: 1px solid var(--borda-media, rgba(184,134,11,.25)); color: var(--texto-3); }
+    .paywall-btn-sec:hover { border-color: var(--ouro); color: var(--ouro); }
+
+    /* ══ ENQUETE / VOTAÇÃO ════════════════════════════════════════ */
+    .post-enquete { max-width: 700px; margin: 0 auto; padding: 1.5rem 2rem 1rem; }
+    .enquete-card {
+      background: var(--fundo-card, #1C1408); border: 1px solid var(--borda);
+      border-radius: var(--raio-lg, 10px); padding: 1.75rem;
+      border-top: 3px solid var(--ouro);
+    }
+    .enquete-label {
+      font-family: var(--fonte-display); font-size: .58rem; letter-spacing: .25em;
+      text-transform: uppercase; color: var(--ouro); margin-bottom: .6rem;
+    }
+    .enquete-pergunta {
+      font-family: Georgia, serif; font-size: 1.05rem; font-weight: 400;
+      color: var(--texto); margin-bottom: 1.25rem; line-height: 1.5;
+    }
+    .enquete-opcoes { display: flex; flex-direction: column; gap: .6rem; }
+    .enquete-opcao {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .8rem 1rem; border-radius: var(--raio, 6px);
+      border: 1px solid var(--borda); background: transparent;
+      color: var(--texto-2); font-size: .9rem; cursor: pointer;
+      text-align: left; width: 100%; transition: all .2s;
+    }
+    .enquete-opcao:hover  { border-color: var(--ouro); color: var(--texto); background: rgba(184,134,11,.06); }
+    .enquete-opcao.votada { border-color: var(--ouro); background: rgba(184,134,11,.12); color: var(--texto); }
+    .enquete-barra-wrap { flex: 1; }
+    .enquete-barra {
+      height: 6px; border-radius: 3px; margin-top: .4rem;
+      background: rgba(184,134,11,.15);
+      overflow: hidden; position: relative;
+    }
+    .enquete-barra-fill {
+      height: 100%; border-radius: 3px;
+      background: var(--ouro);
+      transition: width .6s ease;
+    }
+    .enquete-pct { font-size: .72rem; color: var(--ouro); font-weight: 700; min-width: 34px; text-align: right; }
+    .enquete-total { font-size: .72rem; color: var(--texto-3); margin-top: .85rem; text-align: right; }
+
+    /* ══ TWEET-A-QUOTE — popup ao selecionar texto ════════════════ */
+    #taqPopup {
+      position: fixed; z-index: 9000; pointer-events: none; opacity: 0;
+      transition: opacity .18s; transform: translateY(-4px);
+    }
+    #taqPopup.visivel { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .taq-inner {
+      display: flex; gap: .3rem; align-items: center;
+      background: #1A0F00; border: 1px solid var(--borda-2);
+      border-radius: 8px; padding: .35rem .5rem;
+      box-shadow: 0 6px 24px rgba(0,0,0,.5);
+      white-space: nowrap;
+    }
+    .taq-inner::before {
+      content: ''; position: absolute; bottom: -6px; left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border: 6px solid transparent; border-top-color: #1A0F00; border-bottom: none;
+    }
+    .taq-btn {
+      width: 30px; height: 30px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      background: transparent; border: none; cursor: pointer;
+      font-size: .85rem; color: var(--texto-2); transition: all .15s;
+    }
+    .taq-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .taq-sep { width: 1px; height: 20px; background: var(--borda); }
+
+    /* ══ BARRA DE PROGRESSO DE LEITURA ═══════════════════════════ */
+    #leitura-progresso {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px; width: 0%;
+      background: linear-gradient(90deg, #8B6508 0%, var(--ouro) 50%, #e8c200 100%);
+      z-index: 9999;
+      transition: width .12s linear;
+      pointer-events: none;
+      box-shadow: 0 0 8px rgba(184,134,11,.45);
+    }
+
+    /* ══ CURTIR COMENTÁRIO ════════════════════════════════════════ */
+    .coment-footer {
+      display: flex; align-items: center; gap: .5rem;
+      margin-top: .75rem; padding-top: .6rem;
+      border-top: 1px solid var(--borda);
+    }
+    .coment-curtir {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .22rem .65rem; border-radius: 20px;
+      border: 1px solid var(--borda); background: transparent;
+      color: var(--texto-3); font-size: .75rem;
+      font-family: var(--fonte-ui, system-ui);
+      cursor: pointer; transition: all .2s;
+      line-height: 1;
+    }
+    .coment-curtir:hover  { border-color: #e74c3c; color: #e74c3c; }
+    .coment-curtir.curtido { background: rgba(231,76,60,.1); border-color: #e74c3c; color: #e74c3c; }
+    .coment-curtir:disabled { opacity: .5; cursor: not-allowed; }
+    .coment-curtir .coment-curtir-n { font-weight: 600; min-width: 10px; }
+
+    /* ══ RESPOSTAS ANINHADAS ══════════════════════════════════════ */
+    .coment-respostas {
+      margin-top: .85rem; margin-left: 1.5rem;
+      display: flex; flex-direction: column; gap: .65rem;
+      border-left: 2px solid var(--borda-media);
+      padding-left: .85rem;
+    }
+    .coment-card--resposta {
+      background: rgba(255,255,255,.02);
+      border-color: rgba(255,255,255,.06);
+      padding: .85rem 1rem;
+    }
+
     /* ══ RESPONSIVE ════════════════════════════════════════════ */
     @media (max-width: 600px) {
       .post-hero { height: 320px; }
@@ -550,6 +698,26 @@
   </div>
 </div>
 
+<!-- ══ TWEET-A-QUOTE POPUP ══════════════════════════════════════ -->
+<div id="taqPopup" role="toolbar" aria-label="Compartilhar trecho selecionado">
+  <div class="taq-inner">
+    <button class="taq-btn" id="taqX"  title="Compartilhar no X/Twitter">
+      <i class="fa-brands fa-x-twitter"></i>
+    </button>
+    <button class="taq-btn" id="taqWa" title="Compartilhar no WhatsApp">
+      <i class="fa-brands fa-whatsapp"></i>
+    </button>
+    <div class="taq-sep"></div>
+    <button class="taq-btn" id="taqCp" title="Copiar frase">
+      <i class="fa fa-copy"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ══ ENQUETE ═══════════════════════════════════════════════════ -->
+<section class="post-enquete" id="enqueteSection" style="display:none" aria-label="Enquete">
+</section>
+
 <!-- ══ COMENTÁRIOS ════════════════════════════════════════════════ -->
 <section class="post-comentarios" aria-label="Comentários">
   <h2 class="coment-titulo">O que você <em>achou</em>?</h2>
@@ -675,7 +843,30 @@
   /* ─────────────────────────────────────────────────────────────
      CARREGAR POST
   ───────────────────────────────────────────────────────────── */
+  /* ── Fallback estático (sem banco) — declarado antes do try para evitar TDZ ── */
+  const POSTS_FALLBACK = {
+    'post-01': {
+      slug:'post-01', titulo:'Por trás da serpente e da maçã: os bastidores de A Sétima Lei',
+      subtitulo:'Como nasceu a capa, a ideia, e o silêncio que precedeu tudo isso',
+      categoria:'bastidores', resumo:'Cada livro começa muito antes da primeira palavra.',
+      conteudo:`<p>Cada livro começa muito antes da primeira palavra. Antes da sinopse, antes do nome, antes mesmo da ideia clara. Começa numa inquietação — algo que incomoda sem ter forma, que aparece nos sonhos e nos intervalos de silêncio.</p>
+      <p><em>A Sétima Lei</em> nasceu de uma pergunta que me perseguiu durante meses: o que acontece com a alma de quem descobre que as regras que sempre obedeceu foram escritas por alguém que não merecia escrever nada?</p>
+      <blockquote>"A serpente não mentiu. A maçã era boa para comer, era agradável aos olhos, e daria conhecimento. O problema nunca foi a maçã."</blockquote>
+      <h2>A capa que nasceu antes do livro</h2>
+      <p>Aconteceu algo incomum neste livro: a capa existiu antes do texto. Eu tinha uma imagem na cabeça — uma mão segurando uma serpente enrolada em torno dos dedos, não com medo, mas com familiaridade.</p>
+      <h2>O silêncio que precedeu tudo</h2>
+      <p>Escrevi os primeiros trinta páginas em três dias. Depois parei por seis semanas. Não por bloqueio — por necessidade. Havia algo que eu ainda não sabia sobre os personagens.</p>
+      <p>Quando voltei, sabia o que faltava: o protagonista não queria ser salvo. Ele queria entender. E esses são desejos completamente diferentes.</p>
+      <blockquote>"Se o bem e o mal fossem fáceis de distinguir, não precisaríamos de histórias."</blockquote>
+      <p>Foi o livro mais difícil que escrevi até hoje. Espero que seja o mais difícil de esquecer que você já leu.</p>`,
+      imagem_url:'img/post-bastidores-setima-lei.jpg', audio_url:null,
+      tempo_leitura:8, livro_slug:'setima-lei', publicado_em:'2025-04-01T10:00:00', updated_at:null,
+    },
+  };
+
   let post, anterior, proximo, totalCurtidasInicial, jaCurtiu;
+  // Variáveis extras de resposta da API — declaradas fora do try para manter escopo
+  let dExclusivo = false, dAcessoTotal = true, dUsuarioLogado = false, dEnquete = null;
 
   try {
     const r = await fetch(`../backend/blog_api.php?acao=post&slug=${encodeURIComponent(POST_SLUG)}`);
@@ -686,6 +877,10 @@
     proximo               = d.proximo;
     totalCurtidasInicial  = d.curtidas;
     jaCurtiu              = d.ja_curtiu;
+    dExclusivo            = !!d.exclusivo;
+    dAcessoTotal          = !!d.acesso_total;
+    dUsuarioLogado        = !!d.usuario_logado;
+    dEnquete              = d.enquete ?? null;
   } catch {
     // Fallback para funcionamento sem banco (XAMPP)
     post = POSTS_FALLBACK[POST_SLUG];
@@ -925,6 +1120,101 @@
   renderizarCorpo(post.conteudo || '', post.livro_slug);
 
   /* ─────────────────────────────────────────────────────────────
+     PAYWALL — muralha parcial para posts exclusivos
+  ───────────────────────────────────────────────────────────── */
+  if (dExclusivo && !dAcessoTotal) {
+    const corpo = document.getElementById('postCorpo');
+    const wrap  = document.createElement('div');
+    wrap.className = 'paywall-wrap';
+    wrap.innerHTML = `
+      <div class="paywall-gradiente"></div>
+      <div class="paywall-card">
+        <div class="paywall-icone"><i class="fa fa-crown"></i></div>
+        <h2 class="paywall-titulo">Continue lendo com a Assinatura</h2>
+        <p class="paywall-desc">
+          Este conteúdo é exclusivo para assinantes. Assine e tenha acesso a todos os posts,
+          contos e à biblioteca completa de obras de Robério Diógenes.
+        </p>
+        <div class="paywall-btns">
+          <a href="../pagamento/assinatura.html" class="paywall-btn paywall-btn-primario">
+            <i class="fa fa-crown"></i> Ver planos — a partir de R$12,90/mês
+          </a>
+          ${!dUsuarioLogado
+            ? `<a href="../login.html?redir=blog/${POST_SLUG}.html" class="paywall-btn paywall-btn-sec">
+                 <i class="fa fa-sign-in-alt"></i> Já tenho conta
+               </a>`
+            : ''}
+        </div>
+      </div>`;
+    corpo.after(wrap);
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     ENQUETE / VOTAÇÃO
+  ───────────────────────────────────────────────────────────── */
+  const enqueteData = dEnquete;
+  const enqueteEl   = document.getElementById('enqueteSection');
+
+  if (enqueteData && enqueteEl) {
+    enqueteEl.style.display = 'block';
+    renderizarEnquete(enqueteData);
+  }
+
+  function renderizarEnquete(enq) {
+    const jaVotou = enq.ja_votei !== null;
+    const total   = enq.total_votos;
+
+    function opcoesHTML(resultado = false) {
+      return enq.opcoes.map(o => {
+        const pct   = total > 0 ? Math.round((o.votos / total) * 100) : 0;
+        const minha = enq.ja_votei === o.id;
+        if (resultado) {
+          return `<div class="enquete-opcao${minha ? ' votada' : ''}" style="cursor:default">
+            <div class="enquete-barra-wrap">
+              <div>${esc(o.texto)}</div>
+              <div class="enquete-barra"><div class="enquete-barra-fill" style="width:${pct}%"></div></div>
+            </div>
+            <span class="enquete-pct">${pct}%</span>
+          </div>`;
+        }
+        return `<button class="enquete-opcao" data-opcao="${o.id}" onclick="votarEnquete(${enq.id}, ${o.id})">
+          ${o.icone ? `<i class="fa ${esc(o.icone)}"></i>` : ''}
+          ${esc(o.texto)}
+        </button>`;
+      }).join('');
+    }
+
+    enqueteEl.innerHTML = `<div class="enquete-card">
+      <div class="enquete-label"><i class="fa fa-chart-bar"></i> Enquete do post</div>
+      <p class="enquete-pergunta">${esc(enq.titulo)}</p>
+      <div class="enquete-opcoes" id="enqueteOpcoes">${opcoesHTML(jaVotou)}</div>
+      ${jaVotou ? `<div class="enquete-total">${total} voto${total !== 1 ? 's' : ''}</div>` : ''}
+    </div>`;
+  }
+
+  async function votarEnquete(enqueteId, opcaoId) {
+    try {
+      const r = await fetch('../backend/blog_api.php', {
+        method:'POST', credentials:'same-origin',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({acao:'votar_enquete', enquete_id: enqueteId, opcao_id: opcaoId}),
+      });
+      const d = await r.json();
+      if (d.ok) {
+        // Atualiza resultados
+        enqueteData.opcoes      = d.resultados.map(r => ({...enqueteData.opcoes.find(o=>o.id===r.id)||{}, votos: r.votos}));
+        enqueteData.total_votos = d.total;
+        enqueteData.ja_votei    = d.meu_voto;
+        renderizarEnquete(enqueteData);
+        mostrarToast('Voto registrado!');
+      } else {
+        mostrarToast(d.erro || 'Erro ao votar.', 'erro');
+      }
+    } catch { mostrarToast('Erro de conexão.', 'erro'); }
+  }
+  window.votarEnquete = votarEnquete;
+
+  /* ─────────────────────────────────────────────────────────────
      BARRA DE PROGRESSO DE LEITURA
   ───────────────────────────────────────────────────────────── */
   const progressBar = document.getElementById('leitura-progresso');
@@ -1080,6 +1370,45 @@
     if (btnEnviar) btnEnviar.disabled = false;
   }
 
+  /* ── Renderiza um card de comentário (ou resposta aninhada) ── */
+  function renderCard(c, isReply = false) {
+    const avatar = c.foto_url
+      ? `<img src="${esc(c.foto_url)}" alt="${esc(c.nome)}" loading="lazy">`
+      : `<i class="fa fa-user" aria-hidden="true"></i>`;
+
+    // Botão curtir: só aparece se a tabela de curtidas já existir (migration v2)
+    const temCurtidas = typeof c.curtidas_count !== 'undefined';
+    const curtidoClass = c.eu_curti ? ' curtido' : '';
+    const curtirHtml = temCurtidas
+      ? `<button class="coment-curtir${curtidoClass}" data-id="${c.id}"
+                 aria-label="Curtir comentário" aria-pressed="${c.eu_curti ? 'true' : 'false'}">
+           <i class="${c.eu_curti ? 'fas' : 'far'} fa-heart" aria-hidden="true"></i>
+           <span class="coment-curtir-n">${c.curtidas_count}</span>
+         </button>`
+      : '';
+
+    // Respostas aninhadas (apenas 1 nível)
+    const repliesHtml = (!isReply && c.respostas?.length)
+      ? `<div class="coment-respostas" aria-label="Respostas">
+           ${c.respostas.map(r => renderCard(r, true)).join('')}
+         </div>`
+      : '';
+
+    return `
+      <div class="coment-card${isReply ? ' coment-card--resposta' : ''}">
+        <div class="coment-header">
+          <div class="coment-avatar">${avatar}</div>
+          <div>
+            <div class="coment-autor">${esc(c.nome)}</div>
+            <div class="coment-data">${dataFmt(c.criado_em)}</div>
+          </div>
+        </div>
+        <div class="coment-texto">${esc(c.texto)}</div>
+        ${curtirHtml ? `<div class="coment-footer">${curtirHtml}</div>` : ''}
+        ${repliesHtml}
+      </div>`;
+  }
+
   async function carregarComentarios() {
     const lista = document.getElementById('listaComentarios');
     if (!lista) return;
@@ -1090,22 +1419,41 @@
         lista.innerHTML = '<div class="coment-vazio"><i class="fa fa-comments"></i>Seja o primeiro a comentar este post.</div>';
         return;
       }
-      lista.innerHTML = d.comentarios.map(c => `
-        <div class="coment-card">
-          <div class="coment-header">
-            <div class="coment-avatar">
-              ${c.foto_url ? `<img src="${esc(c.foto_url)}" alt="${esc(c.nome)}">` : `<i class="fa fa-user"></i>`}
-            </div>
-            <div>
-              <div class="coment-autor">${esc(c.nome)}</div>
-              <div class="coment-data">${dataFmt(c.criado_em)}</div>
-            </div>
-          </div>
-          <div class="coment-texto">${esc(c.texto)}</div>
-        </div>
-      `).join('');
+      lista.innerHTML = d.comentarios.map(c => renderCard(c)).join('');
+
+      // Registrar listeners de curtida nos botões renderizados
+      lista.querySelectorAll('.coment-curtir').forEach(btn => {
+        btn.addEventListener('click', () => curtirComentario(btn));
+      });
     } catch {
       lista.innerHTML = '<div class="coment-vazio"><i class="fa fa-comments"></i>Não foi possível carregar comentários.</div>';
+    }
+  }
+
+  /* ── Curtir / descurtir comentário ── */
+  async function curtirComentario(btn) {
+    if (!sessao) { mostrarToast('Faça login para curtir comentários.'); return; }
+    const id = parseInt(btn.dataset.id);
+    btn.disabled = true;
+    try {
+      const r = await fetch('../backend/comentarios.php', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'curtir', id }),
+      });
+      const d = await r.json();
+      if (d.ok) {
+        btn.classList.toggle('curtido', d.curtiu);
+        btn.setAttribute('aria-pressed', d.curtiu);
+        btn.querySelector('i').className = d.curtiu ? 'fas fa-heart' : 'far fa-heart';
+        btn.querySelector('.coment-curtir-n').textContent = d.total;
+      } else {
+        mostrarToast(d.erro || 'Não foi possível curtir.', 'erro');
+      }
+    } catch {
+      mostrarToast('Erro de conexão.', 'erro');
+    } finally {
+      btn.disabled = false;
     }
   }
 
@@ -1125,7 +1473,15 @@
           body: JSON.stringify({ acao: 'criar', slug: POST_SLUG, texto }),
         });
         const d = await r.json();
-        if (d.ok) { textarea.value = ''; mostrarToast('Comentário enviado!'); await carregarComentarios(); }
+        if (d.ok) {
+          textarea.value = '';
+          if (d.pendente) {
+            mostrarToast('Comentário enviado — será revisado antes de ser publicado. 🕐');
+          } else {
+            mostrarToast('Comentário publicado!');
+            await carregarComentarios();
+          }
+        }
         else      { mostrarToast(d.erro || 'Erro ao enviar.', 'erro'); }
       } catch { mostrarToast('Erro de conexão.', 'erro'); }
       finally   { btnEnviar.disabled = false; btnEnviar.innerHTML = '<i class="fa fa-paper-plane"></i> Comentar'; }
@@ -1133,27 +1489,56 @@
   }
 
   /* ─────────────────────────────────────────────────────────────
-     FALLBACK DATA (funciona sem banco de dados)
+     TWEET-A-QUOTE — popup ao selecionar texto no corpo do post
   ───────────────────────────────────────────────────────────── */
-  const POSTS_FALLBACK = {
-    'post-01': {
-      slug:'post-01', titulo:'Por trás da serpente e da maçã: os bastidores de A Sétima Lei',
-      subtitulo:'Como nasceu a capa, a ideia, e o silêncio que precedeu tudo isso',
-      categoria:'bastidores', resumo:'Cada livro começa muito antes da primeira palavra.',
-      conteudo:`<p>Cada livro começa muito antes da primeira palavra. Antes da sinopse, antes do nome, antes mesmo da ideia clara. Começa numa inquietação — algo que incomoda sem ter forma, que aparece nos sonhos e nos intervalos de silêncio.</p>
-      <p><em>A Sétima Lei</em> nasceu de uma pergunta que me perseguiu durante meses: o que acontece com a alma de quem descobre que as regras que sempre obedeceu foram escritas por alguém que não merecia escrever nada?</p>
-      <blockquote>"A serpente não mentiu. A maçã era boa para comer, era agradável aos olhos, e daria conhecimento. O problema nunca foi a maçã."</blockquote>
-      <h2>A capa que nasceu antes do livro</h2>
-      <p>Aconteceu algo incomum neste livro: a capa existiu antes do texto. Eu tinha uma imagem na cabeça — uma mão segurando uma serpente enrolada em torno dos dedos, não com medo, mas com familiaridade.</p>
-      <h2>O silêncio que precedeu tudo</h2>
-      <p>Escrevi os primeiros trinta páginas em três dias. Depois parei por seis semanas. Não por bloqueio — por necessidade. Havia algo que eu ainda não sabia sobre os personagens.</p>
-      <p>Quando voltei, sabia o que faltava: o protagonista não queria ser salvo. Ele queria entender. E esses são desejos completamente diferentes.</p>
-      <blockquote>"Se o bem e o mal fossem fáceis de distinguir, não precisaríamos de histórias."</blockquote>
-      <p>Foi o livro mais difícil que escrevi até hoje. Espero que seja o mais difícil de esquecer que você já leu.</p>`,
-      imagem_url:'img/post-bastidores-setima-lei.jpg', audio_url:null,
-      tempo_leitura:8, livro_slug:'setima-lei', publicado_em:'2025-04-01T10:00:00', updated_at:null,
-    },
-  };
+  const taqPopup = document.getElementById('taqPopup');
+  let   taqTexto = '';
+
+  function taqPosicionar(rect) {
+    const top  = rect.top  + window.scrollY - taqPopup.offsetHeight - 10;
+    const left = rect.left + (rect.width / 2) - (taqPopup.offsetWidth / 2);
+    taqPopup.style.top  = Math.max(8, top)  + 'px';
+    taqPopup.style.left = Math.max(8, Math.min(left, window.innerWidth - taqPopup.offsetWidth - 8)) + 'px';
+  }
+
+  document.getElementById('postCorpo')?.addEventListener('mouseup', (e) => {
+    setTimeout(() => {
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed) { taqPopup.classList.remove('visivel'); return; }
+      const txt = sel.toString().trim();
+      if (txt.length < 15 || txt.length > 280) { taqPopup.classList.remove('visivel'); return; }
+      taqTexto = txt;
+      const rect = sel.getRangeAt(0).getBoundingClientRect();
+      taqPopup.classList.add('visivel');
+      taqPosicionar(rect);
+    }, 10);
+  });
+
+  document.addEventListener('mousedown', (e) => {
+    if (!taqPopup.contains(e.target)) taqPopup.classList.remove('visivel');
+  });
+
+  document.getElementById('taqX')?.addEventListener('click', () => {
+    const url = encodeURIComponent(pageUrl);
+    const txt = encodeURIComponent(`"${taqTexto}" — ${post.titulo}`);
+    window.open(`https://twitter.com/intent/tweet?text=${txt}&url=${url}`, '_blank', 'noopener');
+    taqPopup.classList.remove('visivel');
+    window.getSelection()?.removeAllRanges();
+  });
+
+  document.getElementById('taqWa')?.addEventListener('click', () => {
+    const txt = encodeURIComponent(`"${taqTexto}"\n\n— ${post.titulo}\n${pageUrl}`);
+    window.open(`https://wa.me/?text=${txt}`, '_blank', 'noopener');
+    taqPopup.classList.remove('visivel');
+  });
+
+  document.getElementById('taqCp')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(`"${taqTexto}" — ${post.titulo} ${pageUrl}`);
+      mostrarToast('Frase copiada! ✓');
+    } catch { mostrarToast('Não foi possível copiar.', 'erro'); }
+    taqPopup.classList.remove('visivel');
+  });
 
 })();
 </script>

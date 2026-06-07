@@ -52,6 +52,15 @@ function adm_badge(string $status): string {
 }
 
 /* ── Menu de navegação ─────────────────────────────────────── */
+// Badge de comentários flagged pendentes de revisão
+$_nComentariosPendentes = 0;
+try {
+    $_nComentariosPendentes = (int)$pdo->query(
+        "SELECT COUNT(*) FROM comentarios c WHERE c.flagged=1
+         AND NOT EXISTS (SELECT 1 FROM comentarios_flags_log fl WHERE fl.comentario_id=c.id AND fl.acao_tomada!='pendente')"
+    )->fetchColumn();
+} catch (Throwable $e) { /* Tabela ainda não criada */ }
+
 $MENU = [
     ['slug'=>'dashboard',   'href'=>'index.php',       'icon'=>'fa-gauge',       'label'=>'Dashboard'],
     ['slug'=>'usuarios',    'href'=>'usuarios.php',    'icon'=>'fa-users',       'label'=>'Usuários'],
@@ -60,8 +69,13 @@ $MENU = [
     'sep',
     ['slug'=>'livros',      'href'=>'livros.php',      'icon'=>'fa-book',        'label'=>'Livros'],
     ['slug'=>'blog',        'href'=>'blog.php',        'icon'=>'fa-pen-nib',     'label'=>'Blog'],
+    ['slug'=>'enquetes',   'href'=>'enquetes.php',    'icon'=>'fa-chart-bar',   'label'=>'Enquetes'],
+    ['slug'=>'clusters',   'href'=>'clusters.php',    'icon'=>'fa-layer-group', 'label'=>'Clusters'],
+    ['slug'=>'comentarios', 'href'=>'comentarios.php', 'icon'=>'fa-comments',    'label'=>'Comentários',
+     'badge' => $_nComentariosPendentes > 0 ? $_nComentariosPendentes : null],
     'sep',
     ['slug'=>'marketing',   'href'=>'marketing.php',   'icon'=>'fa-bullhorn',    'label'=>'Marketing'],
+    ['slug'=>'bio',         'href'=>'bio.php',         'icon'=>'fa-link',        'label'=>'Bio / Links'],
     'sep',
     ['slug'=>'_site',       'href'=>'../index.html',   'icon'=>'fa-globe',       'label'=>'Ver site', 'target'=>'_blank'],
 ];
@@ -250,6 +264,9 @@ $tituloPagina = $TITULO_MAP[$ADMIN_PAGE] ?? 'Admin';
            <?= isset($item['target']) ? 'target="' . $item['target'] . '"' : '' ?>>
           <i class="fa <?= $item['icon'] ?>"></i>
           <span><?= $item['label'] ?></span>
+          <?php if (!empty($item['badge'])): ?>
+            <span style="margin-left:auto;background:#e74c3c;color:#fff;border-radius:12px;padding:.1rem .45rem;font-size:.58rem;font-weight:700;min-width:18px;text-align:center;flex-shrink:0"><?= (int)$item['badge'] ?></span>
+          <?php endif; ?>
         </a>
       <?php endif; ?>
     <?php endforeach; ?>

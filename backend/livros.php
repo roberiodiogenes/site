@@ -60,6 +60,51 @@ if ($metodo === 'GET' && $acao === 'contadores') {
     ]);
 }
 
+/* ── GET: catálogo público com preços dinâmicos ──────────────── */
+/* Retorna preço atual de cada livro considerando:                */
+/*   • gratuito_ate > NOW() → gratuito temporariamente           */
+/*   • promo_ate > NOW()    → preco_promocao ativo               */
+/*   • senão               → preco normal                        */
+if ($metodo === 'GET' && $acao === 'catalogo') {
+    $pdo  = db();
+    try {
+        $rows = $pdo->query(
+            "SELECT slug, titulo, tipo, preco, preco_promocao, gratuito,
+                    (promo_ate IS NOT NULL AND promo_ate > NOW())    AS promo_ativa,
+                    (gratuito_ate IS NOT NULL AND gratuito_ate > NOW()) AS gratuito_temp,
+                    promo_ate, gratuito_ate, ativo
+             FROM livros WHERE ativo = 1
+             ORDER BY ordem ASC, titulo ASC"
+        )->fetchAll();
+    } catch (Throwable $e) {
+        // Colunas promo_ate/gratuito_ate ainda não existem (migration pendente)
+        $rows = $pdo->query(
+            "SELECT slug, titulo, tipo, preco, preco_promocao, gratuito, 0 AS promo_ativa, 0 AS gratuito_temp
+             FROM livros WHERE ativo = 1 ORDER BY titulo ASC"
+        )->fetchAll();
+    }
+
+    $catalogo = [];
+    foreach ($rows as $r) {
+        $promoAtiva   = (bool)(int)$r['promo_ativa'];
+        $gratuitoTemp = (bool)(int)$r['gratuito_temp'];
+        $ehGratuito   = (bool)$r['gratuito'] || $gratuitoTemp;
+
+        $catalogo[] = [
+            'slug'          => $r['slug'],
+            'tipo'          => $r['tipo'],
+            'preco'         => $r['preco']          ? (float)$r['preco']          : null,
+            'preco_promo'   => $r['preco_promocao'] ? (float)$r['preco_promocao'] : null,
+            'promo_ativa'   => $promoAtiva,
+            'gratuito'      => $ehGratuito,
+            'gratuito_temp' => $gratuitoTemp,
+            'promo_ate'     => $r['promo_ate']     ?? null,
+            'gratuito_ate'  => $r['gratuito_ate']  ?? null,
+        ];
+    }
+    responderOk(['catalogo' => $catalogo]);
+}
+
 /* ── GET: contadores de TODOS os livros (para livros.html) ─── */
 /* ── GET: meus favoritos com avaliação (para o perfil) ──────── */
 if ($metodo === 'GET' && $acao === 'meus_favoritos') {
