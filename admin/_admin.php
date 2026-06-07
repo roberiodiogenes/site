@@ -80,17 +80,20 @@ $MENU = [
     ['slug'=>'push',           'href'=>'push.php',           'icon'=>'fa-bell',            'label'=>'Push'],
     ['slug'=>'bio',            'href'=>'bio.php',            'icon'=>'fa-link',            'label'=>'Bio / Links'],
     'sep',
-    ['slug'=>'_site',       'href'=>'../index.html',   'icon'=>'fa-globe',       'label'=>'Ver site', 'target'=>'_blank'],
+    ['slug'=>'_site',          'href'=>'../index.html',       'icon'=>'fa-globe',    'label'=>'Ver site', 'target'=>'_blank'],
+    'sep',
+    ['slug'=>'configuracoes',  'href'=>'configuracoes.php',   'icon'=>'fa-sliders',  'label'=>'Configurações'],
 ];
 
 /* ── CSS e início do HTML ──────────────────────────────────── */
 $TITULO_MAP = [
-    'dashboard'   => 'Dashboard',
-    'usuarios'    => 'Usuários',
-    'assinaturas' => 'Assinaturas',
-    'compras'     => 'Compras',
-    'livros'      => 'Livros',
-    'blog'        => 'Blog',
+    'dashboard'      => 'Dashboard',
+    'usuarios'       => 'Usuários',
+    'assinaturas'    => 'Assinaturas',
+    'compras'        => 'Compras',
+    'livros'         => 'Livros',
+    'blog'           => 'Blog',
+    'configuracoes'  => 'Configurações',
 ];
 $tituloPagina = $TITULO_MAP[$ADMIN_PAGE] ?? 'Admin';
 ?>

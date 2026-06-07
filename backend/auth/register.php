@@ -18,6 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 verificarRateLimit('cadastro', 5, 3600);
 
+// ── Verifica se novos cadastros estão permitidos ───────────────
+try {
+    $pdo = db();
+    $stmt = $pdo->prepare("SELECT valor FROM configuracoes WHERE chave = 'permitir_cadastros'");
+    $stmt->execute();
+    $permiteRow = $stmt->fetchColumn();
+    // Se a configuração existir e estiver desligada, bloqueia
+    if ($permiteRow !== false && $permiteRow === '0') {
+        responderErro('Os cadastros estão temporariamente desativados. Tente novamente mais tarde.', 403);
+    }
+} catch (Throwable $e) {
+    // Tabela ainda não criada — permite o cadastro normalmente
+}
+
 $body = json_decode(file_get_contents('php://input'), true) ?? [];
 
 $nome  = trim($body['nome']  ?? '');

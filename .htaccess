@@ -15,6 +15,19 @@ ServerSignature Off
 
   # ── Sitemap amigável: /sitemap.xml → sitemap.php ─────────────
   RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
+
+  # ── Modo de Manutenção ────────────────────────────────────────
+  # Redireciona tudo para manutencao.php quando manutencao.lock
+  # existir na raiz do site.
+  # A dupla condição cobre produção (DOCUMENT_ROOT = raiz do site)
+  # e localhost XAMPP (DOCUMENT_ROOT = htdocs, site em subpasta).
+  RewriteCond %{DOCUMENT_ROOT}/manutencao.lock                     -f [OR]
+  RewriteCond %{DOCUMENT_ROOT}/roberiodiogenes.com/manutencao.lock -f
+  RewriteCond %{REQUEST_URI}  !/admin/          [NC]
+  RewriteCond %{REQUEST_URI}  !/backend/        [NC]
+  RewriteCond %{REQUEST_URI}  !manutencao\.php  [NC]
+  RewriteCond %{REQUEST_URI}  !\.(css|js|webp|jpg|jpeg|png|gif|ico|svg|woff2?|ttf|otf)$ [NC]
+  RewriteRule ^ manutencao.php [L]
 </IfModule>
 
 # ── Páginas de erro personalizadas ───────────────────────────

@@ -409,3 +409,17 @@
   window.Fonte = Fonte;
 
 })();
+
+/* ── Tema Sazonal — carregado uma vez por global.js ────────────── */
+(function () {
+  // Não carrega no painel admin (URL contém /admin/)
+  if (location.pathname.includes('/admin/')) return;
+  const s = document.createElement('script');
+  // Caminho relativo à raiz do site
+  const base = location.hostname === 'localhost'
+    ? `${location.protocol}//${location.host}/roberiodiogenes.com`
+    : `${location.protocol}//${location.host}`;
+  s.src = base + '/js/tema-sazonal.js';
+  s.async = true;
+  document.head.appendChild(s);
+})();

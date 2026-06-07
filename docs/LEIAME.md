@@ -71,7 +71,7 @@ Todos os itens devem aparecer em **verde**. **Apague ou renomeie o arquivo após
 ### 3.5 Testar funcionalidades
 
 ```
-http://localhost/site/                          → Página inicial
+http://localhost/site/                         → Página inicial
 http://localhost/site/autor.html               → Página do autor
 http://localhost/site/cadastro.html            → Cadastro
 http://localhost/site/login.html               → Login
