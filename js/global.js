@@ -231,6 +231,37 @@
       nav.querySelectorAll('a').forEach(a => {
         a.addEventListener('mouseenter', () => Sons.tocar('hover'));
       });
+
+      /* ── Popup de tema/acessibilidade ── */
+      const acessoBtn   = document.getElementById('acessoToggle');
+      const acessoPopup = document.getElementById('acessoPopup');
+      if (acessoBtn && acessoPopup) {
+        acessoBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          const aberto = acessoPopup.hasAttribute('hidden') ? false : true;
+          if (aberto) {
+            acessoPopup.setAttribute('hidden', '');
+            acessoBtn.setAttribute('aria-expanded', 'false');
+          } else {
+            acessoPopup.removeAttribute('hidden');
+            acessoBtn.setAttribute('aria-expanded', 'true');
+            Sons.tocar('clique');
+          }
+        });
+        document.addEventListener('click', e => {
+          if (!acessoBtn.closest('.acesso-wrap').contains(e.target)) {
+            acessoPopup.setAttribute('hidden', '');
+            acessoBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape' && !acessoPopup.hasAttribute('hidden')) {
+            acessoPopup.setAttribute('hidden', '');
+            acessoBtn.setAttribute('aria-expanded', 'false');
+            acessoBtn.focus();
+          }
+        });
+      }
     }
   };
 
@@ -272,14 +303,47 @@
       this.carregarIndice(p);
       this.criarDropdown();
 
+      /* ── Botão/ícone clicável para abrir/fechar a busca ── */
+      const wrap  = this.input.closest('.busca-nav');
+      const icone = wrap?.querySelector('.busca-nav-icone');
+      if (icone) {
+        icone.addEventListener('click',   () => this._toggle());
+        icone.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this._toggle(); }
+        });
+      }
+
       this.input.addEventListener('input',  () => this.pesquisar());
       this.input.addEventListener('focus',  () => Sons.tocar('hover'));
       this.input.addEventListener('keydown', e => {
-        if (e.key==='Escape') { this.input.blur(); this.fechar(); }
+        if (e.key==='Escape') { this._fecharBusca(); }
       });
       document.addEventListener('click', e => {
-        if (!this.input.closest('.busca-nav').contains(e.target)) this.fechar();
+        if (wrap && !wrap.contains(e.target)) this._fecharBusca();
       });
+    },
+
+    _toggle() {
+      const wrap = this.input?.closest('.busca-nav');
+      if (!wrap) return;
+      if (wrap.classList.contains('aberta')) {
+        this._fecharBusca();
+      } else {
+        wrap.classList.add('aberta');
+        wrap.querySelector('.busca-nav-icone')?.setAttribute('aria-expanded','true');
+        this.input.focus();
+        Sons.tocar('hover');
+      }
+    },
+
+    _fecharBusca() {
+      const wrap = this.input?.closest('.busca-nav');
+      if (wrap) {
+        wrap.classList.remove('aberta');
+        wrap.querySelector('.busca-nav-icone')?.setAttribute('aria-expanded','false');
+      }
+      this.fechar();
+      this.input?.blur();
     },
 
     criarDropdown() {
@@ -301,23 +365,30 @@
 
     carregarIndice(p) {
       this.indice = [
-        {t:'Início',            u:p+'index.html',                       d:'Página principal'},
-        {t:'Biblioteca',        u:p+'livros.html',                      d:'Todos os livros'},
-        {t:'O Autor',           u:p+'autor.html',                       d:'Biografia'},
-        {t:'Diário',            u:p+'blog.html',                        d:'Posts e reflexões'},
-        {t:'Contato',           u:p+'contato.html',                     d:'Fale com o autor'},
-        {t:'Área do Leitor',    u:p+'leitor/index.html',                d:'Login e compras'},
-        {t:'O Jogo das Máscaras',u:p+'livros/jogo-das-mascaras.html',  d:'Thriller Psicológico'},
-        {t:'A Sétima Lei',      u:p+'livros/a-setima-lei.html',         d:'Auto-Ajuda Cristã'},
-        {t:'Lúmen',             u:p+'livros/lumen.html',                d:'Ficção · Romance'},
-        {t:'Gênesis',           u:p+'livros/genesis.html',              d:'Ficção · Romance'},
-        {t:'Rosas & Espinhos',  u:p+'livros/rosas-e-espinhos.html',    d:'Drama · Romance'},
-        {t:'Cartas do Passado', u:p+'livros/cartas-do-passado.html',   d:'Ficção · Romance'},
-        {t:'As Marés Secretas', u:p+'livros/mares-secretas.html',      d:'Romance · Drama'},
-        {t:'Das Coisas que o Amor Faz',u:p+'livros/das-coisas-que-o-amor-faz.html',d:'Poesias'},
-        {t:'O Abismo das Almas',u:p+'livros/o-abismo-das-almas.html',  d:'Distopia · Horror'},
-        {t:'A Marca da Besta',  u:p+'livros/a-marca-da-besta.html',    d:'Distopia'},
-        {t:'Caminhos de Outono',u:p+'livros/caminhos-de-outono.html',  d:'Romance'},
+        /* ── Páginas principais ── */
+        {t:'Início',                   u:p+'index.html',                           d:'Página principal'},
+        {t:'Biblioteca',               u:p+'livros.html',                          d:'Todos os livros e contos'},
+        {t:'O Autor',                  u:p+'autor.html',                           d:'Biografia de Robério Diógenes'},
+        {t:'Diário',                   u:p+'blog.html',                            d:'Posts e reflexões'},
+        {t:'Leitor Online',            u:p+'leitor/index.html',                    d:'Leia online · Sua biblioteca'},
+        {t:'Contato',                  u:p+'contato.html',                         d:'Fale com o autor'},
+        {t:'Pré-lançamento',           u:p+'pre-lancamento.html',                  d:'Lista de espera · Novidades'},
+        {t:'Ajuda',                    u:p+'ajuda.html',                           d:'FAQ · Central de ajuda'},
+        /* ── Livros ── */
+        {t:'O Jogo das Máscaras',      u:p+'livros/jogo-das-mascaras.html',        d:'Suspense Psicológico'},
+        {t:'A Sétima Lei',             u:p+'livros/a-setima-lei.html',             d:'Auto-Ajuda Cristã'},
+        {t:'Lúmen — A Outra Metade',   u:p+'livros/lumen.html',                   d:'Ficção Psicológica'},
+        {t:'Gênesis',                  u:p+'livros/genesis.html',                  d:'Ficção Especulativa'},
+        {t:'Rosas e Espinhos',         u:p+'livros/rosas-e-espinhos.html',         d:'Drama'},
+        {t:'Cartas do Passado',        u:p+'livros/cartas-do-passado.html',        d:'Ficção · Romance'},
+        {t:'As Marés Secretas do Amor',u:p+'livros/mares-secretas.html',           d:'Romance'},
+        {t:'Das Coisas que o Amor Faz',u:p+'livros/das-coisas-que-o-amor-faz.html',d:'Romance Literário'},
+        {t:'O Abismo das Almas',       u:p+'livros/o-abismo-das-almas.html',       d:'Horror Literário'},
+        {t:'A Marca da Besta',         u:p+'livros/a-marca-da-besta.html',         d:'Estudo Gospel'},
+        {t:'Caminhos de Outono',       u:p+'livros/caminhos-de-outono.html',       d:'Romance Lírico'},
+        {t:'O Farol do Afogado',       u:p+'livros/o-farol-do-afogado.html',       d:'Conto'},
+        {t:'Linhas e Agulhas',         u:p+'livros/linhas-e-agulhas.html',         d:'Conto'},
+        {t:'O Quarto das Moscas',      u:p+'livros/o-quarto-das-moscas.html',      d:'Conto de Horror'},
       ];
     },
 

@@ -202,10 +202,12 @@
 <a href="#conteudo-principal" class="pular-nav">Pular para o conteúdo</a>
 
 <!-- AVISO DE SENSIBILIDADE -->
+ <!--
 <div role="note" aria-label="Aviso de conteúdo sensível" style="background:var(--fundo-3);border-bottom:1px solid var(--borda-media);padding:0.65rem 3rem;padding-top:calc(var(--altura-nav) + 0.65rem);font-family:var(--fonte-ui);font-size:0.8rem;color:var(--texto-3);display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
   <i class="fa fa-circle-info" aria-hidden="true" style="color:var(--ouro);"></i>
   <span>Esta obra aborda traição, separação conjugal, violência doméstica e crise espiritual. Se você estiver em situação de violência, ligue <strong>180</strong> (Central de Atendimento à Mulher) ou <strong>190</strong>. Para apoio emocional: <a href="https://www.cvv.org.br" target="_blank" rel="noopener" style="color:var(--ouro);">CVV</a> · 188.</span>
 </div>
+-->
 
 <!-- ══ NAVEGAÇÃO ══════════════════════════════════════════════ -->
 <nav id="nav" role="navigation" aria-label="Navegação principal">
@@ -216,8 +218,9 @@
   <ul class="nav-links" id="navLinks" role="list">
     <li><a href="../index.html">Início</a></li>
     <li><a href="../livros.html" class="ativa" aria-current="page">Biblioteca</a></li>
-    <li><a href="../autor.html">O Autor</a></li>
+    <li><a href="../autor.html">Autor</a></li>
     <li><a href="../blog.html">Diário</a></li>
+    <li><a href="../leitor/index.html">Leitor</a></li>
     <li><a href="../contato.html">Contato</a></li>
     <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
       <span class="mobile-controles-label">Tema &amp; Fonte</span>
@@ -231,20 +234,32 @@
   </ul>
   <div class="nav-acoes">
     <div class="busca-nav" role="search">
-      <span class="busca-nav-icone" aria-hidden="true">🔍</span>
-      <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site" autocomplete="off" spellcheck="false" />
+      <button class="busca-nav-icone" aria-label="Buscar" aria-expanded="false">
+        <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
+      </button>
+      <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site"
+             autocomplete="off" spellcheck="false" />
       <div class="busca-resultados" id="buscaResultados" role="listbox" aria-label="Resultados da busca" hidden></div>
     </div>
-    <div class="tema-controles" role="group" aria-label="Selecionar tema">
-      <button class="tema-btn ativo" data-tema="claro"     aria-label="Tema claro">☀</button>
-      <button class="tema-btn"       data-tema="noturno"   aria-label="Tema noturno">🌙</button>
-      <button class="tema-btn"       data-tema="contraste" aria-label="Alto contraste">◑</button>
+    <div class="acesso-wrap">
+      <button class="acesso-btn" id="acessoToggle" aria-label="Tema e acessibilidade" aria-expanded="false" title="Tema e Acessibilidade">
+        <i class="fa fa-sliders" aria-hidden="true"></i>
+      </button>
+      <div class="acesso-popup" id="acessoPopup" hidden>
+        <span class="acesso-grupo-label">Tema</span>
+        <div class="acesso-linha">
+          <button class="tema-btn ativo" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+          <button class="tema-btn"       data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+          <button class="tema-btn"       data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+        </div>
+        <span class="acesso-grupo-label">Texto &amp; Som</span>
+        <div class="acesso-linha">
+          <button class="fonte-btn fonte-diminuir" title="Texto menor"  aria-label="Texto menor">A-</button>
+          <button class="fonte-btn fonte-aumentar" title="Texto maior"  aria-label="Texto maior">A+</button>
+          <button class="tema-btn som-btn"          title="Sons"         aria-label="Sons">♪</button>
+        </div>
+      </div>
     </div>
-    <div class="fonte-controles" role="group" aria-label="Tamanho do texto">
-      <button class="fonte-btn fonte-diminuir" aria-label="Diminuir texto">A-</button>
-      <button class="fonte-btn fonte-aumentar" aria-label="Aumentar texto">A+</button>
-    </div>
-    <button class="tema-btn som-btn" aria-label="Alternar sons">♪</button>
     <a href="../login.html" class="btn btn-secundario btn-entrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;">
       <i class="fa fa-user" aria-hidden="true"></i> Entrar
     </a>
@@ -299,7 +314,11 @@
       <div class="badges-wrap reveal">
         <span class="livro-genero" style="margin-bottom:0;">Ensaio Pastoral · Não-Ficção Cristã</span>
         <span class="badge-item"><i class="fa fa-book" aria-hidden="true"></i> Não-ficção</span>
-        <span class="badge-item"><i class="fa fa-print" aria-hidden="true"></i> Disponível impresso</span>
+                <span class="badge-item"><i class="fa fa-globe" aria-hidden="true"></i> Disponível online</span>
+
+        <!-- Botão Disposnivvvel impressão
+        <span class="badge-item"><i class="fa fa-print" aria-hidden="true"></i> Disponível impresso</span> 
+        -->
       </div>
 
       <h1 class="livro-titulo reveal reveal-delay-1" itemprop="name">
@@ -337,7 +356,9 @@
           </div>
           <span class="avaliacao-label">Avaliar</span>
         </div>
+        
         <div class="download-wrap" aria-label="Baixar amostra gratuita">
+          
           <button class="btn-download" data-download="pdf" title="Baixar prefácio em PDF (requer login)">
             <span class="icone-formato" aria-hidden="true">PDF</span>
             <i class="fa fa-download" aria-hidden="true"></i>
@@ -360,7 +381,7 @@
       </div>
 
       <div class="livro-ctas reveal reveal-delay-3">
-        <a href="https://www.amazon.com.br" target="_blank" rel="noopener noreferrer"
+        <a href="https://www.amazon.com.br/s%C3%A9tima-lei-guerra-silenciosa-casamento-ebook/dp/B0GXGZJV1Y/ref=sr_1_1?__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=E3C8HUPVO88M&dib=eyJ2IjoiMSJ9.UyIUI8SQVvgneIH7fCWI5tlrflMm3oyrOpAj9vazd7JhSnwqpBwomqO1A6R3Ko8lpNTWUL2fXxcSLP1WxBQuiwFXZNo3T2DzR0VelVh4XG3ClF0sV0yRPS3zGBuepJN2PRd94WXftGfzwERlVyWew7OnQAYPn6a5pRdbzoKySm8Is_ryaCdpm3Xk2-yhmTWScSEdhn8_DHueGO9M32m1hBOtSUbwGjPNaYUUXlxxPPI.7JpfZqRpH0_ITfS4Sjg3F1pUyNHXrvl4R4eHdElO5CU&dib_tag=se&keywords=A+s%C3%A9tima+lei&qid=1781021199&sprefix=a+s%C3%A9tima+lei%2Caps%2C184&sr=8-1" target="_blank" rel="noopener noreferrer"
            class="btn btn-primario" aria-label="Comprar na Amazon">
           <i class="fa-brands fa-amazon" aria-hidden="true"></i> Comprar na Amazon
         </a>
@@ -403,7 +424,7 @@
           <p>
             Um contrato diz: <em>eu cumpro a minha parte se você cumprir a sua.</em>
             A aliança diz: <em>eu me comprometo com você mesmo quando você falha.</em>
-            Não porque o erro não tem consequências — mas porque a estrutura que
+            Não porque o erro não tem consequências, mas porque a estrutura que
             sustenta a união não é o "se", e sim o "apesar de".
           </p>
           <p>
@@ -411,15 +432,15 @@
             fáceis. Não promete salvar seu casamento em dez passos. Não oferece
             versículos de conforto para anestesiar uma dor que precisa ser enfrentada.
             Em vez disso, percorre com honestidade brutal a anatomia da destruição
-            conjugal — das fissuras silenciosas que precedem o adultério à dor que
-            parece não ter fim — e então examina, com o mesmo rigor, os caminhos
+            conjugal, das fissuras silenciosas que precedem o adultério à dor que
+            parece não ter fim e então examina, com o mesmo rigor, os caminhos
             que podem levar à reconstrução. Ou, quando a reconstrução não for possível,
             a um encerramento que preserve a dignidade.
           </p>
           <p>
             Escrito com rigor bíblico que vai do Gênesis à teologia do ezer kenegdo
             (a "força correspondente" da criação), o livro também traz 6 ilustrações
-            em preto e branco criadas pelo próprio autor — metáforas visuais para
+            em preto e branco criadas pelo próprio autor, metáforas visuais para
             as etapas de uma jornada que poucos conseguem nomear sozinhos.
           </p>
         </div>
@@ -433,7 +454,7 @@
             O que você está prestes a ler não é um manual de sobrevivência romântica.
             Também não é um desses livros que prometem salvar seu casamento em dez
             passos se você apenas "orar mais" ou "fazer surpresas no café da manhã".
-            Há lugar para gestos assim, mas eles vêm depois — e só depois que algo
+            Há lugar para gestos assim, mas eles vêm depois e só depois que algo
             muito mais fundamental for resolvido.
           </p>
           <footer class="excerto-fonte">— Prefácio: A aliança como espelho do Evangelho</footer>
@@ -467,7 +488,7 @@
             <p class="contraste-item">Um martelo para forçar reconciliação a qualquer custo.</p>
             <p class="contraste-item">Autoajuda cristã com respostas fáceis e versículos de efeito.</p>
             <p class="contraste-item">Um livro que culpabiliza quem se separou.</p>
-            <p class="contraste-item">Uma leitura confortável — e isso é intencional.</p>
+            <p class="contraste-item">Uma leitura confortável e isso é intencional.</p>
           </div>
         </div>
       </section>
@@ -497,7 +518,7 @@
             <span class="jornada-num" aria-hidden="true">3</span>
             <div class="jornada-corpo">
               <p class="jornada-titulo">A consumação da ruptura</p>
-              <p class="jornada-desc">O momento em que o que estava oculto vem à tona. A traição exposta, o choque, as reações imediatas — e por que as decisões tomadas nesse momento costumam ser as piores.</p>
+              <p class="jornada-desc">O momento em que o que estava oculto vem à tona. A traição exposta, o choque, as reações imediatas e por que as decisões tomadas nesse momento costumam ser as piores.</p>
             </div>
           </div>
 
@@ -505,7 +526,7 @@
             <span class="jornada-num" aria-hidden="true">4</span>
             <div class="jornada-corpo">
               <p class="jornada-titulo">A abstinência da presença</p>
-              <p class="jornada-desc">A dor da ausência do cônjuge que ainda está fisicamente presente. O distanciamento emocional como forma de sobrevivência — e seus custos.</p>
+              <p class="jornada-desc">A dor da ausência do cônjuge que ainda está fisicamente presente. O distanciamento emocional como forma de sobrevivência e seus custos.</p>
             </div>
           </div>
 
@@ -513,7 +534,7 @@
             <span class="jornada-num" aria-hidden="true">5</span>
             <div class="jornada-corpo">
               <p class="jornada-titulo">A cura do indivíduo antes da reconciliação</p>
-              <p class="jornada-desc">O princípio mais contraintuitivo do livro: nenhuma reconciliação sustentável acontece antes que cada pessoa cuide de si mesma. A cura não é pré-requisito do amor — é precondição da aliança.</p>
+              <p class="jornada-desc">O princípio mais contraintuitivo do livro: nenhuma reconciliação sustentável acontece antes que cada pessoa cuide de si mesma. A cura não é pré-requisito do amor, é precondição da aliança.</p>
             </div>
           </div>
 
@@ -521,7 +542,7 @@
             <span class="jornada-num" aria-hidden="true">6</span>
             <div class="jornada-corpo">
               <p class="jornada-titulo">O fim de uma aliança</p>
-              <p class="jornada-desc">Quando e por que uma separação pode ser a escolha mais íntegra. O que a Bíblia realmente diz sobre divórcio — sem os extremos da condenação nem da permissividade.</p>
+              <p class="jornada-desc">Quando e por que uma separação pode ser a escolha mais íntegra. O que a Bíblia realmente diz sobre divórcio, sem os extremos da condenação nem da permissividade.</p>
             </div>
           </div>
 
@@ -537,7 +558,7 @@
             <span class="jornada-num" aria-hidden="true" style="opacity:1;">8</span>
             <div class="jornada-corpo">
               <p class="jornada-titulo" style="color:var(--ouro);">A esperança que vai além do casamento</p>
-              <p class="jornada-desc">O último capítulo vai onde os outros não chegam: o que sobra da sua identidade quando o casamento acaba. A esperança não é o cônjuge que volta — é a pessoa que você se torna quando escolhe não ser definida pela ruptura.</p>
+              <p class="jornada-desc">O último capítulo vai onde os outros não chegam: o que sobra da sua identidade quando o casamento acaba. A esperança não é o cônjuge que volta, é a pessoa que você se torna quando escolhe não ser definida pela ruptura.</p>
             </div>
           </div>
 
@@ -550,7 +571,7 @@
         <div class="sinopse">
           <p>
             A palavra hebraica <em>ezer</em> (socorro, auxílio) aparece no Antigo
-            Testamento predominantemente para descrever Deus — não uma assistente
+            Testamento predominantemente para descrever Deus, não uma assistente
             de segunda categoria. Quando aplicada à mulher na criação, ela está sendo
             posicionada ao lado do homem como alguém com autoridade, dignidade e
             poder para salvar, sustentar e confrontar.
@@ -558,7 +579,7 @@
           <p>
             Kenegdo significa "correspondente", "diante dele", como num espelho.
             Semelhante o suficiente para identificação; diferente o suficiente
-            para complemento. Juntos: <em>ezer kenegdo</em> — a força correspondente.
+            para complemento. Juntos: <em>ezer kenegdo</em>, a força correspondente.
           </p>
           <p>
             O livro parte dessa visão original e mostra como o pecado perverteu

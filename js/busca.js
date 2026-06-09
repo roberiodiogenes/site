@@ -92,6 +92,13 @@
       externo: true,
     },
     {
+      titulo: 'Leitor Online',
+      desc:   'Leia os livros de Robério Diógenes no navegador, com anotações e progresso.',
+      ancora: 'leitor/index.html',
+      icone:  '📖',
+      externo: true,
+    },
+    {
       titulo: 'Contato',
       desc:   'Entre em contato com o autor.',
       ancora: 'contato.html',

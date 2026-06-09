@@ -57,14 +57,21 @@ if (empty($_SESSION['usuario_id'])) {
     exit;
 }
 
+// Modo de download: 'completo' = epub do livro inteiro (requer compra)
+//                   padrão    = amostra (requer apenas login)
+$completo = !empty($_GET['completo']);
+
 // Validar formato
 if (!in_array($formato, ['pdf', 'epub'])) {
     responderErro('Formato inválido. Use pdf ou epub.');
 }
+if ($completo && $formato !== 'epub') {
+    responderErro('O download completo está disponível apenas em ePub.', 400);
+}
 
 // Buscar arquivo no banco
-$pdo  = db();
-$col  = $formato === 'pdf' ? 'arquivo_pdf' : 'arquivo_epub';
+$pdo = db();
+$col = $formato === 'pdf' ? 'arquivo_pdf' : 'arquivo_epub';
 $stmt = $pdo->prepare("SELECT titulo, $col as arquivo FROM livros WHERE slug=? AND ativo=1");
 $stmt->execute([$slug]);
 $livro = $stmt->fetch();
@@ -73,8 +80,43 @@ if (!$livro || !$livro['arquivo']) {
     responderErro('Arquivo não disponível para este livro.', 404);
 }
 
+// ── Download completo: verificar se usuário tem acesso ────────────
+if ($completo) {
+    $uid = (int)$_SESSION['usuario_id'];
+
+    // 1. Assinatura ativa — acesso a qualquer livro
+    $stA = $pdo->prepare(
+        "SELECT id FROM assinaturas
+         WHERE usuario_id = ? AND status = 'ativa' AND expira_em > NOW()
+         LIMIT 1"
+    );
+    $stA->execute([$uid]);
+    $temAcesso = (bool)$stA->fetchColumn();
+
+    // 2. Compra avulsa aprovada
+    if (!$temAcesso) {
+        $stC = $pdo->prepare(
+            "SELECT id FROM compras
+             WHERE usuario_id = ? AND livro_slug = ? AND status = 'aprovada'
+             LIMIT 1"
+        );
+        $stC->execute([$uid, $slug]);
+        $temAcesso = (bool)$stC->fetchColumn();
+    }
+
+    if (!$temAcesso) {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'ok'   => false,
+            'erro' => 'Você precisa adquirir este livro para fazer o download.',
+        ]);
+        exit;
+    }
+}
+
 // Construir caminho absoluto
-$raiz   = dirname(__DIR__); // pasta raiz do site
+$raiz    = dirname(__DIR__);
 $caminho = $raiz . '/download/' . $formato . '/' . $livro['arquivo'];
 
 if (!file_exists($caminho)) {
@@ -104,7 +146,9 @@ if ((int)$stmt->fetchColumn() > 10) {
 
 // Servir arquivo com headers corretos
 $mimes = ['pdf' => 'application/pdf', 'epub' => 'application/epub+zip'];
-$nomeDownload = $livro['titulo'] . ' - Capítulo 1.' . $formato;
+$nomeDownload = $completo
+    ? $livro['titulo'] . '.' . $formato
+    : $livro['titulo'] . ' - Capítulo 1.' . $formato;
 
 header('Content-Type: ' . $mimes[$formato]);
 header('Content-Disposition: attachment; filename="' . rawurlencode($nomeDownload) . '"');

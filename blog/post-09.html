@@ -449,40 +449,53 @@
   <ul class="nav-links" id="navLinks" role="list">
     <li><a href="../index.html">Início</a></li>
     <li><a href="../livros.html">Biblioteca</a></li>
-    <li><a href="../autor.html">O Autor</a></li>
+    <li><a href="../autor.html">Autor</a></li>
     <li><a href="../blog.html" class="ativa" aria-current="page">Diário</a></li>
+    <li><a href="../leitor/index.html">Leitor</a></li>
     <li><a href="../contato.html">Contato</a></li>
     <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
       <span class="mobile-controles-label">Tema &amp; Fonte</span>
-      <button class="tema-btn" data-tema="claro"     aria-label="Tema claro">☀</button>
-      <button class="tema-btn" data-tema="noturno"   aria-label="Tema noturno">🌙</button>
-      <button class="tema-btn" data-tema="contraste" aria-label="Alto contraste">◑</button>
-      <button class="fonte-btn fonte-diminuir"       aria-label="Texto menor">A-</button>
-      <button class="fonte-btn fonte-aumentar"       aria-label="Texto maior">A+</button>
-      <button class="tema-btn som-btn"               aria-label="Sons">♪</button>
+      <button class="tema-btn" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+      <button class="tema-btn" data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+      <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+      <button class="fonte-btn fonte-diminuir"       title="Texto menor"   aria-label="Texto menor">A-</button>
+      <button class="fonte-btn fonte-aumentar"       title="Texto maior"   aria-label="Texto maior">A+</button>
+      <button class="tema-btn som-btn"               title="Sons"          aria-label="Sons">♪</button>
     </li>
   </ul>
   <div class="nav-acoes">
     <div class="busca-nav" role="search">
-      <span class="busca-nav-icone" aria-hidden="true">🔍</span>
-      <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site" autocomplete="off" />
-      <div class="busca-resultados" id="buscaResultados" role="listbox" hidden></div>
+      <button class="busca-nav-icone" aria-label="Buscar" aria-expanded="false">
+        <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
+      </button>
+      <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site"
+             autocomplete="off" spellcheck="false" />
+      <div class="busca-resultados" id="buscaResultados" role="listbox" aria-label="Resultados da busca" hidden></div>
     </div>
-    <div class="tema-controles" role="group" aria-label="Tema">
-      <button class="tema-btn ativo" data-tema="claro"     aria-label="Claro">☀</button>
-      <button class="tema-btn"       data-tema="noturno"   aria-label="Noturno">🌙</button>
-      <button class="tema-btn"       data-tema="contraste" aria-label="Contraste">◑</button>
+    <div class="acesso-wrap">
+      <button class="acesso-btn" id="acessoToggle" aria-label="Tema e acessibilidade" aria-expanded="false" title="Tema e Acessibilidade">
+        <i class="fa fa-sliders" aria-hidden="true"></i>
+      </button>
+      <div class="acesso-popup" id="acessoPopup" hidden>
+        <span class="acesso-grupo-label">Tema</span>
+        <div class="acesso-linha">
+          <button class="tema-btn ativo" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+          <button class="tema-btn"       data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+          <button class="tema-btn"       data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+        </div>
+        <span class="acesso-grupo-label">Texto &amp; Som</span>
+        <div class="acesso-linha">
+          <button class="fonte-btn fonte-diminuir" title="Texto menor"  aria-label="Texto menor">A-</button>
+          <button class="fonte-btn fonte-aumentar" title="Texto maior"  aria-label="Texto maior">A+</button>
+          <button class="tema-btn som-btn"          title="Sons"         aria-label="Sons">♪</button>
+        </div>
+      </div>
     </div>
-    <div class="fonte-controles" role="group" aria-label="Fonte">
-      <button class="fonte-btn fonte-diminuir" aria-label="A-">A-</button>
-      <button class="fonte-btn fonte-aumentar" aria-label="A+">A+</button>
-    </div>
-    <button class="tema-btn som-btn" aria-label="Sons">♪</button>
-    <a href="../login.html" class="btn btn-secundario btn-entrar" style="padding:.4rem .9rem;font-size:.8rem;">
+    <a href="../login.html" class="btn btn-secundario btn-entrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;">
       <i class="fa fa-user" aria-hidden="true"></i> Entrar
     </a>
   </div>
-  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+  <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">
     <span></span><span></span><span></span>
   </button>
 </nav>

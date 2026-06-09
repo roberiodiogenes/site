@@ -77,16 +77,27 @@
   .fil-btn:hover { border-color: var(--ouro); color: var(--ouro); }
   .fil-btn.ativo { background: var(--ouro); color: #1A0F00; border-color: var(--ouro); font-weight: 700; }
 
+  /* ── BOTÃO ENTRAR — compacto para o nav ────────────────────── */
+  #btnEntrar {
+    font-size: 0.8rem;
+    padding: 0.4rem 1rem;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
   /* ── CARRINHO FLUTUANTE ─────────────────────────────────────── */
   #carrinhoBtn {
     position: fixed; bottom: 2rem; right: 2rem; z-index: 500;
     width: 56px; height: 56px; border-radius: 50%;
     background: var(--ouro); color: #1A0F00;
-    border: none; cursor: pointer; font-size: 1.1rem;
+    border: none; cursor: pointer; font-size: 1.35rem;
     box-shadow: 0 4px 20px rgba(184,134,11,.4);
     transition: transform .2s, box-shadow .2s;
     display: flex; align-items: center; justify-content: center;
   }
+  /* Garante ícone escuro sobre fundo dourado */
+  #carrinhoBtn i { color: #1A0F00; font-size: 1.3rem; }
   #carrinhoBtn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(184,134,11,.5); }
   #carrinhoBadge {
     position: absolute; top: -4px; right: -4px;
@@ -437,25 +448,54 @@
   <ul class="nav-links" id="navLinks" role="list">
     <li><a href="index.html">Início</a></li>
     <li><a href="livros.html" class="ativa" aria-current="page">Biblioteca</a></li>
-    <li><a href="autor.html">O Autor</a></li>
+    <li><a href="autor.html">Autor</a></li>
     <li><a href="blog.html">Diário</a></li>
+    <li><a href="leitor/index.html">Leitor</a></li>
     <li><a href="contato.html">Contato</a></li>
+    <!-- Controles de acessibilidade — visíveis no menu mobile -->
+    <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
+      <span class="mobile-controles-label">Tema &amp; Fonte</span>
+      <button class="tema-btn" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+      <button class="tema-btn" data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+      <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+      <button class="fonte-btn fonte-diminuir"       title="Texto menor"   aria-label="Texto menor">A-</button>
+      <button class="fonte-btn fonte-aumentar"       title="Texto maior"   aria-label="Texto maior">A+</button>
+      <button class="tema-btn som-btn"               title="Sons"          aria-label="Sons">♪</button>
+    </li>
   </ul>
   <div class="nav-acoes">
-    <div class="tema-controles" role="group">
-      <button class="tema-btn ativo" data-tema="claro" aria-label="Tema claro">☀</button>
-      <button class="tema-btn" data-tema="noturno" aria-label="Tema noturno">🌙</button>
-      <button class="tema-btn" data-tema="contraste" aria-label="Alto contraste">◑</button>
+    <div class="busca-nav" role="search">
+      <button class="busca-nav-icone" aria-label="Buscar" aria-expanded="false">
+        <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
+      </button>
+      <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site"
+             autocomplete="off" spellcheck="false" />
+      <div class="busca-resultados" id="buscaResultados" role="listbox" aria-label="Resultados da busca" hidden></div>
     </div>
-    <div class="fonte-controles" role="group">
-      <button class="fonte-btn fonte-diminuir" aria-label="Texto menor">A-</button>
-      <button class="fonte-btn fonte-aumentar" aria-label="Texto maior">A+</button>
+    <div class="acesso-wrap">
+      <button class="acesso-btn" id="acessoToggle" aria-label="Tema e acessibilidade" aria-expanded="false" title="Tema e Acessibilidade">
+        <i class="fa fa-sliders" aria-hidden="true"></i>
+      </button>
+      <div class="acesso-popup" id="acessoPopup" hidden>
+        <span class="acesso-grupo-label">Tema</span>
+        <div class="acesso-linha">
+          <button class="tema-btn ativo" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+          <button class="tema-btn"       data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+          <button class="tema-btn"       data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+        </div>
+        <span class="acesso-grupo-label">Texto &amp; Som</span>
+        <div class="acesso-linha">
+          <button class="fonte-btn fonte-diminuir" title="Texto menor"  aria-label="Texto menor">A-</button>
+          <button class="fonte-btn fonte-aumentar" title="Texto maior"  aria-label="Texto maior">A+</button>
+          <button class="tema-btn som-btn"          title="Sons"         aria-label="Sons">♪</button>
+        </div>
+      </div>
     </div>
-    <a href="login.html" class="btn btn-secundario btn-entrar" id="btnEntrar">
+    <a href="login.html" class="btn btn-secundario btn-entrar" id="btnEntrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;">
       <i class="fa fa-user" aria-hidden="true"></i> Entrar
     </a>
   </div>
-  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+  <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -524,7 +564,7 @@
 
 <!-- CARRINHO FLUTUANTE -->
 <button id="carrinhoBtn" aria-label="Abrir carrinho" title="Carrinho de compras">
-  <i class="fa fa-cart-shopping"></i>
+  <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
   <span id="carrinhoBadge" aria-label="itens no carrinho"></span>
 </button>
 
@@ -572,13 +612,14 @@
    preco: null = gratuito (0.00 no banco)
    tempo: minutos estimados de leitura do livro completo
    ═══════════════════════════════════════════════════════════════ */
-const CATALOGO = [
+/* CATALOGO_BASE: fallback estático usado só se o banco falhar   */
+const CATALOGO_BASE = [
   /* ── LIVROS ────────────────────────────────────────────────── */
   {
     slug: 'a-setima-lei', tipo: 'livro', destaque: true, novo: false,
     titulo: 'A Sétima Lei',
     subtitulo: 'O que acontece quando as regras são escritas por quem não merecia escrever nada?',
-    genero: 'Ficção literária', capitulos: 8, tempo: 420,
+    genero: 'Auto ajuda cristã', capitulos: 8, tempo: 420,
     preco: 19.90, preco_promo: null, gratuito: false,
     capa: 'img/a-setima-lei.jpg',
     sinopse: 'Uma história sobre poder, culpa e a inquietação de quem descobre que obedeceu regras escritas por quem não merecia escrever nada. Oito capítulos densos, sem resposta fácil.',
@@ -588,7 +629,7 @@ const CATALOGO = [
     slug: 'lumen', tipo: 'livro', destaque: true, novo: true,
     titulo: 'Lúmen — A Outra Metade do Céu',
     subtitulo: 'A mente de Hannah oscila entre memórias e sonhos.',
-    genero: 'Ficção psicológica', capitulos: 1, tempo: 90,
+    genero: 'Ficção psicológica', capitulos: 8, tempo: 520,
     preco: 19.90, preco_promo: null, gratuito: false,
     capa: 'img/lumen.jpg',
     sinopse: 'Hannah não tem certeza se seus sonhos são memórias ou suas memórias são sonhos. Uma narrativa não-confiável que dissolve as fronteiras entre o real e o imaginado.',
@@ -598,17 +639,17 @@ const CATALOGO = [
     slug: 'o-abismo-das-almas', tipo: 'livro', destaque: true, novo: false,
     titulo: 'O Abismo das Almas',
     subtitulo: 'E se sentir fosse o maior perigo?',
-    genero: 'Horror literário', capitulos: 8, tempo: 400,
+    genero: 'Horror literário', capitulos: 5, tempo: 400,
     preco: 19.90, preco_promo: null, gratuito: false,
-    capa: 'img/o-abismo-das-almas.jpg',
-    sinopse: 'Uma humanidade que aprendeu a não sentir mais — não por escolha, mas por necessidade. O horror não vem dos mortos. Vem dos vivos que esqueceram como ter medo.',
+    capa: 'img/o-abismo-das-almas-vol-1.jpg',
+    sinopse: 'Uma humanidade que aprendeu a não sentir mais, não por escolha, mas por necessidade. O horror não vem dos mortos. Vem dos vivos que esqueceram como ter medo.',
     pagina: 'livros/o-abismo-das-almas.html',
   },
   {
     slug: 'jogo-das-mascaras', tipo: 'livro', destaque: false, novo: false,
     titulo: 'O Jogo das Máscaras',
     subtitulo: null,
-    genero: 'Suspense', capitulos: 1, tempo: 110,
+    genero: 'Suspense', capitulos: 9, tempo: 450,
     preco: 19.90, preco_promo: null, gratuito: false,
     capa: 'img/jogo-das-mascaras.jpg',
     sinopse: 'Num jogo onde identidade é moeda, ninguém sai sem perder alguma coisa.',
@@ -618,19 +659,19 @@ const CATALOGO = [
     slug: 'cartas-do-passado', tipo: 'livro', destaque: false, novo: false,
     titulo: 'Cartas do Passado',
     subtitulo: null,
-    genero: 'Drama', capitulos: 1, tempo: 95,
+    genero: 'Drama', capitulos: 3, tempo: 355,
     preco: 19.90, preco_promo: null, gratuito: false,
     capa: 'img/cartas-do-passado.jpg',
-    sinopse: 'Cartas que chegaram tarde demais — ou na hora exata. Uma história sobre o que dizemos quando finalmente encontramos coragem.',
+    sinopse: 'Cartas que chegaram tarde demais, ou na hora exata. Uma história sobre o que dizemos quando finalmente encontramos coragem.',
     pagina: 'livros/cartas-do-passado.html',
   },
   {
     slug: 'a-marca-da-besta', tipo: 'livro', destaque: false, novo: false,
     titulo: 'A Marca da Besta',
     subtitulo: null,
-    genero: 'Horror', capitulos: 9, tempo: 380,
+    genero: 'Estudo gospel', capitulos: 9, tempo: 380,
     preco: 19.90, preco_promo: null, gratuito: false,
-    capa: 'img/a-marca-da-besta.jpg',
+    capa: 'img/a-marca-da-besta-capa.jpg',
     sinopse: 'Alguns medos habitam a carne. Outros habitam a memória. Os mais perigosos habitam ambos.',
     pagina: 'livros/a-marca-da-besta.html',
   },
@@ -650,7 +691,7 @@ const CATALOGO = [
     subtitulo: null,
     genero: 'Romance literário', capitulos: 8, tempo: 360,
     preco: 19.90, preco_promo: null, gratuito: false,
-    capa: 'img/das-coisas-que-o-amor-faz.jpg',
+    capa: 'img/coisas-que-o-amor-faz.jpg',
     sinopse: 'Um inventário honesto das coisas que o amor faz — inclusive as que preferíamos que não fizesse.',
     pagina: 'livros/das-coisas-que-o-amor-faz.html',
   },
@@ -719,6 +760,10 @@ const CATALOGO = [
   /* { slug: 'novo-livro', tipo: 'livro', destaque: true, novo: true, ... } */
 ];
 
+/* CATALOGO é reconstruído do banco a cada carregamento.          */
+/* Começa com o fallback estático para render imediato.           */
+let CATALOGO = [...CATALOGO_BASE];
+
 /* ══ CARRINHO — leitura com verificação de dono ════════════════ */
 function carrinhoInicial() {
   // Se o carrinho pertence a outro uid, descartar
@@ -765,34 +810,49 @@ function toast(msg, tipo = 'ok') {
   setTimeout(() => { t.classList.remove('visivel'); setTimeout(() => t.remove(), 400); }, 3200);
 }
 
-/* ══ PREÇOS DINÂMICOS — sincroniza CATALOGO com o banco ════════ */
-async function sincronizarPrecos() {
+/* ══ CATÁLOGO 100% DB-DRIVEN ════════════════════════════════════
+   Reconstrói o CATALOGO inteiro a partir do banco de dados.
+   Não depende de matching por slug — elimina o problema onde
+   editar o título (muda o slug) impedia a sincronização.
+   ═══════════════════════════════════════════════════════════════ */
+async function carregarCatalogoDB() {
   try {
     const r = await fetch('backend/livros.php?acao=catalogo');
     const d = await r.json();
-    if (!d.ok || !d.catalogo) return;
+    if (!d.ok || !d.catalogo || !d.catalogo.length) return;
 
-    d.catalogo.forEach(item => {
-      const local = CATALOGO.find(c => c.slug === item.slug);
-      if (!local) return;
+    CATALOGO = d.catalogo.map(item => ({
+      // ── Identificação ──────────────────────────────────────
+      slug:      item.slug,
+      tipo:      item.tipo,
+      // ── Conteúdo editorial ─────────────────────────────────
+      titulo:    item.titulo    || '',
+      subtitulo: item.subtitulo || null,
+      genero:    item.genero    || '',
+      sinopse:   item.sinopse   || '',
+      capa:      item.capa_img  || '',
+      // Livros: total_capitulos = nº capítulos, tempo_leitura = minutos
+      // Contos: total_capitulos = minutos de leitura
+      capitulos: item.tipo !== 'conto' ? (item.total_capitulos || 0) : 1,
+      tempo:     item.tipo === 'conto'
+                   ? (item.total_capitulos  || 0)
+                   : (item.tempo_leitura    || 0),
+      // Página individual — sempre livros/[slug].html
+      pagina:    `livros/${item.slug}.html`,
+      // ── Flags ──────────────────────────────────────────────
+      destaque:  !!item.destaque,
+      novo:      !!item.novo,
+      // ── Preços ─────────────────────────────────────────────
+      preco:       item.preco,
+      preco_promo: (item.promo_ativa && item.preco_promo) ? item.preco_promo : null,
+      gratuito:    item.gratuito,
+      _promo_ativa:   item.promo_ativa,
+      _gratuito_temp: item.gratuito_temp,
+    }));
 
-      // Preço normal (pode ter mudado no admin)
-      if (item.preco !== null) local.preco = item.preco;
-
-      // Promoção: só aplica se promo_ativa E preco_promo existir
-      local.preco_promo = (item.promo_ativa && item.preco_promo) ? item.preco_promo : null;
-
-      // Gratuito: padrão do banco OU temporário
-      local.gratuito    = item.gratuito;
-
-      // Salva flags extras para uso no modal e botões
-      local._promo_ativa   = item.promo_ativa;
-      local._gratuito_temp = item.gratuito_temp;
-    });
-
-    // Re-renderiza cards com preços atualizados
-    renderizar(state.filtro || 'todos');
-  } catch { /* Fallback: usa o CATALOGO estático — preços podem estar desatualizados */ }
+  } catch {
+    /* Se o banco falhar, CATALOGO mantém o fallback estático */
+  }
 }
 
 /* ══ SESSÃO ════════════════════════════════════════════════════ */
@@ -1311,12 +1371,18 @@ window.copiarLink           = copiarLink;
 
 /* ══ INIT ══════════════════════════════════════════════════════ */
 (async () => {
-  // Carrega sessão e preços em paralelo para máxima velocidade
+  // 1. Render imediato com dados estáticos (sem espera)
+  renderizar('todos');
+  atualizarCarrinhoUI();
+
+  // 2. Carrega sessão e banco em paralelo
   await Promise.all([
     carregarSessao(),
-    sincronizarPrecos(),  // Atualiza preços do banco antes de renderizar
+    carregarCatalogoDB(),   // reconstrói CATALOGO inteiro do banco
   ]);
-  renderizar('todos');
+
+  // 3. Re-renderiza com dados atualizados (admin edits agora visíveis)
+  renderizar(state.filtro || 'todos');
   atualizarCarrinhoUI();
 })();
 

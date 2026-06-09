@@ -251,6 +251,14 @@ require_once __DIR__.'/_admin.php';
 $catLabels=['bastidores'=>'Bastidores','reflexao'=>'Reflexão','escritor'=>'Do Escritor','livros'=>'Sobre os Livros'];
 $livroOpts=['setima-lei'=>'A Sétima Lei','lumen'=>'Lúmen','abismo-das-almas'=>'O Abismo das Almas'];
 
+/* Clusters disponíveis para vínculo */
+$clusters = [];
+try {
+    $clusters = $pdo->query(
+        "SELECT id, titulo, slug FROM clusters WHERE ativo=1 ORDER BY titulo ASC"
+    )->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) { /* tabela ainda não criada */ }
+
 $acao=$_GET['acao']??'listar';
 $postEditar=null;
 if($acao==='editar'){
@@ -520,6 +528,8 @@ if(!empty($_SESSION['blog_flash'])){$flash=$_SESSION['blog_flash'];unset($_SESSI
 
 <!-- ── Exclusivo + Enquete + Cluster ── -->
 <div class="fr" style="gap:.75rem;margin-bottom:.25rem">
+
+  <!-- Coluna esquerda: exclusivo -->
   <div class="fg" style="background:rgba(184,134,11,.07);border:1px solid var(--borda);border-radius:6px;padding:.85rem">
     <label style="font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:.5rem;display:block">
       <i class="fa fa-crown"></i> Conteúdo exclusivo
@@ -532,21 +542,45 @@ if(!empty($_SESSION['blog_flash'])){$flash=$_SESSION['blog_flash'];unset($_SESSI
       Exibe ~35% do conteúdo publicamente e trava o restante com CTA de assinatura.
     </p>
   </div>
-  <div class="fg">
-    <label>Enquete vinculada</label>
-    <select name="enquete_id" class="fi">
-      <option value="">— Nenhuma enquete —</option>
-      <?php
-      try {
-        $enqs = $pdo->query("SELECT id, titulo FROM enquetes WHERE ativo=1 ORDER BY id DESC")->fetchAll();
-        foreach ($enqs as $eq):
-      ?>
-        <option value="<?=(int)$eq['id']?>" <?=(($postEditar['enquete_id']??0)==$eq['id'])?'selected':''?>>
-          <?=htmlspecialchars($eq['titulo'])?>
-        </option>
-      <?php endforeach; } catch(Throwable $e){} ?>
-    </select>
-  </div>
+
+  <!-- Coluna direita: enquete + cluster empilhados -->
+  <div style="display:flex;flex-direction:column;gap:.75rem">
+
+    <div class="fg">
+      <label>Enquete vinculada</label>
+      <select name="enquete_id" class="fi">
+        <option value="">— Nenhuma enquete —</option>
+        <?php
+        try {
+          $enqs = $pdo->query("SELECT id, titulo FROM enquetes WHERE ativo=1 ORDER BY id DESC")->fetchAll();
+          foreach ($enqs as $eq):
+        ?>
+          <option value="<?=(int)$eq['id']?>" <?=(($postEditar['enquete_id']??0)==$eq['id'])?'selected':''?>>
+            <?=htmlspecialchars($eq['titulo'])?>
+          </option>
+        <?php endforeach; } catch(Throwable $e){} ?>
+      </select>
+    </div>
+
+    <div class="fg">
+      <label><i class="fa fa-layer-group" style="opacity:.7"></i> Cluster vinculado</label>
+      <select name="cluster_id" class="fi">
+        <option value="">— Post independente —</option>
+        <?php if (!empty($clusters)): foreach ($clusters as $cl): ?>
+          <option value="<?=(int)$cl['id']?>"
+            <?=(isset($postEditar['cluster_id']) && (int)$postEditar['cluster_id']===(int)$cl['id']) ? 'selected' : ''?>>
+            <?=htmlspecialchars($cl['titulo'])?>
+          </option>
+        <?php endforeach; else: ?>
+          <option disabled>Nenhum cluster cadastrado</option>
+        <?php endif; ?>
+      </select>
+      <span style="font-size:.68rem;color:var(--texto-3);margin-top:.25rem;line-height:1.5;display:block">
+        Vincula este post como satélite ao cluster selecionado (Hub &amp; Spoke).
+      </span>
+    </div>
+
+  </div><!-- /col direita -->
 </div>
 
 <!-- ── Disparo de newsletter ── -->

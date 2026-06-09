@@ -54,39 +54,50 @@
   <ul class="nav-links" id="navLinks" role="list">
     <li><a href="index.html" class="ativa" aria-current="page">Início</a></li>
     <li><a href="livros.html">Biblioteca</a></li>
-    <li><a href="autor.html">O Autor</a></li>
+    <li><a href="autor.html">Autor</a></li>
     <li><a href="blog.html">Diário</a></li>
+    <li><a href="leitor/index.html">Leitor</a></li>
     <li><a href="contato.html">Contato</a></li>
-  
-          <!-- Controles de acessibilidade — visíveis no menu mobile -->
-          <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
-            <span class="mobile-controles-label">Tema &amp; Fonte</span>
-            <button class="tema-btn" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
-            <button class="tema-btn" data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
-            <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
-            <button class="fonte-btn fonte-diminuir"       title="Texto menor"   aria-label="Texto menor">A-</button>
-            <button class="fonte-btn fonte-aumentar"       title="Texto maior"   aria-label="Texto maior">A+</button>
-            <button class="tema-btn som-btn"               title="Sons"          aria-label="Sons">♪</button>
-          </li>
-        </ul>
+    <!-- Controles de acessibilidade — visíveis no menu mobile -->
+    <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
+      <span class="mobile-controles-label">Tema &amp; Fonte</span>
+      <button class="tema-btn" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+      <button class="tema-btn" data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+      <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+      <button class="fonte-btn fonte-diminuir"       title="Texto menor"   aria-label="Texto menor">A-</button>
+      <button class="fonte-btn fonte-aumentar"       title="Texto maior"   aria-label="Texto maior">A+</button>
+      <button class="tema-btn som-btn"               title="Sons"          aria-label="Sons">♪</button>
+    </li>
+  </ul>
 
   <div class="nav-acoes">
     <div class="busca-nav" role="search">
-      <span class="busca-nav-icone" aria-hidden="true">🔍</span>
+      <button class="busca-nav-icone" aria-label="Buscar" aria-expanded="false">
+        <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
+      </button>
       <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site"
              autocomplete="off" spellcheck="false" />
       <div class="busca-resultados" id="buscaResultados" role="listbox" aria-label="Resultados da busca" hidden></div>
     </div>
-    <div class="tema-controles" role="group" aria-label="Selecionar tema">
-      <button class="tema-btn ativo" data-tema="claro" title="Tema claro" aria-label="Tema claro">☀</button>
-      <button class="tema-btn" data-tema="noturno" title="Tema noturno" aria-label="Tema noturno">🌙</button>
-      <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+    <div class="acesso-wrap">
+      <button class="acesso-btn" id="acessoToggle" aria-label="Tema e acessibilidade" aria-expanded="false" title="Tema e Acessibilidade">
+        <i class="fa fa-sliders" aria-hidden="true"></i>
+      </button>
+      <div class="acesso-popup" id="acessoPopup" hidden>
+        <span class="acesso-grupo-label">Tema</span>
+        <div class="acesso-linha">
+          <button class="tema-btn ativo" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+          <button class="tema-btn"       data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+          <button class="tema-btn"       data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+        </div>
+        <span class="acesso-grupo-label">Texto &amp; Som</span>
+        <div class="acesso-linha">
+          <button class="fonte-btn fonte-diminuir" title="Texto menor"  aria-label="Texto menor">A-</button>
+          <button class="fonte-btn fonte-aumentar" title="Texto maior"  aria-label="Texto maior">A+</button>
+          <button class="tema-btn som-btn"          title="Sons"         aria-label="Sons">♪</button>
+        </div>
+      </div>
     </div>
-    <div class="fonte-controles" role="group" aria-label="Tamanho do texto">
-      <button class="fonte-btn fonte-diminuir" title="Diminuir texto" aria-label="Diminuir texto">A-</button>
-      <button class="fonte-btn fonte-aumentar" title="Aumentar texto" aria-label="Aumentar texto">A+</button>
-    </div>
-    <button class="tema-btn som-btn" title="Alternar sons" aria-label="Alternar sons">♪</button>
     <a href="login.html" class="btn btn-secundario btn-entrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;">
       <i class="fa fa-user" aria-hidden="true"></i> Entrar
     </a>
@@ -174,7 +185,7 @@
 <section class="secao" id="livros" aria-labelledby="titulo-livros">
   <p class="secao-pretitulo reveal">Obras Publicadas</p>
   <h2 class="secao-titulo reveal reveal-delay-1" id="titulo-livros">A <em>Biblioteca</em></h2>
-  <p class="secao-intro reveal reveal-delay-2">Histórias que habitam o limiar entre o que se vê e o que se cala. Cada obra é um espelho diferente — escolha o que deseja encarar.</p>
+  <p class="secao-intro reveal reveal-delay-2">Histórias que habitam o limiar entre o que se vê e o que se cala. Cada obra é um espelho diferente, escolha o que deseja encarar.</p>
 
   <!-- Destaque principal -->
   <div class="livro-destaque reveal">
@@ -206,8 +217,8 @@
         <img src="img/a-setima-lei.jpg" alt="Capa do livro A Sétima Lei, de Robério Diógenes — Livro de autoajuda cristã sobre casamento e espiritualidade" class="livro-capa" loading="lazy" />
         <div class="livro-overlay" aria-hidden="true">
           <span class="livro-overlay-genero">Auto-Ajuda Cristã</span>
-          <a href="https://www.amazon.com.br/dp/B0GXGZJV1Y" target="_blank" rel="noopener" class="livro-overlay-btn" tabindex="-1">
-            <i class="fa-brands fa-amazon" aria-hidden="true"></i> Amazon
+          <a href="livros/a-setima-lei.html" class="livro-overlay-btn" tabindex="-1">
+            <i class="fa fa-book-open" aria-hidden="true"></i> Ver mais
           </a>
         </div>
       </div>
@@ -383,7 +394,7 @@
   <div class="newsletter-wrap reveal">
     <div class="newsletter-icone" aria-hidden="true">✉</div>
     <h2 class="newsletter-titulo" id="titulo-newsletter">Receba as <em>novidades</em></h2>
-    <p class="newsletter-desc">Seja o primeiro a saber sobre novos lançamentos, capítulos exclusivos, reflexões do escritor e promoções especiais. Sem spam — só palavras que valem a pena.</p>
+    <p class="newsletter-desc">Seja o primeiro a saber sobre novos lançamentos, capítulos exclusivos, reflexões do escritor e promoções especiais. Sem spam, só palavras que valem a pena.</p>
 
     <div class="newsletter-opcoes">
       <!-- E-mail -->
@@ -404,12 +415,13 @@
       <div class="newsletter-separador" aria-hidden="true">ou</div>
 
       <!-- WhatsApp -->
-      <a href="https://wa.me/5585996409818?text=Quero%20receber%20novidades%20de%20Rob%C3%A9rio%20Di%C3%B3genes"
+      <a href="https://wa.me/5585996409818?text=Ol%C3%A1%21+Quero+entrar+na+sua+lista+de+transmiss%C3%A3o+e+receber+novidades+%F0%9F%93%9A"
          target="_blank" rel="noopener"
          class="btn btn-wpp"
-         aria-label="Entrar na lista de transmissão do WhatsApp">
+         aria-label="Solicitar entrada na lista de transmissão do WhatsApp"
+         title="Abre o WhatsApp com uma mensagem pronta — após enviá-la, você será adicionado(a) à lista">
         <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
-        Lista de transmissão no WhatsApp
+        Novidades no WhatsApp
       </a>
     </div>
 
@@ -427,7 +439,7 @@
         Leia online, sem sair do navegador
       </h2>
       <p style="color:var(--texto-2);line-height:1.75;margin-bottom:1.25rem">
-        A <strong>Área do Leitor</strong> chegou: crie uma conta gratuita e leia capítulos diretamente no site. Sem download, sem aplicativo — só você e a história.
+        A <strong>Área do Leitor</strong> chegou: crie uma conta gratuita e leia capítulos diretamente no site. Sem download, sem aplicativo, só você e a história.
       </p>
       <div style="display:flex;gap:.75rem;flex-wrap:wrap">
         <a href="leitor/index.html" class="btn btn-primario">
@@ -478,7 +490,7 @@
     <div>
       <p class="footer-col-titulo">Contato</p>
       <ul class="footer-links">
-        <li><a href="mailto:diogenes.escritor@gmail.com">diogenes.escritor@gmail.com</a></li>
+        <li><a href="mailto:contato@roberiodiogenes.com">contato@roberiodiogenes.com</a></li>
         <li><a href="contato.html">Formulário de contato</a></li>
         <li><a href="leitor/index.html">Área do leitor</a></li>
       </ul>

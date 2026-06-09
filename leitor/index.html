@@ -8,9 +8,77 @@
   <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" type="image/png" href="../img/favicon.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../css/variables.css" />
   <link rel="stylesheet" href="css/leitor.css" />
+  <style>
+    /* Afasta tela de seleção do nav fixo */
+    .tela-selecao { padding-top: var(--altura-nav, 70px); }
+    /* Leitor em tela cheia passa por cima do nav */
+    .tela-leitor:not([style*="display:none"]) { z-index: 1001; }
+  </style>
 </head>
 <body class="tema-claro fonte-serifada">
+
+<!-- NAV PRINCIPAL -->
+<nav id="nav" role="navigation" aria-label="Navegação principal">
+  <a href="../index.html" class="nav-logo" aria-label="Robério Diógenes - Página inicial">
+    Robério Diógenes
+    <span>Escritor Independente</span>
+  </a>
+  <ul class="nav-links" id="navLinks" role="list">
+    <li><a href="../index.html">Início</a></li>
+    <li><a href="../livros.html">Biblioteca</a></li>
+    <li><a href="../autor.html">Autor</a></li>
+    <li><a href="../blog.html">Diário</a></li>
+    <li><a href="index.html" class="ativa" aria-current="page">Leitor</a></li>
+    <li><a href="../contato.html">Contato</a></li>
+    <!-- Controles de acessibilidade — visíveis no menu mobile -->
+    <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
+      <span class="mobile-controles-label">Tema &amp; Fonte</span>
+      <button class="tema-btn" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+      <button class="tema-btn" data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+      <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+      <button class="fonte-btn fonte-diminuir"       title="Texto menor"   aria-label="Texto menor">A-</button>
+      <button class="fonte-btn fonte-aumentar"       title="Texto maior"   aria-label="Texto maior">A+</button>
+      <button class="tema-btn som-btn"               title="Sons"          aria-label="Sons">♪</button>
+    </li>
+  </ul>
+  <div class="nav-acoes">
+    <div class="busca-nav" role="search">
+      <button class="busca-nav-icone" aria-label="Buscar" aria-expanded="false">
+        <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
+      </button>
+      <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site"
+             autocomplete="off" spellcheck="false" />
+      <div class="busca-resultados" id="buscaResultados" role="listbox" aria-label="Resultados da busca" hidden></div>
+    </div>
+    <div class="acesso-wrap">
+      <button class="acesso-btn" id="acessoToggle" aria-label="Tema e acessibilidade" aria-expanded="false" title="Tema e Acessibilidade">
+        <i class="fa fa-sliders" aria-hidden="true"></i>
+      </button>
+      <div class="acesso-popup" id="acessoPopup" hidden>
+        <span class="acesso-grupo-label">Tema</span>
+        <div class="acesso-linha">
+          <button class="tema-btn ativo" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+          <button class="tema-btn"       data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+          <button class="tema-btn"       data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+        </div>
+        <span class="acesso-grupo-label">Texto &amp; Som</span>
+        <div class="acesso-linha">
+          <button class="fonte-btn fonte-diminuir" title="Texto menor"  aria-label="Texto menor">A-</button>
+          <button class="fonte-btn fonte-aumentar" title="Texto maior"  aria-label="Texto maior">A+</button>
+          <button class="tema-btn som-btn"          title="Sons"         aria-label="Sons">♪</button>
+        </div>
+      </div>
+    </div>
+    <a href="../login.html" class="btn btn-secundario btn-entrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;">
+      <i class="fa fa-user" aria-hidden="true"></i> Entrar
+    </a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
 <!-- ══ TELA DE SELEÇÃO DE LIVRO ═════════════════════════════════ -->
 <div id="telaSelecao" class="tela-selecao">
@@ -326,6 +394,7 @@
 <div id="painelOverlay" class="painel-overlay" hidden></div>
 
 <!-- ══ SCRIPTS ════════════════════════════════════════════════════ -->
+<script src="../js/global.js"></script>
 <!-- epub.js (renderer de EPUB) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js" crossorigin="anonymous"></script>

@@ -16,6 +16,16 @@ ServerSignature Off
   # ── Sitemap amigável: /sitemap.xml → sitemap.php ─────────────
   RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
 
+  # ── Páginas inexistentes → 404.html (via _404.php) ──────────
+  # Funciona em XAMPP (subpasta) e produção (raiz do domínio)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI}  !_404\.php       [NC]
+  RewriteCond %{REQUEST_URI}  !manutencao\.php [NC]
+  RewriteCond %{REQUEST_URI}  !/admin/         [NC]
+  RewriteCond %{REQUEST_URI}  !/backend/       [NC]
+  RewriteRule ^ _404.php [L]
+
   # ── Modo de Manutenção ────────────────────────────────────────
   # Redireciona tudo para manutencao.php quando manutencao.lock
   # existir na raiz do site.
@@ -31,8 +41,29 @@ ServerSignature Off
 </IfModule>
 
 # ── Páginas de erro personalizadas ───────────────────────────
-ErrorDocument 403 /404.html
-ErrorDocument 404 /404.html
+# IMPORTANTE: Dois ambientes, dois caminhos:
+#
+#   XAMPP LOCAL (site em /roberiodiogenes.com/ dentro do htdocs):
+#     ErrorDocument 404 /roberiodiogenes.com/_404.php
+#
+#   PRODUÇÃO (HostGator — site na raiz do domínio):
+#     ErrorDocument 404 /_404.php
+#
+# Troque as linhas comentadas abaixo conforme o ambiente.
+# Obs.: se mod_rewrite estiver ativo, o RewriteRule acima já captura
+# todas as páginas inexistentes e esta diretiva vira apenas fallback.
+#
+# Para ativar mod_rewrite no XAMPP:
+# Abra C:\xampp\apache\conf\httpd.conf e descomente:
+#   LoadModule rewrite_module modules/mod_rewrite.so
+# Depois reinicie o Apache.
+#
+# ── AMBIENTE ATUAL: XAMPP local ──────────────────────────────
+ErrorDocument 403 /roberiodiogenes.com/_404.php
+ErrorDocument 404 /roberiodiogenes.com/_404.php
+# ── PRODUÇÃO: descomente e comente as linhas acima ───────────
+# ErrorDocument 403 /_404.php
+# ErrorDocument 404 /_404.php
 
 # ── Proteger arquivos sensíveis ───────────────────────────────
 <FilesMatch "(config\.php|mailer\.php|\.env|\.git|composer\.(json|lock)|package(-lock)?\.json)$">

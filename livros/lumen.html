@@ -109,8 +109,9 @@
   <ul class="nav-links" id="navLinks" role="list">
     <li><a href="../index.html">Início</a></li>
     <li><a href="../livros.html" class="ativa" aria-current="page">Biblioteca</a></li>
-    <li><a href="../autor.html">O Autor</a></li>
+    <li><a href="../autor.html">Autor</a></li>
     <li><a href="../blog.html">Diário</a></li>
+    <li><a href="../leitor/index.html">Leitor</a></li>
     <li><a href="../contato.html">Contato</a></li>
 
     <!-- Controles de acessibilidade — menu mobile -->
@@ -127,20 +128,32 @@
 
   <div class="nav-acoes">
     <div class="busca-nav" role="search">
-      <span class="busca-nav-icone" aria-hidden="true">🔍</span>
-      <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site" autocomplete="off" spellcheck="false" />
+      <button class="busca-nav-icone" aria-label="Buscar" aria-expanded="false">
+        <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
+      </button>
+      <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site"
+             autocomplete="off" spellcheck="false" />
       <div class="busca-resultados" id="buscaResultados" role="listbox" aria-label="Resultados da busca" hidden></div>
     </div>
-    <div class="tema-controles" role="group" aria-label="Selecionar tema">
-      <button class="tema-btn ativo" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
-      <button class="tema-btn"       data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
-      <button class="tema-btn"       data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+    <div class="acesso-wrap">
+      <button class="acesso-btn" id="acessoToggle" aria-label="Tema e acessibilidade" aria-expanded="false" title="Tema e Acessibilidade">
+        <i class="fa fa-sliders" aria-hidden="true"></i>
+      </button>
+      <div class="acesso-popup" id="acessoPopup" hidden>
+        <span class="acesso-grupo-label">Tema</span>
+        <div class="acesso-linha">
+          <button class="tema-btn ativo" data-tema="claro"     title="Tema claro"    aria-label="Tema claro">☀</button>
+          <button class="tema-btn"       data-tema="noturno"   title="Tema noturno"  aria-label="Tema noturno">🌙</button>
+          <button class="tema-btn"       data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+        </div>
+        <span class="acesso-grupo-label">Texto &amp; Som</span>
+        <div class="acesso-linha">
+          <button class="fonte-btn fonte-diminuir" title="Texto menor"  aria-label="Texto menor">A-</button>
+          <button class="fonte-btn fonte-aumentar" title="Texto maior"  aria-label="Texto maior">A+</button>
+          <button class="tema-btn som-btn"          title="Sons"         aria-label="Sons">♪</button>
+        </div>
+      </div>
     </div>
-    <div class="fonte-controles" role="group" aria-label="Tamanho do texto">
-      <button class="fonte-btn fonte-diminuir" title="Diminuir texto" aria-label="Diminuir texto">A-</button>
-      <button class="fonte-btn fonte-aumentar" title="Aumentar texto" aria-label="Aumentar texto">A+</button>
-    </div>
-    <button class="tema-btn som-btn" title="Alternar sons" aria-label="Alternar sons">♪</button>
     <a href="../login.html" class="btn btn-secundario btn-entrar" style="padding:0.4rem 0.9rem;font-size:0.8rem;">
       <i class="fa fa-user" aria-hidden="true"></i> Entrar
     </a>
@@ -307,12 +320,12 @@
           <p>
             Hannah Bezerra Vilela acorda de um sonho que não parece sonho. Um labirinto de
             mármore negro, água escura no chão, portas brancas que recuam a cada passo.
-            Ela não sabe se está dormindo ou lembrando — e essa distinção, que um dia pareceu
+            Ela não sabe se está dormindo ou lembrando e essa distinção, que um dia pareceu
             óbvia, já não existe mais.
           </p>
           <p>
-            Casada com Nattan — um homem de presença magnética, postura de controle absoluto
-            e silêncios que sufocam —, Hannah vive uma solidão que sangra por dentro.
+            Casada com Nattan, um homem de presença magnética, postura de controle absoluto
+            e silêncios que sufocam, Hannah vive uma solidão que sangra por dentro.
             Trabalha numa biblioteca entre livros alheios enquanto os próprios sentimentos
             ficam sem palavras. Ao seu lado há Ebbe, a amiga vibrante e cheia de segredos.
             E então surge Renner: silencioso, profundo, perturbador. Um homem que parece
@@ -320,14 +333,14 @@
           </p>
           <p>
             Enquanto a fronteira entre sonho e realidade se dissolve, Hannah é forçada a
-            descer ao próprio inconsciente — a encarar a mãe que a abandonou, o amor que
+            descer ao próprio inconsciente, a encarar a mãe que a abandonou, o amor que
             vira posse, o desejo que vira culpa, e a dor de se sentir, desde sempre,
             insuficiente.
           </p>
           <p>
             <em>Lúmen – A Outra Metade do Céu</em> é um romance psicológico sobre o que
             escolhemos não ver em nós mesmos. Sobre os labirintos que construímos por dentro
-            e a luz que sempre esteve lá — esperando que tivéssemos coragem de olhar.
+            e a luz que sempre esteve lá, esperando que tivéssemos coragem de olhar.
           </p>
         </div>
       </section>

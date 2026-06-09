@@ -66,7 +66,7 @@
   transition: all var(--trans);
   text-decoration: none;
 }
-.autor-social a:hover { background: var(--ouro); color: var(--fundo); border-color: var(--ouro); transform: translateY(-3px); }
+.autor-social a:hover { background: var(--ouro); color: #1A0F00; border-color: var(--ouro); transform: translateY(-3px); }
 
 .autor-hero-nome {
   font-family: var(--fonte-titulo);

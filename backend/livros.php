@@ -69,19 +69,27 @@ if ($metodo === 'GET' && $acao === 'catalogo') {
     $pdo  = db();
     try {
         $rows = $pdo->query(
-            "SELECT slug, titulo, tipo, preco, preco_promocao, gratuito,
-                    (promo_ate IS NOT NULL AND promo_ate > NOW())    AS promo_ativa,
+            "SELECT slug, titulo, subtitulo, tipo, sinopse, capa_img, genero,
+                    destaque, novo, total_capitulos, tempo_leitura, badges,
+                    preco, preco_promocao, gratuito,
+                    (promo_ate IS NOT NULL AND promo_ate > NOW())       AS promo_ativa,
                     (gratuito_ate IS NOT NULL AND gratuito_ate > NOW()) AS gratuito_temp,
                     promo_ate, gratuito_ate, ativo
              FROM livros WHERE ativo = 1
              ORDER BY ordem ASC, titulo ASC"
         )->fetchAll();
     } catch (Throwable $e) {
-        // Colunas promo_ate/gratuito_ate ainda não existem (migration pendente)
-        $rows = $pdo->query(
-            "SELECT slug, titulo, tipo, preco, preco_promocao, gratuito, 0 AS promo_ativa, 0 AS gratuito_temp
-             FROM livros WHERE ativo = 1 ORDER BY titulo ASC"
-        )->fetchAll();
+        // Fallback sem colunas opcionais (migration pendente)
+        try {
+            $rows = $pdo->query(
+                "SELECT slug, titulo, subtitulo, tipo, sinopse, capa_img, genero,
+                        destaque, novo, total_capitulos, 0 AS tempo_leitura, badges,
+                        preco, preco_promocao, gratuito,
+                        0 AS promo_ativa, 0 AS gratuito_temp,
+                        NULL AS promo_ate, NULL AS gratuito_ate
+                 FROM livros WHERE ativo = 1 ORDER BY titulo ASC"
+            )->fetchAll();
+        } catch (Throwable $e2) { $rows = []; }
     }
 
     $catalogo = [];
@@ -91,15 +99,29 @@ if ($metodo === 'GET' && $acao === 'catalogo') {
         $ehGratuito   = (bool)$r['gratuito'] || $gratuitoTemp;
 
         $catalogo[] = [
-            'slug'          => $r['slug'],
-            'tipo'          => $r['tipo'],
-            'preco'         => $r['preco']          ? (float)$r['preco']          : null,
-            'preco_promo'   => $r['preco_promocao'] ? (float)$r['preco_promocao'] : null,
-            'promo_ativa'   => $promoAtiva,
-            'gratuito'      => $ehGratuito,
-            'gratuito_temp' => $gratuitoTemp,
-            'promo_ate'     => $r['promo_ate']     ?? null,
-            'gratuito_ate'  => $r['gratuito_ate']  ?? null,
+            // ── Identificação ──────────────────────────────────
+            'slug'             => $r['slug'],
+            'tipo'             => $r['tipo'],
+            // ── Conteúdo editorial ─────────────────────────────
+            'titulo'           => $r['titulo'],
+            'subtitulo'        => $r['subtitulo'],
+            'sinopse'          => $r['sinopse'],
+            'capa_img'         => $r['capa_img'],
+            'genero'           => $r['genero'],
+            'total_capitulos'  => (int)$r['total_capitulos'],
+            'tempo_leitura'    => (int)($r['tempo_leitura'] ?? 0),
+            'badges'           => $r['badges'],
+            // ── Flags de exibição ──────────────────────────────
+            'destaque'         => (bool)(int)$r['destaque'],
+            'novo'             => (bool)(int)$r['novo'],
+            // ── Preços ─────────────────────────────────────────
+            'preco'            => $r['preco']          ? (float)$r['preco']          : null,
+            'preco_promo'      => $r['preco_promocao'] ? (float)$r['preco_promocao'] : null,
+            'promo_ativa'      => $promoAtiva,
+            'gratuito'         => $ehGratuito,
+            'gratuito_temp'    => $gratuitoTemp,
+            'promo_ate'        => $r['promo_ate']    ?? null,
+            'gratuito_ate'     => $r['gratuito_ate'] ?? null,
         ];
     }
     responderOk(['catalogo' => $catalogo]);
