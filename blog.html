@@ -587,9 +587,18 @@
     // - Se tem html_externo (post elaborado em arquivo próprio) → usa esse caminho
     // - Se o arquivo slug.html existe fisicamente (posts antigos) → usa slug.html
     // - Qualquer outro → post-template.html?slug=XXX (sem depender de .htaccess)
-    const slugsEstaticos = ['post-01','post-02','post-03','post-04','post-05','post-06','post-07'];
+    // slugs de posts com arquivo HTML próprio em /blog/
+    const slugsEstaticos = [
+      'h-g-wells-guia-definitivo',
+      'a-maquina-do-tempo-resenha',
+      'o-homem-invisivel-resenha',
+      'o-dorminhoco-resenha',
+      'a-ilha-do-dr-moreau-resenha',
+      'a-guerra-dos-mundos-resenha',
+    ];
     function urlPost(p) {
-      if (p.html_externo) return p.html_externo;
+      if (p.html_externo)               return p.html_externo.startsWith('blog/') ? p.html_externo : 'blog/' + p.html_externo;
+      if (p.estatico)                   return `blog/${p.slug}.html`;
       if (slugsEstaticos.includes(p.slug)) return `blog/${p.slug}.html`;
       return `blog/post-template.html?slug=${encodeURIComponent(p.slug)}`;
     }
@@ -804,16 +813,15 @@
     return {
       ok: true,
       posts: [
-        { slug:'post-01', titulo:'Por trás da serpente e da maçã: os bastidores de A Sétima Lei', categoria:'bastidores', resumo:'Cada livro começa muito antes da primeira palavra. Aqui conto como nasceu a capa, a ideia, e o silêncio que precedeu tudo isso.', imagem_url:'img/post-bastidores-setima-lei.jpg', tempo_leitura:8, destaque:1, publicado_em:'2025-04-01', audio_url:null },
-        { slug:'post-02', titulo:'O peso do silêncio entre duas pessoas que se amaram', categoria:'reflexao', resumo:'Existe um idioma que só existe entre pessoas que já se amaram. É feito de não-ditos, de gestos pela metade.', imagem_url:'img/bastidores-setima-lei.jpg', tempo_leitura:5, destaque:0, publicado_em:'2025-03-01', audio_url:null },
-        { slug:'post-03', titulo:'Por que escrevo sobre dor — e por que não me arrependo', categoria:'escritor', resumo:'Há quem prefira histórias que consolam. Eu prefiro as que arrancam a venda dos olhos.', imagem_url:null, tempo_leitura:6, destaque:0, publicado_em:'2025-02-01', audio_url:null },
-        { slug:'post-04', titulo:'23h47 em Cascavel — onde as histórias nascem', categoria:'reflexao', resumo:'Cada cidade tem uma hora em que se revela. Cascavel às 23h47 é um lugar que só existe quando o silêncio é profundo o suficiente para ter peso.', imagem_url:null, tempo_leitura:4, destaque:0, publicado_em:'2025-01-01', audio_url:null },
-        { slug:'post-05', titulo:'Deus e o versículo incompleto — as origens de O Abismo das Almas', categoria:'livros', resumo:'Todo livro de horror tem um medo real no centro.', imagem_url:null, tempo_leitura:7, destaque:0, publicado_em:'2024-12-01', audio_url:null },
-        { slug:'post-06', titulo:'O labirinto de Lúmen — como construí uma mente que não sabe se existe', categoria:'livros', resumo:'Escrever Hannah foi o exercício mais perturbador que já fiz.', imagem_url:null, tempo_leitura:9, destaque:0, publicado_em:'2024-11-01', audio_url:null },
-        { slug:'post-07', titulo:'Sobre a solidão que produz — e a que apenas consome', categoria:'escritor', resumo:'Existe uma diferença entre a solidão que gera e a solidão que apenas esvazia.', imagem_url:null, tempo_leitura:5, destaque:0, publicado_em:'2024-10-01', audio_url:null },
+        { slug:'h-g-wells-guia-definitivo', titulo:'H. G. Wells: O Homem Que Imaginou o Futuro Antes que Ele Existisse', categoria:'literatura', resumo:'Do filho de empregada doméstica ao profeta do século XX: guia definitivo sobre a vida, a obra e o legado de H. G. Wells.', imagem_url:'img/posts/hgwells-pilar.webp', tempo_leitura:18, destaque:1, publicado_em:'2025-06-01', audio_url:null, estatico:1, tipo_post:'pilar' },
+        { slug:'a-maquina-do-tempo-resenha', titulo:'A Máquina do Tempo: O Livro que Me Ensinou a Sonhar com o Futuro', categoria:'literatura', resumo:'Eloi, Morlocks e a melancolia do fim do mundo. Por que este livro pequeno ainda nos leva tão longe.', imagem_url:'img/posts/hgwells-maquina-tempo.webp', tempo_leitura:12, destaque:0, publicado_em:'2025-06-03', audio_url:null, estatico:1 },
+        { slug:'o-homem-invisivel-resenha', titulo:'O Homem Invisível: Quando o Maior Poder se Torna a Mais Terrível das Prisões', categoria:'literatura', resumo:'Griffin, o anel de Giges e o que acontece quando o poder remove todas as consequências.', imagem_url:'img/posts/hgwells-homem-invisivel.webp', tempo_leitura:10, destaque:0, publicado_em:'2025-06-06', audio_url:null, estatico:1 },
+        { slug:'o-dorminhoco-resenha', titulo:'O Dorminhoco: Acordar em um Futuro que Nunca Pedimos Para Ver', categoria:'literatura', resumo:'Wells adormece um homem no século XIX e o acorda duzentos anos depois num mundo controlado por corporações. Ficção ou descrição?', imagem_url:'img/posts/hgwells-dorminhoco.webp', tempo_leitura:10, destaque:0, publicado_em:'2025-06-09', audio_url:null, estatico:1 },
+        { slug:'a-ilha-do-dr-moreau-resenha', titulo:'A Ilha do Dr. Moreau: O Horror que Mora Dentro da Pele Humana', categoria:'literatura', resumo:'Ciência sem ética, soberba intelectual e a fragilidade da civilização. Nunca esteve tão atual.', imagem_url:'img/posts/hgwells-ilha-moreau.webp', tempo_leitura:11, destaque:0, publicado_em:'2025-06-12', audio_url:null, estatico:1 },
+        { slug:'a-guerra-dos-mundos-resenha', titulo:'A Guerra dos Mundos: Quando o Universo Parou de Ser Amigável', categoria:'literatura', resumo:'Wells pedalava por Woking quando imaginou: e se fôssemos nós os colonizados? O livro que virou o imperialismo de cabeça para baixo.', imagem_url:'img/posts/hgwells-guerra-mundos.webp', tempo_leitura:13, destaque:0, publicado_em:'2025-06-15', audio_url:null, estatico:1 },
       ],
       lidos: [],
-      total: 7,
+      total: 6,
       total_pags: 1,
       pagina: 1,
       por_pagina: 9,

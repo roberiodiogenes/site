@@ -133,10 +133,21 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 
     /* ── editar ── */
     if($acao==='editar'){
-        $id      =(int)($_POST['id']??0);
-        $titulo  =trim($_POST['titulo']  ??'');
-        $conteudo=trim($_POST['conteudo']??'');
-        if(!$id||!$titulo||!$conteudo){echo json_encode(['ok'=>false,'erro'=>'ID/título/conteúdo obrigatórios.']);exit;}
+        $id       =(int)($_POST['id']??0);
+        $titulo   =trim($_POST['titulo']  ??'');
+        $conteudo =trim($_POST['conteudo']??'');
+        $html_ext_v = trim($_POST['html_externo']??'');
+        // Detectar se é post estático: pelo form, pelo html_externo, ou pelo registro no banco
+        $isEstatico = !empty($_POST['estatico']) || $html_ext_v !== '';
+        if(!$isEstatico && $id && !$conteudo){
+            // Consulta o banco — post já marcado como estático não precisa de conteúdo
+            try{
+                $stEs=$pdo->prepare("SELECT COALESCE(estatico,0) FROM posts WHERE id=? LIMIT 1");
+                $stEs->execute([$id]);
+                $isEstatico = (bool)$stEs->fetchColumn();
+            }catch(PDOException $e){}
+        }
+        if(!$id||!$titulo||(!$conteudo && !$isEstatico)){echo json_encode(['ok'=>false,'erro'=>'ID/título/conteúdo obrigatórios.']);exit;}
         $subtitulo =trim($_POST['subtitulo'] ??'');
         $categoria =in_array($_POST['categoria']??'',$cats)?$_POST['categoria']:'reflexao';
         $resumo    =trim($_POST['resumo']    ??'');
@@ -153,22 +164,37 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         $slug      =trim($_POST['slug']??'')?:rd_slugify($titulo);
         $pub=null;
         if($status==='publicado'||$status==='agendado') $pub=trim($_POST['publicado_em']??'')?:date('Y-m-d H:i:s');
+        // Helper: tenta UPDATE com diferentes combinações de colunas de conteúdo
+        // (o banco pode usar 'conteudo' ou 'corpo' dependendo do schema)
+        $atualizado = false;
+        $ex_final   = null;
+        $tentativas = [
+            // 1: conteudo + html_externo + colunas avançadas (schema antigo + migration_blog_avancado)
+            ["UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,conteudo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,html_externo=?,status=?,destaque=?,exclusivo=?,enquete_id=?,cluster_id=?,publicado_em=? WHERE id=?",
+             [$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$html_ext,$status,$destaque,$exclusivo,$enquete_id,$cluster_id,$pub,$id]],
+            // 2: corpo + colunas avançadas (banco_unificado.sql)
+            ["UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,corpo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,html_externo=?,status=?,destaque=?,exclusivo=?,enquete_id=?,cluster_id=?,publicado_em=? WHERE id=?",
+             [$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$html_ext,$status,$destaque,$exclusivo,$enquete_id,$cluster_id,$pub,$id]],
+            // 3: conteudo sem colunas avançadas
+            ["UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,conteudo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,status=?,destaque=?,publicado_em=? WHERE id=?",
+             [$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$status,$destaque,$pub,$id]],
+            // 4: corpo sem colunas avançadas
+            ["UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,corpo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,status=?,destaque=?,publicado_em=? WHERE id=?",
+             [$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$status,$destaque,$pub,$id]],
+            // 5: apenas metadados, sem coluna de conteúdo (posts estáticos: conteúdo está no HTML)
+            ["UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,status=?,destaque=?,cluster_id=?,publicado_em=? WHERE id=?",
+             [$slug,$titulo,$subtitulo,$categoria,$resumo,$imagem_url,$audio_url,$tempo,$livro_slug,$status,$destaque,$cluster_id,$pub,$id]],
+        ];
+        foreach($tentativas as [$sql,$params]){
+            try{ $pdo->prepare($sql)->execute($params); $atualizado=true; break; }
+            catch(PDOException $ex){ $ex_final=$ex; }
+        }
+        if(!$atualizado){
+            error_log('[blog] editar: '.($ex_final?$ex_final->getMessage():''));
+            echo json_encode(['ok'=>false,'erro'=>'Banco: '.($ex_final?$ex_final->getMessage():'Erro desconhecido.')]);
+            exit;
+        }
         try{
-            // Tenta UPDATE com todas as colunas (migration_blog_avancado executada)
-            try{
-                $pdo->prepare("UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,conteudo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,html_externo=?,status=?,destaque=?,exclusivo=?,enquete_id=?,cluster_id=?,publicado_em=? WHERE id=?")
-                   ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$html_ext,$status,$destaque,$exclusivo,$enquete_id,$cluster_id,$pub,$id]);
-            }catch(PDOException $ex1){
-                // Fallback 2: sem colunas da migration avançada, mas com html_externo
-                try{
-                    $pdo->prepare("UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,conteudo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,html_externo=?,status=?,destaque=?,publicado_em=? WHERE id=?")
-                       ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$html_ext,$status,$destaque,$pub,$id]);
-                }catch(PDOException $ex2){
-                    // Fallback 3: schema base (sem html_externo, sem colunas avançadas)
-                    $pdo->prepare("UPDATE posts SET slug=?,titulo=?,subtitulo=?,categoria=?,resumo=?,conteudo=?,imagem_url=?,audio_url=?,tempo_leitura=?,livro_slug=?,status=?,destaque=?,publicado_em=? WHERE id=?")
-                       ->execute([$slug,$titulo,$subtitulo,$categoria,$resumo,$conteudo,$imagem_url,$audio_url,$tempo,$livro_slug,$status,$destaque,$pub,$id]);
-                }
-            }
             rd_flash('Post atualizado!');
             echo json_encode(['ok'=>true,'msg'=>'Post atualizado!']);
         }catch(PDOException $e){
@@ -240,6 +266,48 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         exit;
     }
 
+    /* ══ CLUSTERS — ações CRUD via mesma rota ══════════════════ */
+    if($acao==='cluster_criar'){
+        $titulo    =trim($_POST['titulo']??'');
+        $descricao =trim($_POST['descricao']??'');
+        $imagem    =trim($_POST['imagem_url']??'');
+        $cor       =trim($_POST['cor']??'#4A3728');
+        if(!$titulo){echo json_encode(['ok'=>false,'erro'=>'Título obrigatório.']);exit;}
+        $slug=rd_slugify($titulo);
+        $stC=$pdo->prepare("SELECT id FROM clusters WHERE slug=? LIMIT 1");$stC->execute([$slug]);
+        if($stC->fetchColumn()) $slug.='-'.substr(md5(uniqid('',true)),0,5);
+        try{
+            $pdo->prepare("INSERT INTO clusters(slug,titulo,descricao,imagem_url,cor,ativo) VALUES(?,?,?,?,?,1)")
+               ->execute([$slug,$titulo,$descricao?:null,$imagem?:null,$cor]);
+            echo json_encode(['ok'=>true,'msg'=>'Cluster criado!','slug'=>$slug]);
+        }catch(PDOException $e){echo json_encode(['ok'=>false,'erro'=>'Banco: '.$e->getMessage()]);}
+        exit;
+    }
+    if($acao==='cluster_editar'){
+        $id       =(int)($_POST['id']??0);
+        $titulo   =trim($_POST['titulo']??'');
+        $descricao=trim($_POST['descricao']??'');
+        $imagem   =trim($_POST['imagem_url']??'');
+        $cor      =trim($_POST['cor']??'#4A3728');
+        if(!$id||!$titulo){echo json_encode(['ok'=>false,'erro'=>'Dados inválidos.']);exit;}
+        $pdo->prepare("UPDATE clusters SET titulo=?,descricao=?,imagem_url=?,cor=? WHERE id=?")
+           ->execute([$titulo,$descricao?:null,$imagem?:null,$cor,$id]);
+        echo json_encode(['ok'=>true,'msg'=>'Cluster atualizado!']);
+        exit;
+    }
+    if($acao==='cluster_toggle'){
+        $id=(int)($_POST['id']??0);$v=(int)($_POST['ativo']??0);
+        $pdo->prepare("UPDATE clusters SET ativo=? WHERE id=?")->execute([$v,$id]);
+        echo json_encode(['ok'=>true]);exit;
+    }
+    if($acao==='cluster_excluir'){
+        $id=(int)($_POST['id']??0);
+        if(!$id){echo json_encode(['ok'=>false,'erro'=>'ID inválido.']);exit;}
+        $pdo->prepare("UPDATE posts SET cluster_id=NULL WHERE cluster_id=?")->execute([$id]);
+        $pdo->prepare("DELETE FROM clusters WHERE id=?")->execute([$id]);
+        echo json_encode(['ok'=>true]);exit;
+    }
+
     echo json_encode(['ok'=>false,'erro'=>'Ação desconhecida.']);
     exit;
 }
@@ -259,7 +327,8 @@ try {
     )->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $e) { /* tabela ainda não criada */ }
 
-$acao=$_GET['acao']??'listar';
+$tab  = $_GET['tab'] ?? 'posts'; // 'posts' | 'clusters'
+$acao = $_GET['acao'] ?? 'listar';
 $postEditar=null;
 if($acao==='editar'){
     $id=(int)($_GET['id']??0);
@@ -280,10 +349,21 @@ if($busca){$wh[]="(titulo LIKE ? OR resumo LIKE ?)";$l="%$busca%";$pa[]=$l;$pa[]
 $wsql=$wh?'WHERE '.implode(' AND ',$wh):'';
 $stC=$pdo->prepare("SELECT COUNT(*) FROM posts $wsql");$stC->execute($pa);
 $total=(int)$stC->fetchColumn();$totP=max(1,(int)ceil($total/$pp));$off=($pag-1)*$pp;
-$stL=$pdo->prepare("SELECT id,slug,titulo,categoria,status,destaque,publicado_em,audio_url,html_externo FROM posts $wsql ORDER BY created_at DESC LIMIT $pp OFFSET $off");
-$stL->execute($pa);$posts=$stL->fetchAll(PDO::FETCH_ASSOC);
-$stNL=$pdo->query("SELECT post_id FROM newsletter_posts");
-$nlEnv=$stNL?$stNL->fetchAll(PDO::FETCH_COLUMN):[];
+/* Tenta SELECT com html_externo (schema antigo); se a coluna não existir, retry sem ela */
+try {
+    $stL=$pdo->prepare("SELECT id,slug,titulo,categoria,status,destaque,publicado_em,audio_url,html_externo FROM posts $wsql ORDER BY COALESCE(publicado_em,criado_em) DESC LIMIT $pp OFFSET $off");
+    $stL->execute($pa);$posts=$stL->fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $ex_sel) {
+    try {
+        $stL=$pdo->prepare("SELECT id,slug,titulo,categoria,status,destaque,publicado_em,audio_url,'' AS html_externo FROM posts $wsql ORDER BY COALESCE(publicado_em,criado_em) DESC LIMIT $pp OFFSET $off");
+        $stL->execute($pa);$posts=$stL->fetchAll(PDO::FETCH_ASSOC);
+    } catch(PDOException $ex_sel2) {
+        $stL=$pdo->prepare("SELECT id,slug,titulo,categoria,status,destaque,publicado_em,audio_url,'' AS html_externo FROM posts $wsql ORDER BY publicado_em DESC LIMIT $pp OFFSET $off");
+        $stL->execute($pa);$posts=$stL->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+try { $stNL=$pdo->query("SELECT post_id FROM newsletter_posts"); $nlEnv=$stNL?$stNL->fetchAll(PDO::FETCH_COLUMN):[]; }
+catch(PDOException $e) { $nlEnv=[]; } // tabela ainda não criada
 $flash=null;
 if(!empty($_SESSION['blog_flash'])){$flash=$_SESSION['blog_flash'];unset($_SESSION['blog_flash']);}
 ?>
@@ -374,6 +454,141 @@ if(!empty($_SESSION['blog_flash'])){$flash=$_SESSION['blog_flash'];unset($_SESSI
   <?=adm_esc($flash['msg'])?>
 </div>
 <?php endif;?>
+
+<!-- ══ ABAS ══════════════════════════════════════════════════ -->
+<nav class="adm-tabs" style="display:flex;gap:0;border-bottom:1px solid var(--borda);margin-bottom:1.5rem">
+  <a href="blog.php" style="display:flex;align-items:center;gap:.45rem;padding:.65rem 1.25rem;text-decoration:none;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid <?=$tab==='posts'?'var(--ouro)':'transparent'?>;color:<?=$tab==='posts'?'var(--ouro)':'var(--texto-3)'?>;transition:all .2s">
+    <i class="fa fa-pen-nib"></i> Posts
+  </a>
+  <a href="blog.php?tab=clusters" style="display:flex;align-items:center;gap:.45rem;padding:.65rem 1.25rem;text-decoration:none;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid <?=$tab==='clusters'?'var(--ouro)':'transparent'?>;color:<?=$tab==='clusters'?'var(--ouro)':'var(--texto-3)'?>;transition:all .2s">
+    <i class="fa fa-layer-group"></i> Clusters
+  </a>
+</nav>
+
+<?php if($tab==='clusters'):?>
+<!-- ══ CLUSTERS ══════════════════════════════════════════════ -->
+<div class="sh">
+  <h2 class="st">Gerenciar <em>Clusters</em></h2>
+  <button class="bn2" onclick="abrirModalCluster()"><i class="fa fa-plus"></i> Novo Cluster</button>
+</div>
+<?php
+$clAll=[];
+try{$clAll=$pdo->query("SELECT c.*, (SELECT COUNT(*) FROM posts p WHERE p.cluster_id=c.id) AS total_posts FROM clusters c ORDER BY c.titulo ASC")->fetchAll(PDO::FETCH_ASSOC);}catch(Throwable $e){}
+?>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-top:.5rem">
+<?php if(empty($clAll)):?>
+  <p style="color:var(--texto-3);font-size:.88rem;padding:2rem 0">Nenhum cluster cadastrado ainda.</p>
+<?php else: foreach($clAll as $cl):
+  $clBord   = $cl['ativo'] ? 'var(--borda-media)' : 'var(--borda)';
+  $clOpac   = $cl['ativo'] ? '1' : '.55';
+?>
+  <div style="background:var(--fundo-card,#1C1408);border:1px solid <?=$clBord?>;border-radius:10px;padding:1.25rem;display:flex;flex-direction:column;gap:.6rem;opacity:<?=$clOpac?>">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem">
+      <div>
+        <div style="font-family:var(--fonte-titulo,Georgia);font-size:.98rem;color:var(--texto)"><?=adm_esc($cl['titulo'])?></div>
+        <div style="font-size:.7rem;color:var(--texto-3);margin-top:.15rem">/clusters/<?=adm_esc($cl['slug'])?></div>
+      </div>
+      <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:<?=adm_esc($cl['cor']??'#4A3728')?>;flex-shrink:0;margin-top:.25rem;border:1px solid rgba(255,255,255,.15)"></span>
+    </div>
+    <?php if($cl['descricao']):?>
+      <p style="font-size:.82rem;color:var(--texto-3);line-height:1.55;margin:0"><?=adm_esc(mb_substr($cl['descricao'],0,120,'UTF-8')).(mb_strlen($cl['descricao'],'UTF-8')>120?'…':'')?></p>
+    <?php endif;?>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.35rem;flex-wrap:wrap;gap:.4rem">
+      <span style="font-size:.72rem;color:var(--texto-3)"><i class="fa fa-pen-nib" style="color:var(--ouro);margin-right:.3rem"></i><?=(int)$cl['total_posts']?> post(s)</span>
+      <div style="display:flex;gap:.35rem">
+        <button class="ba be" title="Editar" onclick='editarCluster(<?=json_encode($cl, JSON_HEX_APOS|JSON_UNESCAPED_UNICODE)?>)'><i class="fa fa-pen"></i></button>
+        <button class="ba <?=$cl['ativo']?'bv':'be'?>" title="<?=$cl['ativo']?'Ocultar':'Ativar'?>"
+                onclick="toggleCluster(<?=$cl['id']?>,<?=$cl['ativo']?0:1?>,this)">
+          <i class="fa fa-<?=$cl['ativo']?'eye-slash':'eye'?>"></i>
+        </button>
+        <button class="ba bd" title="Excluir" onclick="excluirCluster(<?=$cl['id']?>,this)"><i class="fa fa-trash"></i></button>
+      </div>
+    </div>
+  </div>
+<?php endforeach; endif;?>
+</div>
+
+<!-- Modal Cluster -->
+<div id="modalCluster" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--fundo-card,#1C1408);border:1px solid var(--borda-media);border-radius:12px;padding:2rem;max-width:520px;width:100%;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+      <h3 style="font-family:var(--fonte-titulo,Georgia);font-size:1.1rem;font-weight:400" id="modalClTitulo">Novo Cluster</h3>
+      <button onclick="fecharModalCluster()" style="background:transparent;border:none;color:var(--texto-3);cursor:pointer;font-size:1.1rem"><i class="fa fa-xmark"></i></button>
+    </div>
+    <form id="fmCluster" class="fm" novalidate>
+      <input type="hidden" name="id" id="clId">
+      <div class="fg"><label>Título *</label><input type="text" name="titulo" id="clTitulo" class="fi" placeholder="Nome do cluster…" required></div>
+      <div class="fg"><label>Descrição</label><textarea name="descricao" id="clDescricao" class="fi fia" placeholder="Breve descrição da série…" rows="3"></textarea></div>
+      <div class="fr">
+        <div class="fg"><label>Imagem (URL ou caminho)</label><input type="text" name="imagem_url" id="clImagem" class="fi" placeholder="img/posts/cluster-cover.webp"></div>
+        <div class="fg"><label>Cor de destaque</label>
+          <div style="display:flex;gap:.5rem;align-items:center">
+            <input type="color" name="cor" id="clCor" value="#4A3728" style="width:44px;height:36px;padding:2px;border:1px solid var(--borda-media);border-radius:6px;background:transparent;cursor:pointer">
+            <input type="text" id="clCorHex" class="fi" value="#4A3728" style="width:90px" oninput="document.getElementById('clCor').value=this.value">
+          </div>
+        </div>
+      </div>
+      <div class="fa2" style="margin-top:.5rem">
+        <button type="submit" class="bs" id="bClSv"><i class="fa fa-floppy-disk"></i> Salvar</button>
+        <button type="button" class="bv2" onclick="fecharModalCluster()">Cancelar</button>
+        <span id="clSt" style="font-size:.82rem"></span>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+function abrirModalCluster(dados){
+  const m=document.getElementById('modalCluster');
+  m.style.display='flex';
+  if(dados){
+    document.getElementById('modalClTitulo').textContent='Editar Cluster';
+    document.getElementById('clId').value=dados.id||'';
+    document.getElementById('clTitulo').value=dados.titulo||'';
+    document.getElementById('clDescricao').value=dados.descricao||'';
+    document.getElementById('clImagem').value=dados.imagem_url||'';
+    const c=dados.cor||'#4A3728';
+    document.getElementById('clCor').value=c;
+    document.getElementById('clCorHex').value=c;
+  }else{
+    document.getElementById('modalClTitulo').textContent='Novo Cluster';
+    document.getElementById('fmCluster').reset();
+    document.getElementById('clId').value='';
+  }
+}
+function editarCluster(d){abrirModalCluster(d);}
+function fecharModalCluster(){document.getElementById('modalCluster').style.display='none';}
+document.getElementById('clCor').addEventListener('input',e=>document.getElementById('clCorHex').value=e.target.value);
+document.getElementById('fmCluster').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const btn=document.getElementById('bClSv'),st=document.getElementById('clSt');
+  btn.disabled=true;btn.innerHTML='<i class="fa fa-spinner fa-spin"></i>';st.textContent='';
+  const f=new FormData(e.target);
+  const id=f.get('id');
+  f.set('acao',id?'cluster_editar':'cluster_criar');
+  if(!id)f.delete('id');
+  try{
+    const r=await fetch('blog.php',{method:'POST',body:f});
+    const d=await r.json();
+    if(d.ok){st.style.color='#2ecc71';st.textContent='✓ '+(d.msg||'Salvo!');setTimeout(()=>location.reload(),800);}
+    else{st.style.color='#e74c3c';st.textContent='✗ '+(d.erro||'Erro.');btn.disabled=false;btn.innerHTML='<i class="fa fa-floppy-disk"></i> Salvar';}
+  }catch(err){st.style.color='#e74c3c';st.textContent='✗ '+err.message;btn.disabled=false;btn.innerHTML='<i class="fa fa-floppy-disk"></i> Salvar';}
+});
+async function toggleCluster(id,ativo,btn){
+  btn.disabled=true;
+  const f=new FormData();f.append('acao','cluster_toggle');f.append('id',id);f.append('ativo',ativo);
+  const r=await fetch('blog.php',{method:'POST',body:f});const d=await r.json();
+  if(d.ok)location.reload();else{toast(d.erro||'Erro.','erro');btn.disabled=false;}
+}
+async function excluirCluster(id,btn){
+  if(!confirm('Excluir cluster? Os posts vinculados ficarão sem cluster.'))return;
+  btn.disabled=true;
+  const f=new FormData();f.append('acao','cluster_excluir');f.append('id',id);
+  const r=await fetch('blog.php',{method:'POST',body:f});const d=await r.json();
+  if(d.ok){toast('Cluster excluído.');setTimeout(()=>location.reload(),600);}else{toast(d.erro||'Erro.','erro');btn.disabled=false;}
+}
+</script>
+
+<?php else: /* tab === 'posts' */ ?>
 
 <?php if($acao==='criar'||$acao==='editar'):?>
 <div class="sh">
@@ -691,7 +906,8 @@ if(!empty($_SESSION['blog_flash'])){$flash=$_SESSION['blog_flash'];unset($_SESSI
   <?php endfor;?>
 </nav>
 <?php endif;?>
-<?php endif;?>
+<?php endif; /* fim ação criar/editar */ ?>
+<?php endif; /* fim tab posts */ ?>
 
 <?php echo $ADMIN_FOOTER_HTML;?>
 
