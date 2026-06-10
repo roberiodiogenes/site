@@ -23,6 +23,7 @@ const L = {
   modoAmostra:   false,   // true = usuário não comprou o livro
   limiteAmostra: 10,      // % máximo na amostra
   paywallAtivo:  false,   // paywall já foi exibido
+  _amostratimer: null,    // timer do monitor de posição em modo amostra
   timer: {
     tipo: 'relogio', ativo: false, segundos: 0,
     alvo: 0, intervalo: null, oculto: false
@@ -127,12 +128,25 @@ async function carregarBiblioteca() {
     return;
   }
 
+  // Rótulos de acesso exibidos ao leitor
+  const labelAcesso = {
+    gratuito:    'Gratuito',
+    compra:      'Adquirido',
+    assinatura:  'Assinante',
+    amostra:     'Amostra · 10%',
+  };
+
   grade.innerHTML = d.livros.map(l => {
     const pct     = parseFloat(l.percentual || 0);
     const concl   = l.concluido === '1' || l.concluido === 1;
+    const isAmostra = l.acesso === 'amostra';
+
     const badgeHtml = concl
       ? `<span class="ts-badge ts-badge-concl">✓ Lido</span>`
-      : (l.novo == '1' ? `<span class="ts-badge ts-badge-novo">Novo</span>` : '');
+      : isAmostra
+        ? `<span class="ts-badge ts-badge-amostra">Amostra</span>`
+        : (l.novo == '1' ? `<span class="ts-badge ts-badge-novo">Novo</span>` : '');
+
     const capaHtml = l.capa_img
       ? `<img src="../${esc(l.capa_img)}" alt="${esc(l.titulo)}" class="ts-card-capa" loading="lazy"
               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
@@ -143,7 +157,11 @@ async function carregarBiblioteca() {
         <span class="ts-prog-txt">${Math.round(pct)}% lido</span>
       </div>` : '';
 
-    return `<div class="ts-card" role="button" tabindex="0"
+    const tipoLabel = l.tipo === 'conto' ? 'Conto' : 'Livro';
+    const acessoLabel = labelAcesso[l.acesso] || l.acesso;
+    const ctaLabel = pct > 0 ? 'Continuar leitura' : (isAmostra ? 'Ler amostra' : 'Começar a ler');
+
+    return `<div class="ts-card${isAmostra ? ' ts-card-amostra' : ''}" role="button" tabindex="0"
                  data-slug="${esc(l.slug)}" data-titulo="${esc(l.titulo)}"
                  onclick="abrirLivro('${esc(l.slug)}')"
                  onkeydown="if(event.key==='Enter')abrirLivro('${esc(l.slug)}')">
@@ -155,11 +173,11 @@ async function carregarBiblioteca() {
         </div>
       </div>
       <div class="ts-card-corpo">
-        <span class="ts-card-tipo">${l.tipo === 'conto' ? 'Conto' : 'Livro'} · ${esc(l.acesso)}</span>
+        <span class="ts-card-tipo">${tipoLabel} · ${esc(acessoLabel)}</span>
         <h2 class="ts-card-titulo">${esc(l.titulo)}</h2>
         ${progHtml}
       </div>
-      <div class="ts-card-continuar">${pct > 0 ? 'Continuar leitura' : 'Começar a ler'}</div>
+      <div class="ts-card-continuar">${ctaLabel}</div>
     </div>`;
   }).join('');
 }
@@ -179,6 +197,17 @@ async function abrirLivro(slug) {
   L.modoAmostra   = (d.tipo === 'amostra');
   L.limiteAmostra = d.percentual_max || 10;
   L.paywallAtivo  = false;
+
+  // Restaurar scroll (pode ter sido bloqueado por paywall em livro anterior)
+  _desbloquearScroll();
+
+  // Restaurar controles de navegação (podem ter sido desabilitados por paywall anterior)
+  const btnAnt = document.getElementById('btnAnterior');
+  const btnPrx = document.getElementById('btnProximo');
+  const selCap = document.getElementById('seletorCapitulo');
+  if (btnAnt) { btnAnt.disabled = false; btnAnt.title = 'Capítulo anterior'; }
+  if (btnPrx) { btnPrx.disabled = false; btnPrx.title = 'Próximo capítulo'; }
+  if (selCap) selCap.disabled = false;
 
   document.getElementById('lhTitulo').textContent = d.livro.titulo;
   document.getElementById('page-title').textContent = d.livro.titulo + ' | Leitor | Robério Diógenes';
@@ -251,6 +280,11 @@ async function iniciarEpub(slug, cfiInicial) {
 
     await L.book.ready;
 
+    // Gera posições para calcular percentual correto no evento 'relocated'.
+    // Async — não bloqueia a renderização; quando terminar, 'relocated' passa a
+    // ter location.start.percentage preciso (0–1 do livro inteiro).
+    L.book.locations.generate(1024).catch(() => {});
+
     // Preencher seletor de capítulos
     preencherSeletorCapitulos();
 
@@ -266,7 +300,17 @@ async function iniciarEpub(slug, cfiInicial) {
     L.rendition.on('relocated', location => {
       L.cfiAtual      = location.start.cfi;
       L.capituloAtual = location.start.href;
-      L.pctAtual      = parseFloat((location.start.percentage * 100).toFixed(1));
+
+      // location.start.percentage só fica disponível após locations.generate().
+      // Enquanto isso (ou se falhar), estima pelo índice do capítulo no spine.
+      const rawPct = location.start.percentage;
+      if (rawPct !== undefined && rawPct !== null && !isNaN(rawPct)) {
+        L.pctAtual = Math.min(100, parseFloat((rawPct * 100).toFixed(1)));
+      } else {
+        const idx   = location.start.index ?? 0;
+        const total = L.book?.spine?.length || 1;
+        L.pctAtual  = Math.min(100, parseFloat(((idx / total) * 100).toFixed(1)));
+      }
 
       atualizarBarraProgresso(L.pctAtual);
       atualizarCapituloHeader(location.start.href);
@@ -352,6 +396,8 @@ function atualizarCapituloHeader(href) {
 }
 
 function atualizarBotoesNav() {
+  // Não reabilitar botões enquanto paywall estiver ativo
+  if (L.modoAmostra && L.paywallAtivo) return;
   const btnAnt = document.getElementById('btnAnterior');
   const btnPrx = document.getElementById('btnProximo');
   if (!L.book || !btnAnt || !btnPrx) return;
@@ -364,10 +410,12 @@ function atualizarBotoesNav() {
 /* ══ NAVEGAÇÃO ═════════════════════════════════════════════════ */
 async function anteriorCapitulo() {
   if (!L.rendition) return;
+  if (L.modoAmostra && L.paywallAtivo) return; // bloqueado pelo paywall
   try { await L.rendition.prev(); } catch(e){}
 }
 async function proximoCapitulo() {
   if (!L.rendition) return;
+  if (L.modoAmostra && L.paywallAtivo) { exibirPaywall(); return; } // bloqueado pelo paywall
   // Se chegou ao fim → modal de conclusão
   const spine = L.book?.spine;
   const idx   = spine?.get(L.capituloAtual)?.index ?? 0;
@@ -380,6 +428,7 @@ async function proximoCapitulo() {
 document.getElementById('btnAnterior')?.addEventListener('click', anteriorCapitulo);
 document.getElementById('btnProximo')?.addEventListener('click', proximoCapitulo);
 document.getElementById('seletorCapitulo')?.addEventListener('change', e => {
+  if (L.modoAmostra && L.paywallAtivo) return; // bloqueado pelo paywall
   L.rendition?.display(e.target.value);
 });
 
@@ -994,41 +1043,66 @@ window.addEventListener('beforeunload', () => {
    container para calcular progresso e disparar conquistas.
    ═══════════════════════════════════════════════════════════════ */
 function setupScrollProgressTracker() {
-  // O container que realmente faz o scroll é o #leitorMain (overflow-y:auto)
-  const container = document.getElementById('leitorMain');
-  if (!container) return;
+  // epub.js em modo continuous pode fazer o scroll acontecer em #epubViewer
+  // (o container que ele gerencia) em vez de #leitorMain. Escutamos ambos —
+  // o que realmente tiver scrollHeight > clientHeight será o container ativo.
+  ['leitorMain', 'epubViewer'].forEach(id => {
+    const container = document.getElementById(id);
+    if (!container) return;
 
-  let tid;
-  container.addEventListener('scroll', () => {
-    clearTimeout(tid);
-    tid = setTimeout(() => {
-      const scrolled = container.scrollTop;
-      const total    = container.scrollHeight - container.clientHeight;
-      if (total < 10) return; // ainda carregando
+    let tid;
+    container.addEventListener('scroll', () => {
+      clearTimeout(tid);
+      tid = setTimeout(() => {
+        const scrolled = container.scrollTop;
+        const total    = container.scrollHeight - container.clientHeight;
+        if (total < 10) return; // sem conteúdo suficiente ainda
 
-      const pct = Math.min(100, parseFloat(((scrolled / total) * 100).toFixed(1)));
-      if (Math.abs(pct - L.pctAtual) < 0.5) return; // ignorar micro-variações
+        const pct = Math.min(100, parseFloat(((scrolled / total) * 100).toFixed(1)));
+        if (Math.abs(pct - L.pctAtual) < 0.5) return; // ignorar micro-variações
 
-      L.pctAtual = pct;
-      atualizarBarraProgresso(pct);
-      verificarConquistasLocal(pct);
+        L.pctAtual = pct;
+        atualizarBarraProgresso(pct);
+        verificarConquistasLocal(pct);
 
-      // Verificar paywall de amostra
-      if (L.modoAmostra && !L.paywallAtivo && pct >= L.limiteAmostra) {
-        exibirPaywall();
-      }
-    }, 250);
-  }, { passive: true });
+        if (L.modoAmostra && !L.paywallAtivo && pct >= L.limiteAmostra) {
+          exibirPaywall();
+        }
+      }, 250);
+    }, { passive: true });
+  });
 }
 
 /* ══ PAYWALL DE AMOSTRA (10%) ══════════════════════════════════ */
+function _bloquearScroll() {
+  ['leitorMain', 'epubViewer'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.overflowY = 'hidden';
+  });
+  // Bloquear scroll interno dos iframes do epub.js
+  document.querySelectorAll('#epubViewer iframe').forEach(f => {
+    try {
+      f.contentDocument.documentElement.style.overflow = 'hidden';
+      f.contentDocument.body.style.overflow            = 'hidden';
+    } catch(e) {}
+  });
+}
+function _desbloquearScroll() {
+  ['leitorMain', 'epubViewer'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.overflowY = '';
+  });
+}
+
 function exibirPaywall() {
   L.paywallAtivo = true;
 
-  // Desabilitar scroll do conteúdo
+  // Bloquear todo o scroll (container e iframes internos)
+  _bloquearScroll();
+
+  // Adicionar blur/pointer-events ao conteúdo epub
   if (L.rendition) {
     try {
-      // Adicionar CSS de blur no iframe para "esconder" o conteúdo abaixo
       L.rendition.themes.override('body', {
         'filter': 'blur(5px) !important',
         'user-select': 'none !important',
@@ -1063,6 +1137,14 @@ function exibirPaywall() {
   const overlay = document.getElementById('paywallOverlay');
   if (overlay) overlay.style.display = 'flex';
 
+  // Desabilitar controles de navegação (não podem avançar/voltar/pular capítulo)
+  const btnAnt = document.getElementById('btnAnterior');
+  const btnPrx = document.getElementById('btnProximo');
+  const selCap = document.getElementById('seletorCapitulo');
+  if (btnAnt) { btnAnt.disabled = true; btnAnt.title = 'Adquira o livro para continuar lendo'; }
+  if (btnPrx) { btnPrx.disabled = true; btnPrx.title = 'Adquira o livro para continuar lendo'; }
+  if (selCap) { selCap.disabled = true; }
+
   // Salvar progresso antes de bloquear
   salvarProgresso();
 }
@@ -1080,9 +1162,18 @@ function voltarBibliotecaPaywall() {
   clearInterval(L.autoSaveTimer);
   if (L.rendition) { try { L.rendition.destroy(); } catch(e){} }
   if (L.book)      { try { L.book.destroy();      } catch(e){} }
+  // Restaurar scroll antes de destruir os iframes
+  _desbloquearScroll();
   document.getElementById('paywallOverlay').style.display = 'none';
   document.getElementById('telaLeitor').style.display  = 'none';
   document.getElementById('telaSelecao').style.display = 'flex';
+  // Restaurar controles de navegação para o próximo livro
+  const btnAnt = document.getElementById('btnAnterior');
+  const btnPrx = document.getElementById('btnProximo');
+  const selCap = document.getElementById('seletorCapitulo');
+  if (btnAnt) { btnAnt.disabled = false; btnAnt.title = 'Capítulo anterior'; }
+  if (btnPrx) { btnPrx.disabled = false; btnPrx.title = 'Próximo capítulo'; }
+  if (selCap) selCap.disabled = false;
   carregarBiblioteca();
 }
 

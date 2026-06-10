@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../backend/config.php';
 iniciarSessao();
 
 $pdo     = db();
-$usuario = $_SESSION['usuario'] ?? null;
+$usuario = getUsuarioSessao();
 $acao    = trim($_GET['acao'] ?? '');
 
 function jRk(array $d): void { ob_end_clean(); header('Content-Type: application/json; charset=utf-8'); echo json_encode($d, JSON_UNESCAPED_UNICODE); exit; }

@@ -10,7 +10,7 @@ ob_start();
 require_once __DIR__ . '/../../backend/config.php';
 iniciarSessao();
 
-$usuario = $_SESSION['usuario'] ?? null;
+$usuario = getUsuarioSessao();
 if (!$usuario) { ob_end_clean(); http_response_code(401); header('Content-Type: application/json; charset=utf-8'); echo json_encode(['ok'=>false,'erro'=>'Login necessário.']); exit; }
 
 $pdo  = db();

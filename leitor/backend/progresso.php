@@ -9,7 +9,8 @@ ob_start();
 require_once __DIR__ . '/../../backend/config.php';
 iniciarSessao();
 
-$usuario = $_SESSION['usuario'] ?? null;
+// Compatível com sessões antigas (usuario_id) e novas (array usuario)
+$usuario = getUsuarioSessao();
 if (!$usuario) {
     ob_end_clean(); http_response_code(401);
     header('Content-Type: application/json; charset=utf-8');

@@ -142,6 +142,10 @@ body { font-family: var(--fonte-sans); background: var(--fundo); color: var(--te
 }
 .ts-badge-novo    { background: var(--ferrugem); color: #fff; }
 .ts-badge-concl   { background: var(--ouro);     color: #1A0F00; }
+.ts-badge-amostra { background: rgba(92,79,58,.75); color: #FAF7F2; }
+/* Cards amostra levemente diferenciados */
+.ts-card-amostra  { opacity: .9; }
+.ts-card-amostra:hover { opacity: 1; }
 
 /* Botão continuar sobreposto */
 .ts-card-continuar {
@@ -461,7 +465,7 @@ body.tema-escuro .foco-baixo { background: rgba(0,0,0,.7); }
 
 /* ── PAYWALL AMOSTRA (10%) ────────────────────────────────────── */
 #paywallOverlay {
-  position: absolute; inset: 0; z-index: 80;
+  position: fixed; inset: 0; z-index: 80;
   display: flex; align-items: center; justify-content: center;
   padding: 1.5rem;
   /* Gradiente que vai de transparente (topo) para sólido (base) */

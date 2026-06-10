@@ -15,7 +15,9 @@ iniciarSessao();
 
 $acao    = trim($_GET['acao'] ?? '');
 $slug    = preg_replace('/[^a-z0-9_-]/', '', trim($_GET['slug'] ?? ''));
-$usuario = $_SESSION['usuario'] ?? null;
+
+// Compatível com sessões antigas (usuario_id) e novas (array usuario)
+$usuario = getUsuarioSessao();
 
 function jsonR(array $d): void {
     ob_end_clean();
@@ -86,38 +88,126 @@ if ($acao === 'servir') {
 if ($acao === 'minha_biblioteca') {
     if (!$usuario) jsonR(['ok' => true, 'livros' => []]);
     $uid = (int)$usuario['id'];
-    $campos = "slug, titulo, tipo, capa_img, tempo_leitura, total_capitulos";
-    $stG = $pdo->query("SELECT $campos, 'gratuito' AS acesso, NULL AS expira_em FROM livros WHERE gratuito=1 AND ativo=1 ORDER BY ordem");
-    $gratuitos = $stG->fetchAll(PDO::FETCH_ASSOC);
-    $stC = $pdo->prepare("SELECT l.$campos, 'compra' AS acesso, NULL AS expira_em FROM compras c JOIN livros l ON l.slug=c.livro_slug WHERE c.usuario_id=? AND c.status='aprovada' AND l.ativo=1");
-    $stC->execute([$uid]); $comprados = $stC->fetchAll(PDO::FETCH_ASSOC);
-    $stA = $pdo->prepare("SELECT expira_em FROM assinaturas WHERE usuario_id=? AND status='ativa' AND expira_em>NOW() ORDER BY expira_em DESC LIMIT 1");
-    $stA->execute([$uid]); $ass = $stA->fetch(PDO::FETCH_ASSOC);
-    $assinatura = [];
-    if ($ass) {
-        $stL = $pdo->query("SELECT $campos, 'assinatura' AS acesso FROM livros WHERE ativo=1 ORDER BY ordem");
-        $todos = $stL->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($todos as &$l) { $l['expira_em'] = $ass['expira_em']; }
-        $assinatura = $todos;
-    }
-    $mapa = [];
-    foreach (array_merge($gratuitos, $comprados, $assinatura) as $l) { $mapa[$l['slug']] = $l; }
-    if ($mapa) {
-        $slugs = array_keys($mapa); $ph = implode(',', array_fill(0, count($slugs), '?'));
-        $stP = $pdo->prepare("SELECT livro_slug,percentual,cfi,ultima_leitura,concluido FROM leitor_progresso WHERE usuario_id=? AND livro_slug IN ($ph)");
-        $stP->execute(array_merge([$uid], $slugs));
-        foreach ($stP->fetchAll(PDO::FETCH_ASSOC) as $p) {
-            if (isset($mapa[$p['livro_slug']])) {
-                $mapa[$p['livro_slug']] = array_merge($mapa[$p['livro_slug']], [
-                    'percentual'    => $p['percentual'],
-                    'cfi'           => $p['cfi'],
-                    'ultima_leitura'=> $p['ultima_leitura'],
-                    'concluido'     => $p['concluido'],
-                ]);
+
+    // Apenas campos garantidamente presentes em qualquer versão do schema
+    $campos = "slug, titulo, tipo, capa_img";
+
+    try {
+        // 1) Obras gratuitas — visíveis para qualquer usuário logado
+        $stG = $pdo->query(
+            "SELECT $campos, 'gratuito' AS acesso, NULL AS expira_em
+             FROM livros WHERE gratuito=1 AND ativo=1 ORDER BY ordem"
+        );
+        $gratuitos = $stG->fetchAll(PDO::FETCH_ASSOC);
+
+        // 2) Obras compradas avulsas
+        $stC = $pdo->prepare(
+            "SELECT l.$campos, 'compra' AS acesso, NULL AS expira_em
+             FROM compras c JOIN livros l ON l.slug = c.livro_slug
+             WHERE c.usuario_id=? AND c.status='aprovada' AND l.ativo=1"
+        );
+        $stC->execute([$uid]);
+        $comprados = $stC->fetchAll(PDO::FETCH_ASSOC);
+
+        // 3) Se tem assinatura ativa → todas as obras
+        $stA = $pdo->prepare(
+            "SELECT expira_em FROM assinaturas
+             WHERE usuario_id=? AND status='ativa' AND expira_em>NOW()
+             ORDER BY expira_em DESC LIMIT 1"
+        );
+        $stA->execute([$uid]);
+        $ass = $stA->fetch(PDO::FETCH_ASSOC);
+        $assinatura = [];
+        if ($ass) {
+            $stL = $pdo->query(
+                "SELECT $campos, 'assinatura' AS acesso FROM livros WHERE ativo=1 ORDER BY ordem"
+            );
+            $todos = $stL->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($todos as &$l) { $l['expira_em'] = $ass['expira_em']; }
+            $assinatura = $todos;
+        }
+
+        // Para usuários sem assinatura: livros pagos não comprados → amostra (10%)
+        $amostras = [];
+        if (!$ass) {
+            $slugsJaTem = array_merge(
+                array_column($gratuitos, 'slug'),
+                array_column($comprados, 'slug')
+            );
+            if ($slugsJaTem) {
+                $phExcl = implode(',', array_fill(0, count($slugsJaTem), '?'));
+                $stAm = $pdo->prepare(
+                    "SELECT $campos, 'amostra' AS acesso, NULL AS expira_em
+                     FROM livros WHERE ativo=1 AND gratuito=0
+                       AND slug NOT IN ($phExcl) ORDER BY ordem"
+                );
+                $stAm->execute($slugsJaTem);
+            } else {
+                $stAm = $pdo->query(
+                    "SELECT $campos, 'amostra' AS acesso, NULL AS expira_em
+                     FROM livros WHERE ativo=1 AND gratuito=0 ORDER BY ordem"
+                );
+            }
+            $amostras = $stAm->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        // Monta mapa único — prioridade: assinatura > compra > gratuito > amostra
+        $mapa = [];
+        foreach (array_merge($amostras, $gratuitos, $comprados, $assinatura) as $l) {
+            $mapa[$l['slug']] = $l;
+        }
+
+        // Adiciona progresso de leitura salvo
+        if ($mapa) {
+            $slugs = array_keys($mapa);
+            $ph    = implode(',', array_fill(0, count($slugs), '?'));
+            try {
+                // Tenta com cfi (schema v2 do leitor)
+                $stP = $pdo->prepare(
+                    "SELECT livro_slug, percentual, cfi, ultima_leitura, concluido
+                     FROM leitor_progresso WHERE usuario_id=? AND livro_slug IN ($ph)"
+                );
+                $stP->execute(array_merge([$uid], $slugs));
+                foreach ($stP->fetchAll(PDO::FETCH_ASSOC) as $p) {
+                    if (isset($mapa[$p['livro_slug']])) {
+                        $mapa[$p['livro_slug']] = array_merge($mapa[$p['livro_slug']], [
+                            'percentual'    => $p['percentual'],
+                            'cfi'           => $p['cfi'] ?? null,
+                            'ultima_leitura'=> $p['ultima_leitura'],
+                            'concluido'     => $p['concluido'],
+                        ]);
+                    }
+                }
+            } catch (PDOException $ep) {
+                // Schema sem cfi → tenta versão simples
+                try {
+                    $stP2 = $pdo->prepare(
+                        "SELECT livro_slug, percentual, ultima_leitura, concluido
+                         FROM leitor_progresso WHERE usuario_id=? AND livro_slug IN ($ph)"
+                    );
+                    $stP2->execute(array_merge([$uid], $slugs));
+                    foreach ($stP2->fetchAll(PDO::FETCH_ASSOC) as $p) {
+                        if (isset($mapa[$p['livro_slug']])) {
+                            $mapa[$p['livro_slug']] = array_merge($mapa[$p['livro_slug']], [
+                                'percentual'    => $p['percentual'],
+                                'ultima_leitura'=> $p['ultima_leitura'],
+                                'concluido'     => $p['concluido'],
+                            ]);
+                        }
+                    }
+                } catch (PDOException $ep2) { /* sem progresso salvo */ }
             }
         }
+
+        jsonR([
+            'ok'               => true,
+            'livros'           => array_values($mapa),
+            'assinatura_expira'=> $ass['expira_em'] ?? null,
+        ]);
+
+    } catch (PDOException $e) {
+        jsonR(['ok' => false, 'erro' => 'Erro ao carregar biblioteca: ' . $e->getMessage()]);
     }
-    jsonR(['ok' => true, 'livros' => array_values($mapa), 'assinatura_expira' => $ass['expira_em'] ?? null]);
 }
 
 jsonR(['ok' => false, 'erro' => 'Ação desconhecida.']);
