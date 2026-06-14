@@ -1,4 +1,4 @@
 Options -Indexes
-<FilesMatch "^(?!(login|logout|index|usuarios|assinaturas|compras|livros|blog|marketing|comentarios|bio|_admin|enquetes|clusters|pre-lancamento|crons|push|configuracoes)\.php$)">
+<FilesMatch "^(?!(login|logout|index|usuarios|assinaturas|compras|livros|blog|marketing|comentarios|bio|_admin|enquetes|clusters|pre-lancamento|crons|push|configuracoes|erros)\.php$)">
     Require all denied
 </FilesMatch>

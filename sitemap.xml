@@ -47,70 +47,71 @@
     <priority>0.75</priority>
   </url>
 
-  <!-- ═══ BLOG — rich snippets e visitas orgânicas ══════════════ -->
+  <!-- ═══ BLOG — Cluster H. G. Wells ══════════════════════════ -->
+  <!-- PILAR -->
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/post-01.html</loc>
+    <loc>https://www.roberiodiogenes.com/blog/h-g-wells-guia-definitivo.html</loc>
+    <lastmod>2025-06-01</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.90</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/post-bastidores-setima-lei.jpg</image:loc>
-      <image:title>Bastidores de A Sétima Lei</image:title>
+      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-pilar.webp</image:loc>
+      <image:title>H. G. Wells: O Homem Que Imaginou o Futuro</image:title>
     </image:image>
   </url>
+  <!-- RESENHAS -->
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/post-02.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-    <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/post-silencio.jpg</image:loc>
-      <image:title>O peso do silêncio entre duas pessoas que se amaram</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://www.roberiodiogenes.com/blog/post-03.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-    <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/post-escritor.jpg</image:loc>
-      <image:title>Por que escrevo sobre dor</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://www.roberiodiogenes.com/blog/post-04.html</loc>
+    <loc>https://www.roberiodiogenes.com/blog/a-maquina-do-tempo-resenha.html</loc>
+    <lastmod>2025-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/post-cidade.jpg</image:loc>
-      <image:title>23h47 em Cascavel — onde as histórias nascem</image:title>
+      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-maquina-tempo.webp</image:loc>
+      <image:title>Resenha: A Máquina do Tempo — H. G. Wells</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/post-05.html</loc>
+    <loc>https://www.roberiodiogenes.com/blog/o-homem-invisivel-resenha.html</loc>
+    <lastmod>2025-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/post-horror.jpg</image:loc>
-      <image:title>Bastidores de O Abismo das Almas</image:title>
+      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-homem-invisivel.webp</image:loc>
+      <image:title>Resenha: O Homem Invisível — H. G. Wells</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/post-06.html</loc>
+    <loc>https://www.roberiodiogenes.com/blog/o-dorminhoco-resenha.html</loc>
+    <lastmod>2025-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/post-lumen.jpg</image:loc>
-      <image:title>O labirinto de Lúmen</image:title>
+      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-dorminhoco.webp</image:loc>
+      <image:title>Resenha: O Dorminhoco — H. G. Wells</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/post-07.html</loc>
+    <loc>https://www.roberiodiogenes.com/blog/a-ilha-do-dr-moreau-resenha.html</loc>
+    <lastmod>2025-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/post-solidao.jpg</image:loc>
-      <image:title>Sobre a solidão que produz</image:title>
+      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-dr-moreau.webp</image:loc>
+      <image:title>Resenha: A Ilha do Dr. Moreau — H. G. Wells</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://www.roberiodiogenes.com/blog/a-guerra-dos-mundos-resenha.html</loc>
+    <lastmod>2025-06-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-guerra-mundos.webp</image:loc>
+      <image:title>Resenha: A Guerra dos Mundos — H. G. Wells</image:title>
+    </image:image>
+  </url>
+  <!-- post-01 a post-11 foram substituídos por redirects para /blog.html —
+       removidos do sitemap para evitar indexação de páginas redirect -->
 
   <!-- ═══ LIVROS — prioridade alta para SEO ═════════════════════ -->
   <url>

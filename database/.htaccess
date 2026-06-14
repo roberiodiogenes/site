@@ -1,0 +1,11 @@
+# ================================================================
+# ROBÉRIO DIÓGENES — /database/.htaccess
+# Bloqueia acesso direto a arquivos SQL pelo navegador.
+# ================================================================
+
+Options -Indexes
+
+<FilesMatch "\.(sql|bak|backup|sh)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>

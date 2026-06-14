@@ -41,10 +41,9 @@ $stAb = $pdo->query(
        AND lp.ultima_leitura < DATE_SUB(NOW(), INTERVAL 14 DAY)
        AND u.ativo = 1
        AND NOT EXISTS (
-         SELECT 1 FROM leitor_lembretes ll
+         SELECT 1 FROM leitor_lembretes_enviados ll
          WHERE ll.usuario_id = lp.usuario_id
            AND ll.livro_slug = lp.livro_slug
-           AND ll.tipo = 'email'
            AND ll.enviado_em > DATE_SUB(NOW(), INTERVAL 30 DAY)
        )"
 );
@@ -90,7 +89,9 @@ foreach ($abandonados as $item) {
 
     if ($ok) {
         $pdo->prepare(
-            "INSERT INTO leitor_lembretes (usuario_id, livro_slug, tipo) VALUES (?, ?, 'email')"
+            "INSERT INTO leitor_lembretes_enviados (usuario_id, livro_slug)
+             VALUES (?, ?)
+             ON DUPLICATE KEY UPDATE enviado_em = NOW()"
         )->execute([$item['usuario_id'], $slug]);
         $log[] = "OK: {$item['email']} — {$item['titulo']} ({$pct}%)";
     } else {

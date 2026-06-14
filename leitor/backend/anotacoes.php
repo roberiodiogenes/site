@@ -22,20 +22,25 @@ $slug = preg_replace('/[^a-z0-9_-]/', '', trim($_GET['slug'] ?? $body['slug'] ??
 function jA(array $d): void { ob_end_clean(); header('Content-Type: application/json; charset=utf-8'); echo json_encode($d, JSON_UNESCAPED_UNICODE); exit; }
 
 if ($acao === 'listar') {
-    $st = $pdo->prepare("SELECT * FROM leitor_anotacoes WHERE usuario_id=? AND livro_slug=? ORDER BY criado_em");
+    // Mapeia colunas do BD para os nomes que o JS espera
+    $st = $pdo->prepare(
+        "SELECT id, usuario_id, livro_slug,
+                capitulo AS cfi, '' AS cfi_range, '' AS trecho,
+                texto AS anotacao, cor, criado_em, atualizado_em
+         FROM leitor_anotacoes
+         WHERE usuario_id=? AND livro_slug=? ORDER BY criado_em"
+    );
     $st->execute([$uid, $slug]);
     jA(['ok' => true, 'anotacoes' => $st->fetchAll(PDO::FETCH_ASSOC)]);
 }
 
 if ($acao === 'criar') {
-    $cfi      = trim($body['cfi']       ?? '');
-    $cfiRange = trim($body['cfi_range'] ?? '');
-    $trecho   = trim($body['trecho']    ?? '');
-    $texto    = trim($body['anotacao']  ?? '');
-    $cor      = preg_match('/^#[0-9A-Fa-f]{6}$/', $body['cor'] ?? '') ? $body['cor'] : '#FFD700';
+    $cfi   = trim($body['cfi']      ?? '');
+    $texto = trim($body['anotacao'] ?? '');
+    $cor   = preg_match('/^#[0-9A-Fa-f]{6}$/', $body['cor'] ?? '') ? $body['cor'] : '#FFD700';
     if (!$texto || !$slug) jA(['ok' => false, 'erro' => 'Texto e slug obrigatórios.']);
-    $pdo->prepare("INSERT INTO leitor_anotacoes (usuario_id,livro_slug,cfi,cfi_range,trecho,anotacao,cor) VALUES(?,?,?,?,?,?,?)")
-        ->execute([$uid,$slug,$cfi,$cfiRange,$trecho,$texto,$cor]);
+    $pdo->prepare("INSERT INTO leitor_anotacoes (usuario_id, livro_slug, capitulo, texto, cor) VALUES(?,?,?,?,?)")
+        ->execute([$uid, $slug, $cfi, $texto, $cor]);
     jA(['ok' => true, 'id' => (int)$pdo->lastInsertId()]);
 }
 
@@ -43,7 +48,7 @@ if ($acao === 'editar') {
     $id    = (int)($body['id'] ?? 0);
     $texto = trim($body['anotacao'] ?? '');
     if (!$id || !$texto) jA(['ok' => false, 'erro' => 'ID e texto obrigatórios.']);
-    $pdo->prepare("UPDATE leitor_anotacoes SET anotacao=? WHERE id=? AND usuario_id=?")->execute([$texto,$id,$uid]);
+    $pdo->prepare("UPDATE leitor_anotacoes SET texto=? WHERE id=? AND usuario_id=?")->execute([$texto,$id,$uid]);
     jA(['ok' => true]);
 }
 

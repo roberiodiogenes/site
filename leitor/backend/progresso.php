@@ -34,7 +34,14 @@ if ($acao === 'carregar' && $slug) {
     // Carregar preferências
     $stPref = $pdo->prepare("SELECT * FROM leitor_preferencias WHERE usuario_id=? LIMIT 1");
     $stPref->execute([$uid]);
-    $pref = $stPref->fetch(PDO::FETCH_ASSOC) ?: ['fonte'=>'serifada','tamanho'=>18,'espacamento'=>1.8,'largura'=>'media','tema'=>'claro'];
+    $rawPref = $stPref->fetch(PDO::FETCH_ASSOC);
+    $pref = $rawPref ? [
+        'fonte'       => $rawPref['fonte']           ?? 'serifada',
+        'tamanho'     => (int)($rawPref['tamanho_fonte'] ?? 18),
+        'espacamento' => (float)($rawPref['altura_linha'] ?? 1.8),
+        'largura'     => $rawPref['largura_coluna']  ?? 'media',
+        'tema'        => $rawPref['fundo_leitura']   ?? 'claro',
+    ] : ['fonte'=>'serifada','tamanho'=>18,'espacamento'=>1.8,'largura'=>'media','tema'=>'claro'];
 
     jR(['ok' => true, 'progresso' => $prog, 'preferencias' => $pref]);
 }
@@ -47,15 +54,14 @@ if ($acao === 'salvar') {
     $tempo_min  = max(0, (int)($body['tempo_min'] ?? 0));
 
     $pdo->prepare(
-        "INSERT INTO leitor_progresso (usuario_id, livro_slug, cfi, percentual, capitulo_atual, tempo_total_min)
-         VALUES (?, ?, ?, ?, ?, ?)
+        "INSERT INTO leitor_progresso (usuario_id, livro_slug, cfi, percentual, tempo_total_min)
+         VALUES (?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
-           cfi           = VALUES(cfi),
-           percentual    = GREATEST(percentual, VALUES(percentual)),
-           capitulo_atual= VALUES(capitulo_atual),
+           cfi             = VALUES(cfi),
+           percentual      = GREATEST(percentual, VALUES(percentual)),
            tempo_total_min = tempo_total_min + VALUES(tempo_total_min),
-           ultima_leitura = NOW()"
-    )->execute([$uid, $slug, $cfi, $percentual, $capitulo, $tempo_min]);
+           ultima_leitura  = NOW()"
+    )->execute([$uid, $slug, $cfi, $percentual, $tempo_min]);
 
     // Verificar conquistas
     verificarConquistas($pdo, $uid, $slug, $percentual);
@@ -90,10 +96,10 @@ if ($acao === 'salvar_preferencias') {
     $tema       = in_array($body['tema'] ?? '', ['claro','sepia','escuro']) ? $body['tema'] : 'claro';
 
     $pdo->prepare(
-        "INSERT INTO leitor_preferencias (usuario_id, fonte, tamanho, espacamento, largura, tema)
+        "INSERT INTO leitor_preferencias (usuario_id, fonte, tamanho_fonte, altura_linha, largura_coluna, fundo_leitura)
          VALUES (?,?,?,?,?,?)
-         ON DUPLICATE KEY UPDATE fonte=VALUES(fonte), tamanho=VALUES(tamanho),
-           espacamento=VALUES(espacamento), largura=VALUES(largura), tema=VALUES(tema)"
+         ON DUPLICATE KEY UPDATE fonte=VALUES(fonte), tamanho_fonte=VALUES(tamanho_fonte),
+           altura_linha=VALUES(altura_linha), largura_coluna=VALUES(largura_coluna), fundo_leitura=VALUES(fundo_leitura)"
     )->execute([$uid, $fonte, $tamanho, $espacamento, $largura, $tema]);
 
     jR(['ok' => true]);

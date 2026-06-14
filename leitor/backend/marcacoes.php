@@ -29,9 +29,9 @@ if ($acao === 'criar') {
     $cfiRange = trim($body['cfi_range'] ?? '');
     $trecho   = trim($body['trecho']    ?? '');
     $cor      = in_array($body['cor']??'', ['amarelo','verde','azul','rosa','laranja']) ? $body['cor'] : 'amarelo';
-    if (!$cfiRange || !$trecho || !$slug) jM(['ok'=>false,'erro'=>'Dados incompletos.']);
-    $pdo->prepare("INSERT INTO leitor_marcacoes (usuario_id,livro_slug,cfi_range,trecho,cor) VALUES(?,?,?,?,?)")
-        ->execute([$uid,$slug,$cfiRange,$trecho,$cor]);
+    if (!$trecho || !$slug) jM(['ok'=>false,'erro'=>'Dados incompletos.']);
+    $pdo->prepare("INSERT INTO leitor_marcacoes (usuario_id, livro_slug, cfi_range, trecho, cor) VALUES(?,?,?,?,?)")
+        ->execute([$uid, $slug, $cfiRange, $trecho, $cor]);
     jM(['ok' => true, 'id' => (int)$pdo->lastInsertId()]);
 }
 if ($acao === 'excluir') {

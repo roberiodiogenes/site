@@ -278,7 +278,13 @@ async function iniciarEpub(slug, cfiInicial) {
       `,
     });
 
-    await L.book.ready;
+    // Timeout de 20s: epub.js às vezes silencia erros de carregamento
+    await Promise.race([
+      L.book.ready,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Tempo limite atingido. Verifique sua conexão ou tente novamente.')), 20000)
+      ),
+    ]);
 
     // Gera posições para calcular percentual correto no evento 'relocated'.
     // Async — não bloqueia a renderização; quando terminar, 'relocated' passa a
@@ -319,6 +325,15 @@ async function iniciarEpub(slug, cfiInicial) {
 
       // Verificar conquistas localmente
       verificarConquistasLocal(L.pctAtual);
+
+      // Evento de rastreamento de progresso (tracking.js)
+      if (window.RD_progressoLeitura && L.livroAtual) {
+        window.RD_progressoLeitura(
+          L.livroAtual.titulo || '',
+          location.start.href || '',
+          Math.round(L.pctAtual)
+        );
+      }
 
       // Amostra: bloquear ao atingir 10%
       if (L.modoAmostra && !L.paywallAtivo && L.pctAtual >= L.limiteAmostra) {

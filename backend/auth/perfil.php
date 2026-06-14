@@ -77,7 +77,7 @@ try {
     // Contar livros favoritos (tolerante a tabela ausente)
     $total_favoritos = 0;
     try {
-      $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM livros_favoritos WHERE usuario_id = ?");
+      $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM favoritos WHERE usuario_id = ?");
       $stmt->execute([$usuario_id]);
       $total_favoritos = (int) $stmt->fetch()['total'];
     } catch (Exception $e) { /* tabela pode ainda não existir */ }

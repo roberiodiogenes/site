@@ -43,7 +43,7 @@ cd site
 1. Inicie o **XAMPP Control Panel** e ligue **Apache** e **MySQL**
 2. Acesse: http://localhost/phpmyadmin
 3. Clique em **Novo** → Nome: `roberio_site` → Collation: `utf8mb4_unicode_ci` → **Criar**
-4. Selecione `roberio_site` → aba **SQL** → cole o conteúdo de `backend/setup.sql` → **Executar**
+4. Selecione `roberio_site` → aba **SQL** → cole o conteúdo de `database/banco_consolidado.sql` → **Executar**
 
 ### 3.3 Configurar o backend
 
@@ -118,7 +118,7 @@ define('JWT_SECRET', 'FRASE_SECRETA_LONGA_DIFERENTE_DA_LOCAL');
 ### 5.2 Banco de dados no Hostgator
 
 1. cPanel → **Bancos de Dados MySQL** → criar banco + usuário + atribuir todos os privilégios
-2. cPanel → **phpMyAdmin** → selecionar banco → importar `backend/setup.sql`
+2. cPanel → **phpMyAdmin** → selecionar banco → importar `database/banco_consolidado.sql`
 
 ### 5.3 Upload dos arquivos
 
@@ -139,9 +139,13 @@ Atualize também as URIs no Google Console para usar `https://`.
 ### 5.5 Checklist pós-deploy
 
 - [ ] Apagar `backend/diagnostico.php` do servidor
+- [ ] Apagar `backend/teste_api.php` do servidor
 - [ ] Confirmar que `backend/config.php` não está acessível pelo navegador
 - [ ] Testar cadastro, login e newsletter em produção
 - [ ] Verificar HTTPS ativo
+- [ ] Registrar webhook no painel do Mercado Pago
+- [ ] Publicar o container do GTM (salvo mas ainda não publicado)
+- [ ] Ativar crons no cPanel (carrinho abandonado + lembrete de leitura)
 
 ---
 

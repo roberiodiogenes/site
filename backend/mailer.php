@@ -49,29 +49,31 @@ if (AMBIENTE === 'local') {
     define('SMTP_MODO_DEBUG', 0);
     */
 } else {
-    /* Produção — Hostgator SMTP local (mais simples) */
-    define('SMTP_HOST',       'localhost');
+    /* Produção — PHP mail() nativo (sendmail do HostGator, sem autenticação SMTP) */
+    define('SMTP_DRIVER',     'mail');
+    define('SMTP_HOST',       '');
     define('SMTP_PORT',       25);
     define('SMTP_USER',       '');
     define('SMTP_PASS',       '');
     define('SMTP_SEGURO',     '');
     define('SMTP_MODO_DEBUG', 0);
 
-    /* Alternativa produção — SendGrid (recomendado para alta entregabilidade)
-       Crie conta em sendgrid.com, gere API Key e cole aqui:
+    /* SMTP autenticado — reativar quando autenticação cPanel estiver funcionando
+    define('SMTP_DRIVER',     'smtp');
+    define('SMTP_HOST',       'mail.roberiodiogenes.com');
+    define('SMTP_PORT',       465);
+    define('SMTP_USER',       'contato@roberiodiogenes.com');
+    define('SMTP_PASS',       '#pelopes1');
+    define('SMTP_SEGURO',     'ssl');
+    define('SMTP_MODO_DEBUG', 0);
+    */
+
+    /* Alternativa produção — SendGrid (alta entregabilidade, recomendado a longo prazo)
+    define('SMTP_DRIVER',     'smtp');
     define('SMTP_HOST',       'smtp.sendgrid.net');
     define('SMTP_PORT',       587);
     define('SMTP_USER',       'apikey');
     define('SMTP_PASS',       'SUA_API_KEY_SENDGRID');
-    define('SMTP_SEGURO',     'tls');
-    define('SMTP_MODO_DEBUG', 0);
-    */
-
-    /* Alternativa produção — Zoho Mail
-    define('SMTP_HOST',       'smtp.zoho.com');
-    define('SMTP_PORT',       587);
-    define('SMTP_USER',       'contato@roberiodiogenes.com');
-    define('SMTP_PASS',       'SUA_SENHA_ZOHO');
     define('SMTP_SEGURO',     'tls');
     define('SMTP_MODO_DEBUG', 0);
     */
@@ -110,7 +112,7 @@ if (file_exists($autoloadComposer)) {
             return false;
         }
         public static function enviarRecuperacaoSenha(string $email, string $nome, string $link): bool { return false; }
-        public static function enviarBoasVindas(string $email, string $nome): bool { return false; }
+        public static function enviarBoasVindas(string $email, string $nome, string $token = ''): bool { return false; }
         public static function enviarConfirmacaoCompra(string $email, string $nome, string $titulo, float $preco): bool { return false; }
         public static function enviarConfirmacaoAssinatura(string $email, string $nome, string $plano, string $expira): bool { return false; }
         public static function enviarContato(array $dados): bool { return false; }
@@ -132,23 +134,34 @@ class Mailer {
         $mail = new PHPMailer(true);
 
         try {
-            // Servidor SMTP
-            $mail->isSMTP();
-            $mail->Host        = SMTP_HOST;
-            $mail->Port        = SMTP_PORT;
-            $mail->SMTPDebug   = SMTP_MODO_DEBUG;
-            $mail->CharSet     = 'UTF-8';
-            $mail->Encoding    = 'base64';
+            $driver = defined('SMTP_DRIVER') ? SMTP_DRIVER : 'smtp';
 
-            if (SMTP_USER && SMTP_PASS) {
-                $mail->SMTPAuth   = true;
-                $mail->Username   = SMTP_USER;
-                $mail->Password   = SMTP_PASS;
+            if ($driver === 'mail') {
+                // PHP mail() nativo — funciona em shared hosting sem configuração extra
+                $mail->isMail();
+            } else {
+                // SMTP autenticado
+                $mail->isSMTP();
+                $mail->Host      = SMTP_HOST;
+                $mail->Port      = SMTP_PORT;
+                $mail->SMTPDebug = SMTP_MODO_DEBUG;
+
+                if (SMTP_USER && SMTP_PASS) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = SMTP_USER;
+                    $mail->Password = SMTP_PASS;
+                }
+
+                if (SMTP_SEGURO) {
+                    $mail->SMTPSecure = SMTP_SEGURO === 'ssl'
+                        ? PHPMailer::ENCRYPTION_SMTPS
+                        : PHPMailer::ENCRYPTION_STARTTLS;
+                }
             }
 
-            if (SMTP_SEGURO) {
-                $mail->SMTPSecure = SMTP_SEGURO === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
-            }
+            $mail->SMTPDebug = SMTP_MODO_DEBUG;
+            $mail->CharSet   = 'UTF-8';
+            $mail->Encoding  = 'base64';
 
             // Remetente
             $mail->setFrom(MAIL_FROM_EMAIL, MAIL_FROM_NOME);
@@ -198,23 +211,96 @@ class Mailer {
         ]);
     }
 
-    /** Boas-vindas após cadastro */
-    public static function enviarBoasVindas(string $email, string $nome): bool {
+    /** Boas-vindas após cadastro — com presente (conto) e rastreamento */
+    public static function enviarBoasVindas(string $email, string $nome, string $token = ''): bool {
         $primeiroNome = explode(' ', trim($nome))[0];
+        $base         = defined('SITE_URL') ? SITE_URL : 'https://roberiodiogenes.com';
+
+        // Links rastreados via tracker.php (também confirmam o e-mail ao clicar)
+        $linkConto      = $token
+            ? "{$base}/backend/tracker.php?token={$token}&acao=baixar_conto"
+            : "{$base}/backend/tracker.php?acao=baixar_conto";
+        $linkBiblioteca = $token
+            ? "{$base}/backend/tracker.php?token={$token}&acao=visitar_biblioteca"
+            : "{$base}/livros.html";
+
+        $html = "
+<p style='font-size:1rem;line-height:1.75;margin:0 0 1.25em'>
+  Olá, <strong style='color:#2C2418'>{$primeiroNome}</strong>.
+</p>
+<p style='font-size:1rem;line-height:1.75;margin:0 0 1.25em'>
+  Sua conta foi criada. Fico feliz em tê-lo aqui.
+</p>
+<p style='font-size:1rem;line-height:1.75;margin:0 0 1.75em'>
+  Para começar, preparei um presente para você: um conto inédito, disponível agora mesmo.
+</p>
+
+<!-- Card do conto -->
+<table width='100%' cellpadding='0' cellspacing='0' style='margin:0 0 2em'>
+  <tr>
+    <td style='background:#F5F0E8;border-radius:10px;padding:1.75rem 1.5rem;border-left:4px solid #B8860B'>
+      <p style='font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:#8C7D65;margin:0 0 .5em'>
+        Seu presente de boas-vindas
+      </p>
+      <!-- Capa do conto -->
+      <div style='text-align:center;margin-bottom:1.25em'>
+        <img src='{$base}/img/contos/o-colecionador-de-paginas.jpg'
+             alt='O Colecionador de Páginas — conto de Robério Diógenes'
+             width='180'
+             style='width:180px;max-width:100%;height:auto;border-radius:6px;display:block;margin:0 auto;box-shadow:0 4px 16px rgba(0,0,0,.15)'>
+      </div>
+      <p style='font-family:Georgia,\"Times New Roman\",serif;font-size:1.3rem;color:#2C2418;font-weight:bold;margin:0 0 .35em;line-height:1.3'>
+        O Colecionador de Páginas
+      </p>
+      <p style='font-size:.8rem;color:#8C7D65;margin:0 0 1.25em;font-style:italic'>
+        Um conto de Robério Diógenes
+      </p>
+      <p style='font-size:.88rem;color:#4A3728;line-height:1.65;margin:0 0 1.5em'>
+        Um homem que passa a vida inteira guardando livros que nunca leu.
+        Até que chega o dia em que precisa escolher um para abrir.
+      </p>
+      <table cellpadding='0' cellspacing='0'>
+        <tr>
+          <td style='padding-right:.75rem'>
+            <a href='{$linkConto}'
+               style='display:inline-block;background:#B8860B;color:#1A0F00 !important;padding:.65rem 1.4rem;border-radius:5px;text-decoration:none;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;font-family:Arial,sans-serif;font-weight:700'>
+              Baixar o conto →
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<hr style='border:none;border-top:1px solid #E8E0D0;margin:0 0 1.75em'>
+
+<p style='font-size:1rem;line-height:1.75;margin:0 0 1em;color:#4A3728'>
+  Quando terminar, a biblioteca completa está disponível para você explorar.
+</p>
+
+<table width='100%' cellpadding='0' cellspacing='0' style='margin:0 0 2em'>
+  <tr>
+    <td align='center'>
+      <a href='{$linkBiblioteca}'
+         style='display:inline-block;background:transparent;color:#B8860B !important;padding:.65rem 1.6rem;border-radius:5px;border:2px solid #B8860B;text-decoration:none;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;font-family:Arial,sans-serif;font-weight:700'>
+        Explorar a biblioteca
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p style='font-size:.82rem;color:#8C7D65;line-height:1.6;margin:0'>
+  Se tiver qualquer dúvida, basta responder este e-mail. Estou sempre por aqui.
+</p>
+";
+
         return self::enviar([
             'para_email' => $email,
             'para_nome'  => $nome,
-            'assunto'    => 'Bem-vindo à biblioteca de Robério Diógenes',
-            'html'       => "
-                <p>Olá, <strong>{$primeiroNome}</strong>.</p>
-                <p>Sua conta foi criada com sucesso. É um prazer tê-lo aqui.</p>
-                <p>Explore a biblioteca e encontre a próxima história que vai ficar com você por muito tempo.</p>
-                <p style='text-align:center;margin:2rem 0'>
-                  <a href='" . SITE_URL . "/livros.html' class='btn-email'>Explorar a biblioteca</a>
-                </p>
-                <p style='font-size:0.85em;color:#888'>Se tiver dúvidas, responda este e-mail — estou sempre por aqui.</p>
-            ",
-            'texto' => "Olá {$primeiroNome},\n\nSua conta foi criada com sucesso!\n\nExplore a biblioteca em: " . SITE_URL . "/livros.html",
+            'assunto'    => 'Um presente para você — Robério Diógenes',
+            'html'       => $html,
+            'texto'      => "Olá {$primeiroNome},\n\nSua conta foi criada com sucesso!\n\nSeu presente: o conto \"O Colecionador de Páginas\" está disponível em:\n{$linkConto}\n\nExplore a biblioteca em:\n{$linkBiblioteca}\n\nRobério Diógenes",
         ]);
     }
 

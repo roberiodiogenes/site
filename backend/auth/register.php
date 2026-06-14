@@ -62,12 +62,16 @@ if ($stmt->fetch()) {
     responderErro('Este e-mail já está cadastrado. Tente fazer login.');
 }
 
-$hash = password_hash($senha, PASSWORD_BCRYPT, ['cost' => 12]);
-$ip   = getIP();
+$hash  = password_hash($senha, PASSWORD_BCRYPT, ['cost' => 12]);
+$ip    = getIP();
+// base64url (43 chars) em vez de hex (64 chars) — evita acionar regras
+// de injeção SQL do ModSecurity/WAF sem precisar desativá-lo
+$token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
 
 $pdo->prepare(
-    "INSERT INTO usuarios (nome, email, senha, ip_cadastro) VALUES (?, ?, ?, ?)"
-)->execute([$nome, $email, $hash, $ip]);
+    "INSERT INTO usuarios (nome, email, senha, ip_cadastro, token_confirmacao, token_expira_em)
+     VALUES (?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))"
+)->execute([$nome, $email, $hash, $ip, $token]);
 
 $userId = (int) $pdo->lastInsertId();
 
@@ -78,8 +82,8 @@ $_SESSION['usuario_email'] = $email;
 $pdo->prepare("UPDATE usuarios SET ultimo_login = NOW() WHERE id = ?")
     ->execute([$userId]);
 
-// ── E-mail de boas-vindas ──────────────────────────────────── ← NOVO
-Mailer::enviarBoasVindas($email, $nome);
+// ── E-mail de boas-vindas com presente (conto + rastreamento) ──
+Mailer::enviarBoasVindas($email, $nome, $token);
 
 responderOk([
     'mensagem' => 'Cadastro realizado com sucesso! Bem-vindo, ' . $nome . '.',

@@ -1,0 +1,4 @@
+# Bloqueia acesso HTTP direto aos arquivos EPUB.
+# Eles são servidos exclusivamente pelo backend/acesso.php (com autenticação).
+Order Deny,Allow
+Deny from all

@@ -409,6 +409,7 @@ try { $recTotal = $pdo->query("SELECT COALESCE(SUM(preco_pago),0) FROM compras W
             <option value="Ficção Científica">
             <option value="Fantasia">
             <option value="Auto-Ajuda">
+            <option value="Gospel">
             <option value="Poesia">
           </datalist>
         </div>

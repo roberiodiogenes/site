@@ -1,5 +1,5 @@
 # Guia de Instalação — Hostgator
-**roberiodiogenes.com · Versão 5.0 · Junho/2026**
+**roberiodiogenes.com · Versão 6.0 · Junho/2026**
 
 Siga este guia na ordem exata. Cada etapa tem uma verificação de confirmação ao final.
 
@@ -30,13 +30,13 @@ Antes de começar, confirme que você tem acesso a:
 
 1. cPanel → **phpMyAdmin** → clique no banco criado
 2. Aba **SQL**
-3. Clique em "Escolher arquivo" e selecione `database/banco_unificado.sql`  
+3. Clique em "Escolher arquivo" e selecione `database/banco_consolidado.sql`  
    **OU** copie e cole o conteúdo do arquivo e clique em **Executar**
-4. Aguarde — o script cria 38 tabelas, 3 views, 4 procedures e 2 eventos agendados
+4. Aguarde — o script cria 42 tabelas, 5 views, 4 procedures e 2 eventos agendados
 
-✅ **Verificar:** a aba "Estrutura" deve listar as tabelas começando por `admin_users`, `assinaturas`, `auth_log`…
+✅ **Verificar:** a aba "Estrutura" deve listar as tabelas começando por `admin_users`, `analytics_eventos`, `analytics_sessoes`…
 
-> ⚠ **NÃO execute os arquivos `migration_*.sql` separados** — o `banco_unificado.sql` já inclui tudo.
+> ⚠ **NÃO execute** os arquivos `migration_*.sql` separados — o `banco_consolidado.sql` v6.0 já incorpora tudo.
 
 ### 1.3 Configurar senha do admin
 
@@ -110,20 +110,32 @@ define('JWT_SECRET', 'troque-por-uma-frase-secreta-longa-aleatoria-aqui-2026');
 
 ### 3.2 Mover credenciais do Mercado Pago para config.php
 
-No `backend/config.php`, adicione também:
+No `backend/config.php`, adicione:
 
 ```php
 // Mercado Pago
-define('MP_PUBLIC_KEY',   'APP_USR-fbf67b6a-...');  // copie de pagamento.php
-define('MP_ACCESS_TOKEN', 'APP_USR-184457053...');   // copie de pagamento.php
+define('MP_PUBLIC_KEY',   'APP_USR-fbf67b6a-e0c1-49e9-a52e-d6ad8972382a');
+define('MP_ACCESS_TOKEN', 'APP_USR-184457053197001-060614-f0bef50c0b779f99134bbf42cc24e77f-3452806373');
 ```
 
-Depois edite `backend/pagamento.php` e substitua as duas linhas `define('MP_...')` por:
-```php
-// Credenciais agora em config.php — não redefinir aqui
-```
+Depois edite `backend/pagamento.php` e **apague** as duas linhas `define('MP_PUBLIC_KEY', ...)` e `define('MP_ACCESS_TOKEN', ...)` (as credenciais agora vêm do config.php).
 
 > ⚠ **Segurança:** nunca deixe credenciais hardcoded em arquivos que podem ser lidos se o PHP parar de funcionar.
+
+### 3.3b Registrar Webhook no Mercado Pago
+
+O webhook já está implementado em `backend/pagamento.php?acao=webhook`, mas precisa ser registrado no painel do MP:
+
+1. Acesse [Mercado Pago Developers](https://www.mercadopago.com.br/developers/panel/app)
+2. Selecione a aplicação → **Webhooks → Adicionar**
+3. URL: `https://roberiodiogenes.com/backend/pagamento.php?acao=webhook`
+4. Eventos: marque **payment** (e **subscription** se usar assinaturas recorrentes)
+5. Copie a **chave secreta** gerada e adicione em `backend/config.php`:
+   ```php
+   define('MP_WEBHOOK_SECRET', 'sua-chave-secreta-aqui');
+   ```
+
+> ⚠ Sem o SSL ativo e o webhook registrado, compras aprovadas não atualizam o banco automaticamente.
 
 ### 3.3 Configurar SMTP para e-mail real
 
@@ -207,11 +219,14 @@ Descubra o usuário do cPanel em: cPanel → Informações da conta → Nome de 
 /usr/bin/php /home/USUARIO/public_html/backend/cron_carrinho_abandonado.php
 ```
 
-### 5.3 Trocar o token dos crons (segurança)
+### 5.3 Token dos crons (já centralizado)
 
-Nos dois arquivos de cron, substitua o token padrão por uma string aleatória:
-- `backend/cron_lembrete_leitura.php` → `define('CRON_TOKEN_LEITURA', 'SEU_TOKEN_ALEATORIO')`
-- `backend/cron_carrinho_abandonado.php` → `define('TOKEN_CRON', 'SEU_TOKEN_ALEATORIO')`
+O `TOKEN_CRON` está definido em `backend/config.php` — **não edite os arquivos de cron**.  
+Para alterar o token, mude apenas `config.php`:
+
+```php
+define('TOKEN_CRON', 'SEU_TOKEN_ALEATORIO');
+```
 
 Use o painel Admin → Automações para testar manualmente se os crons executam sem erros.
 

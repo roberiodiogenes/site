@@ -5,6 +5,7 @@ session_start();
 if (!empty($_SESSION['admin_id'])) { header('Location: index.php'); exit; }
 
 require_once __DIR__ . '/../backend/config.php';
+
 $erro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

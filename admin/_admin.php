@@ -61,6 +61,14 @@ try {
     )->fetchColumn();
 } catch (Throwable $e) { /* Tabela ainda não criada */ }
 
+// Badge de erros ortográficos pendentes no leitor
+$_nErrosPendentes = 0;
+try {
+    $_nErrosPendentes = (int)$pdo->query(
+        "SELECT COUNT(*) FROM leitor_erros WHERE resolvido=0"
+    )->fetchColumn();
+} catch (Throwable $e) { /* Tabela ainda não criada */ }
+
 $MENU = [
     ['slug'=>'dashboard',   'href'=>'index.php',       'icon'=>'fa-gauge',       'label'=>'Dashboard'],
     ['slug'=>'usuarios',    'href'=>'usuarios.php',    'icon'=>'fa-users',       'label'=>'Usuários'],
@@ -72,6 +80,8 @@ $MENU = [
     ['slug'=>'enquetes',   'href'=>'enquetes.php',    'icon'=>'fa-chart-bar',   'label'=>'Enquetes'],
     ['slug'=>'comentarios', 'href'=>'comentarios.php', 'icon'=>'fa-comments',    'label'=>'Comentários',
      'badge' => $_nComentariosPendentes > 0 ? $_nComentariosPendentes : null],
+    ['slug'=>'erros',      'href'=>'erros.php',      'icon'=>'fa-spell-check', 'label'=>'Erros no Leitor',
+     'badge' => $_nErrosPendentes > 0 ? $_nErrosPendentes : null],
     'sep',
     ['slug'=>'marketing',      'href'=>'marketing.php',      'icon'=>'fa-bullhorn',       'label'=>'Marketing'],
     ['slug'=>'pre-lancamento', 'href'=>'pre-lancamento.php', 'icon'=>'fa-hourglass-start', 'label'=>'Lista de Espera'],

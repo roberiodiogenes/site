@@ -63,12 +63,33 @@ if ($acao === 'servir') {
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['ok' => false, 'erro' => $r['motivo'] ?? 'Acesso negado.']); exit;
     }
+    // Fallback: se arquivo_epub vazio no banco, usa convenção {slug}.epub
     $arquivo = basename($r['livro']['arquivo_epub'] ?? '');
-    if (!$arquivo) { ob_end_clean(); http_response_code(404); echo 'Arquivo não configurado.'; exit; }
-    $caminho = realpath(__DIR__ . '/../epub/' . $arquivo);
-    $pasta   = realpath(__DIR__ . '/../epub/');
-    if (!$caminho || !$pasta || strpos($caminho, $pasta) !== 0 || !file_exists($caminho)) {
-        ob_end_clean(); http_response_code(404); echo 'Arquivo não encontrado.'; exit;
+    if (!$arquivo) $arquivo = $slug . '.epub';
+
+    // Buscar o arquivo em múltiplos locais (em ordem de prioridade)
+    $raiz     = realpath(__DIR__ . '/../../');   // raiz do site
+    $caminho  = null;
+    $buscas   = [];
+    // 0. Via pasta_conteudo do banco (mais preciso — usa onde o arquivo realmente está)
+    $pasta = rtrim($r['livro']['pasta_conteudo'] ?? '', '/');
+    if ($pasta) {
+        $buscas[] = $raiz . '/' . $pasta . '/' . $arquivo;
+    }
+    $buscas[] = __DIR__ . '/../epub/' . $arquivo;                  // leitor/epub/{arquivo}
+    $buscas[] = __DIR__ . '/../epub/' . $slug . '.epub';           // leitor/epub/{slug}.epub
+    $buscas[] = $raiz . '/livros-conteudo/livros/' . $arquivo;     // livros-conteudo/livros/{arquivo}
+    $buscas[] = $raiz . '/livros-conteudo/' . $slug . '/' . $arquivo; // livros-conteudo/{slug}/{arquivo}
+    foreach ($buscas as $tentativa) {
+        $real = realpath($tentativa);
+        if ($real && is_file($real) && strpos($real, $raiz) === 0) {
+            $caminho = $real; break;
+        }
+    }
+
+    if (!$caminho) {
+        ob_end_clean(); http_response_code(404);
+        echo 'Arquivo não encontrado: ' . htmlspecialchars($arquivo); exit;
     }
     if ($usuario) {
         try {
@@ -198,6 +219,14 @@ if ($acao === 'minha_biblioteca') {
                 } catch (PDOException $ep2) { /* sem progresso salvo */ }
             }
         }
+
+        // Garantir campos padrão e calcular 'novo'
+        foreach ($mapa as &$l) {
+            if (!isset($l['percentual']))  $l['percentual']  = 0;
+            if (!isset($l['concluido']))   $l['concluido']   = 0;
+            $l['novo'] = !isset($l['ultima_leitura']) ? 1 : 0;
+        }
+        unset($l);
 
         jsonR([
             'ok'               => true,

@@ -18,13 +18,9 @@ require_once __DIR__ . '/config.php';
 iniciarSessao();
 
 /* ── Credenciais Mercado Pago ─────────────────────────────────
-   Aplicação única "roberiodiogenes" — cobre todos os produtos:
-   livros avulsos, contos, assinaturas, presentes e promoções.
-
-   Painel: https://www.mercadopago.com.br/developers/panel/app
+   Definidas em backend/config.php:
+     MP_PUBLIC_KEY, MP_ACCESS_TOKEN, MP_WEBHOOK_SECRET
    ─────────────────────────────────────────────────────────── */
-define('MP_PUBLIC_KEY',   'APP_USR-fbf67b6a-e0c1-49e9-a52e-d6ad8972382a');
-define('MP_ACCESS_TOKEN', 'APP_USR-184457053197001-060614-f0bef50c0b779f99134bbf42cc24e77f-3452806373');
 
 /* ── Roteamento ──────────────────────────────────────────────── */
 $metodo = $_SERVER['REQUEST_METHOD'];
@@ -110,6 +106,12 @@ if ($metodo === 'POST') {
 
     /* ── Webhook do Mercado Pago (não requer sessão) ── */
     if ($acao === 'webhook') {
+        // Valida assinatura HMAC-SHA256 em produção (evita webhooks forjados)
+        if (AMBIENTE === 'producao' && !validarAssinaturaWebhook()) {
+            error_log('[MP Webhook] Assinatura inválida — requisição rejeitada.');
+            http_response_code(401);
+            exit;
+        }
         processarWebhook();
         http_response_code(200);
         exit;
@@ -285,7 +287,7 @@ if ($metodo === 'POST') {
         // Buscar dados dos livros
         $ph2  = implode(',', array_fill(0, count($novos), '?'));
         $lStmt= $pdo->prepare(
-            "SELECT slug, titulo, preco, preco_promocao FROM livros
+            "SELECT slug, titulo, preco, preco_promocao, promo_ate FROM livros
              WHERE slug IN ($ph2) AND ativo = 1"
         );
         $lStmt->execute(array_values($novos));
@@ -297,7 +299,10 @@ if ($metodo === 'POST') {
         $totalPago  = 0;
 
         foreach ($livros as $lv) {
-            $preco = (float)($lv['preco_promocao'] ?: $lv['preco']);
+            // Aplica preço promocional apenas se ainda vigente
+            $promoAtiva = !empty($lv['preco_promocao'])
+                && (!$lv['promo_ate'] || strtotime($lv['promo_ate']) >= time());
+            $preco = (float)($promoAtiva ? $lv['preco_promocao'] : $lv['preco']);
             if ($preco <= 0) continue;
             $mpItens[] = [
                 'id'          => $lv['slug'],
@@ -518,6 +523,47 @@ if ($metodo === 'POST') {
    ────────────────────────────────────────────────────────────── */
 
 /**
+ * Valida a assinatura HMAC-SHA256 enviada pelo Mercado Pago no header X-Signature.
+ * Documentação: https://www.mercadopago.com.br/developers/pt/docs/your-integrations/notifications/webhooks
+ *
+ * O MP envia: X-Signature: ts=<timestamp>,v1=<hmac>
+ * O manifest assinado é: "id:<data_id>;request-id:<x_request_id>;ts:<ts>;"
+ */
+function validarAssinaturaWebhook(): bool {
+    $secret     = defined('MP_WEBHOOK_SECRET') ? MP_WEBHOOK_SECRET : '';
+    $xSignature = $_SERVER['HTTP_X_SIGNATURE']  ?? '';
+    $xRequestId = $_SERVER['HTTP_X_REQUEST_ID'] ?? '';
+
+    // Se o secret não estiver configurado, pula a validação (compatibilidade)
+    if (!$secret || !$xSignature) {
+        error_log('[MP Webhook] Aviso: MP_WEBHOOK_SECRET não configurado ou header ausente.');
+        return true;
+    }
+
+    // Extrai ts e v1 do header "ts=...,v1=..."
+    $ts = '';
+    $v1 = '';
+    foreach (explode(',', $xSignature) as $part) {
+        [$chave, $valor] = array_pad(explode('=', trim($part), 2), 2, '');
+        if ($chave === 'ts') $ts = trim($valor);
+        if ($chave === 'v1') $v1 = trim($valor);
+    }
+
+    if (!$ts || !$v1) return false;
+
+    // Obtém o data_id (do body JSON ou query string)
+    $body   = json_decode(file_get_contents('php://input'), true) ?? [];
+    $dataId = $body['data']['id'] ?? ($_GET['data_id'] ?? '');
+
+    // Monta o manifest conforme especificação do MP
+    $manifest = "id:{$dataId};request-id:{$xRequestId};ts:{$ts};";
+
+    // Compara HMAC gerado com o enviado pelo MP
+    $calculado = hash_hmac('sha256', $manifest, $secret);
+    return hash_equals($calculado, $v1);
+}
+
+/**
  * Cria uma preferência de pagamento no Mercado Pago via API REST.
  * Retorna o objeto de preferência com init_point (URL do checkout).
  */
@@ -720,32 +766,38 @@ function processarWebhook(): void {
                 $durStmt->execute([$planoId]);
                 $dur = (int) ($durStmt->fetchColumn() ?: 30);
 
-                $pdo->prepare(
+                // Idempotente: só ativa se ainda estava pendente.
+                // Webhook duplicado do MP não renova assinatura já ativa.
+                $upd = $pdo->prepare(
                     "UPDATE assinaturas
                      SET status = 'ativa',
                          inicio_em  = NOW(),
                          expira_em  = DATE_ADD(NOW(), INTERVAL ? DAY)
-                     WHERE ref_externa = ?"
-                )->execute([$dur, $ref]);
-
-                // E-mail de confirmação de assinatura
-                $dadosAssin = $pdo->prepare(
-                    "SELECT u.nome, u.email, p.nome AS plano_nome,
-                            DATE_FORMAT(DATE_ADD(NOW(), INTERVAL ? DAY), '%d/%m/%Y') AS expira
-                     FROM assinaturas a
-                     JOIN usuarios u ON u.id = a.usuario_id
-                     JOIN planos   p ON p.id = a.plano_id
-                     WHERE a.ref_externa = ? LIMIT 1"
+                     WHERE ref_externa = ?
+                       AND status = 'pendente'"
                 );
-                $dadosAssin->execute([$dur, $ref]);
-                $assin = $dadosAssin->fetch();
-                if ($assin && class_exists('Mailer')) {
-                    Mailer::enviarConfirmacaoAssinatura(
-                        $assin['email'],
-                        $assin['nome'],
-                        $assin['plano_nome'],
-                        $assin['expira']
+                $upd->execute([$dur, $ref]);
+
+                // E-mail de confirmação só na primeira ativação (rowCount > 0)
+                if ($upd->rowCount() > 0) {
+                    $dadosAssin = $pdo->prepare(
+                        "SELECT u.nome, u.email, p.nome AS plano_nome,
+                                DATE_FORMAT(DATE_ADD(NOW(), INTERVAL ? DAY), '%d/%m/%Y') AS expira
+                         FROM assinaturas a
+                         JOIN usuarios u ON u.id = a.usuario_id
+                         JOIN planos   p ON p.id = a.plano_id
+                         WHERE a.ref_externa = ? LIMIT 1"
                     );
+                    $dadosAssin->execute([$dur, $ref]);
+                    $assin = $dadosAssin->fetch();
+                    if ($assin && class_exists('Mailer')) {
+                        Mailer::enviarConfirmacaoAssinatura(
+                            $assin['email'],
+                            $assin['nome'],
+                            $assin['plano_nome'],
+                            $assin['expira']
+                        );
+                    }
                 }
             }
         } else {

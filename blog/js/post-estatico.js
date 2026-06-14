@@ -5,6 +5,17 @@
    ================================================================ */
 'use strict';
 
+// Carrega tracking.js dinamicamente para posts estáticos
+(function() {
+  if (!document.getElementById('rd-tracking-js')) {
+    var s = document.createElement('script');
+    s.id  = 'rd-tracking-js';
+    s.src = '../js/tracking.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  }
+})();
+
 (async function () {
   // window.POST_CONFIG é definido num <script inline> logo APÓS este arquivo.
   // Aguardamos um macrotask (setTimeout 0) para garantir que o inline já rodou.

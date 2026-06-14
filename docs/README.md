@@ -1,11 +1,13 @@
 # Robério Diógenes — Site Oficial
-**Documentação técnica completa · Versão 5.0 · Junho/2026**
+**Documentação técnica completa · Versão 6.0 · Junho/2026**
 
 **Domínio:** [roberiodiogenes.com](https://roberiodiogenes.com)  
-**Hospedagem:** Hostgator (PHP 8.1+, MySQL 8.0+, HTTPS via Let's Encrypt)  
+**Hospedagem:** Hostgator (PHP 8.2, MySQL **5.7**, HTTPS via Let's Encrypt)  
 **Dev local:** XAMPP · VS Code · Sincronização via SFTP  
-**Stack:** HTML5 · CSS3 · JavaScript Vanilla · PHP 8.2 · MySQL 8.0  
-**Sem framework** — PDO puro, sem Composer obrigatório  
+**Stack:** HTML5 · CSS3 · JavaScript Vanilla · PHP 8.2 · MySQL 5.7  
+**Sem framework** — PDO puro, sem Composer obrigatório
+
+> ⚠ **MySQL 5.7 no HostGator** — `ALTER TABLE ADD COLUMN IF NOT EXISTS` não existe (só no MySQL 8.0+). Usar `ADD COLUMN` simples nas migrations.  
 
 ---
 
@@ -112,10 +114,13 @@ roberiodiogenes.com/
 │
 ├── ── BANCO DE DADOS ───────────────────────────────────────────
 ├── database/
-│   ├── banco_unificado.sql # ← ARQUIVO PRINCIPAL (v5.0, junho/2026)
-│   │                       #   Substitui todos os migration_*.sql
-│   │                       #   38 tabelas, 3 views, 4 procedures, 2 eventos
-│   └── migration_*.sql     # Mantidos como histórico de alterações
+│   ├── banco_consolidado.sql # ← ARQUIVO PRINCIPAL (v6.0, junho/2026)
+│   │                         #   42 tabelas, 5 views, 4 procedures, 2 eventos
+│   │                         #   Inclui analytics_sessoes, analytics_eventos,
+│   │                         #   configuracoes, temas_sazonais,
+│   │                         #   cluster HG Wells + 6 posts
+│   └── banco_unificado.sql   # Versão anterior (v5.0) — mantido como histórico
+│   └── migration_*.sql       # Histórico de migrações (já incorporadas no v6.0)
 │
 ├── ── SERVICE WORKERS ──────────────────────────────────────────
 ├── OneSignalSDKWorker.js   # Obrigatório na raiz para push notifications
@@ -142,10 +147,11 @@ roberiodiogenes.com/
 | Interesses | `usuario_interesses` (segmentação por categoria lida) |
 | Bio | `bio_links`, `bio_config`, `bio_clicks` |
 | Comércio | `planos`, `assinaturas`, `compras`, `carrinhos` (col: `itens`), `presentes`, `cupons` |
-| Leitor | `leitor_progresso`, `leitor_anotacoes`, `leitor_marcacoes`, `leitor_preferencias` |
+| Leitor | `leitor_progresso`, `leitor_anotacoes`, `leitor_marcacoes`, `leitor_preferencias`, `leitor_conquistas`, `leitor_notas_autor` |
 | Automações | `leitor_lembretes_enviados` |
 | Pré-lançamento | `pre_lancamentos`, `pre_lancamento_leads` |
-| Analytics | `visitas`, `visitas_log` |
+| Analytics | `visitas`, `visitas_log`, `analytics_sessoes` (UTMs/dispositivo), `analytics_eventos` (comportamento/BI) |
+| Configurações | `configuracoes` (painel chave-valor), `temas_sazonais` (17 temas sazonais com paletas) |
 
 ---
 
@@ -155,7 +161,7 @@ roberiodiogenes.com/
 |---|---|---|
 | **Auth** | Cadastro + e-mail de boas-vindas | ✅ |
 | **Auth** | Login/Logout/Recuperação de senha | ✅ |
-| **Auth** | Google OAuth (estrutura pronta) | ⚠ Credenciais pendentes |
+| **Auth** | Google OAuth (estrutura pronta) | ⚠ Credenciais obtidas — configurar no servidor |
 | **Auth** | Exclusão de conta (LGPD) | ✅ |
 | **Pagamentos** | Mercado Pago — compra avulsa | ✅ |
 | **Pagamentos** | Mercado Pago — assinatura | ✅ |
@@ -176,6 +182,9 @@ roberiodiogenes.com/
 | **E-mail** | Campanhas manuais no admin | ✅ |
 | **Push** | OneSignal SDK + opt-in inteligente | ⚠ App ID pendente |
 | **Push** | Disparo automático ao publicar post | ⚠ App ID pendente |
+| **Analytics** | GTM (GTM-PZXC4SK8) + GA4 via GTM | ✅ Container publicado (jun/2026) |
+| **Analytics** | Microsoft Clarity (x52noc8f87) | ✅ |
+| **Analytics** | BI interno: sessões + eventos + views bi_* | ✅ |
 | **SEO** | Schema.org completo (Book, Person, FAQ…) | ✅ |
 | **SEO** | Sitemap dinâmico + hreflang | ✅ |
 | **SEO** | Landing pages transacionais | ✅ |
@@ -208,12 +217,14 @@ leitor_progresso: coluna `ultima_leitura` (NÃO `atualizado_em`)
 
 | Item | Arquivo | Status |
 |---|---|---|
-| DB Hostgator (host/user/pass/db) | `backend/config.php` | Preencher antes do deploy |
-| Google OAuth Client ID/Secret | `backend/config.php` | Preencher (Google Cloud Console) |
-| SMTP (SendGrid ou Zoho) | `backend/mailer.php` | Preencher antes do deploy |
-| Mercado Pago (já preenchido) | `backend/pagamento.php` | ✅ Mover para config.php |
-| OneSignal App ID | `backend/push.php` + `js/push-notifications.js` | Preencher (onesignal.com) |
-| Token cron | `backend/cron_*.php` | Trocar 'RD_CRON_2025_SEGURO' |
+| DB Hostgator | `backend/config.php` | ✅ Configurado em produção |
+| Google OAuth Client ID/Secret | `backend/config.php` do servidor | ⚠ Credenciais obtidas — inserir no servidor |
+| SMTP | `backend/mailer.php` | ✅ PHP mail() nativo (funcional no HostGator) |
+| Mercado Pago Public Key + Access Token | `backend/pagamento.php` | ⚠ Mover para config.php (segurança) |
+| Webhook secret do MP | `backend/config.php` | ✅ Registrado |
+| OneSignal App ID | `backend/push.php` + `js/push-notifications.js` | ⚠ Pendente (onesignal.com) |
+| TOKEN_CRON | `backend/config.php` | ✅ Centralizado em config.php |
+| JWT_SECRET | `backend/config.php` do servidor | ⚠ Substituir por string aleatória forte |
 
 ---
 

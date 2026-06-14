@@ -1,26 +1,45 @@
 <?php
 /* ================================================================
    ROBÉRIO DIÓGENES — backend/auth/google-callback.php
-   Recebe o code do Google, troca por token, cria/autentica usuário
+   Recebe o code do Google via POST (response_mode=form_post),
+   troca por token, cria/autentica usuário e redireciona.
+
+   NOTA: usamos response_mode=form_post para evitar que o ModSecurity
+   bloqueie o parâmetro `code` quando chegava via GET na URL.
+   O Google agora envia um POST com os campos code e state.
    ================================================================ */
 
 require_once __DIR__ . '/../config.php';
 
 iniciarSessao();
 
-$code  = $_GET['code']  ?? '';
-$state = $_GET['state'] ?? '';
-$error = $_GET['error'] ?? '';
+// Aceita tanto POST (form_post) quanto GET (fallback / testes locais)
+$code  = $_POST['code']  ?? $_GET['code']  ?? '';
+$state = $_POST['state'] ?? $_GET['state'] ?? '';
+$error = $_POST['error'] ?? $_GET['error'] ?? '';
 
 // ── Verificar CSRF (state) ────────────────────────────────────
-if ($error || !$code || !$state || $state !== ($_SESSION['oauth_state'] ?? '')) {
+// Com form_post o PHPSESSID tem SameSite=Lax e não chega no POST cross-site.
+// Usamos o cookie oauth_state (SameSite=None) como fallback.
+$savedState = $_SESSION['oauth_state'] ?? $_COOKIE['oauth_state'] ?? '';
+
+if ($error || !$code || !$state || $state !== $savedState) {
     header('Location: ' . SITE_URL . '/login.html?erro=google_falhou');
     exit;
 }
+
+// Limpar state
 unset($_SESSION['oauth_state']);
+setcookie('oauth_state', '', [
+    'expires'  => time() - 3600,
+    'path'     => '/backend/auth/',
+    'secure'   => AMBIENTE === 'producao',
+    'httponly' => true,
+    'samesite' => 'None',
+]);
 
 // ── Trocar code por access_token ──────────────────────────────
-$tokenResp = http_post('https://oauth2.googleapis.com/token', [
+$tokenResp = http_post_google('https://oauth2.googleapis.com/token', [
     'code'          => $code,
     'client_id'     => GOOGLE_CLIENT_ID,
     'client_secret' => GOOGLE_CLIENT_SECRET,
@@ -34,7 +53,7 @@ if (empty($tokenResp['access_token'])) {
 }
 
 // ── Buscar perfil Google ──────────────────────────────────────
-$perfil = http_get(
+$perfil = http_get_google(
     'https://www.googleapis.com/oauth2/v3/userinfo',
     $tokenResp['access_token']
 );
@@ -64,7 +83,7 @@ if ($usuario) {
     $pdo->prepare("UPDATE usuarios SET google_id = ?, foto_url = ?, ultimo_login = NOW() WHERE id = ?")
         ->execute([$googleId, $foto, $usuario['id']]);
     $userId = $usuario['id'];
-    $nome   = $usuario['nome']; // manter o nome que o usuário definiu
+    $nome   = $usuario['nome'];
 } else {
     // Criar usuário novo via Google
     $pdo->prepare("
@@ -79,7 +98,6 @@ $_SESSION['usuario_id']    = $userId;
 $_SESSION['usuario_nome']  = $nome;
 $_SESSION['usuario_email'] = $email;
 $_SESSION['usuario_foto']  = $foto;
-// Formato unificado para o leitor
 $_SESSION['usuario'] = [
     'id'    => $userId,
     'nome'  => $nome,
@@ -90,7 +108,7 @@ header('Location: ' . SITE_URL . '/leitor/index.html');
 exit;
 
 // ── Helpers HTTP ──────────────────────────────────────────────
-function http_post(string $url, array $dados): array {
+function http_post_google(string $url, array $dados): array {
     $ctx = stream_context_create(['http' => [
         'method'  => 'POST',
         'header'  => 'Content-Type: application/x-www-form-urlencoded',
@@ -101,7 +119,7 @@ function http_post(string $url, array $dados): array {
     return $r ? (json_decode($r, true) ?? []) : [];
 }
 
-function http_get(string $url, string $token): array {
+function http_get_google(string $url, string $token): array {
     $ctx = stream_context_create(['http' => [
         'header'  => 'Authorization: Bearer ' . $token,
         'timeout' => 10,

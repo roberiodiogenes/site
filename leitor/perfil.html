@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meu Perfil | Robério Diógenes</title>
+  <meta name="description" content="Gerencie seu perfil de leitor — dados pessoais, segurança, favoritos e downloads." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="../img/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/perfil.css" />
+</head>
+<body>
+
+<!-- ══ NAV PRINCIPAL ═════════════════════════════════════════════ -->
+<nav id="nav" role="navigation" aria-label="Navegação principal">
+  <a href="../index.html" class="nav-logo" aria-label="Robério Diógenes - Página inicial">
+    Robério Diógenes
+    <span>Escritor Independente</span>
+  </a>
+  <ul class="nav-links" id="navLinks" role="list">
+    <li><a href="../index.html">Início</a></li>
+    <li><a href="../livros.html">Biblioteca</a></li>
+    <li><a href="../autor.html">Autor</a></li>
+    <li><a href="../blog.html">Diário</a></li>
+    <li><a href="index.html" class="ativa" aria-current="page">Leitor</a></li>
+    <li><a href="../contato.html">Contato</a></li>
+    <li class="mobile-controles" style="display:none;" aria-label="Acessibilidade">
+      <span class="mobile-controles-label">Tema &amp; Fonte</span>
+      <button class="tema-btn" data-tema="claro"     title="Tema claro"     aria-label="Tema claro">☀</button>
+      <button class="tema-btn" data-tema="noturno"   title="Tema noturno"   aria-label="Tema noturno">🌙</button>
+      <button class="tema-btn" data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+      <button class="fonte-btn fonte-diminuir"        title="Texto menor"   aria-label="Texto menor">A-</button>
+      <button class="fonte-btn fonte-aumentar"        title="Texto maior"   aria-label="Texto maior">A+</button>
+      <button class="tema-btn som-btn"                title="Sons"          aria-label="Sons">♪</button>
+    </li>
+  </ul>
+  <div class="nav-acoes">
+    <div class="busca-nav" role="search">
+      <button class="busca-nav-icone" aria-label="Buscar" aria-expanded="false">
+        <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
+      </button>
+      <input type="search" id="buscaNav" placeholder="Buscar..." aria-label="Buscar no site"
+             autocomplete="off" spellcheck="false" />
+      <div class="busca-resultados" id="buscaResultados" role="listbox" aria-label="Resultados da busca" hidden></div>
+    </div>
+    <div class="acesso-wrap">
+      <button class="acesso-btn" id="acessoToggle" aria-label="Tema e acessibilidade"
+              aria-expanded="false" title="Tema e Acessibilidade">
+        <i class="fa fa-sliders" aria-hidden="true"></i>
+      </button>
+      <div class="acesso-popup" id="acessoPopup" hidden>
+        <span class="acesso-grupo-label">Tema</span>
+        <div class="acesso-linha">
+          <button class="tema-btn ativo" data-tema="claro"     title="Tema claro"     aria-label="Tema claro">☀</button>
+          <button class="tema-btn"       data-tema="noturno"   title="Tema noturno"   aria-label="Tema noturno">🌙</button>
+          <button class="tema-btn"       data-tema="contraste" title="Alto contraste" aria-label="Alto contraste">◑</button>
+        </div>
+        <span class="acesso-grupo-label">Texto &amp; Som</span>
+        <div class="acesso-linha">
+          <button class="fonte-btn fonte-diminuir" title="Texto menor"  aria-label="Texto menor">A-</button>
+          <button class="fonte-btn fonte-aumentar" title="Texto maior"  aria-label="Texto maior">A+</button>
+          <button class="tema-btn som-btn"          title="Sons"         aria-label="Sons">♪</button>
+        </div>
+      </div>
+    </div>
+    <a href="../login.html" class="btn btn-secundario btn-entrar"
+       style="padding:0.4rem 0.9rem;font-size:0.8rem;">
+      <i class="fa fa-user" aria-hidden="true"></i> Entrar
+    </a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Abrir menu"
+          aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ══ PÁGINA DE PERFIL ══════════════════════════════════════════ -->
+<div class="perfil-page">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+  <aside class="perfil-sidebar" aria-label="Informações do perfil">
+
+    <!-- Card do usuário (conteúdo preenchido pelo perfil.js) -->
+    <div class="perfil-card" id="perfilCard" aria-live="polite">
+      <!-- Skeleton de loading -->
+      <div class="perfil-card-loading">
+        <div class="perfil-skeleton perfil-skeleton-avatar"></div>
+        <div class="perfil-skeleton perfil-skeleton-linha larga"></div>
+        <div class="perfil-skeleton perfil-skeleton-linha media"></div>
+        <div class="perfil-skeleton perfil-skeleton-linha curta"></div>
+      </div>
+    </div>
+
+    <!-- Menu de navegação lateral -->
+    <nav class="perfil-menu" aria-label="Seções do perfil">
+      <button class="perfil-menu-item" data-aba="dados" type="button">
+        <i class="fa fa-user" aria-hidden="true"></i> Dados Pessoais
+      </button>
+      <button class="perfil-menu-item" data-aba="seguranca" type="button">
+        <i class="fa fa-lock" aria-hidden="true"></i> Segurança
+      </button>
+      <button class="perfil-menu-item" data-aba="favoritos" type="button">
+        <i class="fa fa-heart" aria-hidden="true"></i> Favoritos
+      </button>
+      <button class="perfil-menu-item" data-aba="downloads" type="button">
+        <i class="fa fa-download" aria-hidden="true"></i> Downloads
+      </button>
+    </nav>
+  </aside>
+
+  <!-- ── Conteúdo principal ─────────────────────────────────── -->
+  <main class="perfil-main">
+
+    <!-- Tabs (visíveis em qualquer tamanho de tela) -->
+    <div class="perfil-tabs" role="tablist" aria-label="Seções do perfil">
+      <button class="perfil-tab" role="tab" data-aba="dados"
+              aria-selected="false" aria-controls="painel-dados" id="tab-dados">
+        <i class="fa fa-user" aria-hidden="true"></i>
+        <span class="label-txt">Dados</span>
+      </button>
+      <button class="perfil-tab" role="tab" data-aba="seguranca"
+              aria-selected="false" aria-controls="painel-seguranca" id="tab-seguranca">
+        <i class="fa fa-lock" aria-hidden="true"></i>
+        <span class="label-txt">Segurança</span>
+      </button>
+      <button class="perfil-tab" role="tab" data-aba="favoritos"
+              aria-selected="false" aria-controls="painel-favoritos" id="tab-favoritos">
+        <i class="fa fa-heart" aria-hidden="true"></i>
+        <span class="label-txt">Favoritos</span>
+      </button>
+      <button class="perfil-tab" role="tab" data-aba="downloads"
+              aria-selected="false" aria-controls="painel-downloads" id="tab-downloads">
+        <i class="fa fa-download" aria-hidden="true"></i>
+        <span class="label-txt">Downloads</span>
+      </button>
+      <button class="perfil-tab" role="tab" data-aba="conta"
+              aria-selected="false" aria-controls="painel-conta" id="tab-conta">
+        <i class="fa fa-gear" aria-hidden="true"></i>
+        <span class="label-txt">Conta</span>
+      </button>
+    </div>
+
+    <!-- ────────────────────────────────────────────────────────
+         PAINEL: DADOS PESSOAIS
+         ─────────────────────────────────────────────────────── -->
+    <div class="perfil-painel" role="tabpanel" data-aba="dados"
+         id="painel-dados" aria-labelledby="tab-dados">
+
+      <div class="perfil-secao-header">
+        <h1 class="perfil-secao-titulo">Dados Pessoais</h1>
+        <p class="perfil-secao-sub">Mantenha suas informações atualizadas.</p>
+      </div>
+
+      <!-- Stats rápidos -->
+      <div class="perfil-stats-bar" role="group" aria-label="Estatísticas">
+        <div class="perfil-stat-card">
+          <span class="n" id="statFavoritos">—</span>
+          <span class="l">Favoritos</span>
+        </div>
+        <div class="perfil-stat-card">
+          <span class="n" id="statDownloads">—</span>
+          <span class="l">Downloads</span>
+        </div>
+        <div class="perfil-stat-card">
+          <span class="n" id="statIdade">—</span>
+          <span class="l">Idade</span>
+        </div>
+        <div class="perfil-stat-card">
+          <span class="n" id="statMembro">—</span>
+          <span class="l">Membro desde</span>
+        </div>
+      </div>
+
+      <!-- Alerta -->
+      <div id="perfilAlerta" aria-live="polite"></div>
+
+      <!-- Formulário -->
+      <form id="formPerfil" novalidate>
+        <div class="perfil-form-grid">
+
+          <div class="perfil-campo">
+            <label class="perfil-label" for="perfilNome">Nome completo</label>
+            <input class="perfil-input" type="text" id="perfilNome" name="nome"
+                   autocomplete="name" maxlength="120" placeholder="Seu nome" required />
+          </div>
+
+          <div class="perfil-campo">
+            <label class="perfil-label" for="perfilEmail">E-mail</label>
+            <input class="perfil-input" type="email" id="perfilEmail" name="email"
+                   autocomplete="email" disabled title="O e-mail não pode ser alterado." />
+          </div>
+
+          <div class="perfil-campo">
+            <label class="perfil-label" for="perfilSexo">Sexo</label>
+            <select class="perfil-select" id="perfilSexo" name="sexo">
+              <option value="nao_informado">Prefiro não informar</option>
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+
+          <div class="perfil-campo">
+            <label class="perfil-label" for="perfilDataNasc">Data de nascimento</label>
+            <input class="perfil-input" type="date" id="perfilDataNasc" name="data_nascimento"
+                   autocomplete="bday" />
+          </div>
+
+          <div class="perfil-campo">
+            <label class="perfil-label" for="perfilCidade">Cidade</label>
+            <input class="perfil-input" type="text" id="perfilCidade" name="cidade"
+                   maxlength="80" placeholder="Sua cidade" autocomplete="address-level2" />
+          </div>
+
+          <div class="perfil-campo">
+            <label class="perfil-label" for="perfilEstado">Estado (UF)</label>
+            <input class="perfil-input" type="text" id="perfilEstado" name="estado"
+                   maxlength="2" placeholder="CE" autocomplete="address-level1"
+                   style="text-transform:uppercase;" />
+          </div>
+
+          <div class="perfil-campo">
+            <label class="perfil-label" for="perfilPais">País</label>
+            <input class="perfil-input" type="text" id="perfilPais" name="pais"
+                   maxlength="60" placeholder="Brasil" autocomplete="country-name" />
+          </div>
+
+          <div class="perfil-campo">
+            <label class="perfil-label" for="perfilWhatsapp">WhatsApp</label>
+            <input class="perfil-input" type="tel" id="perfilWhatsapp" name="whatsapp"
+                   maxlength="20" placeholder="+55 85 99999-9999" autocomplete="tel" />
+          </div>
+
+        </div>
+
+        <div class="perfil-form-acoes">
+          <button type="submit" class="perfil-btn perfil-btn-principal">
+            <i class="fa fa-save" aria-hidden="true"></i> Salvar Alterações
+          </button>
+        </div>
+      </form>
+    </div><!-- /painel-dados -->
+
+    <!-- ────────────────────────────────────────────────────────
+         PAINEL: SEGURANÇA
+         ─────────────────────────────────────────────────────── -->
+    <div class="perfil-painel" role="tabpanel" data-aba="seguranca"
+         id="painel-seguranca" aria-labelledby="tab-seguranca">
+
+      <div class="perfil-secao-header">
+        <h1 class="perfil-secao-titulo">Segurança</h1>
+        <p class="perfil-secao-sub">Altere sua senha e gerencie o acesso à conta.</p>
+      </div>
+
+      <!-- Alerta de segurança (também usado pela função deletar-conta) -->
+      <div id="segurancaAlerta" aria-live="polite"></div>
+
+      <!-- Formulário de senha -->
+      <div class="perfil-secao">
+        <h2 class="perfil-secao-subtitulo">
+          <i class="fa fa-key" aria-hidden="true"></i> Alterar Senha
+        </h2>
+
+        <form id="formSenha" novalidate>
+          <div class="perfil-form-grid">
+
+            <div class="perfil-campo campo-cheio">
+              <label class="perfil-label" for="senhaAtual">Senha atual</label>
+              <div class="perfil-campo-senha">
+                <input class="perfil-input" type="password" id="senhaAtual" name="senha_atual"
+                       autocomplete="current-password" placeholder="••••••••" required />
+                <button type="button" class="perfil-toggle-senha"
+                        aria-label="Mostrar/ocultar senha"
+                        onclick="toggleSenha('senhaAtual', this)">
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="perfil-campo">
+              <label class="perfil-label" for="novaSenha">Nova senha</label>
+              <div class="perfil-campo-senha">
+                <input class="perfil-input" type="password" id="novaSenha" name="nova_senha"
+                       autocomplete="new-password" placeholder="Mínimo 8 caracteres" required />
+                <button type="button" class="perfil-toggle-senha"
+                        aria-label="Mostrar/ocultar nova senha"
+                        onclick="toggleSenha('novaSenha', this)">
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="perfil-campo">
+              <label class="perfil-label" for="confirmarSenha">Confirmar nova senha</label>
+              <div class="perfil-campo-senha">
+                <input class="perfil-input" type="password" id="confirmarSenha" name="confirmar_senha"
+                       autocomplete="new-password" placeholder="Repita a nova senha" required />
+                <button type="button" class="perfil-toggle-senha"
+                        aria-label="Mostrar/ocultar confirmação"
+                        onclick="toggleSenha('confirmarSenha', this)">
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="perfil-form-acoes">
+            <button type="submit" class="perfil-btn perfil-btn-principal">
+              <i class="fa fa-refresh" aria-hidden="true"></i> Atualizar Senha
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Zona de perigo / deletar conta -->
+      <div class="perfil-perigo" role="region" aria-label="Zona de perigo">
+        <h3><i class="fa fa-triangle-exclamation" aria-hidden="true"></i> Zona de Perigo</h3>
+        <p>Ao deletar sua conta, todos os seus dados — favoritos, downloads e avaliações — serão
+           apagados permanentemente. Esta ação é <strong>irreversível</strong>.</p>
+        <button type="button" id="btnDeletarConta" class="perfil-btn perfil-btn-perigo">
+          <i class="fa fa-trash" aria-hidden="true"></i> Deletar minha conta
+        </button>
+      </div>
+
+    </div><!-- /painel-seguranca -->
+
+    <!-- ────────────────────────────────────────────────────────
+         PAINEL: FAVORITOS
+         ─────────────────────────────────────────────────────── -->
+    <div class="perfil-painel" role="tabpanel" data-aba="favoritos"
+         id="painel-favoritos" aria-labelledby="tab-favoritos">
+
+      <div class="perfil-secao-header">
+        <h1 class="perfil-secao-titulo">Favoritos</h1>
+        <p class="perfil-secao-sub">Livros que você salvou para ler depois.</p>
+      </div>
+
+      <div id="favoritosGrid" aria-live="polite">
+        <div class="perfil-vazio">
+          <i class="fa fa-heart-crack" aria-hidden="true"></i>
+          <p>Nenhum favorito ainda. Explore a <a href="../livros.html"
+             style="color:var(--ouro);">Biblioteca</a> e salve obras que gostar.</p>
+        </div>
+      </div>
+
+    </div><!-- /painel-favoritos -->
+
+    <!-- ────────────────────────────────────────────────────────
+         PAINEL: DOWNLOADS
+         ─────────────────────────────────────────────────────── -->
+    <div class="perfil-painel" role="tabpanel" data-aba="downloads"
+         id="painel-downloads" aria-labelledby="tab-downloads">
+
+      <div class="perfil-secao-header">
+        <h1 class="perfil-secao-titulo">Downloads</h1>
+        <p class="perfil-secao-sub">Histórico de arquivos que você baixou.</p>
+      </div>
+
+      <div id="downloadsTabela" aria-live="polite">
+        <div class="perfil-vazio">
+          <i class="fa fa-inbox" aria-hidden="true"></i>
+          <p>Nenhum download registrado ainda.</p>
+        </div>
+      </div>
+
+    </div><!-- /painel-downloads -->
+
+    <!-- ────────────────────────────────────────────────────────
+         PAINEL: CONTA (aba adicional no tab bar)
+         ─────────────────────────────────────────────────────── -->
+    <div class="perfil-painel" role="tabpanel" data-aba="conta"
+         id="painel-conta" aria-labelledby="tab-conta">
+
+      <div class="perfil-secao-header">
+        <h1 class="perfil-secao-titulo">Configurações da Conta</h1>
+        <p class="perfil-secao-sub">Acesse as outras seções pelo menu ao lado.</p>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:0.75rem;max-width:400px;">
+        <button type="button" class="perfil-btn" style="justify-content:flex-start;gap:0.75rem;"
+                onclick="document.querySelector('[data-aba=dados][role=tab]').click()">
+          <i class="fa fa-user" style="width:16px;text-align:center;"></i> Editar dados pessoais
+        </button>
+        <button type="button" class="perfil-btn" style="justify-content:flex-start;gap:0.75rem;"
+                onclick="document.querySelector('[data-aba=seguranca][role=tab]').click()">
+          <i class="fa fa-lock" style="width:16px;text-align:center;"></i> Alterar senha e segurança
+        </button>
+        <button type="button" class="perfil-btn" style="justify-content:flex-start;gap:0.75rem;"
+                onclick="document.querySelector('[data-aba=favoritos][role=tab]').click()">
+          <i class="fa fa-heart" style="width:16px;text-align:center;"></i> Ver favoritos
+        </button>
+        <button type="button" class="perfil-btn" style="justify-content:flex-start;gap:0.75rem;"
+                onclick="document.querySelector('[data-aba=downloads][role=tab]').click()">
+          <i class="fa fa-download" style="width:16px;text-align:center;"></i> Ver downloads
+        </button>
+        <a href="index.html" class="perfil-btn" style="justify-content:flex-start;gap:0.75rem;">
+          <i class="fa fa-book-open" style="width:16px;text-align:center;"></i> Ir para a Biblioteca
+        </a>
+      </div>
+
+    </div><!-- /painel-conta -->
+
+  </main>
+</div><!-- /perfil-page -->
+
+<!-- ══ MODAL DE CONFIRMAÇÃO ══════════════════════════════════════ -->
+<div id="modalConfirm" class="perfil-modal-overlay"
+     role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+  <div class="perfil-modal">
+    <button type="button" id="modalFechar" class="perfil-modal-fechar"
+            aria-label="Fechar modal">
+      <i class="fa fa-xmark" aria-hidden="true"></i>
+    </button>
+    <h2 id="modalTitulo">Confirmar ação</h2>
+    <p id="modalMsg"></p>
+    <div class="perfil-modal-acoes">
+      <button type="button" id="btnModalCancelar" class="perfil-btn">Cancelar</button>
+      <button type="button" id="btnModalConfirmar" class="perfil-btn perfil-btn-perigo">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCRIPTS ════════════════════════════════════════════════════ -->
+<script src="../js/global.js"></script>
+<script src="../js/api-client.js"></script>
+<script>
+  /* Toggle de visibilidade de senha (inline para não depender de arquivo externo) */
+  function toggleSenha(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const icone = btn.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      if (icone) { icone.classList.remove('fa-eye'); icone.classList.add('fa-eye-slash'); }
+    } else {
+      input.type = 'password';
+      if (icone) { icone.classList.remove('fa-eye-slash'); icone.classList.add('fa-eye'); }
+    }
+  }
+</script>
+<script src="../js/perfil.js"></script>
+<script src="../js/cookies-lgpd.js" defer></script>
+
+</body>
+</html>

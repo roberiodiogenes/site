@@ -1,207 +1,174 @@
-# 📖 Leitor de Livros Online — Guia de Integração
-**Robério Diógenes — roberiodiogenes.com**
+# Leitor de EPUB — Guia de Integração
+**Robério Diógenes — roberiodiogenes.com · Atualizado: junho/2026**
 
 ---
 
-## Estrutura dos arquivos criados
+## Arquitetura atual
 
 ```
 roberiodiogenes.com/
 │
 ├── leitor/
-│   └── livro.html                  ← PÁGINA DO LEITOR (nova)
+│   ├── index.html              ← Biblioteca + leitor unificado (epub.js v0.3.93)
+│   └── backend/
+│       ├── acesso.php          ← Serve o EPUB e verifica acesso (compra/assinatura/gratuito)
+│       ├── progresso.php       ← Salva/carrega posição de leitura e percentual
+│       ├── anotacoes.php       ← Anotações do leitor por livro
+│       ├── marcacoes.php       ← Marcações de texto (highlights)
+│       ├── conquistas.php      ← Medalhas de leitura (25%, 50%, 75%, 100%)
+│       └── notas_autor.php     ← Notas do autor vinculadas a posições CFI
 │
 ├── livros-conteudo/
-│   └── lumen/
-│       ├── cap01.html              ← Capítulo 1 — A Vigília (teste)
-│       └── cap02.html              ← Capítulo 2 — O Inventário (teste)
-│
-├── css/
-│   └── leitor-livro.css            ← Estilos do leitor (novo)
+│   └── {slug}/                 ← Pasta individual por livro/conto
+│       └── {slug}.epub         ← Arquivo EPUB
 │
 ├── js/
-│   └── leitor.js                   ← Lógica do leitor (novo)
+│   ├── leitor.js               ← Lógica do leitor (epub.js wrapper + paywall + conquistas)
+│   └── biblioteca.js           ← Biblioteca do leitor (lista de livros acessíveis)
 │
 └── backend/
-    ├── acesso.php                  ← Verificação de acesso (novo)
-    └── leitor.php                  ← Endpoints do leitor (novo)
+    └── cron_lembrete_leitura.php  ← Cron diário: lembra usuários com leitura parada
 ```
 
 ---
 
-## Passo 1 — Execute o SQL no phpMyAdmin
+## Como adicionar um livro ou conto novo
 
-1. Abra `http://localhost/phpmyadmin`
-2. Selecione o banco `roberio_site`
-3. Aba **SQL** → Cole o conteúdo de `leitor_setup.sql` → **Executar**
+### 1. Upload do arquivo EPUB
 
-Serão criadas as tabelas:
-- `planos` (planos de assinatura com preços já inseridos)
-- `assinaturas`
-- `compras`
-- `leitor_progresso`
-- `leitor_anotacoes`
-- `leitor_marcacoes`
-- `leitor_preferencias`
-- Views e procedures auxiliares
+Crie a pasta e suba o EPUB via SFTP ou cPanel File Manager:
+
+```
+livros-conteudo/{slug}/{slug}.epub
+```
+
+Exemplos:
+```
+livros-conteudo/lumen/lumen.epub
+livros-conteudo/o-farol-do-afogado/o-farol-do-afogado.epub
+livros-conteudo/a-marca-da-besta/a-marca-da-besta.epub
+```
+
+### 2. Cadastrar no banco de dados
+
+No admin (`/admin/livros.php`) ou via phpMyAdmin, certifique-se de que a tabela `livros` tem:
+
+| Campo | Valor exemplo |
+|---|---|
+| `slug` | `o-farol-do-afogado` |
+| `titulo` | `O Farol do Afogado` |
+| `pasta_conteudo` | `livros-conteudo/o-farol-do-afogado` |
+| `arquivo_epub` | `o-farol-do-afogado.epub` |
+| `gratuito` | `1` (gratuito) ou `0` (pago) |
+| `ativo` | `1` |
+
+> ⚠ O campo `pasta_conteudo` **não** deve ter barra no final.  
+> ✅ `livros-conteudo/o-farol-do-afogado`  
+> ❌ `livros-conteudo/o-farol-do-afogado/`
+
+### 3. Testar o acesso
+
+Acesse o leitor com o slug do livro:
+```
+https://roberiodiogenes.com/leitor/?livro={slug}
+```
 
 ---
 
-## Passo 2 — Copie os arquivos para o htdocs
-
-Cole os novos arquivos dentro da pasta `roberiodiogenes.com/`:
+## Como o acesso funciona
 
 ```
-htdocs/roberiodiogenes.com/leitor/livro.html
-htdocs/roberiodiogenes.com/livros-conteudo/lumen/cap01.html
-htdocs/roberiodiogenes.com/livros-conteudo/lumen/cap02.html
-htdocs/roberiodiogenes.com/css/leitor-livro.css
-htdocs/roberiodiogenes.com/js/leitor.js
-htdocs/roberiodiogenes.com/backend/acesso.php
-htdocs/roberiodiogenes.com/backend/leitor.php
+Usuário abre leitor/?livro=lumen
+    ↓
+JS chama leitor/backend/acesso.php?acao=verificar&slug=lumen
+    ↓
+PHP verifica (em ordem):
+    1. Livro ativo no banco?          → Não: erro
+    2. Livro gratuito?                → Sim + logado: acesso concedido
+    3. Comprou o livro?               → Sim: acesso concedido
+    4. Tem assinatura ativa?          → Sim: acesso concedido
+    5. Nenhum dos anteriores?         → modo amostra (10% gratuito)
+    ↓
+JS chama acesso.php?acao=servir&slug=lumen
+    ↓
+PHP localiza o EPUB em livros-conteudo/{slug}/{slug}.epub e faz stream
+    ↓
+epub.js recebe o binário e renderiza
 ```
 
 ---
 
-## Passo 3 — Teste com o Lúmen
+## Onde o EPUB é buscado (ordem de prioridade)
 
-### Opção A — Usuário logado com acesso liberado manualmente
+O `leitor/backend/acesso.php` busca o arquivo em 5 locais:
 
-Para testar sem sistema de pagamento, insira um registro manual de compra:
+1. `livros-conteudo/{pasta_conteudo}/{arquivo_epub}` — **via banco de dados** (prioritário)
+2. `leitor/epub/{arquivo_epub}`
+3. `leitor/epub/{slug}.epub`
+4. `livros-conteudo/livros/{arquivo_epub}`
+5. `livros-conteudo/{slug}/{arquivo_epub}`
+
+Se o `pasta_conteudo` estiver preenchido corretamente no banco, o caminho 1 resolve sempre.
+
+---
+
+## Tabelas do banco usadas pelo leitor
+
+| Tabela | Função |
+|---|---|
+| `livros` | Catálogo de obras (slug, titulo, pasta_conteudo, arquivo_epub, gratuito) |
+| `compras` | Compras avulsas aprovadas |
+| `assinaturas` | Assinaturas ativas com data de expiração |
+| `leitor_progresso` | Posição de leitura (CFI), percentual, concluído |
+| `leitor_anotacoes` | Anotações do leitor por livro |
+| `leitor_marcacoes` | Highlights/marcações de texto |
+| `leitor_preferencias` | Fonte, tamanho, fundo, largura por usuário |
+| `leitor_conquistas` | Medalhas desbloqueadas (início, 25%, 50%, 75%, 100%) |
+| `leitor_notas_autor` | Notas do autor vinculadas a posições CFI no epub |
+| `leitor_lembretes_enviados` | Controle de throttle do cron de lembrete |
+
+---
+
+## Testar sem sistema de pagamento
+
+Para liberar acesso manualmente (ambiente de desenvolvimento):
 
 ```sql
--- Substitua 1 pelo ID do seu usuário (veja na tabela `usuarios`)
+-- Compra avulsa manual
 INSERT INTO compras (usuario_id, livro_slug, preco_pago, status)
 VALUES (1, 'lumen', 0.00, 'aprovada');
-```
 
-### Opção B — Acesso por assinatura manual
-
-```sql
--- Assinatura mensal de teste (30 dias a partir de hoje)
+-- OU assinatura manual (30 dias)
 INSERT INTO assinaturas (usuario_id, plano_id, status, inicio_em, expira_em)
 VALUES (1, 1, 'ativa', NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY));
 ```
 
-### URL de acesso ao leitor
-
-Com o XAMPP rodando, acesse:
-```
-http://localhost/roberiodiogenes.com/leitor/livro.html?livro=lumen
-```
-
 ---
 
-## Passo 4 — Adicionar botão "Ler agora" nas páginas dos livros
+## Cron de lembrete de leitura
 
-Na página `livros/lumen.html`, adicione o botão de acesso ao leitor:
+Detecta usuários que pararam de ler há mais de 3 dias e envia e-mail.
 
-```html
-<!-- Botão principal de leitura -->
-<a href="../leitor/livro.html?livro=lumen"
-   class="btn btn-primario"
-   id="btn-ler-livro">
-  <i class="fa-solid fa-book-open"></i>
-  Ler agora
-</a>
+**Configurar no cPanel → Cron Jobs:**
 ```
-
----
-
-## Como adicionar capítulos reais do Lúmen
-
-Cada capítulo é um arquivo HTML puro (sem `<html>`, `<head>` ou `<body>`).
-
-Crie os arquivos seguindo o padrão:
+0 9 * * *   /usr/bin/php /home/fra46117/public_html/backend/cron_lembrete_leitura.php
 ```
-livros-conteudo/lumen/cap01.html
-livros-conteudo/lumen/cap02.html
-livros-conteudo/lumen/cap03.html
-...
-livros-conteudo/lumen/cap12.html   ← conforme total_capitulos
-```
-
-### Estrutura HTML dos capítulos
-
-```html
-<span class="capitulo-numero">Capítulo I</span>
-<h2>Nome do Capítulo</h2>
-
-<!-- Primeiro parágrafo (do capítulo) com drop cap (letra capitular) -->
-<p class="drop-cap">
-  Texto do primeiro parágrafo…
-</p>
-
-<!-- Parágrafos normais -->
-<p>Parágrafo normal…</p>
-
-<!-- Separador ornamental -->
-<span class="ornamento" aria-hidden="true">✦</span>
-
-<!-- Diálogos -->
-<p class="dialogo">— Fala de um personagem.</p>
-
-<!-- Pensamentos ou narrativa interna -->
-<p class="pensamento">Pensamento em itálico…</p>
-
-<!-- Ênfase -->
-<p>Palavra <em>enfatizada</em> no texto.</p>
-```
-
-### Atualize o total de capítulos
-
-No arquivo `leitor/livro.html`, localize o objeto `LIVROS` dentro da tag `<script>`
-e ajuste o `totalCapitulos` do livro conforme for criando os capítulos:
-
-```javascript
-const LIVROS = {
-  'lumen': { titulo: 'Lúmen – A Outra Metade do Céu', totalCapitulos: 12 },
-  // ...
-};
-```
-
----
-
-## Como funciona o acesso (resumo)
-
-```
-Usuário acessa leitor/livro.html?livro=lumen
-    ↓
-JS chama backend/acesso.php?livro=lumen
-    ↓
-PHP verifica:
-    1. Está logado? (sessão PHP) → Não: mostra tela de login
-    2. Comprou o livro?          → Sim: libera leitura
-    3. Tem assinatura ativa?     → Sim: libera leitura
-    4. Nenhum dos dois?          → Mostra tela de compra/assinatura
-    ↓
-JS carrega cap01.html via fetch() do servidor
-```
-
----
-
-## Próximos passos sugeridos
-
-| Etapa | O que fazer |
-|-------|-------------|
-| **Conteúdo** | Converter os capítulos reais do Lúmen para HTML fragmentado |
-| **Compras** | Criar página de compra/pagamento (integrar Mercado Pago ou Stripe) |
-| **Assinaturas** | Criar página de planos com os 3 planos já no banco |
-| **Painel do leitor** | Criar `leitor/index.html` com lista de livros em leitura |
-| **PHP dinâmico** | Converter `leitor/livro.html` de estático para PHP (`livro.php`) |
 
 ---
 
 ## Dúvidas frequentes
 
-**P: O leitor não carrega o capítulo — dá erro 404.**
-R: Verifique se os arquivos `livros-conteudo/lumen/cap01.html` existem no htdocs.
+**P: O leitor abre mas fica no spinner infinito.**  
+R: Verifique se o arquivo EPUB existe em `livros-conteudo/{slug}/{slug}.epub` no servidor. Confira também se `pasta_conteudo` e `arquivo_epub` estão corretos no banco.
 
-**P: O backend retorna "Você precisa estar logado".**
-R: Faça login no site normalmente. A sessão PHP precisa estar ativa.
+**P: `acesso.php?acao=servir` retorna 404.**  
+R: O EPUB não foi encontrado em nenhum dos 5 caminhos. Verifique se a pasta e o arquivo foram criados corretamente no servidor.
 
-**P: As preferências não são salvas.**
-R: Certifique-se de que a tabela `leitor_preferencias` foi criada (passo 1).
+**P: O backend retorna "login necessário" mesmo logado.**  
+R: A sessão do leitor usa `PHPSESSID`. Confirme que o usuário está logado no domínio principal (não localhost).
 
-**P: Como testar sem sistema de pagamento?**
-R: Use o INSERT manual descrito no Passo 3, Opção A ou B acima.
+**P: Conquistas/medalhas não aparecem.**  
+R: Confirme que a tabela `leitor_conquistas` existe no banco. Se necessário, execute o SQL de criação.
+
+**P: Como testar sem pagar?**  
+R: Use o INSERT manual de compra ou assinatura descrito acima.

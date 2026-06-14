@@ -16,7 +16,7 @@
    ================================================================ */
 
 /* ── Proteção de acesso ──────────────────────────────────────── */
-define('TOKEN_CRON', 'RD_CRON_2025_SEGURO'); // ← troque em produção
+require_once __DIR__ . '/config.php'; // TOKEN_CRON definido em config.php
 $viaCLI  = (php_sapi_name() === 'cli');
 $viaHTTP = !$viaCLI;
 
@@ -28,28 +28,33 @@ if ($viaHTTP) {
     }
 }
 
-require_once __DIR__ . '/config.php';
 @include_once __DIR__ . '/mailer.php';
 
 $pdo = db();
 $enviados = 0;
 $erros    = 0;
 
-/* ── Buscar carrinhos abandonados (não-vazio, >1h sem atualização) */
+/* ── Buscar carrinhos abandonados ─────────────────────────────────
+   Captura dois casos:
+   1. Carrinho normal (em_checkout=0) parado há mais de 1h
+   2. Checkout iniciado (em_checkout=1) mas não concluído há mais de 2h
+      → usuário chegou ao MP mas não pagou
+   Em ambos os casos: não-vazio, lembrete ainda não enviado.
+──────────────────────────────────────────────────────────────── */
 $stmt = $pdo->prepare("
     SELECT c.usuario_id,
            c.itens,
            c.atualizado_em,
+           c.em_checkout,
            c.lembrete_env,
            u.nome,
            u.email
     FROM   carrinhos c
     JOIN   usuarios  u ON u.id = c.usuario_id
-    WHERE  c.em_checkout = 0
-      AND  c.lembrete_env = 0
+    WHERE  c.lembrete_env = 0
       AND  JSON_LENGTH(c.itens) > 0
-      AND  c.atualizado_em < DATE_SUB(NOW(), INTERVAL 1 HOUR)
       AND  u.ativo = 1
+      AND  c.atualizado_em < DATE_SUB(NOW(), INTERVAL 1 HOUR)
     ORDER BY c.atualizado_em ASC
     LIMIT 100
 ");
@@ -75,11 +80,12 @@ foreach ($carrinhos as $row) {
     if ($enviado) {
         $pdo->prepare(
             "UPDATE carrinhos
-             SET lembrete_env=1, lembrete_em=NOW()
+             SET lembrete_env=1, lembrete_em=NOW(), em_checkout=0
              WHERE usuario_id=?"
         )->execute([$row['usuario_id']]);
         $enviados++;
-        log_cron("Lembrete enviado → {$row['email']} ({$row['nome']}) — {$totalFmt}");
+        $tipo = $row['em_checkout'] ? 'checkout abandonado' : 'carrinho';
+        log_cron("Lembrete enviado [{$tipo}] → {$row['email']} ({$row['nome']}) — {$totalFmt}");
     } else {
         $erros++;
         log_cron("FALHA ao enviar → {$row['email']}");

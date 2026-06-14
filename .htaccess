@@ -3,21 +3,17 @@
 # Segurança geral, HTTPS e proteções de acesso
 # ================================================================
 
-Options -Indexes
-ServerSignature Off
-
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # ── HTTPS: descomentar após ativar SSL no Hostgator ──────────
-  # RewriteCond %{HTTPS} off
-  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # ── HTTPS: redireciona HTTP → HTTPS ─────────────────────────
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
   # ── Sitemap amigável: /sitemap.xml → sitemap.php ─────────────
   RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
 
   # ── Páginas inexistentes → 404.html (via _404.php) ──────────
-  # Funciona em XAMPP (subpasta) e produção (raiz do domínio)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_URI}  !_404\.php       [NC]
@@ -27,10 +23,6 @@ ServerSignature Off
   RewriteRule ^ _404.php [L]
 
   # ── Modo de Manutenção ────────────────────────────────────────
-  # Redireciona tudo para manutencao.php quando manutencao.lock
-  # existir na raiz do site.
-  # A dupla condição cobre produção (DOCUMENT_ROOT = raiz do site)
-  # e localhost XAMPP (DOCUMENT_ROOT = htdocs, site em subpasta).
   RewriteCond %{DOCUMENT_ROOT}/manutencao.lock                     -f [OR]
   RewriteCond %{DOCUMENT_ROOT}/roberiodiogenes.com/manutencao.lock -f
   RewriteCond %{REQUEST_URI}  !/admin/          [NC]
@@ -41,46 +33,29 @@ ServerSignature Off
 </IfModule>
 
 # ── Páginas de erro personalizadas ───────────────────────────
-# IMPORTANTE: Dois ambientes, dois caminhos:
-#
-#   XAMPP LOCAL (site em /roberiodiogenes.com/ dentro do htdocs):
-#     ErrorDocument 404 /roberiodiogenes.com/_404.php
-#
-#   PRODUÇÃO (HostGator — site na raiz do domínio):
-#     ErrorDocument 404 /_404.php
-#
-# Troque as linhas comentadas abaixo conforme o ambiente.
-# Obs.: se mod_rewrite estiver ativo, o RewriteRule acima já captura
-# todas as páginas inexistentes e esta diretiva vira apenas fallback.
-#
-# Para ativar mod_rewrite no XAMPP:
-# Abra C:\xampp\apache\conf\httpd.conf e descomente:
-#   LoadModule rewrite_module modules/mod_rewrite.so
-# Depois reinicie o Apache.
-#
-# ── AMBIENTE ATUAL: XAMPP local ──────────────────────────────
-ErrorDocument 403 /roberiodiogenes.com/_404.php
-ErrorDocument 404 /roberiodiogenes.com/_404.php
-# ── PRODUÇÃO: descomente e comente as linhas acima ───────────
-# ErrorDocument 403 /_404.php
-# ErrorDocument 404 /_404.php
+# PRODUÇÃO (HostGator — raiz do domínio)
+ErrorDocument 403 /_404.php
+ErrorDocument 404 /_404.php
+# XAMPP local: comente as linhas acima e descomente estas:
+# ErrorDocument 403 /roberiodiogenes.com/_404.php
+# ErrorDocument 404 /roberiodiogenes.com/_404.php
+
+# ── Bloquear pasta .git inteira (CRÍTICO) ────────────────────
+RedirectMatch 404 /\.git(/.*)?$
 
 # ── Proteger arquivos sensíveis ───────────────────────────────
-<FilesMatch "(config\.php|mailer\.php|\.env|\.git|composer\.(json|lock)|package(-lock)?\.json)$">
-  Order Allow,Deny
-  Deny from all
+<FilesMatch "(config\.php|mailer\.php|\.env|composer\.(json|lock)|package(-lock)?\.json)$">
+  Require all denied
 </FilesMatch>
 
 # ── Bloquear acesso direto a arquivos de log, SQL e scripts ──
 <FilesMatch "\.(log|sql|bak|backup|sh|bash)$">
-  Order Allow,Deny
-  Deny from all
+  Require all denied
 </FilesMatch>
 
-# ── Bloquear ferramentas de diagnóstico ───────────────────────
-<FilesMatch "^(diagnostico|phpinfo|info|test|teste)\.php$">
-  Order Allow,Deny
-  Deny from all
+# ── Bloquear ferramentas de diagnóstico e arquivos de debug ──
+<FilesMatch "^(diagnostico|phpinfo|info|test|teste|teste_api|blog_debug)\.php$">
+  Require all denied
 </FilesMatch>
 
 # ── Cabeçalhos de segurança HTTP ─────────────────────────────
