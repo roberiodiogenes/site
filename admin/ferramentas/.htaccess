@@ -1,0 +1,7 @@
+Options -Indexes
+
+# Ferramentas administrativas — libera PHP neste subdiretório
+# (o .htaccess pai bloqueia arquivos não listados; este sobrescreve para cá)
+<FilesMatch "\.php$">
+    Require all granted
+</FilesMatch>

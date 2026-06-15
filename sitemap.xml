@@ -1,187 +1,209 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <!-- ═══ PÁGINAS PRINCIPAIS ════════════════════════════════════ -->
   <url>
-    <loc>https://www.roberiodiogenes.com/</loc>
+    <loc>https://roberiodiogenes.com/</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros.html</loc>
+    <loc>https://roberiodiogenes.com/bio.html</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://roberiodiogenes.com/livros.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/autor.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.roberiodiogenes.com/blog.html</loc>
+    <loc>https://roberiodiogenes.com/blog.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/contato.html</loc>
+    <loc>https://roberiodiogenes.com/autor.html</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://roberiodiogenes.com/contato.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/privacidade.html</loc>
+    <loc>https://roberiodiogenes.com/privacidade.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.20</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/termos.html</loc>
+    <loc>https://roberiodiogenes.com/termos.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.20</priority>
   </url>
 
   <!-- ═══ LEITOR ONLINE ═════════════════════════════════════════ -->
   <url>
-    <loc>https://www.roberiodiogenes.com/leitor/index.html</loc>
+    <loc>https://roberiodiogenes.com/leitor/index.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
 
   <!-- ═══ BLOG — Cluster H. G. Wells ══════════════════════════ -->
-  <!-- PILAR -->
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/h-g-wells-guia-definitivo.html</loc>
-    <lastmod>2025-06-01</lastmod>
+    <loc>https://roberiodiogenes.com/blog/h-g-wells-guia-definitivo.html</loc>
+    <lastmod>2026-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-pilar.webp</image:loc>
+      <image:loc>https://roberiodiogenes.com/img/posts/hgwells-pilar.webp</image:loc>
       <image:title>H. G. Wells: O Homem Que Imaginou o Futuro</image:title>
     </image:image>
   </url>
-  <!-- RESENHAS -->
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/a-maquina-do-tempo-resenha.html</loc>
-    <lastmod>2025-06-01</lastmod>
+    <loc>https://roberiodiogenes.com/blog/a-maquina-do-tempo-resenha.html</loc>
+    <lastmod>2026-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-maquina-tempo.webp</image:loc>
+      <image:loc>https://roberiodiogenes.com/img/posts/hgwells-maquina-tempo.webp</image:loc>
       <image:title>Resenha: A Máquina do Tempo — H. G. Wells</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/o-homem-invisivel-resenha.html</loc>
-    <lastmod>2025-06-01</lastmod>
+    <loc>https://roberiodiogenes.com/blog/o-homem-invisivel-resenha.html</loc>
+    <lastmod>2026-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-homem-invisivel.webp</image:loc>
+      <image:loc>https://roberiodiogenes.com/img/posts/hgwells-homem-invisivel.webp</image:loc>
       <image:title>Resenha: O Homem Invisível — H. G. Wells</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/o-dorminhoco-resenha.html</loc>
-    <lastmod>2025-06-01</lastmod>
+    <loc>https://roberiodiogenes.com/blog/o-dorminhoco-resenha.html</loc>
+    <lastmod>2026-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-dorminhoco.webp</image:loc>
+      <image:loc>https://roberiodiogenes.com/img/posts/hgwells-dorminhoco.webp</image:loc>
       <image:title>Resenha: O Dorminhoco — H. G. Wells</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/a-ilha-do-dr-moreau-resenha.html</loc>
-    <lastmod>2025-06-01</lastmod>
+    <loc>https://roberiodiogenes.com/blog/a-ilha-do-dr-moreau-resenha.html</loc>
+    <lastmod>2026-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-dr-moreau.webp</image:loc>
+      <image:loc>https://roberiodiogenes.com/img/posts/hgwells-dr-moreau.webp</image:loc>
       <image:title>Resenha: A Ilha do Dr. Moreau — H. G. Wells</image:title>
     </image:image>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/blog/a-guerra-dos-mundos-resenha.html</loc>
-    <lastmod>2025-06-01</lastmod>
+    <loc>https://roberiodiogenes.com/blog/a-guerra-dos-mundos-resenha.html</loc>
+    <lastmod>2026-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
     <image:image>
-      <image:loc>https://www.roberiodiogenes.com/img/posts/hgwells-guerra-mundos.webp</image:loc>
+      <image:loc>https://roberiodiogenes.com/img/posts/hgwells-guerra-mundos.webp</image:loc>
       <image:title>Resenha: A Guerra dos Mundos — H. G. Wells</image:title>
     </image:image>
   </url>
-  <!-- post-01 a post-11 foram substituídos por redirects para /blog.html —
-       removidos do sitemap para evitar indexação de páginas redirect -->
 
-  <!-- ═══ LIVROS — prioridade alta para SEO ═════════════════════ -->
+  <!-- ═══ LIVROS ════════════════════════════════════════════════ -->
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/a-setima-lei.html</loc>
+    <loc>https://roberiodiogenes.com/livros/a-setima-lei.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/a-marca-da-besta.html</loc>
+    <loc>https://roberiodiogenes.com/livros/a-marca-da-besta.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/genesis.html</loc>
+    <loc>https://roberiodiogenes.com/livros/genesis.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/jogo-das-mascaras.html</loc>
+    <loc>https://roberiodiogenes.com/livros/jogo-das-mascaras.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/lumen.html</loc>
+    <loc>https://roberiodiogenes.com/livros/lumen.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/caminhos-de-outono.html</loc>
+    <loc>https://roberiodiogenes.com/livros/caminhos-de-outono.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/cartas-do-passado.html</loc>
+    <loc>https://roberiodiogenes.com/livros/cartas-do-passado.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/das-coisas-que-o-amor-faz.html</loc>
+    <loc>https://roberiodiogenes.com/livros/das-coisas-que-o-amor-faz.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/mares-secretas.html</loc>
+    <loc>https://roberiodiogenes.com/livros/mares-secretas.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/rosas-e-espinhos.html</loc>
+    <loc>https://roberiodiogenes.com/livros/rosas-e-espinhos.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/o-abismo-das-almas.html</loc>
+    <loc>https://roberiodiogenes.com/livros/o-abismo-das-almas.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
-  <!-- Novos livros adicionados -->
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/o-farol-do-afogado.html</loc>
+    <loc>https://roberiodiogenes.com/livros/o-farol-do-afogado.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/o-quarto-das-moscas.html</loc>
+    <loc>https://roberiodiogenes.com/livros/o-quarto-das-moscas.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.roberiodiogenes.com/livros/linhas-e-agulhas.html</loc>
+    <loc>https://roberiodiogenes.com/livros/linhas-e-agulhas.html</loc>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>

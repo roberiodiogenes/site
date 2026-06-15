@@ -422,6 +422,69 @@ class Mailer {
         ]);
     }
 
+    /** Certificado de Leitor Embaixador */
+    public static function enviarCertificadoEmbaixador(string $email, string $genero, int $numero): bool {
+        $base = defined('SITE_URL') ? SITE_URL : 'https://roberiodiogenes.com';
+
+        $mapa = [
+            'drama'     => ['label' => 'Drama',     'cor' => '#6B7FA3', 'icone' => '✦'],
+            'romance'   => ['label' => 'Romance',   'cor' => '#B07A8A', 'icone' => '✉'],
+            'terror'    => ['label' => 'Terror',    'cor' => '#8A3A3A', 'icone' => '◈'],
+            'autoajuda' => ['label' => 'Autoajuda', 'cor' => '#8A7340', 'icone' => '◎'],
+        ];
+        $g      = $mapa[$genero] ?? ['label' => 'Ficção', 'cor' => '#B8860B', 'icone' => '✦'];
+        $numFmt = $numero > 0 ? '#' . str_pad((string)$numero, 4, '0', STR_PAD_LEFT) : '';
+        $numMsg = $numFmt ? "Você é o Leitor Embaixador <strong style='color:{$g['cor']}'>{$numFmt}</strong>." : '';
+
+        return self::enviar([
+            'para_email' => $email,
+            'para_nome'  => '',
+            'assunto'    => 'Certificado de Leitor Embaixador — Robério Diógenes',
+            'html'       => "
+<!-- Badge visual CSS (iframes e canvas não funcionam em e-mail) -->
+<div style='text-align:center;margin-bottom:1.75rem'>
+  <div style='display:inline-block;width:148px;height:148px;border-radius:50%;
+              background:#12090c;border:3px solid {$g['cor']};
+              vertical-align:middle;padding:18px 0;box-sizing:border-box'>
+    <div style='font-size:30px;line-height:1;margin-bottom:6px'>{$g['icone']}</div>
+    <div style='font-size:7.5px;letter-spacing:.22em;color:{$g['cor']};font-family:Arial,sans-serif;text-transform:uppercase'>LEITOR</div>
+    <div style='font-size:19px;font-family:Georgia,serif;font-style:italic;color:#d6c8ae;margin:3px 0'>Embaixador</div>
+    " . ($numFmt ? "<div style='font-size:11px;color:{$g['cor']};font-family:Arial,sans-serif;font-weight:bold;letter-spacing:.05em'>{$numFmt}</div>" : '') . "
+    <div style='font-size:7px;color:{$g['cor']};font-family:Arial,sans-serif;margin-top:5px'>✦ &nbsp; ✦ &nbsp; ✦</div>
+  </div>
+</div>
+
+<p style='font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:#8C7D65;text-align:center;margin-bottom:1.5rem'>
+  Certificado · {$g['icone']} {$g['label']}
+</p>
+
+<p>{$numMsg}</p>
+
+<p>Você leu um conto, sentiu algo, e decidiu compartilhar.<br>
+Esse gesto fez uma história chegar a alguém que talvez precisasse dela naquele exato momento.</p>
+
+<p style='background:#F5F0E8;border-left:3px solid {$g['cor']};padding:1rem 1.25rem;
+          border-radius:0 6px 6px 0;font-style:italic;color:#4A3728;line-height:1.8'>
+  Cada história precisa de alguém que a leve adiante.<br>
+  Você foi esse alguém.
+</p>
+
+<p>Se quiser conhecer mais histórias, a biblioteca está esperando por você:</p>
+<p style='text-align:center;margin:1.5rem 0'>
+  <a href='{$base}/bio.html' class='btn-email'>Ler os contos →</a>
+</p>
+
+<p style='margin-top:2rem;font-family:Georgia,serif;font-size:.95rem;color:#4A3728'>
+  Com respeito e afeto,
+</p>
+<p style='font-family:Georgia,serif;font-size:1.15rem;color:#B8860B;font-style:italic;margin:.25rem 0'>
+  Robério Diógenes
+</p>
+<p style='font-size:.78rem;color:#8C7D65'>Fortaleza, Ceará</p>",
+            'texto' => "Certificado de Leitor Embaixador" . ($numFmt ? " — {$numFmt}" : '') . "\n\nVocê leu um conto, sentiu algo, e decidiu compartilhar. Esse gesto fez uma história chegar a alguém que talvez precisasse dela.\n\nCada história precisa de alguém que a leve adiante. Você foi esse alguém.\n\nCom respeito e afeto,\nRobério Diógenes\n\n{$base}/bio.html",
+        ]);
+    }
+
     /* ──────────────────────────────────────────────────────────
        TEMPLATE HTML BASE
        Envolve todos os e-mails com um layout consistente.

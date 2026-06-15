@@ -1,0 +1,44 @@
+{
+  "contos": [
+    {
+      "id": "drama",
+      "genero": "Drama",
+      "titulo": "O Peso do Horizonte",
+      "cor_acento": "#6B7FA3",
+      "icone": "✦",
+      "teaser": "Nós passamos a vida pintando o futuro. Mas e quando percebemos que escolhemos as cores erradas?",
+      "frase_chamada": "Nós passamos a vida pintando o futuro, mas e quando percebemos que escolhemos as cores erradas? Leia o conto completo e descubra o valor das escolhas que deixamos para trás.",
+      "texto": "Aluísio ergueu a tela encoberta diante de uma sala que não respirava.\n\nOitenta e dois anos. Doze prêmios internacionais. Uma visão que se dissolvia em névoa nas bordas. E aquele quadro, o único que ninguém tinha visto em quarenta anos.\n\n\"Começamos em dois milhões\", disse o leiloeiro.\n\nEle não ouviu. Estava olhando para a mulher na primeira fileira.\n\nEla tinha uns cinquenta anos e usava um casaco cinza que parecia cansado de ser usado. Mas eram os olhos que o detiveram: o mesmo vazio particular que ele reconhecia nas fotos antigas de si mesmo, antes dos prêmios, antes de Paris, antes de ter escolhido a tela em vez de Vera.\n\nO leiloeiro repetiu o valor. Aluísio desceu do palco.\n\nCruzou o corredor entre as cadeiras com os passos lentos de quem não tem mais pressa de nada. Parou diante da mulher. Ela não se moveu. Apenas o olhou como se já soubesse o que viria.\n\nEle colocou a tela no chão, encostada nos joelhos dela.\n\n\"Não está à venda\", disse em voz baixa. \"Nunca esteve.\"\n\nEla olhou para a tela pela primeira vez. Abriu a boca. Fechou. Seus dedos tocaram a moldura como quem toca uma ferida antiga.\n\n\"Quem é ela?\", perguntou, apontando para a figura pintada.\n\nAluísio ficou imóvel por um longo momento.\n\n\"Era quem eu era\", respondeu, \"antes de me tornar famoso.\"\n\nEla ergueu os olhos para ele.\n\n\"Eu a conheci\", disse a mulher. \"Ela me mandou aqui.\""
+    },
+    {
+      "id": "romance",
+      "genero": "Romance",
+      "titulo": "A Penúltima Página",
+      "cor_acento": "#B07A8A",
+      "icone": "✉",
+      "teaser": "O amor da sua vida pode estar escondido na próxima página.",
+      "frase_chamada": "O amor da sua vida pode estar escondido na próxima página. Um conto sobre encontros escritos pelo destino.",
+      "texto": "Jaqueline não sabia o que a fez dobrar o bilhete naquela quinta-feira em vez de escrevê-lo num pedaço qualquer de papel.\n\nTalvez fosse a chuva. Talvez fosse o cheiro particular daquele sebo no centro, mistura de umidade e vidas alheias impressas em páginas amareladas. Ela comprou o Dostoiévski, abriu na penúltima página como sempre, e escreveu:\n\n\"Irmãos Karamázov me deixou sem chão. Se você estiver lendo isso e também ficou, me escreve. Preciso saber que não estou sozinha nisso. — J.\"\n\nDobrou o papel. Fechou o livro. Não esperava resposta.\n\nNunca esperava.\n\nTrês semanas depois, o e-mail chegou às 23h47.\n\n\"Eu fiquei sem chão. Mas acho que foi você quem me derrubou.\"\n\nO que deveria ser uma única troca de mensagens virou meses. Ele escrevia à noite, textos longos, cheios de silêncios e vírgulas no lugar errado. Ela respondia de manhã, antes do café, com a sensação de estar conversando com alguém que conhecia a gramática exata do que ela sentia.\n\nCombinaram de se encontrar na última sexta-feira de março. No mesmo sebo. Às dezoito horas.\n\nJaqueline chegou cinco minutos antes. Parou na calçada, o coração fazendo uma coisa que ela não sabia nomear.\n\nA porta do sebo abriu.\n\nE o homem que saiu para recebê-la era o mesmo que, durante meses, tinha olhado para ela sem dizer nada enquanto ela escolhia os livros.\n\nEle segurava nas mãos um maço de bilhetes dobrados."
+    },
+    {
+      "id": "terror",
+      "genero": "Terror",
+      "titulo": "O Quarto Passageiro",
+      "cor_acento": "#8A3A3A",
+      "icone": "◈",
+      "teaser": "Algumas caronas nunca deveriam ser aceitas. Você tem coragem de olhar no retrovisor?",
+      "frase_chamada": "Algumas caronas nunca deveriam ser aceitas. Descubra o que estava no banco de trás... se puder esquecer de olhar no retrovisor.",
+      "texto": "Genivaldo aceitou a corrida às 2h37 da manhã porque precisava pagar o boleto do gás.\n\nTrês passageiros. Destino: uma fazenda a quarenta quilômetros da cidade. Avaliação cinco estrelas. Ele não pensou duas vezes.\n\nEles entraram em silêncio. Dois homens e uma mulher. Nenhum olhou para o outro. Nenhum falou uma palavra. Genivaldo puxou conversa, sobre o calor, sobre nada e o único retorno foi o chiado do rádio sintonizando uma frequência que ele não havia tocado.\n\nDez minutos na estrada, sem iluminação pública, ele olhou pelo retrovisor.\n\nOs três estavam olhando para a frente. Olhos abertos. Sem piscar.\n\nGenivaldo respirou fundo. Gente cansada às vezes dorme de olhos abertos. Ele já tinha visto isso.\n\nMas não tinha visto o GPS recalcular por conta própria três vezes seguidas, cada rota apontando para um trecho de mata fechada onde nenhuma fazenda existia.\n\nIa desligar o aplicativo quando o celular falou.\n\nNão era a voz do GPS. Era diferente. Mais próxima.\n\n\"A rota foi alterada. O passageiro do porta-malas chegou ao seu destino.\"\n\nGenivaldo travou o carro no acostamento.\n\nVirou no banco.\n\nOs três passageiros tinham sumido. Os cintos estavam presos como se nunca tivessem sido usados. As janelas, fechadas por dentro.\n\nFoi então que sentiu.\n\nUma pressão lenta, calculada, vinda de trás do banco do motorista. Como se algo no porta-malas ainda não tivesse chegado ao destino.\n\nE o travamento das portas subiu sozinho."
+    },
+    {
+      "id": "autoajuda",
+      "genero": "Autoajuda",
+      "titulo": "O Labirinto dos Espelhos",
+      "cor_acento": "#8A7340",
+      "icone": "◎",
+      "teaser": "O seu maior inimigo e o seu maior aliado compartilham o mesmo reflexo no espelho.",
+      "frase_chamada": "O seu maior inimigo e o seu maior aliado compartilham o mesmo reflexo no espelho. Mude sua perspectiva sobre o seu próprio potencial.",
+      "texto": "Ele acordou de pé.\n\nNão no chão frio de um quarto, não na dureza de um colchão ruim, de pé, no centro de uma sala que se esticava em todas as direções sem paredes visíveis. Só espelhos. Espelhos em cima de espelhos, repetindo sua imagem até o infinito.\n\nMas não a imagem certa.\n\nNo primeiro espelho à esquerda, ele usava um terno que não reconhecia e ria de uma piada que não tinha escutado. No segundo, pedalava numa montanha que nunca visitou. No terceiro, segurava um filho pequeno pelo ombro, os dois olhando para um horizonte que o espelho não mostrava inteiro.\n\nEle passou horas tentando encontrar uma saída. Correu. Gritou. Bateu nos reflexos com as palmas das mãos até que as versões felizes nem se dignaram a reagir, apenas continuaram vivendo suas vidas paralelas com a indiferença de quem não se lembra de ter feito uma escolha diferente.\n\nAté que parou.\n\nEstava exausto, o coração pesado, quando notou que havia um espelho que nenhuma das outras versões olhava.\n\nEra o menor de todos, atrás de uma coluna que ele só encontrou quando desistiu de correr.\n\nNele, não havia uma versão diferente. Só ele, como era agora: cabelo desarrumado, olheiras fundas, o mesmo homem que tinha adormecido sem saber onde estava.\n\nErgueu a mão para tocar a superfície.\n\nE o reflexo não ergueu a mão junto."
+    }
+  ]
+}

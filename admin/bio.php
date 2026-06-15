@@ -1,8 +1,140 @@
 <?php
 /* ================================================================
-   admin/bio.php — Editor da página bio (link-in-bio)
+   admin/bio.php — Editor da bio + Analytics do Ateliê de Histórias
    ================================================================ */
 ob_start();
+
+/* ── AJAX GET (endpoints JSON para o painel) ── */
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['acao'])) {
+    ini_set('display_errors', '0');
+    ob_end_clean();
+    session_name('rd_admin_sess');
+    session_start();
+    if (empty($_SESSION['admin_id'])) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['ok' => false, 'erro' => 'Sessão expirada.']);
+        exit;
+    }
+    require_once __DIR__ . '/../backend/config.php';
+    header('Content-Type: application/json; charset=utf-8');
+    $pdo   = db();
+    $acao  = $_GET['acao'];
+    $dias  = max(7, min(365, (int)($_GET['dias'] ?? 30)));
+
+    /* ── Cliques nos links da bio (legado) ── */
+    if ($acao === 'cliques') {
+        try {
+            $stL = $pdo->prepare(
+                "SELECT COALESCE(bc.link_slug, CONCAT('link-', bc.link_id)) AS slug,
+                        COALESCE(bl.titulo, bc.link_slug, CONCAT('Link #', bc.link_id)) AS titulo,
+                        COUNT(*) AS total,
+                        COUNT(DISTINCT bc.ip_hash) AS unicos
+                   FROM bio_clicks bc
+                   LEFT JOIN bio_links bl ON bl.id = bc.link_id
+                  WHERE bc.clicado_em >= DATE_SUB(NOW(), INTERVAL ? DAY)
+                  GROUP BY slug, titulo
+                  ORDER BY total DESC LIMIT 20"
+            );
+            $stL->execute([$dias]);
+            $porLink = $stL->fetchAll(PDO::FETCH_ASSOC);
+
+            $stO = $pdo->prepare(
+                "SELECT COALESCE(origem, 'Direto') AS origem, COUNT(*) AS total
+                   FROM bio_clicks
+                  WHERE clicado_em >= DATE_SUB(NOW(), INTERVAL ? DAY)
+                  GROUP BY origem ORDER BY total DESC LIMIT 10"
+            );
+            $stO->execute([$dias]);
+            $porOrigem = $stO->fetchAll(PDO::FETCH_ASSOC);
+
+            $stT = $pdo->prepare("SELECT COUNT(*), COUNT(DISTINCT ip_hash) FROM bio_clicks WHERE clicado_em >= DATE_SUB(NOW(), INTERVAL ? DAY)");
+            $stT->execute([$dias]);
+            [$totalCliques, $totalUnicos] = $stT->fetch(PDO::FETCH_NUM);
+
+            echo json_encode([
+                'ok' => true,
+                'por_link'   => $porLink,
+                'por_origem' => $porOrigem,
+                'total'      => (int)$totalCliques,
+                'unicos'     => (int)$totalUnicos,
+                'periodo_dias' => $dias,
+            ]);
+        } catch (Throwable $e) {
+            echo json_encode(['ok' => false, 'por_link' => [], 'por_origem' => [], 'total' => 0, 'unicos' => 0, 'periodo_dias' => $dias]);
+        }
+        exit;
+    }
+
+    /* ── Analytics do Ateliê de Histórias ── */
+    if ($acao === 'atelie') {
+        try {
+            $generos = ['drama', 'romance', 'terror', 'autoajuda'];
+
+            // Funil geral
+            $funil = [];
+            $eventos_funil = ['pagina_aberta', 'card_aberto', 'conto_lido_50pct', 'conto_lido_100pct', 'email_capturado', 'compartilhamento', 'embaixador_gerado'];
+            foreach ($eventos_funil as $ev) {
+                $st = $pdo->prepare("SELECT COUNT(*) FROM bio_eventos WHERE evento=? AND criado_em >= DATE_SUB(NOW(), INTERVAL ? DAY)");
+                $st->execute([$ev, $dias]);
+                $funil[$ev] = (int)$st->fetchColumn();
+            }
+
+            // Por gênero
+            $porGenero = [];
+            foreach ($generos as $g) {
+                $st = $pdo->prepare(
+                    "SELECT
+                       SUM(evento='card_aberto')       AS abertos,
+                       SUM(evento='conto_lido_50pct')  AS leram_50,
+                       SUM(evento='conto_lido_100pct') AS leram_100
+                     FROM bio_eventos
+                    WHERE genero=? AND criado_em >= DATE_SUB(NOW(), INTERVAL ? DAY)"
+                );
+                $st->execute([$g, $dias]);
+                $row = $st->fetch(PDO::FETCH_ASSOC);
+                $porGenero[$g] = [
+                    'abertos'   => (int)($row['abertos']   ?? 0),
+                    'leram_50'  => (int)($row['leram_50']  ?? 0),
+                    'leram_100' => (int)($row['leram_100'] ?? 0),
+                ];
+            }
+
+            // Leads recentes
+            $stLeads = $pdo->prepare(
+                "SELECT email, tipo, genero, captado_em
+                   FROM bio_leads
+                  ORDER BY captado_em DESC LIMIT 20"
+            );
+            $stLeads->execute();
+            $leads = $stLeads->fetchAll(PDO::FETCH_ASSOC);
+
+            // Leads por tipo
+            $stTipos = $pdo->query("SELECT tipo, COUNT(*) AS total FROM bio_leads GROUP BY tipo ORDER BY total DESC");
+            $leadsPorTipo = $stTipos->fetchAll(PDO::FETCH_ASSOC);
+
+            // Sessões únicas (total visitantes)
+            $stSess = $pdo->prepare("SELECT COUNT(DISTINCT sessao_id) FROM bio_eventos WHERE evento='pagina_aberta' AND criado_em >= DATE_SUB(NOW(), INTERVAL ? DAY)");
+            $stSess->execute([$dias]);
+            $sessoes = (int)$stSess->fetchColumn();
+
+            echo json_encode([
+                'ok'           => true,
+                'funil'        => $funil,
+                'por_genero'   => $porGenero,
+                'leads'        => $leads,
+                'leads_por_tipo' => $leadsPorTipo,
+                'sessoes'      => $sessoes,
+                'periodo_dias' => $dias,
+            ]);
+        } catch (Throwable $e) {
+            echo json_encode(['ok' => false, 'erro' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    echo json_encode(['ok' => false, 'erro' => 'Ação desconhecida.']);
+    exit;
+}
 
 /* ── AJAX POST ── */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -230,10 +362,27 @@ $cfg = fn(string $k, string $def = '') => htmlspecialchars($config[$k] ?? $def, 
   </code>
 </div>
 
-<!-- ── PAINEL DE CLIQUES ── -->
+<!-- ── ATELIÊ DE HISTÓRIAS — ANALYTICS ── -->
 <div class="secao" style="margin-top:1.25rem">
   <div class="secao-header">
-    <span class="secao-titulo"><i class="fa fa-chart-bar"></i> Rastreamento de Cliques</span>
+    <span class="secao-titulo"><i class="fa fa-book-open"></i> Ateliê de Histórias — Analytics</span>
+    <div style="display:flex;gap:.5rem;align-items:center">
+      <select id="selPeriodoAtelie" onchange="carregarAtelie()" style="padding:.25rem .5rem;background:var(--fundo-input);border:1px solid var(--borda);border-radius:var(--raio);color:var(--texto);font-size:.78rem">
+        <option value="7">7 dias</option>
+        <option value="30" selected>30 dias</option>
+        <option value="90">90 dias</option>
+      </select>
+    </div>
+  </div>
+  <div id="atelieConteudo" style="padding:1rem">
+    <p style="color:var(--texto-3);font-size:.82rem;text-align:center">Carregando…</p>
+  </div>
+</div>
+
+<!-- ── PAINEL DE CLIQUES (links bio legado) ── -->
+<div class="secao" style="margin-top:1.25rem">
+  <div class="secao-header">
+    <span class="secao-titulo"><i class="fa fa-chart-bar"></i> Cliques nos Links (legado)</span>
     <div style="display:flex;gap:.5rem;align-items:center">
       <select id="selPeriodo" onchange="carregarCliques()" style="padding:.25rem .5rem;background:var(--fundo-input);border:1px solid var(--borda);border-radius:var(--raio);color:var(--texto);font-size:.78rem">
         <option value="7">7 dias</option>
@@ -399,16 +548,151 @@ async function salvarConfig() {
   toast(d.ok ? 'Configurações salvas!' : (d.erro||'Erro.'), d.ok?'ok':'erro');
 }
 
-/* ── Painel de cliques ── */
+/* ── Ateliê de Histórias — Analytics ── */
+const GENERO_LABEL = { drama:'Drama', romance:'Romance', terror:'Terror', autoajuda:'Autoajuda' };
+const GENERO_COR   = { drama:'#6B7FA3', romance:'#B07A8A', terror:'#8A3A3A', autoajuda:'#8A7340' };
+
+async function carregarAtelie() {
+  const dias = document.getElementById('selPeriodoAtelie')?.value || 30;
+  const el   = document.getElementById('atelieConteudo');
+  if (!el) return;
+  el.innerHTML = '<p style="color:var(--texto-3);font-size:.82rem;text-align:center">Carregando…</p>';
+  try {
+    const r = await fetch(`bio.php?acao=atelie&dias=${dias}`, { credentials: 'same-origin' });
+    const d = await r.json();
+    if (!d.ok) {
+      el.innerHTML = '<p style="color:var(--texto-3);font-size:.82rem;text-align:center">Sem dados ainda. Execute a migration <code>database/bio_eventos.sql</code>.</p>';
+      return;
+    }
+
+    const fmtN = n => Number(n).toLocaleString('pt-BR');
+    const pct  = (a, b) => b > 0 ? Math.round(a/b*100) : 0;
+    const f    = d.funil;
+
+    /* ── Métricas de topo ── */
+    let html = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.65rem;margin-bottom:1.25rem">`;
+    const cards = [
+      { ic:'fa-eye',       val: d.sessoes,                  lbl:'Visitantes'     },
+      { ic:'fa-book-open', val: f.card_aberto,              lbl:'Abriram conto'  },
+      { ic:'fa-hourglass-half', val: f.conto_lido_50pct,   lbl:'Leram 50%+'     },
+      { ic:'fa-check-double',   val: f.conto_lido_100pct,  lbl:'Leram tudo'     },
+      { ic:'fa-envelope',  val: f.email_capturado,          lbl:'Leads capturados'},
+      { ic:'fa-share-nodes',val: f.compartilhamento,        lbl:'Compartilhamentos'},
+      { ic:'fa-medal',     val: f.embaixador_gerado,        lbl:'Embaixadores'   },
+    ];
+    cards.forEach(c => {
+      html += `<div style="background:var(--fundo-input);border:1px solid var(--borda);border-radius:var(--raio);padding:.75rem .85rem;text-align:center">
+        <i class="fa ${c.ic}" style="color:var(--ouro);font-size:.95rem;opacity:.7;display:block;margin-bottom:.35rem"></i>
+        <div style="font-size:1.4rem;font-weight:700;color:var(--texto)">${fmtN(c.val)}</div>
+        <div style="font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--texto-3);margin-top:.15rem">${c.lbl}</div>
+      </div>`;
+    });
+    html += '</div>';
+
+    /* ── Funil visual ── */
+    const etapas = [
+      { label:'Visitantes',       val: d.sessoes              },
+      { label:'Abriram conto',    val: f.card_aberto          },
+      { label:'Leram 50%',        val: f.conto_lido_50pct     },
+      { label:'Leram 100%',       val: f.conto_lido_100pct    },
+      { label:'Leads',            val: f.email_capturado      },
+      { label:'Shares',           val: f.compartilhamento     },
+      { label:'Embaixadores',     val: f.embaixador_gerado    },
+    ];
+    const maxVal = etapas[0]?.val || 1;
+    html += `<div style="margin-bottom:1.5rem">
+      <div style="font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:.65rem">Funil de conversão (${dias} dias)</div>`;
+    etapas.forEach((et, i) => {
+      const w      = maxVal > 0 ? Math.max(2, Math.round(et.val/maxVal*100)) : 0;
+      const conv   = i > 0 && etapas[i-1].val > 0 ? pct(et.val, etapas[i-1].val) : null;
+      html += `<div style="margin-bottom:.5rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.18rem">
+          <span style="font-size:.79rem;color:var(--texto)">${et.label}</span>
+          <span style="font-size:.75rem;color:var(--ouro);font-weight:700">${fmtN(et.val)}${conv !== null ? ` <span style="color:var(--texto-3);font-weight:400">(${conv}%)</span>` : ''}</span>
+        </div>
+        <div style="height:6px;background:var(--fundo-2);border-radius:3px">
+          <div style="height:100%;width:${w}%;background:var(--ouro);border-radius:3px;transition:width .6s ease;opacity:${1 - i*0.1}"></div>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+
+    /* ── Por gênero ── */
+    html += `<div style="margin-bottom:1.5rem">
+      <div style="font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:.65rem">Por gênero</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.6rem">`;
+    Object.entries(d.por_genero).forEach(([g, v]) => {
+      const taxa = pct(v.leram_50, v.abertos);
+      html += `<div style="background:var(--fundo-input);border:1px solid var(--borda);border-radius:var(--raio);padding:.75rem .9rem">
+        <div style="display:flex;align-items:center;gap:.45rem;margin-bottom:.55rem">
+          <span style="width:8px;height:8px;border-radius:50%;background:${GENERO_COR[g]};flex-shrink:0"></span>
+          <span style="font-size:.8rem;font-weight:600;color:var(--texto)">${GENERO_LABEL[g]}</span>
+          <span style="margin-left:auto;font-size:.68rem;color:var(--texto-3)">${taxa}% leitura</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);text-align:center;gap:.25rem">
+          <div><div style="font-size:1.05rem;font-weight:700;color:${GENERO_COR[g]}">${fmtN(v.abertos)}</div><div style="font-size:.6rem;color:var(--texto-3)">abertos</div></div>
+          <div><div style="font-size:1.05rem;font-weight:700;color:${GENERO_COR[g]}">${fmtN(v.leram_50)}</div><div style="font-size:.6rem;color:var(--texto-3)">50%+</div></div>
+          <div><div style="font-size:1.05rem;font-weight:700;color:${GENERO_COR[g]}">${fmtN(v.leram_100)}</div><div style="font-size:.6rem;color:var(--texto-3)">100%</div></div>
+        </div>
+      </div>`;
+    });
+    html += '</div></div>';
+
+    /* ── Leads por tipo ── */
+    if (d.leads_por_tipo.length) {
+      html += `<div style="margin-bottom:1.5rem">
+        <div style="font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:.65rem">Leads por isca</div>
+        <div style="display:flex;flex-wrap:wrap;gap:.4rem">`;
+      d.leads_por_tipo.forEach(t => {
+        const label = {pdf:'PDF completo','contos-ineditos':'Contos inéditos',playlist:'Playlist','carta-do-autor':'Carta do autor'}[t.tipo] || t.tipo || 'Sem tipo';
+        html += `<span style="background:var(--fundo-input);border:1px solid var(--borda);border-radius:20px;padding:.2rem .75rem;font-size:.73rem;color:var(--texto-2)">
+          ${label} <strong style="color:var(--ouro)">${fmtN(t.total)}</strong>
+        </span>`;
+      });
+      html += '</div></div>';
+    }
+
+    /* ── Últimos leads ── */
+    if (d.leads.length) {
+      html += `<div>
+        <div style="font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:.65rem">Últimos leads capturados</div>
+        <table>
+          <thead><tr>
+            <th>E-mail</th><th>Isca</th><th>Gênero</th><th>Captado em</th>
+          </tr></thead>
+          <tbody>`;
+      d.leads.forEach(l => {
+        const iscaLabel = {pdf:'PDF','contos-ineditos':'Contos inéditos',playlist:'Playlist','carta-do-autor':'Carta autor'}[l.tipo] || l.tipo || '—';
+        const genLabel  = GENERO_LABEL[l.genero] || l.genero || '—';
+        const dt        = l.captado_em ? new Date(l.captado_em).toLocaleDateString('pt-BR') : '—';
+        html += `<tr>
+          <td class="td-nome">${l.email}</td>
+          <td>${iscaLabel}</td>
+          <td>${genLabel}</td>
+          <td style="color:var(--texto-3)">${dt}</td>
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+    } else {
+      html += `<p style="text-align:center;color:var(--texto-3);font-size:.82rem;padding:1rem 0">Nenhum lead capturado ainda.</p>`;
+    }
+
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<p style="color:var(--texto-3);font-size:.82rem;text-align:center">Erro ao carregar analytics do Ateliê.</p>';
+  }
+}
+
+/* ── Painel de cliques (links legado) ── */
 async function carregarCliques() {
   const dias = document.getElementById('selPeriodo')?.value || 30;
   const el   = document.getElementById('cliquesConteudo');
   if (!el) return;
   el.innerHTML = '<p style="color:var(--texto-3);font-size:.82rem;text-align:center">Carregando…</p>';
   try {
-    const r = await fetch(`../backend/bio.php?acao=cliques&dias=${dias}`, { credentials: 'same-origin' });
+    const r = await fetch(`bio.php?acao=cliques&dias=${dias}`, { credentials: 'same-origin' });
     const d = await r.json();
-    if (!d.ok) { el.innerHTML='<p style="color:var(--texto-3);font-size:.82rem;text-align:center">Sem dados ainda. Execute a migration_bio_v2.sql.</p>'; return; }
+    if (!d.ok) { el.innerHTML='<p style="color:var(--texto-3);font-size:.82rem;text-align:center">Sem dados ainda.</p>'; return; }
 
     const fmtN = n => Number(n).toLocaleString('pt-BR');
 
@@ -424,44 +708,40 @@ async function carregarCliques() {
         </div>
         <div style="background:var(--fundo-input);border:1px solid var(--borda);border-radius:var(--raio);padding:.85rem 1rem;text-align:center">
           <div style="font-size:1.6rem;font-weight:700;color:var(--ouro)">${d.por_link.length}</div>
-          <div style="font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--texto-3)">Links ativos</div>
+          <div style="font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--texto-3)">Links</div>
         </div>
       </div>`;
 
-    // Tabela por link
     if (d.por_link.length) {
       const maxTotal = Math.max(...d.por_link.map(l=>l.total));
       html += `<div style="margin-bottom:1.25rem">
         <div style="font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:.6rem">Por link</div>`;
       d.por_link.forEach(l => {
-        const pct = maxTotal > 0 ? Math.round((l.total/maxTotal)*100) : 0;
+        const w = maxTotal > 0 ? Math.round((l.total/maxTotal)*100) : 0;
         html += `<div style="margin-bottom:.55rem">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.2rem">
             <span style="font-size:.82rem;color:var(--texto);max-width:65%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.titulo}</span>
             <span style="font-size:.78rem;color:var(--ouro);font-weight:700">${fmtN(l.total)}</span>
           </div>
           <div style="height:5px;background:var(--fundo-2);border-radius:3px">
-            <div style="height:100%;width:${pct}%;background:var(--ouro);border-radius:3px;transition:width .5s ease"></div>
+            <div style="height:100%;width:${w}%;background:var(--ouro);border-radius:3px;transition:width .5s ease"></div>
           </div>
         </div>`;
       });
-      html += `</div>`;
+      html += '</div>';
     }
 
-    // Top origens
     if (d.por_origem.length) {
       html += `<div style="font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:.6rem">Por origem</div>
         <div style="display:flex;flex-wrap:wrap;gap:.4rem">`;
       d.por_origem.forEach(o => {
-        html += `<span style="background:var(--fundo-input);border:1px solid var(--borda);border-radius:20px;padding:.2rem .65rem;font-size:.72rem;color:var(--texto-2)">
-          ${o.origem} <strong style="color:var(--ouro)">${fmtN(o.total)}</strong>
-        </span>`;
+        html += `<span style="background:var(--fundo-input);border:1px solid var(--borda);border-radius:20px;padding:.2rem .65rem;font-size:.72rem;color:var(--texto-2)">${o.origem} <strong style="color:var(--ouro)">${fmtN(o.total)}</strong></span>`;
       });
-      html += `</div>`;
+      html += '</div>';
     }
 
     if (!d.total) {
-      html += `<p style="text-align:center;color:var(--texto-3);font-size:.82rem;padding:1rem 0">Nenhum clique registrado nos últimos ${dias} dias.</p>`;
+      html += `<p style="text-align:center;color:var(--texto-3);font-size:.82rem;padding:1rem 0">Nenhum clique nos últimos ${dias} dias.</p>`;
     }
 
     el.innerHTML = html;
@@ -470,6 +750,7 @@ async function carregarCliques() {
   }
 }
 
+carregarAtelie();
 carregarCliques();
 </script>
 

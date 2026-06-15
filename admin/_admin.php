@@ -15,11 +15,18 @@
      fn adm_data($s, $fmt) — formata data pt-BR
    ================================================================ */
 
+// Suporte a páginas em subdiretórios (ex: ferramentas/epub.php)
+// Defina $ADM_HREF = '../' e $ADM_ROOT = '../../' antes de incluir este arquivo.
+$ADM_HREF = $ADM_HREF ?? '';   // prefixo para links do menu (vazio em admin/, '../' em admin/subdir/)
+$ADM_ROOT = $ADM_ROOT ?? '../'; // caminho para a raiz do site (assets como favicon)
+
 session_name('rd_admin_sess');
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (empty($_SESSION['admin_id'])) {
-    header('Location: login.php');
+    header('Location: ' . $ADM_HREF . 'login.php');
     exit;
 }
 
@@ -88,6 +95,7 @@ $MENU = [
     ['slug'=>'crons',          'href'=>'crons.php',          'icon'=>'fa-robot',           'label'=>'Automações'],
     ['slug'=>'push',           'href'=>'push.php',           'icon'=>'fa-bell',            'label'=>'Push'],
     ['slug'=>'bio',            'href'=>'bio.php',            'icon'=>'fa-link',            'label'=>'Bio / Links'],
+    ['slug'=>'ferramentas-epub', 'href'=>'ferramentas/epub.php', 'icon'=>'fa-scroll', 'label'=>'Gerador EPUB'],
     'sep',
     ['slug'=>'_site',          'href'=>'../index.html',       'icon'=>'fa-globe',    'label'=>'Ver site', 'target'=>'_blank'],
     'sep',
@@ -102,7 +110,8 @@ $TITULO_MAP = [
     'compras'        => 'Compras',
     'livros'         => 'Livros',
     'blog'           => 'Blog',
-    'configuracoes'  => 'Configurações',
+    'configuracoes'      => 'Configurações',
+    'ferramentas-epub'   => 'Gerador de EPUB',
 ];
 $tituloPagina = $TITULO_MAP[$ADMIN_PAGE] ?? 'Admin';
 ?>
@@ -113,7 +122,7 @@ $tituloPagina = $TITULO_MAP[$ADMIN_PAGE] ?? 'Admin';
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="robots" content="noindex, nofollow"/>
   <title><?= $tituloPagina ?> | Admin | Robério Diógenes</title>
-  <link rel="icon" type="image/png" href="../img/favicon.png"/>
+  <link rel="icon" type="image/png" href="<?= $ADM_ROOT ?>img/favicon.png"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -274,7 +283,7 @@ $tituloPagina = $TITULO_MAP[$ADMIN_PAGE] ?? 'Admin';
       <?php if ($item === 'sep'): ?>
         <hr class="nav-sep">
       <?php else: ?>
-        <a href="<?= $item['href'] ?>"
+        <a href="<?= $ADM_HREF . $item['href'] ?>"
            class="nav-item <?= $ADMIN_PAGE === $item['slug'] ? 'ativo' : '' ?>"
            <?= isset($item['target']) ? 'target="' . $item['target'] . '"' : '' ?>>
           <i class="fa <?= $item['icon'] ?>"></i>
@@ -288,7 +297,7 @@ $tituloPagina = $TITULO_MAP[$ADMIN_PAGE] ?? 'Admin';
   </nav>
   <div class="sidebar-footer">
     <div class="admin-info"><?= $adminNome ?></div>
-    <form action="logout.php" method="post">
+    <form action="<?= $ADM_HREF ?>logout.php" method="post">
       <button type="submit" class="btn-sair">
         <i class="fa fa-sign-out-alt"></i>
         <span>Sair</span>

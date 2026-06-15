@@ -19,6 +19,9 @@ Allow: /img/
 Allow: /css/
 Allow: /js/
 
+# ── Contos gratuitos (indexável — página de maior valor) ─
+Allow: /bio.html
+
 # ── Leitor online (página de apresentação indexável) ─────
 Allow: /leitor/index.html
 
@@ -41,4 +44,4 @@ Disallow: /resetar-senha.html
 Disallow: /docs/
 Disallow: /404.html
 
-Sitemap: https://www.roberiodiogenes.com/sitemap.xml
+Sitemap: https://roberiodiogenes.com/sitemap.xml
